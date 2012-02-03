@@ -72,9 +72,6 @@ def get_menu(request):
     response = HttpResponse()
     restaurant = Restaurant.objects.get(id=request.GET.get('id'))
 
-    #beforeSerializationR = serializers.serialize('json', [restaurant])
-    #jsonR = simplejson.loads(beforeSerializationR)[0]
-
     menu = restaurant.menu
     jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
     
@@ -86,7 +83,6 @@ def get_menu(request):
     jsonDishes = simplejson.loads(serializers.serialize('json', dishes, excludes=('restaurant'), relations=('tags','categories',)))
     jsonMenu['dishes']=jsonDishes
 
-    #jsonR['menu']= jsonMenu
     response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
     return response
 
@@ -174,12 +170,45 @@ def get_order_by_id(request, id):
         return login_required(request)
     response = HttpResponse()
     # TODO check if the user has permission to view the order
-    writeJson([Order.objects.get(id=id),], response)
+    serializer = serializers.get_serializer("json")()
+    order = Order.objects.get(id=id)
+    jsonOrder = simplejson.loads(serializer.serialize([order], relations={'restaurant':{'fields':('name',)}}))[0]
+    orderDishes = OrderDishes.objects.filter(order__id=id)
+    jsonDishes = []
+    for orderDish in orderDishes:
+        dish = orderDish.dish
+        jsonDish = serializer.serialize([dish])
+        jsonDishes.append(simplejson.loads(jsonDish)[0])
+    jsonOrder['fields']['dishes'] = jsonDishes
+    response.write(simplejson.dumps(jsonOrder, ensure_ascii=False))
     return response
 
-def get_orderes(request):
+def get_orders(request):
     if not request.user.is_authenticated():
         return login_required(request)
     response = HttpResponse()
-    writeJson(Order.objects.filter(customer__id=request.user.id), response)
+    serializer = serializers.get_serializer("json")()
+    orders = Order.objects.filter(customer__id=request.user.id)
+    serializer.serialize(orders, relations={'restaurant':{'fields':('name',)}}, stream=response, ensure_ascii=False)
+    return response
+
+# get detailed information including dishes of all of the orders, not used by now
+def get_orders_detailed(request):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    response = HttpResponse()
+    serializer = serializers.get_serializer("json")()
+    orders = Order.objects.filter(customer__id=request.user.id)
+    jsonOrders = []
+    jsonOrders = simplejson.loads(serializer.serialize(orders, relations={'restaurant':{'fields':('name',)}}))
+    for jsonOrder in jsonOrders:
+        orderID = jsonOrder['pk']
+        orderDishes = OrderDishes.objects.filter(order__id=orderID)
+        jsonDishes = []
+        for orderDish in orderDishes:
+            dish = orderDish.dish
+            jsonDish = serializer.serialize([dish])
+            jsonDishes.append(simplejson.loads(jsonDish)[0])
+        jsonOrder['fields']['dishes'] = jsonDishes
+    response.write(simplejson.dumps(jsonOrders, ensure_ascii=False))
     return response

@@ -14,7 +14,7 @@ urlpatterns = patterns('',
                        ('^login/$',login),
                        ('^test_make_order/$',test_make_order),
                        ('^make_order/$',make_order),
-                       ('^order/$',get_orderes),
+                       ('^order/$',get_orders),
                        ('^order/(\d+)/$',get_order_by_id),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
