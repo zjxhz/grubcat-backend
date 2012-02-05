@@ -174,12 +174,8 @@ def get_order_by_id(request, id):
     order = Order.objects.get(id=id)
     jsonOrder = simplejson.loads(serializer.serialize([order], relations={'restaurant':{'fields':('name',)}}))[0]
     orderDishes = OrderDishes.objects.filter(order__id=id)
-    jsonDishes = []
-    for orderDish in orderDishes:
-        dish = orderDish.dish
-        jsonDish = serializer.serialize([dish])
-        jsonDishes.append(simplejson.loads(jsonDish)[0])
-    jsonOrder['fields']['dishes'] = jsonDishes
+    jsonOrderDishes = serializer.serialize(orderDishes, relations=('dish',))
+    jsonOrder['fields']['dishes'] = simplejson.loads(jsonOrderDishes)
     response.write(simplejson.dumps(jsonOrder, ensure_ascii=False))
     return response
 
