@@ -207,4 +207,38 @@ def get_orders_detailed(request):
             jsonDishes.append(simplejson.loads(jsonDish)[0])
         jsonOrder['fields']['dishes'] = jsonDishes
     response.write(simplejson.dumps(jsonOrders, ensure_ascii=False))
+    return responset
+
+def get_user_profile(request):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    response = HttpResponse()
+    response.write(request.user.get_profile())
     return response
+
+def favorite_restaurant(request, id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    response = {}
+    profile = request.user.get_profile()
+    if request.method == 'POST':
+        profile.favorite_restaurants.add(Restaurant.objects.get(id=id))
+        profile.save()
+        response['status']='OK'
+        response['info']='Data saved' 
+    # is GET needed? How about use /restaurant
+    elif request.method == 'GET':
+        response['status']='NOK'
+        response['info']='GET is not supported' 
+    return HttpResponse(simplejson.dumps(response, ensure_ascii=False))
+    
+def favorite_restaurants(request):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    response = HttpResponse()
+    profile = request.user.get_profile()
+    serializer = serializers.get_serializer("json")()
+    #serializer.serialize([profile], relations=('favorite_restaurants',), stream=response)
+    serializer.serialize(profile.favorite_restaurants.all(), relations=('favorite_restaurants',), ensure_ascii=False, stream=response)
+    return response
+    

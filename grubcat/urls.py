@@ -16,6 +16,9 @@ urlpatterns = patterns('',
                        ('^make_order/$',make_order),
                        ('^order/$',get_orders),
                        ('^order/(\d+)/$',get_order_by_id),
+                       ('^profile/$',get_user_profile),
+                       ('^profile/favorite/restaurant/(\d+)/$',favorite_restaurant),
+                       ('^profile/favorite/restaurant/$',favorite_restaurants),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
 

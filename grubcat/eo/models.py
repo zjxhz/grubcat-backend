@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 # Create your models here.
 class Company(models.Model):
@@ -88,6 +89,20 @@ class OrderDishes(models.Model):
     quantity = models.FloatField()
     class Meta:
         db_table = u'order_dishes'
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    favorite_restaurants = models.ManyToManyField(Restaurant)
+    class Meta:
+        db_table = u'user_profile'
+
+# Create a user profile if the profile does not exist
+def create_user_profile(sender, instance, created, **kwargs):  
+    if created:  
+       profile, created = UserProfile.objects.get_or_create(user=instance)  
+
+post_save.connect(create_user_profile, sender=User)
+
 '''
 class CategoryRestaurant(models.Model):
     id = models.IntegerField(primary_key=True)
