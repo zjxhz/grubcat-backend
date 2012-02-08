@@ -7,6 +7,8 @@ class Company(models.Model):
     name = models.CharField(max_length=135)
     class Meta:
         db_table = u'company'
+
+
     
 class Restaurant(models.Model):
     name = models.CharField(max_length=135)
@@ -24,7 +26,15 @@ class Restaurant(models.Model):
         return u'%s %s' % (self.name, self.address)
     class Meta:
         db_table = u'restaurant'
-
+        
+class RestaurantComments(models.Model):
+    user = models.ForeignKey(User)
+    restaurant = models.ForeignKey(Restaurant)
+    comments = models.CharField(max_length=4096)
+    time = models.DateTimeField()
+    class Meta:
+        db_table = u'restaurant_comments'
+        
 class Menu(models.Model):
     restaurant = models.OneToOneField(Restaurant)
     cover = models.CharField(max_length=255, blank=True)

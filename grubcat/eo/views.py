@@ -29,6 +29,13 @@ def writeJson(qs, response):
     json_serializer = serializers.get_serializer("json")()
     return json_serializer.serialize(qs, ensure_ascii=False, stream=response)
 
+# Create a general response with status and message)
+def createGeneralResponse(status, message):
+    response = {}
+    response['status']=status
+    response['info']=message
+    return HttpResponse(simplejson.dumps(response))
+    
 # get distance in meter, code from google maps
 def getDistance( lng1,  lat1,  lng2,  lat2):
     EARTH_RADIUS = 6378.137
@@ -246,4 +253,25 @@ def favorite_restaurants(request):
     #serializer.serialize([profile], relations=('favorite_restaurants',), stream=response)
     serializer.serialize(profile.favorite_restaurants.all(), relations=('favorite_restaurants',), ensure_ascii=False, stream=response)
     return response
+
     
+def restaurant_comments(request, restaurant_id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    rid = int(restaurant_id)
+    response = HttpResponse()
+    
+    if request.method == 'GET':
+        writeJson(RestaurantComments.objects.filter(restaurant__id=rid), response)
+        return response
+    elif request.method == 'POST':
+        comments = request.POST.get('comments')
+        rc = RestaurantComments()
+        rc.user_id = request.user.id
+        rc.restaurant_id = rid
+        rc.comments = comments
+        rc.time = datetime.now()
+        rc.save()
+        return createGeneralResponse('OK','Comments committed')
+    else:
+        raise                           
