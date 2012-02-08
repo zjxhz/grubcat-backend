@@ -256,15 +256,15 @@ def favorite_restaurants(request):
 
     
 def restaurant_comments(request, restaurant_id):
-    if not request.user.is_authenticated():
-        return login_required(request)
     rid = int(restaurant_id)
     response = HttpResponse()
-    
+   
     if request.method == 'GET':
         writeJson(RestaurantComments.objects.filter(restaurant__id=rid), response)
         return response
     elif request.method == 'POST':
+        if not request.user.is_authenticated():
+            return login_required(request)
         comments = request.POST.get('comments')
         rc = RestaurantComments()
         rc.user_id = request.user.id
