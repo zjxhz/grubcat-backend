@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from grubcat.eo.views import *
+from grubcat.eo.db import updateLatLng
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -9,6 +10,7 @@ urlpatterns = patterns('',
                        ('^hello/$', hello),
                        ('^get_menu/$',get_menu),
                        ('^get_restaurant_list_by_geo/$',get_restaurant_list_by_geo),
+                       ('^restaurant/(\d+)/$', get_restaurant),
                        ('^search_restaurant_list/$',restaurantList),
                        ('^user_login/$',user_login),
                        ('^login/$',login),
@@ -19,6 +21,9 @@ urlpatterns = patterns('',
                        ('^profile/$',get_user_profile),
                        ('^profile/favorite/restaurant/(\d+)/$',favorite_restaurant),
                        ('^profile/favorite/restaurant/$',favorite_restaurants),
+
+                       # developer interfaces...
+                       ('^updateLatLng/$', updateLatLng),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
 

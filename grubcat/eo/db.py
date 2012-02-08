@@ -87,13 +87,13 @@ def updateLatLng(request):
         city = urllib.quote(city.encode('utf-8'))
         name = urllib.quote(r.name.encode('utf-8'))
         url = 'http://ajax.googleapis.com/ajax/services/search/local?v=3.0&q="%s%s"' % (city, name)
-        html = getWebPageContent(url, True)
+        html = getWebPageContent(url, False)
         simplejson.loads(html)
         results = simplejson.loads(html)['responseData']['results']
         if results:
             firstMatch = results[0]
-            r.longitude = float(firstMatch['lat'])
-            r.latitude = float(firstMatch['lng'])
+            r.longitude = float(firstMatch['lng'])
+            r.latitude = float(firstMatch['lat'])
             if firstMatch.get('phoneNumbers') == NoneType:
                 count = 1
                 print 'emplty phone'

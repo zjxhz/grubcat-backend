@@ -1,3 +1,4 @@
 django
 simplejson
 wadofstuff-django-serializers
+BeautifulSoup

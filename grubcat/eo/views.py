@@ -47,6 +47,11 @@ def restaurantList(request):
     if key:
         return getJsonResponse(Restaurant.objects.filter(name__contains=key), response)
     return getJsonResponse(Restaurant.objects.all(), response)
+
+def get_restaurant(request, id):
+    response = HttpResponse()
+    writeJson(Restaurant.objects.filter(id=id), response)
+    return response
     
 def get_restaurant_list_by_geo(request):
     try:
