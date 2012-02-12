@@ -11,6 +11,7 @@ from django.contrib import auth
 from datetime import datetime
 from django.db import transaction
 from decimal import Decimal
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def hello(request):
@@ -25,8 +26,10 @@ def getJsonResponse(qs, response, useNatureKeys=False):
         print model_to_dict(intance)
     return response
 
-def writeJson(qs, response):
+def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
+    if relations:
+        return json_serializer.serialize(qs, ensure_ascii=False, relations=relations, stream=response)
     return json_serializer.serialize(qs, ensure_ascii=False, stream=response)
 
 # Create a general response with status and message)
@@ -48,6 +51,13 @@ def getDistance( lng1,  lat1,  lng2,  lat2):
     s = s * EARTH_RADIUS
     return s*1000
 
+# convert the query set of models to a list of dict
+def modelToDict(query_set, relations=None):
+    serializer = serializers.get_serializer("json")()
+    if relations:
+        return simplejson.loads(serializer.serialize(query_set, relations=relations))
+    return simplejson.loads(serializer.serialize(query_set))
+    
 def restaurantList(request):
     response = HttpResponse()
     key = request.GET.get('key')
@@ -57,7 +67,22 @@ def restaurantList(request):
 
 def get_restaurant(request, id):
     response = HttpResponse()
-    writeJson(Restaurant.objects.filter(id=id), response)
+    r = Restaurant.objects.get(id=id)
+    jsonR = modelToDict([r])[0]
+    ri = RestaurantInfo.objects.get(restaurant__id=id)
+    jsonR['fields']['rating']=ri.average_rating
+    jsonR['fields']['average_cost']=ri.average_cost
+    jsonR['fields']['good_rating_percentage']=ri.good_rating_percentage
+    jsonR['fields']['comments']=modelToDict(RestaurantComments.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
+    jsonR['fields']['recommended_dishes']=modelToDict(r.get_recommended_dishes(),
+                                                      {'user': {'fields':('username',)},'dish':{'fields':('name',)}})
+    response.write(simplejson.dumps(jsonR, ensure_ascii=False))
+    return response
+
+def get_recommended_dishes(request, id):
+    response = HttpResponse()
+    dishes = Restaurant.objects.get(id=id).get_recommended_dishes()
+    writeJson(dishes, response, ('dish',)) # order by dish descending
     return response
     
 def get_restaurant_list_by_geo(request):
@@ -123,8 +148,15 @@ def user_login(request):
         response['info']="Incorrect username or password"
     return HttpResponse(simplejson.dumps(response))
 
+def user_logout(request):
+    logout(request)
+    return createGeneralResponse('OK',"You've logged out.")
+
 def login(request):
     return render_to_response("registration/login.html")
+
+def logout(request):
+    return render_to_response("registration/logout.html")
 
 def test_make_order(request):
     return render_to_response("order/make_order.html")
@@ -254,23 +286,63 @@ def favorite_restaurants(request):
     serializer.serialize(profile.favorite_restaurants.all(), relations=('favorite_restaurants',), ensure_ascii=False, stream=response)
     return response
 
-    
+# View or add an user comment for a restaurant    
 def restaurant_comments(request, restaurant_id):
     rid = int(restaurant_id)
+    r = Restaurant.objects.get(id=restaurant_id)
     response = HttpResponse()
-   
+    
     if request.method == 'GET':
-        writeJson(RestaurantComments.objects.filter(restaurant__id=rid), response)
+        id_name_fields={'fields':('username',)}
+        writeJson(r.get_comments(), response, relations={'user': id_name_fields,})
         return response
     elif request.method == 'POST':
         if not request.user.is_authenticated():
             return login_required(request)
-        comments = request.POST.get('comments')
+        data = simplejson.loads(request.raw_post_data)
+        comments = data['comments']
+        rating = float(data['rating'])
+        averageCost = float(data['average_cost'])
+        recommendedDishes = data['recommended_dishes']
+        try:
+            ri = RestaurantInfo.objects.get(restaurant__id=rid)
+            divider = ri.divider
+            ri.average_cost = (ri.average_cost * divider + averageCost) / (divider + 1)
+            ri.average_rating = (ri.average_rating * divider + rating) / (divider + 1)
+            good_rate = 0
+            if rating >= 3:
+                good_rate = 1
+            ri.good_rating_percentage = (ri.good_rating_percentage * divider + good_rate) / (divider + 1)
+            ri.divider = divider + 1
+        except ObjectDoesNotExist:
+            ri = RestaurantInfo()
+            ri.restaurant_id=rid
+            ri.average_cost = averageCost
+            ri.average_rating = rating
+            if rating >= 3:
+                ri.good_rating_percentage = 1
+            else:
+                ri.good_rating_percentage = 0
+            ri.divider = 1
+        for dish_id in recommendedDishes:
+            try:
+                rd = RecommendedDishes.objects.get(dish__id=dish_id)
+                rd.times = rd.times + 1
+            except ObjectDoesNotExist:
+                rd = RecommendedDishes()
+                rd.times = 1
+                rd.restaurant_id = rid
+                rd.dish_id = dish_id
+            rd.save()
+        ri.save()
+        
         rc = RestaurantComments()
+        rc.rating = rating
         rc.user_id = request.user.id
         rc.restaurant_id = rid
         rc.comments = comments
         rc.time = datetime.now()
+        rc.average_cost = averageCost
         rc.save()
         return createGeneralResponse('OK','Comments committed')
     else:

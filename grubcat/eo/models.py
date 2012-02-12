@@ -7,8 +7,6 @@ class Company(models.Model):
     name = models.CharField(max_length=135)
     class Meta:
         db_table = u'company'
-
-
     
 class Restaurant(models.Model):
     name = models.CharField(max_length=135)
@@ -24,6 +22,10 @@ class Restaurant(models.Model):
     company = models.ForeignKey(Company)
     def __unicode__(self):
         return u'%s %s' % (self.name, self.address)
+    def get_recommended_dishes(self, max_number=10):
+        return RecommendedDishes.objects.filter(restaurant__id=self.id).order_by('-times')[:max_number]
+    def get_comments(self):
+        return RestaurantComments.objects.filter(restaurant__id=self.id)
     class Meta:
         db_table = u'restaurant'
         
@@ -32,8 +34,27 @@ class RestaurantComments(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     comments = models.CharField(max_length=4096)
     time = models.DateTimeField()
+    rating = models.FloatField()
+    average_cost = models.FloatField()
+    # for average cost, see RestaurantAverageCost
     class Meta:
         db_table = u'restaurant_comments'
+
+class RestaurantInfo(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    average_cost = models.FloatField()
+    average_rating = models.FloatField()
+    good_rating_percentage = models.FloatField()
+    divider = models.IntegerField()
+    class Meta:
+        db_table = u'restaurant_info'
+
+class UserSharedImages(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    user = models.ForeignKey(User)
+    image = models.CharField(max_length=1024)
+    class Meta:
+        db_table = u'user_shared_images'
         
 class Menu(models.Model):
     restaurant = models.OneToOneField(Restaurant)
@@ -67,6 +88,7 @@ class Dish(models.Model):
     has_other_uom = models.IntegerField()
     available = models.CharField(max_length=39)
     is_mandatory = models.IntegerField()
+    is_recommended = models.IntegerField(default=0)
     tags =  models.ManyToManyField(TagDish)
     categories = models.ManyToManyField(CategoryDish)
     class Meta:
@@ -113,6 +135,12 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
+class RecommendedDishes(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    dish = models.ForeignKey(Dish)
+    times = models.IntegerField()
+    class Meta:
+        db_table = u'recommended_dishes'
 '''
 class CategoryRestaurant(models.Model):
     id = models.IntegerField(primary_key=True)

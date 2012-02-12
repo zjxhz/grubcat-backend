@@ -1,0 +1,10 @@
+
+
+{% block content %}
+ 
+ <form action="/user_logout/" method="post">
+    <input type="submit" value="logout" />
+    <input type="hidden" name="next" value="{{ next|escape }}" />
+  </form>
+
+{% endblock %}
