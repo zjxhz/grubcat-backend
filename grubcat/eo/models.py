@@ -7,7 +7,12 @@ class Company(models.Model):
     name = models.CharField(max_length=135)
     class Meta:
         db_table = u'company'
-    
+
+class RestaurantTag(models.Model):
+    name = models.CharField(max_length=45)
+    class Meta:
+        db_table = u'restaurant_tag'
+        
 class Restaurant(models.Model):
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
@@ -20,6 +25,7 @@ class Restaurant(models.Model):
     average_cost = models.IntegerField()
     rating = models.IntegerField()
     company = models.ForeignKey(Company)
+    tags = models.ManyToManyField(RestaurantTag)
     def __unicode__(self):
         return u'%s %s' % (self.name, self.address)
     def get_recommended_dishes(self, max_number=10):
@@ -217,11 +223,7 @@ class RestaurantHasCategory(models.Model):
     class Meta:
         db_table = u'restaurant_has_category'
 
-class TagRestaurant(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=45)
-    class Meta:
-        db_table = u'tag_restaurant'
+
     
 class RestaurantHasTag(models.Model):
     restaurant = models.ForeignKey(Restaurant)

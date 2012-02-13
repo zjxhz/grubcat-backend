@@ -32,6 +32,11 @@ def writeJson(qs, response, relations=None):
         return json_serializer.serialize(qs, ensure_ascii=False, relations=relations, stream=response)
     return json_serializer.serialize(qs, ensure_ascii=False, stream=response)
 
+def getJsonResponse(qs):
+    response = HttpResponse()
+    writeJson(qs, response) 
+    return response
+    
 # Create a general response with status and message)
 def createGeneralResponse(status, message):
     response = {}
@@ -347,3 +352,9 @@ def restaurant_comments(request, restaurant_id):
         return createGeneralResponse('OK','Comments committed')
     else:
         raise                           
+
+def get_restaurant_tags(request):
+    return getJsonResponse(RestaurantTag.objects.all())
+
+def get_restaurants_with_tag(request, tag_id):
+    return getJsonResponse(RestaurantTag.objects.get(id=tag_id).restaurant_set.all())
