@@ -358,3 +358,9 @@ def get_restaurant_tags(request):
 
 def get_restaurants_with_tag(request, tag_id):
     return getJsonResponse(RestaurantTag.objects.get(id=tag_id).restaurant_set.all())
+
+def get_business_districts(request):
+    return getJsonResponse(BusinessDistrict.objects.all())
+
+def get_restaurants_in_business_district(request, business_district_id):
+    return getJsonResponse(BusinessDistrict.objects.get(id=business_district_id).restaurant_set.all())
