@@ -89,7 +89,13 @@ def get_recommended_dishes(request, id):
     dishes = Restaurant.objects.get(id=id).get_recommended_dishes()
     writeJson(dishes, response, ('dish',)) # order by dish descending
     return response
-    
+
+# return a list of values with the order how keys are sorted for a given dict
+def sortedDictValues(dict):
+    keys = dict.keys()
+    keys.sort()
+    return [dict[key] for key in keys]
+
 def get_restaurant_list_by_geo(request):
     try:
         response = HttpResponse()
@@ -97,14 +103,34 @@ def get_restaurant_list_by_geo(request):
         lat = float(request.GET.get('latitude'))
         rangeInMeter = float(request.GET.get('range'))
         # TODO page...
-        rInRange = []
+        distance_restaurant_dict = {}
+        rating_restaurant_dict = {}
+        cost_restaurant_dict = {}
+        order_by = request.GET.get('order_by')
+        restaurants = []
         for r in Restaurant.objects.all():
             if r.longitude and r.latitude:
-                if getDistance(lng, lat, r.longitude, r.latitude)  < rangeInMeter:
-                    rInRange.append(r)
-        qs = Restaurant.objects.filter(id__in=[r.id for r in rInRange])
-        writeJson(qs, response)
-        #print Restaurant.objects.filter(getDistance(longitude,latitude,lng,lat) < rangeInMeter)
+                distance = getDistance(lng, lat, r.longitude, r.latitude)
+                if distance < rangeInMeter:
+                    if order_by == 'distance':
+                        distance_restaurant_dict[distance] = r
+                    elif order_by == 'cost':
+                        cost_restaurant_dict[r.average_cost] = r
+                    elif order_by == 'rating':
+                        print "%s rating: %s" % (r, r.rating)
+                        rating_restaurant_dict[r.rating] = r
+                    else:
+                        restaurants.append(r)
+        if order_by == 'distance':
+            restaurants = sortedDictValues(distance_restaurant_dict)
+        elif order_by == 'cost':
+            restaurants = sortedDictValues(cost_restaurant_dict)
+        elif order_by == 'rating':
+            print "before reverse: %s" % sortedDictValues(rating_restaurant_dict)
+            restaurants = sortedDictValues(rating_restaurant_dict)
+            restaurants.reverse()
+        # print "Restaruants in range %s meters: %s" % (rangeInMeter, distance_restaurant_dict)
+        writeJson(restaurants, response)
     except:
         print "Unexpected error:", sys.exc_info()[0]
         raise

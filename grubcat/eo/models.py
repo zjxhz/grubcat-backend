@@ -38,6 +38,14 @@ class Restaurant(models.Model):
         return RecommendedDishes.objects.filter(restaurant__id=self.id).order_by('-times')[:max_number]
     def get_comments(self):
         return RestaurantComments.objects.filter(restaurant__id=self.id)
+    def get_average_cost(self):
+        '''ri = RestaurantInfo.objects.get(restaurant__id=self.id)
+        return ri.average_cost'''
+        return average_cost
+    def get_rating(self):
+        '''ri = RestaurantInfo.objects.get(restaurant__id=self.id)
+        return ri.rating'''
+        return rating
     class Meta:
         db_table = u'restaurant'
         
