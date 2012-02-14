@@ -14,6 +14,7 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import logout
 
 
 def hello(request):
@@ -168,28 +169,31 @@ def test(request):
     return getJsonResponse(qs, response)
 
 def user_login(request):
-    username = request.POST.get('username', '')
-    password = request.POST.get('password', '')
-    user = auth.authenticate(username=username, password=password)
-    response = {}
-    if user is not None and user.is_active:
-        response['status']='OK'
-        response['info']="You've logged in"
-        auth.login(request, user)
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        response = {}
+        if user is not None and user.is_active:
+            response['status']='OK'
+            response['info']="You've logged in"
+            auth.login(request, user)
+        else:
+            response['status']='NOK'
+            response['info']="Incorrect username or password"
+        return HttpResponse(simplejson.dumps(response))
     else:
-        response['status']='NOK'
-        response['info']="Incorrect username or password"
-    return HttpResponse(simplejson.dumps(response))
+        return render_to_response("registration/login.html")
 
 def user_logout(request):
-    logout(request)
-    return createGeneralResponse('OK',"You've logged out.")
+    if request.method == 'POST':
+        logout(request)
+        return createGeneralResponse('OK',"You've logged out.")
+    else:
+        return render_to_response("registration/logout.html")
 
 def login(request):
-    return render_to_response("registration/login.html")
-
-def logout(request):
-    return render_to_response("registration/logout.html")
+    return render_to_response("registration/login.html")    
 
 def register(request):
     if request.method == 'POST':
