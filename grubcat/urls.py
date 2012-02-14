@@ -29,6 +29,7 @@ urlpatterns = patterns('',
                        ('^profile/$',get_user_profile),
                        ('^profile/favorite/restaurant/(\d+)/$',favorite_restaurant),
                        ('^profile/favorite/restaurant/$',favorite_restaurants),
+                       ('^register/$',register),
 
                        # developer interfaces...
                        ('^updateLatLng/$', updateLatLng),

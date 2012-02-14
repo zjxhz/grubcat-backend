@@ -12,6 +12,8 @@ from datetime import datetime
 from django.db import transaction
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
 
 
 def hello(request):
@@ -189,6 +191,17 @@ def login(request):
 def logout(request):
     return render_to_response("registration/logout.html")
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return createGeneralResponse('OK','User created')
+    else:
+        form = UserCreationForm()
+    return render_to_response("registration/register.html", {
+        'form': form,})
+
 def test_make_order(request):
     return render_to_response("order/make_order.html")
 
@@ -259,7 +272,7 @@ def get_orders(request):
         return login_required(request)
     response = HttpResponse()
     serializer = serializers.get_serializer("json")()
-    orders = Order.objects.filter(customer__id=request.user.id)
+    orders = Order.objects.filter(customer__id=request.user.id).order_by("-created_time")
     serializer.serialize(orders, relations={'restaurant':{'fields':('name',)}}, stream=response, ensure_ascii=False)
     return response
 
