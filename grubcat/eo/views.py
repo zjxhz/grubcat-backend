@@ -67,23 +67,29 @@ def modelToDict(query_set, relations=None):
     return simplejson.loads(serializer.serialize(query_set))
     
 def restaurantList(request):
-    response = HttpResponse()
     key = request.GET.get('key')
     if key:
-        return getJsonResponse(Restaurant.objects.filter(name__contains=key), response)
-    return getJsonResponse(Restaurant.objects.all(), response)
+        return getJsonResponse(Restaurant.objects.filter(name__contains=key))
+    return getJsonResponse(Restaurant.objects.all())
 
 def get_restaurant(request, id):
     response = HttpResponse()
     r = Restaurant.objects.get(id=id)
     jsonR = modelToDict([r])[0]
-    ri = RestaurantInfo.objects.get(restaurant__id=id)
-    jsonR['fields']['rating']=ri.average_rating
-    jsonR['fields']['average_cost']=ri.average_cost
-    jsonR['fields']['good_rating_percentage']=ri.good_rating_percentage
-    jsonR['fields']['comments']=modelToDict(RestaurantComments.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
-    jsonR['fields']['recommended_dishes']=modelToDict(r.get_recommended_dishes(),
-                                                      {'user': {'fields':('username',)},'dish':{'fields':('name',)}})
+    try:
+        ri = RestaurantInfo.objects.get(restaurant__id=id)
+        jsonR['fields']['rating']=ri.average_rating
+        jsonR['fields']['average_cost']=ri.average_cost
+        jsonR['fields']['good_rating_percentage']=ri.good_rating_percentage
+        jsonR['fields']['comments']=modelToDict(RestaurantComments.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
+        jsonR['fields']['recommended_dishes']=modelToDict(r.get_recommended_dishes(),
+                                                          {'user': {'fields':('username',)},'dish':{'fields':('name',)}})
+    except ObjectDoesNotExist:
+        jsonR['fields']['rating']=-1
+        jsonR['fields']['average_cost']=-1
+        jsonR['fields']['good_rating_percentage']=-1
+        jsonR['fields']['comments']=[]
+        jsonR['fields']['recommended_dishes']=[]
     response.write(simplejson.dumps(jsonR, ensure_ascii=False))
     return response
 
@@ -158,30 +164,24 @@ def get_menu(request):
     return response
 
 def get_menu2(request):
-    response = HttpResponse()
     rid = request.GET.get('id')
     qs = Dish.objects.filter(restaurant__id=int(rid))
-    return getJsonResponse(qs, response)
+    return getJsonResponse(qs)
 
 def test(request):
-    response = HttpResponse()
     qs = B.objects.all()
-    return getJsonResponse(qs, response)
+    return getJsonResponse(qs)
 
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         user = auth.authenticate(username=username, password=password)
-        response = {}
         if user is not None and user.is_active:
-            response['status']='OK'
-            response['info']="You've logged in"
             auth.login(request, user)
+            return createGeneralResponse('OK', "You've logged in")
         else:
-            response['status']='NOK'
-            response['info']="Incorrect username or password"
-        return HttpResponse(simplejson.dumps(response))
+            return createGeneralResponse('NOK', "Incorrect username or password")
     else:
         return render_to_response("registration/login.html")
 
@@ -189,11 +189,10 @@ def user_logout(request):
     if request.method == 'POST':
         logout(request)
         return createGeneralResponse('OK',"You've logged out.")
+        # return HttpResponse("Hello world") # there is no response from the server even the code is so simple, might be bug of dotcloud
+        # raise Exception("what's going on here?") # enable this line to check that the code IS executed here
     else:
         return render_to_response("registration/logout.html")
-
-def login(request):
-    return render_to_response("registration/login.html")    
 
 def register(request):
     if request.method == 'POST':
@@ -257,15 +256,21 @@ def make_order(request):
     response['info']="Order confirmed, total price: %s" % totalPrice     
     return HttpResponse(simplejson.dumps(response))
 
-def get_order_by_id(request, id):
+def order_last_modified(request, order_id):
+    return Order.objects.get(id=order_id).confirmed_time
+
+from django.views.decorators.http import condition
+#@condition(last_modified_func=order_last_modified)
+def get_order_by_id(request, order_id):
+    print request.GET.get('ETag')
     if not request.user.is_authenticated():
         return login_required(request)
     response = HttpResponse()
     # TODO check if the user has permission to view the order
     serializer = serializers.get_serializer("json")()
-    order = Order.objects.get(id=id)
+    order = Order.objects.get(id=order_id)
     jsonOrder = simplejson.loads(serializer.serialize([order], relations={'restaurant':{'fields':('name',)}}))[0]
-    orderDishes = OrderDishes.objects.filter(order__id=id)
+    orderDishes = OrderDishes.objects.filter(order__id=order_id)
     jsonOrderDishes = serializer.serialize(orderDishes, relations=('dish',))
     jsonOrder['fields']['dishes'] = simplejson.loads(jsonOrderDishes)
     response.write(simplejson.dumps(jsonOrder, ensure_ascii=False))
