@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from image_cropping.fields import ImageRatioField, ImageCropField
 
 # Create your models here.
 class Company(models.Model):
     name = models.CharField(max_length=135)
+    def __unicode__(self):
+        return u'%s' % (self.name)
     class Meta:
         db_table = u'company'
 
@@ -12,9 +15,12 @@ class RestaurantTag(models.Model):
     name = models.CharField(max_length=45)
     class Meta:
         db_table = u'restaurant_tag'
+     
 
 class BusinessDistrict(models.Model):
     name = models.CharField(max_length=64)
+    def __unicode__(self):
+        return u'%s' % (self.name)
     class Meta:
         db_table = u'business_district'
         
@@ -85,6 +91,8 @@ class Menu(models.Model):
 
 class TagDish(models.Model):
     name = models.CharField(max_length=15)
+    def __unicode__(self):
+        return u'%s' % (self.name)
     class Meta:
         db_table = u'tag_dish'
 
@@ -92,6 +100,8 @@ class CategoryDish(models.Model):
     menu = models.ForeignKey(Menu)
     name = models.CharField(max_length=45)
     parent_category = models.ForeignKey('self', null=True)
+    def __unicode__(self):
+        return u'%s' % (self.name)
     class Meta:
         db_table = u'category_dish'
         
@@ -105,9 +115,9 @@ class Dish(models.Model):
     cooking = models.CharField(max_length=765, blank=True)
     taste = models.CharField(max_length=18)
     uom = models.CharField(max_length=30)
-    has_other_uom = models.IntegerField()
-    available = models.CharField(max_length=39)
-    is_mandatory = models.IntegerField()
+    has_other_uom = models.IntegerField(default=0)
+    available = models.IntegerField(default=0)
+    is_mandatory = models.IntegerField(default=0)
     is_recommended = models.IntegerField(default=0)
     tags =  models.ManyToManyField(TagDish)
     categories = models.ManyToManyField(CategoryDish)
@@ -142,11 +152,44 @@ class OrderDishes(models.Model):
     class Meta:
         db_table = u'order_dishes'
 
+class Relationship(models.Model):
+    from_person = models.ForeignKey("UserProfile", related_name='from_user')
+    to_person = models.ForeignKey("UserProfile", related_name='to_user')
+    class Meta:
+        db_table = u'relationship'
+    
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     favorite_restaurants = models.ManyToManyField(Restaurant)
+    following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
+    recommended_following = models.ManyToManyField('self', symmetrical=False)
+    gender = models.IntegerField()
+    avatars = models.CharField(max_length=256)
+    lat = models.FloatField()
+    lng = models.FloatField()
+    location_updated_at = models.DateTimeField()
+    constellation = models.IntegerField()
+    birthday = models.DateTimeField()
+    college = models.CharField(max_length=64)
+    work_for = models.CharField(max_length=64)
+    profesion = models.CharField(max_length=64)
+    @property
+    def followers(self):
+        return self.related_to.all()
+    def __unicode__(self):
+        return self.user.name
     class Meta:
         db_table = u'user_profile'
+
+class UserMessage(models.Model):
+    from_person = models.ForeignKey(UserProfile, related_name="sent_from_user")
+    to_person = models.ForeignKey(UserProfile, related_name='sent_to_user')
+    message = models.CharField(max_length=1024)
+    timestamp = models.DateTimeField()
+    message_type = models.IntegerField(default=0) # 0 message, 1 comments
+    class Meta:
+        db_table = u'user_message'
+
 
 # Create a user profile if the profile does not exist
 def create_user_profile(sender, instance, created, **kwargs):  
@@ -161,6 +204,12 @@ class RecommendedDishes(models.Model):
     times = models.IntegerField()
     class Meta:
         db_table = u'recommended_dishes'
+        
+
+class ImageTest(models.Model):
+    image = ImageCropField(blank=True, null=True, upload_to='uploaded_images/%Y/%m/%d')
+    # size is "width x height"
+    cropping = ImageRatioField('image', '430x360')
 '''
 class CategoryRestaurant(models.Model):
     id = models.IntegerField(primary_key=True)

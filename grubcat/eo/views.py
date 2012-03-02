@@ -1,6 +1,7 @@
 # Create your views here.
 from django.http import HttpResponse
 from grubcat.eo.models import *
+from grubcat.eo.forms import *
 from django.core import serializers
 from django.db.models.query import QuerySet
 import logging
@@ -15,6 +16,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
+
 
 
 def hello(request):
@@ -35,9 +37,9 @@ def writeJson(qs, response, relations=None):
         return json_serializer.serialize(qs, ensure_ascii=False, relations=relations, stream=response)
     return json_serializer.serialize(qs, ensure_ascii=False, stream=response)
 
-def getJsonResponse(qs):
-    response = HttpResponse()
-    writeJson(qs, response) 
+def getJsonResponse(qs, relations=None):
+    response = HttpResponse(content_type='application/json')
+    writeJson(qs, response, relations) 
     return response
     
 # Create a general response with status and message)
@@ -412,3 +414,105 @@ def get_business_districts(request):
 
 def get_restaurants_in_business_district(request, business_district_id):
     return getJsonResponse(BusinessDistrict.objects.get(id=business_district_id).restaurant_set.all())
+
+
+'''HTML VIEWS, which are supported to be used by web browser'''
+def add_dish(request, restaurant_id):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return createGeneralResponse('OK','User created')
+    else:
+        form = DishForm()
+        return render_to_response("restaurant/add_dish.html", {
+            'form': form,})
+
+def add_restaurant(request):
+    if request.method == 'POST':
+        form = RestaurantCreationForm(request.POST)
+        if form.is_valid():
+            #new_user = form.save()
+            return createGeneralResponse('OK','User created')
+    else:
+        form = RestaurantCreationForm()
+        return render_to_response("restaurant/add_restaurant.html", {
+            'form': form,})
+
+'''For TEST only'''
+def img_test(request):
+    if request.method == 'POST':
+        form = ImgTestForm(request.POST, request.FILES)
+        #if form.is_valid():
+        handle_uploaded_file(request.FILES['image'])
+        return createGeneralResponse('OK','File uploaded')
+    else:
+        form = ImgTestForm()
+        img_test = ImageTest.objects.get(id=2)
+    return render_to_response('test/img_test.html', {'img_test': img_test,})
+
+def handle_uploaded_file(file):
+    it = ImageTest()
+    it.image = file
+    it.save()
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        #if form.is_valid():
+        handle_uploaded_file(request.FILES['file'])
+        return createGeneralResponse('OK','File uploaded')
+    else:
+        form = UploadFileForm()
+    return render_to_response('test/upload.html', {'form': form})
+
+def get_following(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'GET':
+        return getJsonResponse(user.get_profile().following.all(), {'user':{'fields':('username',)}})
+    elif request.method == 'POST':
+        following_user = User.objects.get(id=request.POST.get('user_id'))
+        relationship = Relationship(from_person=user.get_profile(),to_person=following_user.get_profile())
+        relationship.save()
+        return createGeneralResponse('OK','You are now following %s' % following_user)
+    else:
+        raise
+    
+def remove_following(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        following_user = User.objects.get(id=request.POST.get('user_id'))
+        relationship = Relationship.objects.get(from_person=user.get_profile(),to_person=following_user.get_profile())
+        relationship.delete()
+        return createGeneralResponse('OK','You are not following %s anymore' % following_user)
+
+    
+def followers(request, user_id):
+    user = User.objects.get(id=user_id)
+    return getJsonResponse(user.get_profile().followers.all(), {'user':{'fields':('username',)}})
+
+def get_recommended_following(request, user_id):
+    user = User.objects.get(id=user_id)
+    return getJsonResponse(user.get_profile().recommended_following.all(), {'user':
+                                                              {'fields':('username',)}
+                                                             })
+def messages(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'GET':
+        message_type=request.GET.get('type', '0')
+        print "message_type: %s" % message_type
+        return getJsonResponse(UserMessage.objects.filter(to_person=user.get_profile(), message_type=message_type))
+    elif request.method == 'POST':
+        from_person = User.objects.get(id=request.POST.get('from_user_id'))
+        text = request.POST.get('message')
+        message_type=request.POST.get('type', '0')
+        message = UserMessage(from_person.get_profile(),
+                              user.get_profile(), text, datetime.now(), message_type)
+        message.save()
+        return createGeneralResponse('OK','Message sent to %s' % user)
+    else:
+        raise
+
+def get_user_profile(request, user_id):
+    return getJsonResponse([User.objects.get(id=user_id).get_profile()],
+                           {'user':{'fields':('username',)}})

@@ -2,3 +2,6 @@ django
 simplejson
 wadofstuff-django-serializers
 BeautifulSoup
+django-image-cropping
+easy_thumbnails
+

@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from grubcat.eo.views import *
-from grubcat.eo.db import updateLatLng
+from grubcat import settings
+from grubcat.eo.db import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -28,9 +29,25 @@ urlpatterns = patterns('',
                        ('^profile/favorite/restaurant/(\d+)/$',favorite_restaurant),
                        ('^profile/favorite/restaurant/$',favorite_restaurants),
                        ('^register/$',register),
-
+                       ('^restaurant/new/$',add_restaurant),
+                       ('^search/restaurant/$', query_restaurant_from_google),
+                       
+                        #social
+                       ('^user/(\d)/$', get_user_profile),
+                       ('^user/(\d)/following/$', get_following),
+                       ('^user/(\d)/following/remove/$', remove_following),
+                       ('^user/(\d)/followers/$', followers),
+                       ('^user/(\d)/following/recommendations/$', get_recommended_following),
+                       ('^user/(\d)/messages/$',messages),
+                       
                        # developer interfaces...
                        ('^updateLatLng/$', updateLatLng),
+                       ('^img_test/$',img_test),
+                       ('^upload_file/$',upload_file),
+                       
+
+                       # HTML
+                       ('^restaurant/(\d+)/dish/add/$',add_dish),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
 
@@ -41,3 +58,10 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 )
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,}),)
+    urlpatterns += staticfiles_urlpatterns()

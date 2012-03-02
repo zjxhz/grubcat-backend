@@ -17,8 +17,10 @@ def getWebPageContent(url, useProxy=True):
     if useProxy == True:
         proxy_support = urllib2.ProxyHandler({'http':'http://10.159.32.155:8080'})
         opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
-        urllib2.install_opener(opener)  
-    f = urllib2.urlopen(url)
+        urllib2.install_opener(opener)
+    headers = {'Accept-Language': 'zh-CN',}
+    request = urllib2.Request(url, headers=headers)
+    f = urllib2.urlopen(request)
     content = f.read()
     f.close()
     return content
@@ -83,13 +85,7 @@ def gendata(request):
 
 def updateLatLng(request):
     for r in Restaurant.objects.all():
-        city = u'中国浙江省杭州市'
-        city = urllib.quote(city.encode('utf-8'))
-        name = urllib.quote(r.name.encode('utf-8'))
-        url = 'http://ajax.googleapis.com/ajax/services/search/local?v=3.0&q="%s%s"' % (city, name)
-        html = getWebPageContent(url, False)
-        simplejson.loads(html)
-        results = simplejson.loads(html)['responseData']['results']
+        results = do_query_restaurant_from_google(r.name)
         if results:
             firstMatch = results[0]
             r.longitude = float(firstMatch['lng'])
@@ -109,4 +105,32 @@ def updateLatLng(request):
         else:
             logging.warn('Cannot find lat and lng for %s' % r.id)
     return HttpResponse('OK check the console for detail')
+
+
+def query_restaurant_from_google(request):
+    name = request.GET.get("term")
+    results = []
+    if name:
+        restaurants = do_query_restaurant_from_google(name)
+        print restaurants
+        for restaurant in restaurants:
+            info = {"label": restaurant["titleNoFormatting"] + " " + restaurant["streetAddress"],
+                    "value": restaurant["titleNoFormatting"],
+                    "address": restaurant["streetAddress"],
+                    "lat":restaurant["lat"], "lng": restaurant["lng"],
+                    "phoneNumbers":restaurant.get("phoneNumbers")}
+            results.append(info)
+    return HttpResponse(simplejson.dumps(results, ensure_ascii=False))
+
+def do_query_restaurant_from_google(name):
+    city = u'中国浙江省杭州市'
+    city = urllib.quote(city.encode('utf-8'))
+    name = urllib.quote(name.encode('utf-8'))
+    url = 'http://ajax.googleapis.com/ajax/services/search/local?v=3.0&q=%s%s&hl=zh-CN"' % (city, name)
+    print "url: %s" % url
+    response = getWebPageContent(url, False)
+    print "response: %s" % response
+    return simplejson.loads(response)['responseData']['results']
+    
+
     

@@ -104,11 +104,18 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 	'eo',
     'django.contrib.staticfiles',
+    'easy_thumbnails',
+    'image_cropping',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
 )
 SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
 }
+
+from easy_thumbnails import defaults
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+) + defaults.PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
