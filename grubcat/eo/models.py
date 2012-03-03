@@ -204,12 +204,26 @@ class RecommendedDishes(models.Model):
     times = models.IntegerField()
     class Meta:
         db_table = u'recommended_dishes'
-        
+
+class Meal(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    topic = models.CharField(max_length=64)
+    introduction = models.CharField(max_length=1024)
+    price = models.IntegerField()
+    photo = models.CharField(max_length=256)
+    time = models.DateTimeField()
+    host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
+    participants = models.ManyToManyField(UserProfile)
+    num_of_person = models.IntegerField()
+    meal_type = models.IntegerField() # THEMES, DATES
+    class Meta:
+        db_table = u'meal'
 
 class ImageTest(models.Model):
     image = ImageCropField(blank=True, null=True, upload_to='uploaded_images/%Y/%m/%d')
     # size is "width x height"
     cropping = ImageRatioField('image', '430x360')
+    
 '''
 class CategoryRestaurant(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -218,40 +232,12 @@ class CategoryRestaurant(models.Model):
     class Meta:
         db_table = u'category_restaurant'
 
-class Customer(models.Model):
-    id = models.IntegerField(primary_key=True)
-    username = models.CharField(max_length=60)
-    password = models.CharField(max_length=60)
-    class Meta:
-        db_table = u'customer'
-
 class DishCategory(models.Model):
     category_id = models.IntegerField(primary_key=True)
     dish = models.ForeignKey(Dish)
     restaurant = models.ForeignKey(Dish)
     class Meta:
         db_table = u'dish_category'
-
-class DishHasCategory(models.Model):
-    dish = models.ForeignKey(Dish)
-    restaurant = models.ForeignKey(Dish)
-    category = models.ForeignKey(CategoryDish)
-    class Meta:
-        db_table = u'dish_has_category'
-
-    
-class TagDish(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=45)
-    class Meta:
-        db_table = u'tag_dish'
-    
-class DishHasTag(models.Model):
-    dish = models.ForeignKey(Dish)
-    restaurant = models.ForeignKey(Dish)
-    tag = models.ForeignKey(TagDish)
-    class Meta:
-        db_table = u'dish_has_tag'
 
 class DishOtherUom(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -267,32 +253,6 @@ class Table(models.Model):
     name = models.CharField(max_length=60)
     class Meta:
         db_table = u'table'
-    
-class OrderHasDish(models.Model):
-    order = models.ForeignKey(Order)
-    customer = models.ForeignKey(Order)
-    table = models.ForeignKey(Order)
-    dish = models.ForeignKey(Dish)
-    restaurant = models.ForeignKey(Dish)
-    quantity = models.DecimalField(max_digits=11, decimal_places=0)
-    uom = models.CharField(max_length=30)
-    comments = models.CharField(max_length=135, blank=True)
-    class Meta:
-        db_table = u'order_has_dish'
-
-class RestaurantHasCategory(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
-    category = models.ForeignKey(CategoryRestaurant)
-    class Meta:
-        db_table = u'restaurant_has_category'
-
-
-    
-class RestaurantHasTag(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
-    tag = models.ForeignKey(TagRestaurant)
-    class Meta:
-        db_table = u'restaurant_has_tag'
 '''
 
 class OrderStatus:

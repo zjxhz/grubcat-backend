@@ -516,3 +516,33 @@ def messages(request, user_id):
 def get_user_profile(request, user_id):
     return getJsonResponse([User.objects.get(id=user_id).get_profile()],
                            {'user':{'fields':('username',)}})
+
+def get_meals(request):
+    return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()),('host','participants'))
+
+def get_meal(request, meal_id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    if request.method == 'GET':
+        meal = Meal.objects.get(id=meal_id)
+        return getJsonResponse([meal],('host','participants'))
+    
+
+def meal_participants (request, meal_id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    user = request.user
+    if request.method == 'POST':
+        meal = Meal.objects.get(id=meal_id)
+        if meal.participants.count() >= meal.num_of_person:
+            return createGeneralResponse('NOK',"No available seat.")
+        if user.get_profile() == meal.host:
+            return createGeneralResponse('NOK',"You're the host.")
+        for participant in meal.participants.all():
+            if participant == user.get_profile():
+                return createGeneralResponse('NOK',"You already joined.")
+        meal.participants.add(user.get_profile())
+        meal.save()
+        return createGeneralResponse('OK',"You've just join the meal")
+    else:
+        raise

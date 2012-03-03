@@ -39,6 +39,9 @@ urlpatterns = patterns('',
                        ('^user/(\d)/followers/$', followers),
                        ('^user/(\d)/following/recommendations/$', get_recommended_following),
                        ('^user/(\d)/messages/$',messages),
+                       ('^meal/$',get_meals),
+                       ('^meal/(\d)/$',get_meal),
+                       ('^meal/(\d)/participants/$',meal_participants),
                        
                        # developer interfaces...
                        ('^updateLatLng/$', updateLatLng),
