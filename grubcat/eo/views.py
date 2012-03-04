@@ -518,14 +518,14 @@ def get_user_profile(request, user_id):
                            {'user':{'fields':('username',)}})
 
 def get_meals(request):
-    return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()),('host','participants'))
+    return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()),('restaurant','host','participants'))
 
 def get_meal(request, meal_id):
     if not request.user.is_authenticated():
         return login_required(request)
     if request.method == 'GET':
         meal = Meal.objects.get(id=meal_id)
-        return getJsonResponse([meal],('host','participants'))
+        return getJsonResponse([meal],('restaurant', 'host','participants'))
     
 
 def meal_participants (request, meal_id):
