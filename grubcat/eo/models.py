@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from image_cropping.fields import ImageRatioField, ImageCropField
+from datetime import datetime
 
 # Create your models here.
 class Company(models.Model):
@@ -216,9 +217,28 @@ class Meal(models.Model):
     participants = models.ManyToManyField(UserProfile)
     num_of_person = models.IntegerField()
     meal_type = models.IntegerField() # THEMES, DATES
+
+    def is_participant(self, user_profile):
+        for participant in self.participants.all():
+            if participant == user_profile:
+                return True
+        return False    
     class Meta:
         db_table = u'meal'
 
+class MealInvitation(models.Model):
+    from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
+    to_person = models.ForeignKey(UserProfile, related_name='invitation_to_user')
+    meal = models.ForeignKey(Meal)
+    timestamp = models.DateTimeField(default=datetime.now())
+    status = models.IntegerField(default=0) # PENDING, ACCEPTED, REJECTED
+
+    def is_related(self, user_profile):
+        return self.from_person==user_profile or self.to_person==user_profile
+           
+    class Meta:
+        db_table = u'meal_invitation'
+    
 class ImageTest(models.Model):
     image = ImageCropField(blank=True, null=True, upload_to='uploaded_images/%Y/%m/%d')
     # size is "width x height"

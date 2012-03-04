@@ -42,6 +42,8 @@ urlpatterns = patterns('',
                        ('^meal/$',get_meals),
                        ('^meal/(\d)/$',get_meal),
                        ('^meal/(\d)/participants/$',meal_participants),
+                       ('^user/(\d)/invitation/$',view_or_send_meal_invitations),
+                       ('^user/(\d)/invitation/(\d)/$',accept_or_reject_meal_invitations),
                        
                        # developer interfaces...
                        ('^updateLatLng/$', updateLatLng),

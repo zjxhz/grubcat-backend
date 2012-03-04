@@ -4,6 +4,7 @@ from grubcat.eo.models import *
 from grubcat.eo.forms import *
 from django.core import serializers
 from django.db.models.query import QuerySet
+from django.db.models import Q
 import logging
 import simplejson
 import sys
@@ -43,10 +44,12 @@ def getJsonResponse(qs, relations=None):
     return response
     
 # Create a general response with status and message)
-def createGeneralResponse(status, message):
+def createGeneralResponse(status, message, extra_dict=None):
     response = {}
     response['status']=status
     response['info']=message
+    if extra_dict:
+        response.update(extra_dict)
     return HttpResponse(simplejson.dumps(response))
     
 # get distance in meter, code from google maps
@@ -181,7 +184,7 @@ def user_login(request):
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.is_active:
             auth.login(request, user)
-            return createGeneralResponse('OK', "You've logged in")
+            return createGeneralResponse('OK', "You've logged in", {"id":user.id})
         else:
             return createGeneralResponse('NOK', "Incorrect username or password")
     else:
@@ -521,8 +524,6 @@ def get_meals(request):
     return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()),('restaurant','host','participants'))
 
 def get_meal(request, meal_id):
-    if not request.user.is_authenticated():
-        return login_required(request)
     if request.method == 'GET':
         meal = Meal.objects.get(id=meal_id)
         return getJsonResponse([meal],('restaurant', 'host','participants'))
@@ -538,11 +539,62 @@ def meal_participants (request, meal_id):
             return createGeneralResponse('NOK',"No available seat.")
         if user.get_profile() == meal.host:
             return createGeneralResponse('NOK',"You're the host.")
-        for participant in meal.participants.all():
-            if participant == user.get_profile():
-                return createGeneralResponse('NOK',"You already joined.")
+        if meal.is_participant(user.get_profile()):
+            return createGeneralResponse('NOK',"You already joined.")
         meal.participants.add(user.get_profile())
         meal.save()
         return createGeneralResponse('OK',"You've just join the meal")
+    else:
+        raise
+
+def view_or_send_meal_invitations(request, user_id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    user = request.user
+    if request.method == 'POST':
+        to_user = User.objects.get(id=request.POST.get('to_user_id'))
+        meal = Meal.objects.get(id=request.POST.get('meal_id'))
+        #if meal.host != user.get_profile():
+        #    return createGeneralResponse('NOK',"You're not the host - do we check this?")
+        if to_user.get_profile() == meal.host or meal.is_participant(to_user.get_profile()):
+            return createGeneralResponse('NOK',"%s already joined." % to_user)
+        if MealInvitation.objects.filter(from_person=user.get_profile(), to_person=to_user.get_profile(), meal=meal):
+            return createGeneralResponse('NOK',"Invitation sent to %s earlier, no new invitation sent." % to_user)
+        i = MealInvitation(from_person=user.get_profile(), to_person=to_user.get_profile(), meal=meal)
+        i.save()
+        return createGeneralResponse('OK',"Invitation sent to %s" % to_user)
+    elif request.method == 'GET':
+        from_person=user.get_profile()
+        return getJsonResponse(MealInvitation.objects.filter(
+            Q(from_person=user.get_profile()) | Q(to_person=user.get_profile())))
+    else:
+        raise
+    
+def accept_or_reject_meal_invitations(request, user_id, invitation_id):
+    if not request.user.is_authenticated():
+        return login_required(request)
+    user = request.user
+    i = MealInvitation.objects.get(id=invitation_id)
+    
+    if request.method == 'POST':
+        if i.to_person == user.get_profile():
+            if i.status == 0: # PENDING
+                accept = request.POST.get("accept").lower()
+                if accept == "yes":
+                    i.status = 1
+                    i.save()
+                    return createGeneralResponse('OK',"Invitation accepted.")
+                else:
+                    i.status = 2
+                    i.save()
+                    return createGeneralResponse('OK',"Invitation rejected.")
+            else:
+                return createGeneralResponse('NOK',"Can not accept/reject an invitation that was already accepted or rejected")
+        else:
+            return createGeneralResponse('NOK',"Unauthorized: you are not the receiver of this invitation.")
+    elif request.method == 'GET':
+        if not i.is_related(user.get_profile()):
+            return createGeneralResponse('NOK',"Unauthorized: you are not either the sender or receiver of the invitation")
+        return getJsonResponse([i])
     else:
         raise
