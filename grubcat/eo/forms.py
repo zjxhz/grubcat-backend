@@ -24,7 +24,7 @@ class RestaurantCreationForm(forms.ModelForm):
     tags = forms.CharField(max_length=100,
                            help_text=u"Separated by spaces, 5 tags at most ", #TODO validation
                            required=False)
-    business_districts = forms.ModelChoiceField(queryset=BusinessDistrict.objects.all(),
+    business_districts = forms.ModelChoiceField(queryset=Region.objects.all(),
                                                 empty_label=None)
     longitude = forms.FloatField()
     latitude = forms.FloatField()

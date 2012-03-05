@@ -86,7 +86,7 @@ def get_restaurant(request, id):
         jsonR['fields']['rating']=ri.average_rating
         jsonR['fields']['average_cost']=ri.average_cost
         jsonR['fields']['good_rating_percentage']=ri.good_rating_percentage
-        jsonR['fields']['comments']=modelToDict(RestaurantComments.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
+        jsonR['fields']['comments']=modelToDict(Rating.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
         jsonR['fields']['recommended_dishes']=modelToDict(r.get_recommended_dishes(),
                                                           {'user': {'fields':('username',)},'dish':{'fields':('name',)}})
     except ObjectDoesNotExist:
@@ -157,7 +157,7 @@ def get_menu(request):
     menu = restaurant.menu
     jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
     
-    categories = menu.categorydish_set.all()
+    categories = menu.dishcategory_set.all()
     jsonCategories = simplejson.loads(serializers.serialize('json', categories))
     jsonMenu['categories']=jsonCategories
 
@@ -345,14 +345,14 @@ def favorite_restaurants(request):
     return response
 
 # View or add an user comment for a restaurant    
-def restaurant_comments(request, restaurant_id):
+def restaurant_rating(request, restaurant_id):
     rid = int(restaurant_id)
     r = Restaurant.objects.get(id=restaurant_id)
     response = HttpResponse()
     
     if request.method == 'GET':
         id_name_fields={'fields':('username',)}
-        writeJson(r.get_comments(), response, relations={'user': id_name_fields,})
+        writeJson(r.get_rating(), response, relations={'user': id_name_fields,})
         return response
     elif request.method == 'POST':
         if not request.user.is_authenticated():
@@ -384,23 +384,26 @@ def restaurant_comments(request, restaurant_id):
             ri.divider = 1
         for dish_id in recommendedDishes:
             try:
-                rd = RecommendedDishes.objects.get(dish__id=dish_id)
+                rd = BestRatingDish.objects.get(dish__id=dish_id)
                 rd.times = rd.times + 1
             except ObjectDoesNotExist:
-                rd = RecommendedDishes()
+                rd = BestRatingDish()
                 rd.times = 1
                 rd.restaurant_id = rid
                 rd.dish_id = dish_id
             rd.save()
         ri.save()
         
-        rc = RestaurantComments()
+        rc = Rating()
         rc.rating = rating
         rc.user_id = request.user.id
         rc.restaurant_id = rid
         rc.comments = comments
         rc.time = datetime.now()
         rc.average_cost = averageCost
+        rc.save()
+        for dish_id in recommendedDishes:
+            rc.dishes.add(Dish.objects.get(id=dish_id))
         rc.save()
         return createGeneralResponse('OK','Comments committed')
     else:
@@ -412,11 +415,11 @@ def get_restaurant_tags(request):
 def get_restaurants_with_tag(request, tag_id):
     return getJsonResponse(RestaurantTag.objects.get(id=tag_id).restaurant_set.all())
 
-def get_business_districts(request):
-    return getJsonResponse(BusinessDistrict.objects.all())
+def get_regions(request):
+    return getJsonResponse(Region.objects.all())
 
-def get_restaurants_in_business_district(request, business_district_id):
-    return getJsonResponse(BusinessDistrict.objects.get(id=business_district_id).restaurant_set.all())
+def get_restaurants_in_region(request, region_id):
+    return getJsonResponse(Region.objects.get(id=region_id).restaurant_set.all())
 
 
 '''HTML VIEWS, which are supported to be used by web browser'''
@@ -518,7 +521,8 @@ def messages(request, user_id):
 
 def get_user_profile(request, user_id):
     return getJsonResponse([User.objects.get(id=user_id).get_profile()],
-                           {'user':{'fields':('username',)}})
+                           {'user':{'fields':('username',)},
+                            'location':{'fields':('lat','lng','updated_at')}})
 
 def get_meals(request):
     return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()),('restaurant','host','participants'))

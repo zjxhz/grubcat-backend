@@ -18,6 +18,8 @@ DATABASES = {
         'PASSWORD': 'CD7nJt6Uwk0XRdagy830',
         'HOST': 'easyorder-JackZhu.dotcloud.com',
         'PORT': '22402',
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB",}  
+
     }
 }
 
