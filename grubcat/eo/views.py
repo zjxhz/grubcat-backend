@@ -413,7 +413,9 @@ def get_restaurant_tags(request):
     return getJsonResponse(RestaurantTag.objects.all())
 
 def get_restaurants_with_tag(request, tag_id):
-    return getJsonResponse(RestaurantTag.objects.get(id=tag_id).restaurant_set.all())
+    tag = RestaurantTag.objects.get(id=tag_id)
+    return getJsonResponse(Restaurant.objects.filter(tags=tag))
+    #return getJsonResponse(RestaurantTag.objects.get(id=tag_id).restaurant_set.all())
 
 def get_regions(request):
     return getJsonResponse(Region.objects.all())

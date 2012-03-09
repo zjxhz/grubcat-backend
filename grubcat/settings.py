@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'easy_thumbnails',
     'image_cropping',
+    'tastypie',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
 )
@@ -121,3 +122,5 @@ THUMBNAIL_PROCESSORS = (
 ) + defaults.PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
+
+API_LIMIT_PER_PAGE = 5

@@ -28,8 +28,8 @@ class Region(models.Model):
 class Restaurant(models.Model):
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
-    longitude = models.FloatField()
-    latitude = models.FloatField()
+    longitude = models.FloatField(null=True)
+    latitude = models.FloatField(null=True)
     tel = models.CharField(max_length=60)
     tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(max_length=6000, blank=True)
@@ -179,7 +179,7 @@ class UserProfile(models.Model):
     avatar = models.CharField(max_length=256) # photo
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField()
-    birthday = models.DateTimeField()
+    birthday = models.DateTimeField(null=True)
     college = models.CharField(max_length=64)
     work_for = models.CharField(max_length=64)
     occupation = models.CharField(max_length=64)
@@ -187,7 +187,7 @@ class UserProfile(models.Model):
     def followers(self):
         return self.related_to.all()
     def __unicode__(self):
-        return self.user.name
+        return self.user.username
     class Meta:
         db_table = u'user_profile'
 

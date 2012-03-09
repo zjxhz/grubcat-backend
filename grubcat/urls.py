@@ -7,6 +7,7 @@ from grubcat.eo.db import *
 from django.contrib import admin
 admin.autodiscover()
 
+
 urlpatterns = patterns('',
                        ('^hello/$', hello),
                        ('^get_menu/$',get_menu),
@@ -70,3 +71,11 @@ if settings.DEBUG:
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,}),)
     urlpatterns += staticfiles_urlpatterns()
+
+
+from eo.apis import v1_api
+
+# Standard bits...
+urlpatterns += patterns('',
+    (r'^api/', include(v1_api.urls)),
+)
