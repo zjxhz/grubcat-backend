@@ -1,10 +1,22 @@
 from django.conf.urls.defaults import *
-from grubcat.eo.views import *
-from grubcat import settings
+from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from eo.apis import v1_api
+from eo.db import query_restaurant_from_google, updateLatLng
+from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant, \
+    get_recommended_dishes, restaurant_rating, get_restaurant_tags, \
+    get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList, \
+    user_login, user_logout, test_make_order, make_order, get_orders, \
+    get_order_by_id, get_user_profile, favorite_restaurant, favorite_restaurants, \
+    add_restaurant, get_following, remove_following, followers, \
+    get_recommended_following, register, messages, get_meals, get_meal, \
+    meal_participants, view_or_send_meal_invitations, \
+    accept_or_reject_meal_invitations, img_test, upload_file, add_dish
 from grubcat.eo.db import *
+from grubcat.eo.views import *
+import settings
 
 # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
 admin.autodiscover()
 
 
@@ -65,7 +77,6 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 )
 
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 if settings.DEBUG:
     urlpatterns += patterns('',
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
@@ -73,7 +84,6 @@ if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
 
 
-from eo.apis import v1_api
 
 # Standard bits...
 urlpatterns += patterns('',

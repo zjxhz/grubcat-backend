@@ -16,6 +16,8 @@ class RestaurantTag(models.Model):
     name = models.CharField(max_length=45)
     class Meta:
         db_table = u'restaurant_tag'
+    def __unicode__(self):
+        return u'%s' % (self.name)
      
 
 class Region(models.Model):
@@ -48,7 +50,7 @@ class Restaurant(models.Model):
     def get_average_cost(self):
         '''ri = RestaurantInfo.objects.get(restaurant__id=self.id)
         return ri.average_cost'''
-        return average_cost
+        return self.average_cost
     '''def get_rating(self):
         ri = RestaurantInfo.objects.get(restaurant__id=self.id)
         return ri.rating
@@ -57,7 +59,7 @@ class Restaurant(models.Model):
         db_table = u'restaurant'
 
 class RestaurantInfo(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
+    restaurant = models.OneToOneField(Restaurant, related_name='info')
     average_cost = models.FloatField()
     average_rating = models.FloatField()
     good_rating_percentage = models.FloatField()
@@ -87,7 +89,7 @@ class DishTag(models.Model):
         db_table = u'dish_tag'
 
 class DishCategory(models.Model):
-    menu = models.ForeignKey(Menu)
+    menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(max_length=45)
     parent_category = models.ForeignKey('self', null=True)
     def __unicode__(self):
@@ -101,6 +103,7 @@ class Dish(models.Model):
     pic = models.CharField(max_length=765, blank=True)
     price = models.FloatField()
     restaurant = models.ForeignKey(Restaurant)
+    menu = models.ForeignKey(Menu, related_name='dishes', null=True)
     ingredient = models.CharField(max_length=765, blank=True)
     cooking = models.CharField(max_length=765, blank=True)
     taste = models.CharField(max_length=18)
@@ -117,14 +120,14 @@ class Dish(models.Model):
 class DishOtherUom(models.Model):
     price = models.DecimalField(max_digits=11, decimal_places=0)
     uom = models.CharField(max_length=10)
-    dish = models.ForeignKey(Dish)
+    dish = models.ForeignKey(Dish, related_name='other_uom')
     class Meta:
         db_table = u'dish_other_uom'
 
         
 class Rating(models.Model):
-    user = models.ForeignKey(User)
-    restaurant = models.ForeignKey(Restaurant, related_name="restaurant_rating")
+    user = models.ForeignKey(User, related_name='user_ratings')
+    restaurant = models.ForeignKey(Restaurant, related_name="ratings")
     comments = models.CharField(max_length=4096)
     time = models.DateTimeField()
     rating = models.FloatField()
@@ -137,7 +140,7 @@ class Rating(models.Model):
         
 class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant)
-    customer = models.ForeignKey(User)
+    customer = models.ForeignKey('UserProfile', related_name='orders')
     num_persons = models.IntegerField()
     status = models.IntegerField()
     total_price = models.DecimalField(max_digits=11, decimal_places=2)
@@ -172,7 +175,7 @@ class UserLocation(models.Model):
         
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
-    favorite_restaurants = models.ManyToManyField(Restaurant,db_table="favorite_restaurants")
+    favorite_restaurants = models.ManyToManyField(Restaurant,db_table="favorite_restaurants", related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField()
@@ -211,7 +214,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 class BestRatingDish(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
+    restaurant = models.ForeignKey(Restaurant, related_name="best_rating_dishes")
     dish = models.ForeignKey(Dish)
     times = models.IntegerField()
     class Meta:

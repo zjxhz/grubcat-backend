@@ -1,36 +1,32 @@
 # Create your views here.
-from django.http import HttpResponse
-from grubcat.eo.models import *
-from grubcat.eo.forms import *
+from datetime import datetime
+from decimal import Decimal
+from django.contrib import auth
+from django.contrib.auth import logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core import serializers
-from django.db.models.query import QuerySet
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.db.models import Q
-import logging
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm, \
+    UploadFileForm
+from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order, \
+    OrderStatus, OrderDishes, BestRatingDish, RestaurantTag, Region, ImageTest, \
+    Relationship, UserMessage, Meal, MealInvitation
+from grubcat.eo.forms import *
 import simplejson
 import sys
-from django.shortcuts import render_to_response
-from django.contrib import auth
-from datetime import datetime
-from django.db import transaction
-from decimal import Decimal
-from django.core.exceptions import ObjectDoesNotExist
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import logout
 
 
 
 def hello(request):
+    u = UserProfile.objects.get(pk=1)
+    r = Restaurant.objects.filter(user_favorite=u)
+    print r
     return HttpResponse("Hello world")
-
-# use this maybe only for get_menu? for more common one, use writeJson
-def getJsonResponse(qs, response, useNatureKeys=False):
-    json_serializer = serializers.get_serializer("json")()
-    json_serializer.serialize(qs, ensure_ascii=False, stream=response, use_natural_keys=useNatureKeys)
-    from django.forms.models import model_to_dict
-    for intance in qs:
-        print model_to_dict(intance)
-    return response
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
@@ -55,7 +51,7 @@ def createGeneralResponse(status, message, extra_dict=None):
 # get distance in meter, code from google maps
 def getDistance( lng1,  lat1,  lng2,  lat2):
     EARTH_RADIUS = 6378.137
-    from math import asin,sin,cos,acos,radians, degrees,pow,sqrt, hypot,pi
+    from math import asin,sin,cos,radians, pow,sqrt
     radLat1 = radians(lat1) 
     radLat2 = radians(lat2) 
     a = radLat1 - radLat2
@@ -77,16 +73,16 @@ def restaurantList(request):
         return getJsonResponse(Restaurant.objects.filter(name__contains=key))
     return getJsonResponse(Restaurant.objects.all())
 
-def get_restaurant(request, id):
+def get_restaurant(request, restaurant_id):
     response = HttpResponse()
-    r = Restaurant.objects.get(id=id)
+    r = Restaurant.objects.get(id=restaurant_id)
     jsonR = modelToDict([r])[0]
     try:
-        ri = RestaurantInfo.objects.get(restaurant__id=id)
+        ri = RestaurantInfo.objects.get(restaurant__id=restaurant_id)
         jsonR['fields']['rating']=ri.average_rating
         jsonR['fields']['average_cost']=ri.average_cost
         jsonR['fields']['good_rating_percentage']=ri.good_rating_percentage
-        jsonR['fields']['comments']=modelToDict(Rating.objects.filter(restaurant__id=id), {'user': {'fields':('username',)}})
+        jsonR['fields']['comments']=modelToDict(Rating.objects.filter(restaurant__id=restaurant_id), {'user': {'fields':('username',)}})
         jsonR['fields']['recommended_dishes']=modelToDict(r.get_recommended_dishes(),
                                                           {'user': {'fields':('username',)},'dish':{'fields':('name',)}})
     except ObjectDoesNotExist:
@@ -98,17 +94,17 @@ def get_restaurant(request, id):
     response.write(simplejson.dumps(jsonR, ensure_ascii=False))
     return response
 
-def get_recommended_dishes(request, id):
+def get_recommended_dishes(request, restaurant_id):
     response = HttpResponse()
-    dishes = Restaurant.objects.get(id=id).get_recommended_dishes()
+    dishes = Restaurant.objects.get(id=restaurant_id).get_recommended_dishes()
     writeJson(dishes, response, ('dish',)) # order by dish descending
     return response
 
 # return a list of values with the order how keys are sorted for a given dict
-def sortedDictValues(dict):
-    keys = dict.keys()
+def sortedDictValues(some_dict):
+    keys = some_dict.keys()
     keys.sort()
-    return [dict[key] for key in keys]
+    return [some_dict[key] for key in keys]
 
 def get_restaurant_list_by_geo(request):
     try:
@@ -157,7 +153,7 @@ def get_menu(request):
     menu = restaurant.menu
     jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
     
-    categories = menu.dishcategory_set.all()
+    categories = menu.categories.all()
     jsonCategories = simplejson.loads(serializers.serialize('json', categories))
     jsonMenu['categories']=jsonCategories
 
@@ -167,15 +163,6 @@ def get_menu(request):
 
     response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
     return response
-
-def get_menu2(request):
-    rid = request.GET.get('id')
-    qs = Dish.objects.filter(restaurant__id=int(rid))
-    return getJsonResponse(qs)
-
-def test(request):
-    qs = B.objects.all()
-    return getJsonResponse(qs)
 
 def user_login(request):
     if request.method == 'POST':
@@ -203,7 +190,7 @@ def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            new_user = form.save()
+            form.save()
             return createGeneralResponse('OK','User created')
     else:
         form = UserCreationForm()
@@ -220,7 +207,7 @@ def login_required(request):
 @transaction.commit_manually
 def make_order(request):
     if not request.user.is_authenticated():
-        return self.login_required(request)
+        return login_required(request)
     response = {}
     try:
         data = simplejson.loads(request.raw_post_data)
@@ -241,7 +228,7 @@ def make_order(request):
         order.created_time = datetime.now()
         order.confirmed_time = datetime.now()
         order.status = OrderStatus.CONFIRMED # Confirmed
-        order.customer_id = request.user.id
+        order.customer_id = request.user.get_profile().id
         order.save()
         for dish in dishes:
             dish_id = dish["dish_id"]
@@ -264,7 +251,6 @@ def make_order(request):
 def order_last_modified(request, order_id):
     return Order.objects.get(id=order_id).confirmed_time
 
-from django.views.decorators.http import condition
 #@condition(last_modified_func=order_last_modified)
 def get_order_by_id(request, order_id):
     print request.GET.get('ETag')
@@ -309,13 +295,6 @@ def get_orders_detailed(request):
             jsonDishes.append(simplejson.loads(jsonDish)[0])
         jsonOrder['fields']['dishes'] = jsonDishes
     response.write(simplejson.dumps(jsonOrders, ensure_ascii=False))
-    return responset
-
-def get_user_profile(request):
-    if not request.user.is_authenticated():
-        return login_required(request)
-    response = HttpResponse()
-    response.write(request.user.get_profile())
     return response
 
 def favorite_restaurant(request, id):
