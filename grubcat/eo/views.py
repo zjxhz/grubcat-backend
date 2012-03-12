@@ -20,12 +20,13 @@ from grubcat.eo.forms import *
 import simplejson
 import sys
 
-
-
 def hello(request):
     u = UserProfile.objects.get(pk=1)
-    r = Restaurant.objects.filter(user_favorite=u)
-    print r
+    print u.from_user.all()
+#    r = Restaurant.objects.filter(user_favorite=u)
+#    print r
+    #print UserProfile.objects.filter(to_user=u)
+    
     return HttpResponse("Hello world")
 
 def writeJson(qs, response, relations=None):
@@ -549,9 +550,8 @@ def view_or_send_meal_invitations(request, user_id):
         i.save()
         return createGeneralResponse('OK',"Invitation sent to %s" % to_user)
     elif request.method == 'GET':
-        from_person=user.get_profile()
-        return getJsonResponse(MealInvitation.objects.filter(
-            Q(from_person=user.get_profile()) | Q(to_person=user.get_profile())))
+#        from_person=user.get_profile()
+        return getJsonResponse(user.get_profile().invitation)
     else:
         raise
     

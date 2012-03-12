@@ -1,8 +1,9 @@
-from django.db import models
+from datetime import datetime
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from image_cropping.fields import ImageRatioField, ImageCropField
-from datetime import datetime
 
 # Create your models here.
 class Company(models.Model):
@@ -163,8 +164,13 @@ class Relationship(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name='from_user')
     to_person = models.ForeignKey("UserProfile", related_name='to_user')
     status = models.IntegerField(default=0) # FOLLOWING, BLOCKED
+    
+    def __unicode__(self):
+        return '%s -> %s: %s' % (self.from_person, self.to_person, self.status) 
+    
     class Meta:
         db_table = u'relationship'
+        
 
 class UserLocation(models.Model):
     lat = models.FloatField()
@@ -178,7 +184,7 @@ class UserProfile(models.Model):
     favorite_restaurants = models.ManyToManyField(Restaurant,db_table="favorite_restaurants", related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
-    gender = models.IntegerField()
+    gender = models.IntegerField(null=True)
     avatar = models.CharField(max_length=256) # photo
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField()
@@ -189,6 +195,9 @@ class UserProfile(models.Model):
     @property
     def followers(self):
         return self.related_to.all()
+    @property
+    def invitation(self):
+        return MealInvitation.objects.filter( Q(from_person=self) | Q(to_person=self) )
     def __unicode__(self):
         return self.user.username
     class Meta:
