@@ -183,9 +183,9 @@ class UserProfile(models.Model):
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField()
     birthday = models.DateTimeField(null=True)
-    college = models.CharField(max_length=64)
-    work_for = models.CharField(max_length=64)
-    occupation = models.CharField(max_length=64)
+    college = models.CharField(max_length=64, null=True)
+    work_for = models.CharField(max_length=64, null=True)
+    occupation = models.CharField(max_length=64, null=True)
     @property
     def followers(self):
         return self.related_to.all()
