@@ -239,7 +239,7 @@ class Meal(models.Model):
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
     participants = models.ManyToManyField(UserProfile)
     num_of_person = models.IntegerField()
-    meal_type = models.IntegerField() # THEMES, DATES
+    type = models.IntegerField() # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     def is_participant(self, user_profile):
         for participant in self.participants.all():

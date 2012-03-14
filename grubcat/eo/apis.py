@@ -11,7 +11,6 @@ from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from urllib import urlencode
-from django.db.models import Q
 
 '''TODO add a base class that:
     is a sub class of ModelResource
@@ -327,9 +326,12 @@ class UserMessageResource(ModelResource):
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
-    participants = fields.ToManyField(UserResource, 'participants', full=True)
+    participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
     class Meta:
         queryset = Meal.objects.all()
+        filtering = {'type': ALL,}
+        allowed_methods = ['get','post']
+        authorization = Authorization()
 
 class MealInvitationResource(ModelResource):
     from_person = fields.ForeignKey(UserResource, 'from_person')
