@@ -2,7 +2,8 @@ from django.conf.urls.defaults import url
 from django.contrib.auth.models import User
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
-    DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation
+    DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
+    UserLocation
 from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
@@ -59,17 +60,25 @@ class DjangoUserResource(ModelResource):
         excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get']
         include_resource_uri = False
-        
+
+class UserLocationResource(ModelResource):
+    class Meta:
+        queryset = UserLocation.objects.all()        
         
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
     from_user = fields.ToManyField('eo.apis.RelationshipResource', 'from_user')
+    location = fields.ToOneField(UserLocationResource, 'location', full=True)
+    
+    def mergeOneToOneField(self, bundle, field_name):
+        for key in bundle.data[field_name].data:
+            bundle.data[key] = bundle.data[field_name].data[key]
+        del bundle.data[field_name]
     
     def dehydrate(self, bundle):
-        for key in bundle.data['user'].data:
-            bundle.data[key] = bundle.data['user'].data[key]
-        del bundle.data['user']
+        self.mergeOneToOneField(bundle, 'user')
+        self.mergeOneToOneField(bundle, 'location')
         return bundle
     
     def override_urls(self):
@@ -359,3 +368,4 @@ v1_api.register(OrderResource())
 v1_api.register(RelationshipResource())
 v1_api.register(MealResource())
 v1_api.register(MealInvitationResource())
+v1_api.register(UserLocationResource())
