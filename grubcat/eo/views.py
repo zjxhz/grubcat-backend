@@ -494,8 +494,11 @@ def messages(request, user_id):
         from_person = User.objects.get(id=request.POST.get('from_user_id'))
         text = request.POST.get('message')
         message_type=request.POST.get('type', '0')
-        message = UserMessage(from_person.get_profile(),
-                              user.get_profile(), text, datetime.now(), message_type)
+        message = UserMessage(from_person=from_person.get_profile(),
+                              to_person=user.get_profile(), 
+                              message=text, 
+                              timestamp=datetime.now(), 
+                              message_type=message_type)
         message.save()
         return createGeneralResponse('OK','Message sent to %s' % user)
     else:
