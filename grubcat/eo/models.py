@@ -210,7 +210,7 @@ class UserMessage(models.Model):
     to_person = models.ForeignKey(UserProfile, related_name='sent_to_user')
     message = models.CharField(max_length=1024)
     timestamp = models.DateTimeField()
-    message_type = models.IntegerField(default=0) # 0 message, 1 comments
+    type = models.IntegerField(default=0) # 0 message, 1 comments
     class Meta:
         db_table = u'user_message'
 

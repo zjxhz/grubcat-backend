@@ -69,12 +69,13 @@ class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
     from_user = fields.ToManyField('eo.apis.RelationshipResource', 'from_user')
-    location = fields.ToOneField(UserLocationResource, 'location', full=True)
+    location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     
     def mergeOneToOneField(self, bundle, field_name):
-        for key in bundle.data[field_name].data:
-            bundle.data[key] = bundle.data[field_name].data[key]
-        del bundle.data[field_name]
+        if bundle.data[field_name]:
+            for key in bundle.data[field_name].data:
+                bundle.data[key] = bundle.data[field_name].data[key]
+            del bundle.data[field_name]
     
     def dehydrate(self, bundle):
         self.mergeOneToOneField(bundle, 'user')
@@ -324,13 +325,14 @@ class OrderResource(ModelResource):
         filtering = {'customer':ALL,}
 
 class UserMessageResource(ModelResource): 
-    from_person = fields.ForeignKey(UserResource, 'from_person')
-    to_person = fields.ForeignKey(UserResource, 'to_person')
+    from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
+    to_person = fields.ForeignKey(UserResource, 'to_person', full=True )
     
     class Meta:
         queryset = UserMessage.objects.all()
         filtering = {'from_person': ALL_WITH_RELATIONS,
-                     'to_person': ALL_WITH_RELATIONS}
+                     'to_person': ALL_WITH_RELATIONS,
+                     'type':ALL,}
 
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)

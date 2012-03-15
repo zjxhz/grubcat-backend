@@ -489,7 +489,7 @@ def messages(request, user_id):
     if request.method == 'GET':
         message_type=request.GET.get('type', '0')
         print "message_type: %s" % message_type
-        return getJsonResponse(UserMessage.objects.filter(to_person=user.get_profile(), message_type=message_type))
+        return getJsonResponse(UserMessage.objects.filter(to_person=user.get_profile(), type=message_type))
     elif request.method == 'POST':
         from_person = User.objects.get(id=request.POST.get('from_user_id'))
         text = request.POST.get('message')
