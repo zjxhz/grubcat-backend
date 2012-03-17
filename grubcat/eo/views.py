@@ -498,7 +498,7 @@ def messages(request, user_id):
                               to_person=user.get_profile(), 
                               message=text, 
                               timestamp=datetime.now(), 
-                              message_type=message_type)
+                              type=message_type)
         message.save()
         return createGeneralResponse('OK','Message sent to %s' % user)
     else:
@@ -532,7 +532,7 @@ def meal_participants (request, meal_id):
             return createGeneralResponse('NOK',"You already joined.")
         meal.participants.add(user.get_profile())
         meal.save()
-        return createGeneralResponse('OK',"You've just join the meal")
+        return createGeneralResponse('OK',"You've just joined the meal")
     else:
         raise
 

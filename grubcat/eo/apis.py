@@ -15,10 +15,16 @@ from urllib import urlencode
 
 '''TODO add a base class that:
     is a sub class of ModelResource
-    contains get_my_list, which return a response of a serialized query set
+    has method get_my_list, which return a response of a serialized query set
+    has method mergeOneToOneField, which merge the fields of the one to one field to self
     use PageNumberPaginator
 '''
 def get_my_list(resource, queryset, request):
+    '''
+    Returns serialized list of the queryset, a bit duplicated with get_list(self, request, **kwargs). 
+    
+    This is useful when the filtering string is difficult to construct
+    '''
     base_object_list = resource.apply_authorization_limits(request, queryset)
     sorted_objects = resource.apply_sorting(base_object_list, options=request.GET)
 
@@ -319,6 +325,9 @@ class MenuResource(ModelResource):
 
 class OrderResource(ModelResource):        
     customer = fields.ToOneField('eo.apis.UserResource', 'customer')
+    dishes = fields.ToManyField(DishResource, 'dishes', full=True)
+    restaurant = fields.ToOneField(RestaurantResource, 'restaurant')
+    meal = fields.ToOneField('eo.apis.MealResource', 'meal')
     
     class Meta:
         queryset = Order.objects.all()
@@ -338,6 +347,7 @@ class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
     participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
+    order = fields.ToOneField('eo.apis.OrderResource', 'order', full=True)
     class Meta:
         queryset = Meal.objects.all()
         filtering = {'type': ALL,}

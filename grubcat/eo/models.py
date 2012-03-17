@@ -142,6 +142,7 @@ class Rating(models.Model):
 class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     customer = models.ForeignKey('UserProfile', related_name='orders')
+    meal = models.OneToOneField('Meal', null=True)
     num_persons = models.IntegerField()
     status = models.IntegerField()
     total_price = models.DecimalField(max_digits=11, decimal_places=2)
@@ -233,12 +234,14 @@ class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     topic = models.CharField(max_length=64)
     introduction = models.CharField(max_length=1024)
-    price = models.IntegerField()
+    list_price = models.IntegerField()
     photo = models.CharField(max_length=256)
     time = models.DateTimeField()
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
     participants = models.ManyToManyField(UserProfile)
-    num_of_person = models.IntegerField()
+    actual_persons = models.IntegerField(default=1, null=True)
+    min_persons = models.IntegerField()
+    max_persons = models.IntegerField(default=0, null=True) # not used for now, min_persons = max_persons
     type = models.IntegerField() # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     def is_participant(self, user_profile):
