@@ -21,12 +21,6 @@ import simplejson
 import sys
 
 def hello(request):
-    u = UserProfile.objects.get(pk=1)
-    print u.from_user.all()
-#    r = Restaurant.objects.filter(user_favorite=u)
-#    print r
-    #print UserProfile.objects.filter(to_user=u)
-    
     return HttpResponse("Hello world")
 
 def writeJson(qs, response, relations=None):
@@ -524,13 +518,14 @@ def meal_participants (request, meal_id):
     user = request.user
     if request.method == 'POST':
         meal = Meal.objects.get(id=meal_id)
-        if meal.participants.count() >= meal.num_of_person:
+        if meal.participants.count() >= meal.max_persons:
             return createGeneralResponse('NOK',"No available seat.")
         if user.get_profile() == meal.host:
             return createGeneralResponse('NOK',"You're the host.")
         if meal.is_participant(user.get_profile()):
             return createGeneralResponse('NOK',"You already joined.")
         meal.participants.add(user.get_profile())
+        meal.actual_persons += 1
         meal.save()
         return createGeneralResponse('OK',"You've just joined the meal")
     else:

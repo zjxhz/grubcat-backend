@@ -142,7 +142,7 @@ class Rating(models.Model):
 class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     customer = models.ForeignKey('UserProfile', related_name='orders')
-    meal = models.OneToOneField('Meal', null=True)
+    #meal = models.OneToOneField('Meal', null=True)
     num_persons = models.IntegerField()
     status = models.IntegerField()
     total_price = models.DecimalField(max_digits=11, decimal_places=2)
@@ -232,6 +232,7 @@ class BestRatingDish(models.Model):
 
 class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant)
+    order = models.OneToOneField(Order, null=True)
     topic = models.CharField(max_length=64)
     introduction = models.CharField(max_length=1024)
     list_price = models.IntegerField()
