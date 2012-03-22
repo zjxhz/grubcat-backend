@@ -6,11 +6,12 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-import urllib
-import urllib2
-import simplejson
 from django.test.client import Client
-
+import base64
+import json
+import os
+import urllib2
+        
 class SimpleTest(TestCase):
     def test_basic_addition(self):
         """
@@ -27,36 +28,43 @@ True
 
 class JSonClientTest(TestCase):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-
-    #dumps data to json format and send to url
-    def sendJSon(self, url, data):
-        data_json = simplejson.dumps(data)
-        req = urllib2.Request(url, data_json, {'content-type': 'application/json'})
-        #req = urllib2.Request("http://localhost:8000/get_restaurant_list_by_geo/?longitude=30.273025&latitude=120.163314&range=500")
-        response_stream = self.opener.open(req)
-        response = response_stream.read()
-        return response
-
-    def login(self, username, password):
-        url = "http://localhost:8000/user_login/"
-        data={"username":username, "password":password}
-        reqest = urllib2.Request(url, urllib.urlencode(data))
-        response_stream = self.opener.open(reqest)
-        response = response_stream.read()
-        print response
-        return response
+    c = Client()
+    fixtures = ['test_data.json']
         
-    def test_create_order(self):
-        c = Client()
-        response = c.post("/user_login/",{"username":"xuaxu", "password":"1qaz2wsx"})
-        print response.content
-        '''self.login("xuaxu","1qaz2wsx")
-        url = "http://localhost:8000/make_order/"
-        data={"restaurant_id":25, "num_persons":2, "table_name":2}
-        dishes=[{"dish_id":1,"quantity":1},
-                {"dish_id":2,"quantity":3},
-                {"dish_id":3,"quantity":2.5},
-                {"dish_id":4,"quantity":0.5},]
-        data["dishes"]=dishes
-        print self.sendJSon(url, data)'''
+    def get_base64_str(self, file_path):
+        f1 = open(file_path)
+        output='temp_base64.txt'
+        f2 = open(output, 'wb')
+
+        base64.encode(f1, f2)
+        f1.close()
+        f2.close()
+        f2 = open(output)
+        base64_str = f2.read()
+        f2.close()
+        os.remove(output)
+        return base64_str
         
+    def test_create_meal(self):
+        file_name='test.jpg'
+        base64_img=self.get_base64_str('/home/wayne/workspace/curl_tests/' + file_name)
+        data = {"host":"/api/v1/user/1/", 
+                "introduction":"test",
+                "min_persons":5,
+                "photo":{'file':base64_img,
+                         'content_type':'image/jpg',
+                         'name':file_name,
+                         },
+                "list_price":32,
+                "privacy":0,
+                "restaurant":"/api/v1/restaurant/26/",
+                "time":"2012-04-03T18:00:00",
+                "topic":"what topic",
+                "type":0,
+                "order":{"table":"2",
+                         "dishes":[{"id":1,"quantity":2.5},{"id":2,"quantity":3}],
+                         "num_persons":-1
+                         }
+                }
+        response = self.c.post('/api/v1/meal/',json.dumps(data), content_type='application/json')
+        self.assertEqual(response.status_code, 201, "Failed to create meal, code: %s" % response.status_code)

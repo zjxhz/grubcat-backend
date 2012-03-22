@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf.urls.defaults import url
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.uploadedfile import SimpleUploadedFile
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
@@ -11,11 +12,61 @@ from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.fields import FileField
 from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from urllib import urlencode
+import base64
+import mimetypes
+import os
 
+
+class Base64FileField(FileField):
+    """
+    A django-tastypie field for handling file-uploads through raw post data. see https://gist.github.com/709890
+    It uses base64 for en-/decoding the contents of the file.
+    Usage:
+
+    class MyResource(ModelResource):
+        file_field = Base64FileField("file_field")
+        
+        class Meta:
+            queryset = ModelWithFileField.objects.all()
+
+    In the case of multipart for submission, it would also pass the filename.
+    By using a raw post data stream, we have to pass the filename within our
+    file_field structure:
+
+    file_field = {
+        "name": "myfile.png",
+        "file": "longbas64encodedstring",
+        "content_type": "image/png" # on hydrate optional
+    }
+    """
+#    def dehydrate(self, bundle):
+#        if not bundle.data.has_key(self.instance_name) and hasattr(bundle.obj, self.instance_name):
+#            file_field = getattr(bundle.obj, self.instance_name)
+#            if file_field:
+#                try:
+#                    content_type, encoding = mimetypes.guess_type(file_field.file.name)
+#                    b64 = open(file_field.file.name, "rb").read().encode("base64")
+#                    ret = {
+#                        "name": os.path.basename(file_field.file.name),
+#                        "file": b64,
+#                        "content-type": content_type or "application/octet-stream"
+#                    }
+#                    return ret
+#                except:
+#                    pass
+#        return None
+
+    def hydrate(self, obj):
+        value = super(FileField, self).hydrate(obj)
+        if value:
+            value = SimpleUploadedFile(value["name"], base64.b64decode(value["file"]), getattr(value, "content_type", "application/octet-stream"))
+        return value
+    
 '''TODO add a base class that:
     is a sub class of ModelResource
     has method get_my_list, which return a response of a serialized query set
@@ -298,24 +349,6 @@ class RestaurantTagResource(ModelResource):
         authorization = Authorization()
         allowed_methods = ['get', 'post', 'delete']
         
-    ''' Not really used code, for study purpose
-    def get_my_list(self, resource, request, **kwargs):
-        base_object_list = resource.get_object_list(request).filter(**kwargs)
-        base_object_list = resource.apply_authorization_limits(request, base_object_list)
-        sorted_objects = resource.apply_sorting(base_object_list, options=request.GET)
-
-        paginator = resource._meta.paginator_class(request.GET, sorted_objects, 
-                                                   resource_uri=resource.get_resource_list_uri(),
-                                                    limit=resource._meta.limit)
-        to_be_serialized = paginator.page()
-
-        # Dehydrate the bundles in preparation for serialization.
-        bundles = [resource.build_bundle(obj=obj, request=request) for obj in to_be_serialized['objects']]
-        to_be_serialized['objects'] = [resource.full_dehydrate(bundle) for bundle in bundles]
-        to_be_serialized = resource.alter_list_data_to_serialize(request, to_be_serialized)
-        return resource.create_response(request, to_be_serialized)
-    '''
-
 class RegionResource(ModelResource):
     class Meta:
         queryset = Region.objects.all()
@@ -365,6 +398,7 @@ class MealResource(ModelResource):
     host = fields.ForeignKey(UserResource, 'host', full=True)
     participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
     order = fields.ToOneField('eo.apis.OrderResource', 'order', full=True)
+    photo = Base64FileField("photo")
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
@@ -379,9 +413,8 @@ class MealResource(ModelResource):
         for dish_data in bundle.data['order']['dishes']:
             dish = Dish.objects.get(id=dish_data['id'])
             quantity = dish_data["quantity"]
-            totalPrice = totalPrice + dish.price * Decimal(str(quantity))
+            totalPrice = totalPrice + dish.price * quantity
         bundle.data['order']['total_price']=totalPrice
-        
         return bundle
     
     def save_order_dishes(self, bundle, order):
@@ -400,7 +433,7 @@ class MealResource(ModelResource):
         """
         super(MealResource, self).save_related(bundle)
         self.save_order_dishes(bundle, bundle.obj.order)
-                
+    
     class Meta:
         queryset = Meal.objects.all()
         filtering = {'type': ALL,}

@@ -77,7 +77,7 @@ class RatingPic(models.Model):
         
 class Menu(models.Model):
     restaurant = models.OneToOneField(Restaurant)
-    cover = models.CharField(max_length=255, blank=True)
+    cover = models.CharField(max_length=255, null=True)
     menu_timestamp = models.DateTimeField(auto_now=True)
     class Meta:
         db_table = u'menu'
@@ -145,7 +145,7 @@ class Order(models.Model):
     #meal = models.OneToOneField('Meal', null=True)
     num_persons = models.IntegerField()
     status = models.IntegerField()
-    total_price = models.DecimalField(max_digits=11, decimal_places=2)
+    total_price = models.FloatField()
     created_time = models.DateTimeField()
     confirmed_time = models.DateTimeField(null=True)
     completed_time = models.DateTimeField(null=True)
@@ -188,7 +188,7 @@ class UserProfile(models.Model):
     gender = models.IntegerField(null=True)
     avatar = models.CharField(max_length=256) # photo
     location = models.ForeignKey(UserLocation, unique=True, null=True)
-    constellation = models.IntegerField()
+    constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)
     college = models.CharField(max_length=64, null=True)
     work_for = models.CharField(max_length=64, null=True)
@@ -236,7 +236,7 @@ class Meal(models.Model):
     topic = models.CharField(max_length=64)
     introduction = models.CharField(max_length=1024)
     list_price = models.IntegerField()
-    photo = models.CharField(max_length=256)
+    photo = models.FileField(null=True, upload_to='uploaded_images/%Y/%m/%d')
     time = models.DateTimeField()
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
     participants = models.ManyToManyField(UserProfile)
