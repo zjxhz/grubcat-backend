@@ -197,8 +197,13 @@ class UserProfile(models.Model):
     def followers(self):
         return self.related_to.all()
     @property
-    def invitation(self):
-        return MealInvitation.objects.filter( Q(from_person=self) | Q(to_person=self) )
+    def meals(self):
+        return Meal.objects.filter(Q(host=self) | Q(participants=self))
+    @property
+    def invitations(self):
+        """ Invitation sent from others.
+        """
+        return MealInvitation.objects.filter(to_person=self).filter(status=0)
     def __unicode__(self):
         return self.user.username
     class Meta:

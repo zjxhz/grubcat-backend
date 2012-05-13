@@ -566,7 +566,7 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
                 if accept == "yes":
                     i.status = 1
                     i.save()
-                    return createGeneralResponse('OK',"Invitation accepted.")
+                    return meal_participants(request, i.meal.id)  #createGeneralResponse('OK',"Invitation accepted.")
                 else:
                     i.status = 2
                     i.save()

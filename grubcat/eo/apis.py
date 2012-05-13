@@ -4,6 +4,7 @@ from django.conf.urls.defaults import url
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models.query_utils import Q
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
@@ -158,6 +159,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_messages'), name="api_get_messages"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/invitation%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_invitation'), name="api_get_invitation"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/meal%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_meal'), name="api_get_meal"),
         ]
     
     
@@ -190,8 +193,12 @@ class UserResource(ModelResource):
     
     def get_invitation(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
-        return get_my_list(MealInvitationResource(), obj.invitation, request);
+        return get_my_list(MealInvitationResource(), obj.invitations, request)
     
+    def get_meal(self, request, **kwargs):
+        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        return get_my_list(MealResource(), obj.meals, request)
+        
     class Meta:
         queryset = UserProfile.objects.all()
         resource_name = 'user'
@@ -441,8 +448,9 @@ class MealResource(ModelResource):
         authorization = Authorization()
 
 class MealInvitationResource(ModelResource):
-    from_person = fields.ForeignKey(UserResource, 'from_person')
-    to_person = fields.ForeignKey(UserResource, 'to_person')
+    from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
+    to_person = fields.ForeignKey(UserResource, 'to_person', full=True)
+    meal = fields.ForeignKey(MealResource, 'meal', full=True)
     
     class Meta:
         queryset = MealInvitation.objects.all()
