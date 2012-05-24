@@ -19,7 +19,6 @@ DATABASES = {
         'HOST': 'easyorder-JackZhu.dotcloud.com',
         'PORT': '22402',
         'OPTIONS': {"init_command": "SET storage_engine=INNODB",}
-
     }
 }
 
@@ -86,7 +85,7 @@ MIDDLEWARE_CLASSES = (
     #    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
 ROOT_URLCONF = 'grubcat.urls'
@@ -96,7 +95,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
-    'path/to/debug_toolbar/templates',
+#    'path/to/debug_toolbar/templates',
     )
 
 INSTALLED_APPS = (
@@ -111,7 +110,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'image_cropping',
     'tastypie',
-    'debug_toolbar'
+#    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     )
@@ -130,26 +129,3 @@ AUTH_PROFILE_MODULE = 'eo.UserProfile'
 API_LIMIT_PER_PAGE = 5
 
 #Debug-toolbar settings
-INTERNAL_IPS = ('127.0.0.1',)
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.template.TemplateDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-    )
-
-def custom_show_toolbar(request):
-    return True # Always show toolbar, for example purposes only.
-
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-    'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'div',
-    'ENABLE_STACKTRACES': True,
-    }
