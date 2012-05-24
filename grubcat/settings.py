@@ -13,12 +13,12 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'fanju', # Or path to database file if using sqlite3.
+        'NAME': 'easyorder',                      # Or path to database file if using sqlite3.
         'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '',
-        'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
+        'PASSWORD': 'CD7nJt6Uwk0XRdagy830',
+        'HOST': 'easyorder-JackZhu.dotcloud.com',
+        'PORT': '22402',
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB",}
 
     }
 }
@@ -46,10 +46,9 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/dotcloud/data/media/'
+MEDIA_ROOT = 'D:/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
