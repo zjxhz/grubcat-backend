@@ -11,6 +11,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.views.generic.list import ListView
 from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm, \
     UploadFileForm
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order, \
@@ -21,6 +22,7 @@ import simplejson
 import sys
 
 def hello(request):
+    session = request.session
     return HttpResponse("Hello world")
 
 def writeJson(qs, response, relations=None):
@@ -31,9 +33,9 @@ def writeJson(qs, response, relations=None):
 
 def getJsonResponse(qs, relations=None):
     response = HttpResponse(content_type='application/json')
-    writeJson(qs, response, relations) 
+    writeJson(qs, response, relations)
     return response
-    
+
 # Create a general response with status and message)
 def createGeneralResponse(status, message, extra_dict=None):
     response = {}
@@ -42,13 +44,13 @@ def createGeneralResponse(status, message, extra_dict=None):
     if extra_dict:
         response.update(extra_dict)
     return HttpResponse(simplejson.dumps(response))
-    
+
 # get distance in meter, code from google maps
 def getDistance( lng1,  lat1,  lng2,  lat2):
     EARTH_RADIUS = 6378.137
     from math import asin,sin,cos,radians, pow,sqrt
-    radLat1 = radians(lat1) 
-    radLat2 = radians(lat2) 
+    radLat1 = radians(lat1)
+    radLat2 = radians(lat2)
     a = radLat1 - radLat2
     b = radians(lng1) - radians(lng2)
     s = 2 * asin(sqrt(pow(sin(a/2),2) + cos(radLat1)*cos(radLat2)*pow(sin(b/2),2)))
@@ -61,7 +63,7 @@ def modelToDict(query_set, relations=None):
     if relations:
         return simplejson.loads(serializer.serialize(query_set, relations=relations))
     return simplejson.loads(serializer.serialize(query_set))
-    
+
 def restaurantList(request):
     key = request.GET.get('key')
     if key:
@@ -147,7 +149,7 @@ def get_menu(request):
 
     menu = restaurant.menu
     jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
-    
+
     categories = menu.categories.all()
     jsonCategories = simplejson.loads(serializers.serialize('json', categories))
     jsonMenu['categories']=jsonCategories
@@ -240,7 +242,7 @@ def make_order(request):
         transaction.rollback()
         raise
     response['status']='OK'
-    response['info']="Order confirmed, total price: %s" % totalPrice     
+    response['info']="Order confirmed, total price: %s" % totalPrice
     return HttpResponse(simplejson.dumps(response))
 
 def order_last_modified(request, order_id):
@@ -301,13 +303,13 @@ def favorite_restaurant(request, id):
         profile.favorite_restaurants.add(Restaurant.objects.get(id=id))
         profile.save()
         response['status']='OK'
-        response['info']='Data saved' 
+        response['info']='Data saved'
     # is GET needed? How about use /restaurant
     elif request.method == 'GET':
         response['status']='NOK'
-        response['info']='GET is not supported' 
+        response['info']='GET is not supported'
     return HttpResponse(simplejson.dumps(response, ensure_ascii=False))
-    
+
 def favorite_restaurants(request):
     if not request.user.is_authenticated():
         return login_required(request)
@@ -323,7 +325,7 @@ def restaurant_rating(request, restaurant_id):
     rid = int(restaurant_id)
     r = Restaurant.objects.get(id=restaurant_id)
     response = HttpResponse()
-    
+
     if request.method == 'GET':
         id_name_fields={'fields':('username',)}
         writeJson(r.get_rating(), response, relations={'user': id_name_fields,})
@@ -367,7 +369,7 @@ def restaurant_rating(request, restaurant_id):
                 rd.dish_id = dish_id
             rd.save()
         ri.save()
-        
+
         rc = Rating()
         rc.rating = rating
         rc.user_id = request.user.id
@@ -381,7 +383,7 @@ def restaurant_rating(request, restaurant_id):
         rc.save()
         return createGeneralResponse('OK','Comments committed')
     else:
-        raise                           
+        raise
 
 def get_restaurant_tags(request):
     return getJsonResponse(RestaurantTag.objects.all())
@@ -459,7 +461,7 @@ def get_following(request, user_id):
         return createGeneralResponse('OK','You are now following %s' % following_user)
     else:
         raise
-    
+
 def remove_following(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
@@ -468,7 +470,7 @@ def remove_following(request, user_id):
         relationship.delete()
         return createGeneralResponse('OK','You are not following %s anymore' % following_user)
 
-    
+
 def followers(request, user_id):
     user = User.objects.get(id=user_id)
     return getJsonResponse(user.get_profile().followers.all(), {'user':{'fields':('username',)}})
@@ -489,9 +491,9 @@ def messages(request, user_id):
         text = request.POST.get('message')
         message_type=request.POST.get('type', '0')
         message = UserMessage(from_person=from_person.get_profile(),
-                              to_person=user.get_profile(), 
-                              message=text, 
-                              timestamp=datetime.now(), 
+                              to_person=user.get_profile(),
+                              message=text,
+                              timestamp=datetime.now(),
                               type=message_type)
         message.save()
         return createGeneralResponse('OK','Message sent to %s' % user)
@@ -510,7 +512,7 @@ def get_meal(request, meal_id):
     if request.method == 'GET':
         meal = Meal.objects.get(id=meal_id)
         return getJsonResponse([meal],('restaurant', 'host','participants'))
-    
+
 
 def meal_participants (request, meal_id):
     if not request.user.is_authenticated():
@@ -552,13 +554,13 @@ def view_or_send_meal_invitations(request, user_id):
         return getJsonResponse(user.get_profile().invitation)
     else:
         raise
-    
+
 def accept_or_reject_meal_invitations(request, user_id, invitation_id):
     if not request.user.is_authenticated():
         return login_required(request)
     user = request.user
     i = MealInvitation.objects.get(id=invitation_id)
-    
+
     if request.method == 'POST':
         if i.to_person == user.get_profile():
             if i.status == 0: # PENDING
@@ -581,3 +583,9 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
         return getJsonResponse([i])
     else:
         raise
+
+class MealView(ListView):
+    model=Meal
+    template_name="meal/meal_list.html"
+    context_object_name="meal_list"
+    #TODO add filter to queyset

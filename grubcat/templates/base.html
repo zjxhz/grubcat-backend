@@ -1,0 +1,62 @@
+{% load staticfiles %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{{ STATIC_URL }}css/app.css" media="screen" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+    </style>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#main-nav .nav-inner ul li").not(".current").hover(function () {
+                $(this).addClass("current");
+            },function () {
+                $(this).removeClass("current");
+            }).click(function () {
+                        $(this).addClass("current").siblings().removeClass("current");
+                    });
+
+            $("#faq .sidebar-box-inner a").toggle(function () {
+                $(this).next("p").show();
+            }, function () {
+                $(this).next("p").hide();
+            })
+        })
+    </script>
+</head>
+<body>
+
+<div id="main-nav" class="logged-out">
+    <div class="nav-inner">
+        <div class="logo">
+            <a href="https://www.grubwithus.com/">
+                <img width="198px" height="58px" alt="Grubwithus Logo"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/logo-f80c86e64b7507f40b997e42c4452843.png"></a>
+        </div>
+        <ul>
+            <li class="current"><a href="/meals/">饭局</a></li>
+            <li><a href="#">小组</a></li>
+            <li><a href="#">成员</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="page-container">
+    <div id="container-upper"></div>
+    <div id="container-middle">
+        {% block main %}{% endblock %}
+        <div class="clear-fix"></div>
+    </div>
+    <div id="footer" >
+        <img alt="Footer_shadows"
+             src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/footer_shadows-1d8468b2c2845e22b76638c6ed59eb7a.png">
+        <p style="margin:5px 40px ">This is footer.</p>
+    </div>
+</div>
+</body>
+</html>
