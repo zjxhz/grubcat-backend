@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block main %}
+    <div id="meal-page">
+        <div id="meal-main">
+            <div id="title">
+                <h1>No Business Like Show Business @ Loteria Grill</h1>
+                <span>At Loteria Grill in Hollywood • 6627 Hollywood Blvd., Los Angeles 90028 </span>
+            </div>
+            <div id="desc">
+                Billie Holiday once said, “There's no damn business like show business -- you have to smile to keep from
+                throwing up.” Swap stories about your time in the Hollywood trenches over tasty tacos at Loteria Grill!
+            </div>
+            <div id="meal-grub">
+                <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
+                   class="purchase-button">
+                    Reserve Now!
+                    <span>$27 for your seat</span>
+                </a>
+
+                <div class="what-is-grubwithus">
+                    <b>What am I paying for?</b> Grubwithus is a social dining experience that brings new people
+                    together over delicious food.<br>
+                </div>
+                <span class="date">Wednesday, May 23,  8:00PM</span>
+                <span class="date"><a href="#" class="show-menu">See the Menu</a></span>
+            </div>
+            <div id="meal-img-wrapper">
+                <img alt="No Business Like Show Business @ Loteria Grill" id="meal-photo" src="https://s3.amazonaws.com/grub_restaurant_pics/11612/large/ab376f68366aa02aef8d-Screen_shot_2012-03-02_at_2.05.51_AM.png?1330682837" width="385px">
+            </div>
+            <div id="users">
+
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="faq">
+                <b>What is Grubwithus?</b>
+
+                <p>Grubwithus is a social dining network that brings people together over delicious food. It's not just
+                    about the food or the people, though - it's about making new friends and forming lasting offline
+                    relationships.</p>
+                <b>How does this work?</b>
+
+                <p>It's easy - just book a seat at this meal. On the day of the meal, you just show up, enjoy a great
+                    dinner (usually family-style), and leave with new friends.</p>
+                <b>Cancellation Policy</b>
+
+                <p>We get it - plans change, emergencies pop up. You can cancel a reservation up until 72 hours before
+                    the schedule date and time of the meal for full Grub Credit. Feel free to email us at
+                    info@grubwithus.com or call the Grubwithus Hotline at 1-888-478-2857, and we'll take care of it.</p>
+                <b>Meet awesome people</b>
+
+                <p>Grubwithus is thriving with all sorts of interesting people. You might meet successful entrepreneurs,
+                    aspiring actors, world travelers, business moguls, authors... there's only one way to find out!</p>
+                <b>Hassle-free pricing</b>
+
+                <p>Your Grubwithus purchase includes food, tax, and gratuity. Drinks can be purchased separately at the
+                    meal.</p>
+                <b>Book early to save</b>
+
+                <p>Book early to save money! With each reservation, the meal price increases.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
