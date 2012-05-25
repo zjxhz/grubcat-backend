@@ -19,7 +19,7 @@ class RestaurantTag(models.Model):
         db_table = u'restaurant_tag'
     def __unicode__(self):
         return u'%s' % (self.name)
-     
+
 
 class Region(models.Model):
     name = models.CharField(max_length=64)
@@ -27,7 +27,7 @@ class Region(models.Model):
         return u'%s' % (self.name)
     class Meta:
         db_table = u'region'
-        
+
 class Restaurant(models.Model):
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
@@ -74,7 +74,7 @@ class RatingPic(models.Model):
     image = models.CharField(max_length=1024)
     class Meta:
         db_table = u'rating_pic'
-        
+
 class Menu(models.Model):
     restaurant = models.OneToOneField(Restaurant)
     cover = models.CharField(max_length=255, null=True)
@@ -97,7 +97,7 @@ class DishCategory(models.Model):
         return u'%s' % (self.name)
     class Meta:
         db_table = u'dish_category'
-        
+
 class Dish(models.Model):
     number = models.IntegerField()
     name = models.CharField(max_length=135)
@@ -125,7 +125,7 @@ class DishOtherUom(models.Model):
     class Meta:
         db_table = u'dish_other_uom'
 
-        
+
 class Rating(models.Model):
     user = models.ForeignKey(User, related_name='user_ratings')
     restaurant = models.ForeignKey(Restaurant, related_name="ratings")
@@ -138,7 +138,7 @@ class Rating(models.Model):
     # for average cost, see RestaurantAverageCost
     class Meta:
         db_table = u'rating'
-        
+
 class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     customer = models.ForeignKey('UserProfile', related_name='orders')
@@ -165,13 +165,13 @@ class Relationship(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name='from_user')
     to_person = models.ForeignKey("UserProfile", related_name='to_user')
     status = models.IntegerField(default=0) # FOLLOWING, BLOCKED
-    
+
     def __unicode__(self):
-        return '%s -> %s: %s' % (self.from_person, self.to_person, self.status) 
-    
+        return '%s -> %s: %s' % (self.from_person, self.to_person, self.status)
+
     class Meta:
         db_table = u'relationship'
-        
+
 
 class UserLocation(models.Model):
     lat = models.FloatField()
@@ -179,7 +179,7 @@ class UserLocation(models.Model):
     updated_at = models.DateTimeField()
     class Meta:
         db_table = u"user_location"
-        
+
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     favorite_restaurants = models.ManyToManyField(Restaurant,db_table="favorite_restaurants", related_name="user_favorite")
@@ -222,9 +222,9 @@ class UserMessage(models.Model):
 
 
 # Create a user profile if the profile does not exist
-def create_user_profile(sender, instance, created, **kwargs):  
-    if created:  
-       profile, created = UserProfile.objects.get_or_create(user=instance)  
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+       profile, created = UserProfile.objects.get_or_create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
 
@@ -254,7 +254,12 @@ class Meal(models.Model):
         for participant in self.participants.all():
             if participant == user_profile:
                 return True
-        return False    
+        return False
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'meal_view', [str(self.id)]
+
     class Meta:
         db_table = u'meal'
 
@@ -267,15 +272,15 @@ class MealInvitation(models.Model):
 
     def is_related(self, user_profile):
         return self.from_person==user_profile or self.to_person==user_profile
-           
+
     class Meta:
         db_table = u'meal_invitation'
-    
+
 class ImageTest(models.Model):
     image = ImageCropField(blank=True, null=True, upload_to='uploaded_images/%Y/%m/%d')
     # size is "width x height"
     cropping = ImageRatioField('image', '430x360')
-    
+
 '''
 class CategoryRestaurant(models.Model):
     id = models.IntegerField(primary_key=True)

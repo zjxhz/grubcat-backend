@@ -146,6 +146,10 @@ html, body {
     padding: 10px;
 }
 
+.meal-cell-title a:hover{
+    color: #20538c;
+}
+
 .meal-img-wrapper {
     height: 210px;
     width: 376px;

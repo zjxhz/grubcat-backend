@@ -56,7 +56,7 @@ urlpatterns = patterns('',
     ('^user/(\d+)/messages/$', messages),
     ('^meal/$', get_meals),
     ('^meal/(\d+)/$', get_meal),
-    ('^meal/(\d+)/participants/$', meal_participants),
+#    ('^meal/(\d+)/participants/$', meal_participants),
     ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
     ('^user/(\d+)/invitation/(\d+)/$', accept_or_reject_meal_invitations),
 
@@ -69,9 +69,9 @@ urlpatterns = patterns('',
     (r'^$', MealView.as_view()),
     ('^restaurant/(\d+)/dish/add/$', add_dish),
     (r'^meals/$', MealView.as_view()),
-    (r'^meal_web/(\d+)$', TemplateView.as_view( #TODO rename url
-       template_name="meal/meal_detail.html"
-    )),
+    url(r'^meal/(\d+)$', TemplateView.as_view(#TODO rename url
+        template_name="meal/meal_detail.html"
+    ), name='meal_view'),
 
 
     # Example:
