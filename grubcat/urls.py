@@ -69,7 +69,7 @@ urlpatterns = patterns('',
     (r'^$', MealView.as_view()),
     ('^restaurant/(\d+)/dish/add/$', add_dish),
     (r'^meals/$', MealView.as_view()),
-    url(r'^meal/(\d+)$', TemplateView.as_view(#TODO rename url
+    url(r'^meal/(\d+)/$', TemplateView.as_view(#TODO rename url
         template_name="meal/meal_detail.html"
     ), name='meal_view'),
 
