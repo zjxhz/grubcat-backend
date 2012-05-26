@@ -27,10 +27,15 @@ html {
 }
 
 html, body {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     font-size: 12px;
-    font-family: helvetica, arial,serif;
+    font-family: helvetica, arial,sans-serif;
+}
+
+img {
+    border: none;
+    text-decoration: none;
 }
 
 #main-nav {
