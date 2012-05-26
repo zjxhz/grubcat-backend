@@ -7,10 +7,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}{% endblock %}</title>
     <link href="{{ STATIC_URL }}css/app.css" media="screen" rel="stylesheet" type="text/css">
-
     <style type="text/css">
     </style>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    {% block base_js %}
+        <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    {% endblock %}
+    {#TODO extract#}
     <script type="text/javascript">
         $(document).ready(function () {
             $("#main-nav .nav-inner ul li").not(".current").hover(function () {
@@ -52,9 +54,10 @@
         {% block main %}{% endblock %}
         <div class="clear-fix"></div>
     </div>
-    <div id="footer" >
+    <div id="footer">
         <img alt="Footer_shadows"
              src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/footer_shadows-1d8468b2c2845e22b76638c6ed59eb7a.png">
+
         <p style="margin:5px 40px ">This is footer.</p>
     </div>
 </div>

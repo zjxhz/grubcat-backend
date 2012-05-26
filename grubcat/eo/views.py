@@ -585,7 +585,7 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
         raise
 
 class MealView(ListView):
-    model=Meal
+    queryset = Meal.objects.order_by("time")
     template_name="meal/meal_list.html"
     context_object_name="meal_list"
     #TODO add filter to queyset
