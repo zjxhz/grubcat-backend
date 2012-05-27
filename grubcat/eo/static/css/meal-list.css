@@ -1,0 +1,172 @@
+#meal-list-city {
+    border-bottom: 1px solid #bbb;
+    width: 970px;
+    margin-left: 8px;
+
+}
+
+#meal-list-city h1 {
+    position: relative;
+    top: -10px;
+    text-align: center;
+}
+
+#meal-list {
+    float: left;
+    width: 720px;
+}
+
+.meal-cell {
+    border: 1px solid #DDD;
+    margin: 10px 10px 30px 15px;
+    padding-right: 15px;
+    position: relative;
+    bottom: 0;
+    background: #ffffff;
+}
+
+.meal-cell-title {
+    font-weight: bold;
+    padding: 10px;
+}
+
+.meal-cell-title a:hover {
+    color: #20538c;
+}
+
+.meal-img-wrapper {
+    height: 210px;
+    width: 376px;
+    float: left;
+    position: relative;
+}
+
+.meal-img-wrapper a img {
+    height: 210px;
+    width: 376px;
+}
+
+.meal-info {
+    float: right;
+    width: 280px;
+    height: 210px;
+    position: relative;
+}
+
+.meal-location {
+    display: block;
+    height: 19px;
+    background: url("../img/meal-location-line.png") repeat-x;
+    text-align: center;
+}
+
+.meal-location span {
+    background: white url("../img/meal-location.png") no-repeat 11px 1px;
+    padding: 3px 10px 3px 32px;
+    color: #777;
+    font-size: 115%;
+    text-align: center;
+}
+
+.meal-info .org img {
+    height: 30px;
+    width: 30px;
+}
+
+.meal-info .org span {
+    line-height: 30px;
+    margin-left: 5px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.meal-info p {
+    line-height: 130%;
+    margin: 10px 0 30px 0;
+}
+
+.meal-info a {
+    display: block;
+    width: 290px;
+    height: 82px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 176%;
+    background: url("../img/meal-check-out-bg.png") no-repeat;
+    margin-left: -11px;
+    line-height: 300%;
+    bottom: -4px;
+    position: absolute;
+    text-shadow: 0 1px 1px black;
+}
+
+.sidebar {
+    float: right;
+    width: 250px;
+    margin: 10px 25px 10px 0px;
+}
+
+.sidebar-box {
+    border: 1px solid #ccc;
+    padding: 1px;
+    background: #ffffff;
+    margin-bottom: 10px;
+}
+
+.sidebar-box-title {
+    background: #EEE;
+    padding: 7px;
+    font-weight: bold;
+}
+
+.sidebar-box-inner {
+    padding: 7px;
+}
+
+.sidebar-box-inner a {
+    color: #20538c;
+}
+
+.sidebar-box-inner p {
+    color: #333;
+    margin: 10px 0px;
+    padding-left: 5px;
+}
+
+.sidebar-box-inner img {
+    margin: 0px 5px 5px 0px;
+}
+
+#recently-grubbed img {
+    border: 0px solid #ddd;
+}
+
+#faq .sidebar-box-inner a {
+    display: block;
+    margin: 10px 0px;
+}
+
+#faq .sidebar-box-inner p {
+    display: none;
+}
+
+#create-a-meal {
+    text-align: center;
+}
+
+#create-a-meal .sidebar-box-inner {
+    padding: 22px 7px;
+}
+
+#create-a-meal input[type="submit"] {
+    font-size: 120%;
+    padding: 6px 24px;
+}
+
+#create-a-meal input[type="submit"] {
+    margin-top: 5px;
+    font-size: 120%;
+    font-weight: bold;
+    padding: 6px 24px;
+}

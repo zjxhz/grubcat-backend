@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from eo.apis import v1_api
 from eo.db import query_restaurant_from_google, updateLatLng
@@ -55,7 +56,7 @@ urlpatterns = patterns('',
     ('^user/(\d+)/following/recommendations/$', get_recommended_following),
     ('^user/(\d+)/messages/$', messages),
     ('^meal/$', get_meals),
-#   ('^meal/(\d+)/$', get_meal),
+    #   ('^meal/(\d+)/$', get_meal),
     ('^meal/(\d+)/participants/$', meal_participants),
     ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
     ('^user/(\d+)/invitation/(\d+)/$', accept_or_reject_meal_invitations),
@@ -66,14 +67,11 @@ urlpatterns = patterns('',
     ('^upload_file/$', upload_file),
 
     # HTML
-    (r'^$', MealView.as_view()),
+    (r'^$', MealListView.as_view()),
     ('^restaurant/(\d+)/dish/add/$', add_dish),
-    (r'^meals/$', MealView.as_view()),
-    url(r'^meal/(\d+)/$', TemplateView.as_view(#TODO rename url
-        template_name="meal/meal_detail.html"
-    ), name='meal_view'),
-
-
+    (r'^meals/$', MealListView.as_view()),
+    url(r'^meal/(?P<pk>\d+)/$', DetailView.as_view(
+        model=Meal, context_object_name="meal", template_name="meal/meal_detail.html"), name='meal_view'),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
 

@@ -6,9 +6,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}{% endblock %}</title>
-    <link href="{{ STATIC_URL }}css/app.css" media="screen" rel="stylesheet" type="text/css">
-    <style type="text/css">
-    </style>
+    {% block page_css %}
+    <link href="{{ STATIC_URL }}css/global.css" media="screen" rel="stylesheet" type="text/css">
+    {% endblock %}
     {% block base_js %}
         <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
     {% endblock %}

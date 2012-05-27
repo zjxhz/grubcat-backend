@@ -204,6 +204,13 @@ class UserProfile(models.Model):
         """ Invitation sent from others.
         """
         return MealInvitation.objects.filter(to_person=self).filter(status=0)
+
+    @property
+    def avatar_default_if_none(self):
+        if self.avatar:
+            return self.avatar
+        else:
+            return "/uploaded_images/anno.png"
     def __unicode__(self):
         return self.user.username
     class Meta:
@@ -251,10 +258,14 @@ class Meal(models.Model):
     type = models.IntegerField() # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     def is_participant(self, user_profile):
-        for participant in self.participants.all():
+        for participant in self.participants.all(): #TODO query the user by id to see the if the user exist
             if participant == user_profile:
                 return True
         return False
+
+    @property
+    def left_persons(self):
+        return self.max_persons  - self.actual_persons
 
     @models.permalink
     def get_absolute_url(self):
