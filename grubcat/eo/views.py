@@ -11,6 +11,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm, \
     UploadFileForm
@@ -584,8 +585,8 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
     else:
         raise
 
-class MealView(ListView):
+class MealListView(ListView):
     queryset = Meal.objects.order_by("time")
-    template_name="meal/meal_list.html"
+    template_name= "meal/meal_list.html"
     context_object_name="meal_list"
     #TODO add filter to queyset

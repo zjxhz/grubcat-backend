@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    <link href="{{ STATIC_URL }}css/global.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/meal-list.css" media="screen" rel="stylesheet" type="text/css">
+{% endblock %}
 {% block main %}
     <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
     <div id="meal-list">
