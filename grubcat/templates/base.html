@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}{% endblock %}</title>
     {% block page_css %}
-        <link href="{{ STATIC_URL }}css/global.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
     {% endblock %}
     {% block base_js %}
         <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
@@ -50,7 +50,7 @@
     </div>
     <div id="footer">
         <img alt="Footer_shadows"
-             src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/footer_shadows-1d8468b2c2845e22b76638c6ed59eb7a.png">
+             src="{{ STATIC_URL }}img/footer-shadow.png">
 
         <p style="margin:5px 40px ">This is footer.</p>
     </div>
