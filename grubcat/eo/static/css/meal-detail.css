@@ -111,6 +111,7 @@
 #title h1 {
     margin-bottom: 10px;
     font-size: 190%;
+    text-align: left;
 }
 
 #resturant-location {
@@ -159,7 +160,7 @@ a.map {
 #creator {
     display: block;
     float: right;
-    padding: 6px ;
+    padding: 11px 6px ;
     border: 1px solid #CCC;
     background: #EEE;
     color: #444;
@@ -169,7 +170,7 @@ a.map {
 
 .host-name{
     float: left;
-    margin-top: 7px;
+    padding-right: 37px;
 }
 
 
@@ -179,9 +180,10 @@ a.map {
 }
 
 #creator img {
-    position: relative;
-    float: right;
+    position: absolute;
     margin-left: 5px;
+    top: 5px;
+    right: 5px;
 }
 
 .reserve-button {
