@@ -8,7 +8,7 @@ class DishForm(ModelForm):
 
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50, required=False)
-    file  = forms.ImageField()
+    file  = forms.FileField()
 
 class ImgTestForm(ModelForm):
     class Meta:

@@ -15,7 +15,7 @@ from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant
     add_restaurant, get_following, remove_following, followers,\
     get_recommended_following, register, messages, get_meals, get_meal,\
     meal_participants, view_or_send_meal_invitations,\
-    accept_or_reject_meal_invitations, img_test, upload_file, add_dish
+    accept_or_reject_meal_invitations, img_test, upload_app, add_dish
 from grubcat.eo.db import *
 from grubcat.eo.views import *
 import settings
@@ -64,7 +64,7 @@ urlpatterns = patterns('',
     # developer interfaces...
     ('^updateLatLng/$', updateLatLng),
     ('^img_test/$', img_test),
-    ('^upload_file/$', upload_file),
+    ('^upload_app/$', upload_app),
 
     # HTML
     (r'^$', MealListView.as_view()),

@@ -21,6 +21,7 @@ from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order, \
 from grubcat.eo.forms import *
 import simplejson
 import sys
+import settings
 
 def hello(request):
     session = request.session
@@ -429,23 +430,30 @@ def img_test(request):
     if request.method == 'POST':
         form = ImgTestForm(request.POST, request.FILES)
         #if form.is_valid():
-        handle_uploaded_file(request.FILES['image'])
+        handle_uploaded_image(request.FILES['image'])
         return createGeneralResponse('OK','File uploaded')
     else:
         form = ImgTestForm()
         img_test = ImageTest.objects.get(id=2)
     return render_to_response('test/img_test.html', {'img_test': img_test,})
 
-def handle_uploaded_file(file):
+def handle_uploaded_image(file):
     it = ImageTest()
     it.image = file
     it.save()
 
-def upload_file(request):
+#    temp use
+def handle_uploaded_app(file):
+    destination = open(settings.MEDIA_ROOT + '/apps/' + file.name,'wb+')
+    for chunk in file.chunks():
+        destination.write(chunk)
+    destination.close()
+
+def upload_app(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         #if form.is_valid():
-        handle_uploaded_file(request.FILES['file'])
+        handle_uploaded_app(request.FILES['file'])
         return createGeneralResponse('OK','File uploaded')
     else:
         form = UploadFileForm()
