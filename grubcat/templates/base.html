@@ -7,47 +7,41 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}{% endblock %}</title>
     {% block page_css %}
-    <link href="{{ STATIC_URL }}css/global.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
     {% endblock %}
     {% block base_js %}
         <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
     {% endblock %}
-    {#TODO extract#}
     <script type="text/javascript">
         $(document).ready(function () {
             $("#main-nav .nav-inner ul li").not(".current").hover(function () {
                 $(this).addClass("current");
-            },function () {
-                $(this).removeClass("current");
-            }).click(function () {
-                        $(this).addClass("current").siblings().removeClass("current");
-                    });
-
-            $("#faq .sidebar-box-inner a").toggle(function () {
-                $(this).next("p").show();
             }, function () {
-                $(this).next("p").hide();
-            })
+                $(this).removeClass("current");
+            });
         })
     </script>
+    {% block extra_js %}{% endblock %}
 </head>
 <body>
 
-<div id="main-nav" class="logged-out">
-    <div class="nav-inner">
-        <div class="logo">
-            <a href="https://www.grubwithus.com/">
-                <img width="198px" height="58px" alt="Grubwithus Logo"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/logo-f80c86e64b7507f40b997e42c4452843.png"></a>
+{% block nav %}
+    <div id="main-nav" class="logged-out">
+        <div class="nav-inner">
+            <div class="logo">
+                <a href="/">
+                    <img width="198px" height="58px" alt="饭局"
+                         src="{{ STATIC_URL }}img/site-logo.png"></a>
+            </div>
+            <ul>
+                <li {% ifequal request.path_info "/meals/" %}class="current"{% endifequal %}
+                    {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a href="/meals/">饭局</a></li>
+                <li><a href="#">小组</a></li>
+                <li><a href="#">成员</a></li>
+            </ul>
         </div>
-        <ul>
-            <li class="current"><a href="/meals/">饭局</a></li>
-            <li><a href="#">小组</a></li>
-            <li><a href="#">成员</a></li>
-        </ul>
     </div>
-</div>
-
+{% endblock %}
 <div id="page-container">
     <div id="container-upper"></div>
     <div id="container-middle">
@@ -56,7 +50,7 @@
     </div>
     <div id="footer">
         <img alt="Footer_shadows"
-             src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/footer_shadows-1d8468b2c2845e22b76638c6ed59eb7a.png">
+             src="{{ STATIC_URL }}img/footer-shadow.png">
 
         <p style="margin:5px 40px ">This is footer.</p>
     </div>

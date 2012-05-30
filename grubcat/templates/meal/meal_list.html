@@ -2,8 +2,20 @@
 {% load staticfiles %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-    <link href="{{ STATIC_URL }}css/global.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
     <link href="{{ STATIC_URL }}css/meal-list.css" media="screen" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block extra_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#nav-meal").addClass("current");
+            $("#faq .sidebar-box-inner a").toggle(function () {
+                $(this).next("p").show();
+            }, function () {
+                $(this).next("p").hide();
+            })
+        })
+    </script>
 {% endblock %}
 {% block main %}
     <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
@@ -13,6 +25,7 @@
                 <div class="meal-cell-title"><a href="{{ meal.get_absolute_url }}"><h2>{{ meal.topic }}</h2></a></div>
                 <div class="meal-img-wrapper">
                     <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
+
                     <div class="date-wrapper">
                         <span class="month">{{ meal.time|date:"n" }}月</span>
                         <span class="day-num">{{ meal.time|date:"d" }}</span>
