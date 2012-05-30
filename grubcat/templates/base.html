@@ -9,19 +9,6 @@
     {% block page_css %}
         <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
     {% endblock %}
-    {% block base_js %}
-        <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
-    {% endblock %}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#main-nav .nav-inner ul li").not(".current").hover(function () {
-                $(this).addClass("current");
-            }, function () {
-                $(this).removeClass("current");
-            });
-        })
-    </script>
-    {% block extra_js %}{% endblock %}
 </head>
 <body>
 
@@ -55,5 +42,18 @@
         <p style="margin:5px 40px ">This is footer.</p>
     </div>
 </div>
+{% block base_js %}
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+{% endblock %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#main-nav .nav-inner ul li").not(".current").hover(function () {
+            $(this).addClass("current");
+        }, function () {
+            $(this).removeClass("current");
+        });
+    })
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
