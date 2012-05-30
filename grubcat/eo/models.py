@@ -288,7 +288,7 @@ class MealInvitation(models.Model):
         db_table = u'meal_invitation'
 
 class ImageTest(models.Model):
-    image = ImageCropField(blank=True, null=True, upload_to='uploaded_images/%Y/%m/%d')
+    image = ImageCropField(blank=True, null=True, upload_to='apps')
     # size is "width x height"
     cropping = ImageRatioField('image', '430x360')
 
