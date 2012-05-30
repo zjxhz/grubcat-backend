@@ -1,0 +1,282 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+    color: black;
+}
+
+div.hidden, a.hidden, p.hidden {
+    display: none;
+}
+
+body {
+    display: block;
+}
+
+html {
+    background: black url("../img/site-bg.jpg") repeat-x fixed top center;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-family: helvetica, arial, sans-serif;
+}
+
+img {
+    border: none;
+    text-decoration: none;
+}
+
+#main-nav {
+    background: url("../img/nav-background.png");
+    text-align: center;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    height: 52px;
+    font: bold 17px "microsoft yahei", simsun, sans-serif;
+}
+
+.nav-inner {
+    width: 980px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+.logo {
+    float: left;
+    margin-left: -11px;
+}
+
+.nav-inner ul {
+    margin-left: 129px;
+    width: 450px;
+    float: left;
+}
+
+.nav-inner ul li {
+    display: inline-block;
+    float: left;
+    line-height: 42px;
+    font-size: 115%;
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
+    margin-left: -1px;
+}
+
+.nav-inner ul li a {
+    display: inline-block;
+    float: left;
+    line-height: 42px;
+    font-weight: bold;
+    color: #DDD;
+    text-decoration: none;
+    padding: 0 35px;
+    text-shadow: black 0px -1px 1px;
+    position: relative;
+}
+
+.nav-inner ul li.current a, .nav-inner ul li.current a:hover {
+    color: white;
+    background: url("../img/nav-background.png");
+    -moz-box-shadow: inset 0 0 10px #000;
+    -webkit-box-shadow: inset 0 0 10px #000;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.clear-fix {
+    clear: both;
+}
+
+#page-container {
+}
+
+#container-upper {
+    width: 1000px;
+    height: 42px;
+    margin: 50px auto 0px auto;
+    background: url(../img/container_upper_shadower.png);
+    padding-left: 10px
+}
+
+#container-middle {
+    background: url("../img/container_background.png");
+    margin: 0px auto;
+    width: 1000px;
+    padding-left: 10px
+}
+
+.date-wrapper {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 70px;
+    text-align: center;
+    background: white;
+    box-shadow: 0 0 10px #000;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.month {
+    background: #EEE;
+    border-bottom: 1px solid #CCC;
+    text-transform: uppercase;
+    color: #777;
+    padding-top: 5px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-top-left-radius: 3px;
+    -moz-border-top-right-radius: 3px;
+}
+
+.date-wrapper span {
+    display: block;
+    padding: 3px;
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+}
+
+.date-wrapper .day-num {
+    font-size: 230%;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+.date-wrapper .day-text {
+    margin-top: -3px;
+}
+
+.time {
+    position: absolute;
+    top: 105px;
+    left: 16px;
+    width: 70px;
+    text-align: center;
+    color: white;
+    background: black;
+    opacity: 0.8;
+    padding: 3px 0 3px 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 0 0 10px #000;
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="user[email]"], .referral-link, .find-by-name {
+    color: #333;
+    font-size: 13px;
+    height: 25px;
+    width: 100%;
+    border: 1px solid #CCC;
+    padding: 0px;
+    text-indent: 5px;
+    -webkit-box-shadow: inset #eee 2px 3px 3px;
+    -moz-box-shadow: inset #eee 2px 3px 3px;
+    box-shadow: inset #eee 2px 3px 3px;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+input[type="text"].cart_day {
+    width: 120px;
+    background: whiteSmoke url("../img/date-pickker-icon.png") no-repeat 12px center;
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 14px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    padding: 6px 15px 6px 40px;
+    box-shadow: none;
+}
+
+.dk_toggle {
+    background: url("../img/time-pickker-bg.png") no-repeat 90% center;
+    border: 1px solid #CCC;
+    color: #333;
+    padding: 7px 45px 7px 10px;
+    text-shadow: white 1px 1px 0;
+    text-align: left;
+}
+
+.dk_toggle {
+    display: -moz-inline-stack;
+    display: inline-block;
+    position: relative;
+    zoom: 1;
+}
+
+#dk_container_cart_time .dk_toggle {
+    background-image: url("../img/time-pickker-icon.png");
+    background-position: 12px center;
+    padding: 12px 10px 12px 45px;
+    width: 120px;
+    text-align: left;
+}
+
+.button, .resumator-button, .resumator-apply-button, .join, input[type="submit"], .view-more {
+    text-decoration: none;
+    color: white;
+    font-family: helvetica, arial, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    padding: 4px 6px;
+    background: #446D9C;
+    display: inline-block;
+    text-align: center;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0px 5px #444;
+    -moz-box-shadow: 0 0px 5px #444;
+    box-shadow: 0 0px 5px #444;
+    text-shadow: 0px 1px 2px black;
+    border: 1px solid #2F3C5C;
+    font-size: 100%;
+}
+
+.button:hover, .join:hover, input[type="submit"]:hover, .view-more:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#2C496B), to(#28415E));
+    color: white;
+}
+
+.dk_container.dk_theme_default {
+    margin: 10px;
+}
+
+#footer {
+    height: 200px;
+    margin: 0 auto;
+    width: 1000px;
+    padding-left: 10px;
+    background: url("../img/container_background.png");
+}
+
+#footer img {
+    margin-left: 30px;
+}
+
