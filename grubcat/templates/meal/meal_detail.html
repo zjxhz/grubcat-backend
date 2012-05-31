@@ -4,6 +4,34 @@
 {% block page_css %}
     <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
     <link href="{{ STATIC_URL }}css/meal-detail.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .ui-widget-overlay
+        {
+            /*background-color: #000000;*/
+        }
+        .ui-dialog-titlebar{
+            display: none;
+        }
+    </style>
+{% endblock %}
+{% block page_js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.20.custom.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var $menuDialog = $("#menu-popup").dialog({
+                modal:true,
+                autoOpen:false,
+                resizable:false
+            });
+            $(".ui-widget-overlay").live("click", function(){
+                $menuDialog.dialog( "close" );
+            });
+            $("#show-menu-link").click(function () {
+                $menuDialog.dialog( "open" );
+            })
+        })
+    </script>
 {% endblock %}
 {% block main %}
     <div id="meal-page">
@@ -37,7 +65,7 @@
                     </div>
                     <span class="date">{{ meal.time|date:"n" }}月{{ meal.time|date:"j" }}日 {{ meal.time|date:"D" }}
                     <br/>{{ meal.time|date:"G:i " }}</span>
-                    <a href="#" class="show-menu">查看菜单</a>
+                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>
                 </div>
                 <div id="meal-img-wrapper">
                     <img alt="{{ meal.topic }}" id="meal-photo"
@@ -47,11 +75,11 @@
                 <div class="clear-fix"></div>
             </div>
             <div id="users">
-            {% if meal.actual_persons %}
-                <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
-            {% else %}
-                <h1>现在还没有人参加饭局，赶快预定吧！</h1>
-            {% endif %}
+                {% if meal.actual_persons %}
+                    <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
+                {% else %}
+                    <h1>现在还没有人参加饭局，赶快预定吧！</h1>
+                {% endif %}
                 {% for user in meal.participants.all %}
                     <div class="user-wrapper">
                         <h3 class="name">{{ user.user.username }}</h3>
@@ -68,6 +96,9 @@
                 {% endfor %}
 
             </div>
+        </div>
+        <div id="menu-popup">
+            这是菜单
         </div>
         <div class="sidebar">
             <div class="faq">
