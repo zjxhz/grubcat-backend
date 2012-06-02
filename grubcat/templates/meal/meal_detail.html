@@ -2,34 +2,55 @@
 {% load staticfiles %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-    <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="{{ STATIC_URL }}css/meal-detail.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}css/meal-detail.css" media="screen" rel="stylesheet" type="text/css"/>
+    {#    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">#}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>
     <style type="text/css">
-        .ui-widget-overlay
-        {
-            /*background-color: #000000;*/
-        }
-        .ui-dialog-titlebar{
-            display: none;
+            /* .ui-widget-overlay {
+                background-color: #222;
+                opacity: .90;
+                filter: Alpha(Opacity = 90);
+                cursor: pointer;
+            }
+
+            .ui-dialog {
+                padding: 0;
+            }
+
+            .ui-dialog-titlebar {
+                display: none;
+            }*/
+        #cboxOverlay{
+            background-color: #222;
         }
     </style>
 {% endblock %}
 {% block page_js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.20.custom.min.js"></script>
+    {#    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.20.custom.min.js"></script>#}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
     <script type="text/javascript">
         $(function () {
-            var $menuDialog = $("#menu-popup").dialog({
+
+
+            $.colorbox({inline:true, href:"#menu-popup", width:500,open:true,close:""});
+                        $("#show-menu-link").click(function () {
+             $.colorbox({inline:true, href:"#menu-popup", width:500,open:true,close:""});
+             return false;
+             })
+          /*  var $menuDialog = $("#menu-popup").dialog({
                 modal:true,
                 autoOpen:false,
+                width:450,
+                minHeight:800,
                 resizable:false
             });
-            $(".ui-widget-overlay").live("click", function(){
-                $menuDialog.dialog( "close" );
+            $(".ui-widget-overlay").live("click", function () {
+                $menuDialog.dialog("close");
             });
             $("#show-menu-link").click(function () {
-                $menuDialog.dialog( "open" );
-            })
+                $menuDialog.dialog("open");
+            })*/
         })
     </script>
 {% endblock %}
@@ -97,8 +118,25 @@
 
             </div>
         </div>
-        <div id="menu-popup">
-            这是菜单
+        <div style="display: none">
+            <div id="menu-popup">
+                <div id="menu-container">
+                    <div class="ribbon ribbon-menu ribbon-notail">
+                        <div class="ribbon-right"></div>
+                        <div class="ribbon-title">
+                            Entrees&nbsp;
+                        </div>
+                    </div>
+
+                    <div class="content italic">
+                        {% for dish in meal.order.dishes.all %}
+                            <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
+                            <div class="dish-content"><h3>{{ dish.name }}</h3></div>
+                        {% endfor %}
+                        <div class="clear-fix"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="sidebar">
             <div class="faq">

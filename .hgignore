@@ -3,4 +3,3 @@ syntax: glob
 
 *.pyc
 .idea/*
-grubcat/settings2.py

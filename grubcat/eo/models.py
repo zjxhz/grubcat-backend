@@ -92,7 +92,7 @@ class DishTag(models.Model):
 class DishCategory(models.Model):
     menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(max_length=45)
-    parent_category = models.ForeignKey('self', null=True)
+    parent_category = models.ForeignKey('self', null=True) #not used temporary
     def __unicode__(self):
         return u'%s' % (self.name)
     class Meta:
