@@ -21,7 +21,7 @@ from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order, \
 from grubcat.eo.forms import *
 import simplejson
 import sys
-import settings
+from django.conf import settings    
 
 def hello(request):
     session = request.session
