@@ -18,7 +18,7 @@ from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant
     accept_or_reject_meal_invitations, img_test, upload_app, add_dish
 from grubcat.eo.db import *
 from grubcat.eo.views import *
-import settings
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 admin.autodiscover()
