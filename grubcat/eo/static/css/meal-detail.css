@@ -309,3 +309,71 @@ img.user-pic {
     background: #E5E5E5;
     margin-top: -2px;
 }
+
+#menu-popup.ui-widget-content {
+    background-color: white;
+}
+
+#menu-popup .ribbon-menu {
+    position: relative;
+    width: 400px;
+    height: 41px;
+    margin-top: 10px;
+    background: #8DC641;
+    margin-left: 4px;
+    -webkit-box-shadow: inset 41px 0 19px -38px rgba(0,0,0,0.6);
+}
+
+#menu-popup .ribbon-right {
+    width: 15px;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    right: -15px;
+    background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/ribbons/green_ribbon_right-8bcf780b22c077dbe61e227fecf905d1.gif") no-repeat;
+}
+
+#menu-popup .ribbon-title {
+    position: relative;
+    top: 10px;
+    text-transform: none;
+    font-size: 20px;
+    padding: 0px 30px 0px 30px;
+    color: white;
+    font-family: georgia,serif;
+    font-style: italic;
+}
+
+#menu-popup .content {
+    padding: 5px 30px 0px 30px;
+    font-size: 15px;
+    color: #666;
+    /*width: 500px;*/
+}
+
+#menu-popup .content h3 {
+    color: #222;
+    font-size: 16px;
+    padding: 10px 0px 5px 0px;
+    font-style: normal;
+    clear: right;
+}
+#menu-popup .content  p {
+    margin-top: 0px;
+    font-size: 14px;
+    padding-left: 5px;
+    clear: right;
+}
+
+.dish-pic{
+    float: left;
+    clear: left;
+    width: 55px;
+}
+.dish-content{
+    width: 400px;
+    float: left;
+}
+#menu-popup.ui-dialog-content{
+    padding: 0;
+}
