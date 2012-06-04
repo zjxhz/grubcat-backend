@@ -51,7 +51,7 @@
 #meal-page .sidebar {
     float: right;
     width: 250px;
-    padding: 0px 17px 9px 9px;
+    padding: 0 17px 9px 9px;
     border-left: 1px solid #BBB;
     margin-right: -13px;
     background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/5_percent_dark_bg-f7e0b46ba865187843637b4898fba798.png");
@@ -105,13 +105,14 @@
 
 .user-wrapper:hover {
     border: 1px solid #bbb;
-    -webkit-box-shadow: inset 0 0px 6px #ddd;
+    -webkit-box-shadow: inset 0 0 6px #ddd;
 }
 
 #title h1 {
     margin-bottom: 10px;
     font-size: 190%;
     text-align: left;
+    font-weight: bold;
 }
 
 #resturant-location {
@@ -176,7 +177,7 @@ a.map {
 
 #creator:hover {
     border: 1px solid #bbb;
-    -webkit-box-shadow: inset 0 0px 6px #bbb;
+    -webkit-box-shadow: inset 0 0 6px #bbb;
 }
 
 #creator img {
@@ -207,7 +208,7 @@ a.map {
     font-weight: bold;
     text-transform: uppercase;
     box-shadow: 0 0 8px #888;
-    text-shadow: 0px 1px 1px black;
+    text-shadow: 0 1px 1px black;
     border: 2px solid #EEE;
     text-align: center
 }
@@ -249,6 +250,8 @@ a.map {
 
 #users h1 {
     margin-bottom: 8px;
+    font-size: 1.6em;
+    font-weight: bold;
 }
 
 h3.name {
@@ -268,7 +271,7 @@ span.work {
 
 img.user-pic {
     margin-left: 8px;
-    box-shadow: 0 0px 4px #444;
+    box-shadow: 0 0 4px #444;
 }
 
 .speech-outter {
@@ -328,7 +331,7 @@ img.user-pic {
     width: 15px;
     height: 100%;
     position: absolute;
-    top: 0px;
+    top: 0;
     right: -15px;
     background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/ribbons/green_ribbon_right-8bcf780b22c077dbe61e227fecf905d1.gif") no-repeat;
 }
@@ -338,14 +341,14 @@ img.user-pic {
     top: 10px;
     text-transform: none;
     font-size: 20px;
-    padding: 0px 30px 0px 30px;
+    padding: 0 30px 0 30px;
     color: white;
     font-family: georgia,serif;
     font-style: italic;
 }
 
 #menu-popup .content {
-    padding: 5px 30px 0px 30px;
+    padding: 5px 30px 0 30px;
     font-size: 15px;
     color: #666;
     /*width: 500px;*/
@@ -354,12 +357,12 @@ img.user-pic {
 #menu-popup .content h3 {
     color: #222;
     font-size: 16px;
-    padding: 10px 0px 5px 0px;
+    padding: 10px 0 5px 0;
     font-style: normal;
     clear: right;
 }
 #menu-popup .content  p {
-    margin-top: 0px;
+    margin-top: 0;
     font-size: 14px;
     padding-left: 5px;
     clear: right;
