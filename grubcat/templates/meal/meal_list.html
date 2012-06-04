@@ -21,7 +21,7 @@
     <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
     <div id="meal-list">
         {% for meal in meal_list %}
-            <div class="meal-cell">
+            <div class="meal-cell clearfix">
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
                 <div class="meal-img-wrapper">
                     <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
@@ -35,15 +35,14 @@
                 </div>
                 <div class="meal-info">
                     <div class="meal-location"><span>Mission</span></div>
-                    <div class="org">
+                    <div >
                         <img width="30px" height="30px" alt="Social San Francisco"
                              src="{{ STATIC_URL }}img/location.jpg"
                                 >
                         <span>Social San Francisco</span></div>
-                    <p class="org-info">{{ meal.introduction }}</p>
+                    <p>{{ meal.introduction }}</p>
                     <a href="{{ meal.get_absolute_url }}">加入饭局</a>
                 </div>
-                <div class="clear-fix"></div>
             </div>
             <div class="meal-cell-shadow">
             </div>
