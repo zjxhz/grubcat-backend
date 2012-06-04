@@ -1,7 +1,7 @@
 /*TODO remove height*/
 #meal-grub {
-    height: 263px;
     text-align: center;
+
 }
 
 #meal-container {
@@ -242,6 +242,11 @@ a.map {
     display: block;
     width: 90%;
     margin: 10px auto auto;
+}
+
+.price{
+    font-size: 146%;
+    font-weight: bold;
 }
 
 .show-menu {

@@ -186,7 +186,7 @@ class UserProfile(models.Model):
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField(null=True)
-    avatar = models.CharField(max_length=256) # photo
+    avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d',max_length=256) # photo
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)
