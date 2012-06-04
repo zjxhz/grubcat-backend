@@ -92,15 +92,17 @@
 
 .user-wrapper {
     float: left;
-    width: 335px;
-    height: 185px;
-    background: white;
-    border: 1px solid #DDD;
+    width: 208px;
+    height: 240px;
+    padding: 7px 5px;
     margin-right: 10px;
     margin-bottom: 10px;
+    border: 1px solid #DDD;
+    background: white;
     position: relative;
     z-index: 1;
     overflow: hidden;
+    text-align: center;
 }
 
 .user-wrapper:hover {
@@ -257,20 +259,18 @@ a.map {
 h3.name {
     font-size: 165%;
     display: block;
-    text-align: left;
-    padding: 10px 10px 5px;
 }
 
-span.work {
+.work {
     color: #444;
     display: block;
     margin-bottom: 10px;
-    text-align: left;
     margin-left: 10px;
 }
 
 img.user-pic {
-    margin-left: 8px;
+    margin: auto;
+    border: 2px solid white;
     box-shadow: 0 0 4px #444;
 }
 

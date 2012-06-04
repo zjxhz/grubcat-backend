@@ -21,7 +21,7 @@
             .ui-dialog-titlebar {
                 display: none;
             }*/
-        #cboxOverlay{
+        #cboxOverlay {
             background-color: #222;
         }
     </style>
@@ -33,23 +33,23 @@
         $(function () {
 
 
-                        $("#show-menu-link").click(function () {
-             $.colorbox({inline:true, href:"#menu-popup", width:500,close:""});
-             return false;
-             })
-          /*  var $menuDialog = $("#menu-popup").dialog({
-                modal:true,
-                autoOpen:false,
-                width:450,
-                minHeight:800,
-                resizable:false
-            });
-            $(".ui-widget-overlay").live("click", function () {
-                $menuDialog.dialog("close");
-            });
             $("#show-menu-link").click(function () {
-                $menuDialog.dialog("open");
-            })*/
+                $.colorbox({inline:true, href:"#menu-popup", width:500, close:""});
+                return false;
+            })
+            /*  var $menuDialog = $("#menu-popup").dialog({
+             modal:true,
+             autoOpen:false,
+             width:450,
+             minHeight:800,
+             resizable:false
+             });
+             $(".ui-widget-overlay").live("click", function () {
+             $menuDialog.dialog("close");
+             });
+             $("#show-menu-link").click(function () {
+             $menuDialog.dialog("open");
+             })*/
         })
     </script>
 {% endblock %}
@@ -67,12 +67,11 @@
                 <h1>{{ meal.topic }}</h1>
                 <span id="resturant-location">在 <a
                         class="resturant-name">{{ meal.restaurant.name }}</a> {{ meal.restaurant.address }} <a
-                        class="map">地图</a> </span>
+                        class="map">查看地图</a> </span>
             </div>
-            <div id="desc">
-                {{ meal.introduction }}
-            </div>
-            <div id="meal-container" class="box-seperator">
+            <p id="desc">{{ meal.introduction }}</p>
+
+            <div id="meal-container" class="clearfix box-seperator">
                 <div id="meal-grub">
                     <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
                        class="reserve-button">
@@ -80,21 +79,18 @@
                         <span>{{ meal.list_price }}RMB/人</span>
                     </a>
 
-                    <div class="what-is-fanju">
-                        你可以可以在享受美味的同时，认识有着相同兴趣的新朋友!<br>
-                    </div>
+                    <p class="what-is-fanju">你可以可以在享受美味的同时，认识有着相同兴趣的新朋友!<br></p>
                     <span class="date">{{ meal.time|date:"n" }}月{{ meal.time|date:"j" }}日 {{ meal.time|date:"D" }}
                     <br/>{{ meal.time|date:"G:i " }}</span>
-                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>
+{#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
                 </div>
                 <div id="meal-img-wrapper">
                     <img alt="{{ meal.topic }}" id="meal-photo"
                          src="{{ meal.photo.url }}"
                          width="385px">
                 </div>
-                <div class="clear-fix"></div>
             </div>
-            <div id="users">
+            <div id="users" class="clearfix">
                 {% if meal.actual_persons %}
                     <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
                 {% else %}
@@ -103,15 +99,11 @@
                 {% for user in meal.participants.all %}
                     <div class="user-wrapper">
                         <h3 class="name">{{ user.user.username }}</h3>
-                        <span class="work">{{ user.occupation|default:"" }}</span>
-                        <a href=""><img alt="{{ user.user.username }}" class="user-pic" height="110"
-                                        src="/media{{ user.avatar_default_if_none }}"
-                                        width="110"></a>
 
-                        <div class="speech-outter">
-                            <div class="speech-arrow"></div>
-                            <div class="speech-inner">我是第一次参加饭局，很好哦，享受美味的同时还可以认识些志同道合的朋友！这个是什么消息？</div>
-                        </div>
+                        <p class="work">{{ user.occupation|default:"" }}</p>
+                        <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
+                                        src="/media{{ user.avatar_default_if_none }}"></a>
+
                     </div>
                 {% endfor %}
 
@@ -127,12 +119,11 @@
                         </div>
                     </div>
 
-                    <div class="content italic">
+                    <div class="content italic clearfix">
                         {% for dish in meal.order.dishes.all %}
                             <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
                             <div class="dish-content"><h3>{{ dish.name }}</h3></div>
                         {% endfor %}
-                        <div class="clear-fix"></div>
                     </div>
                 </div>
             </div>
