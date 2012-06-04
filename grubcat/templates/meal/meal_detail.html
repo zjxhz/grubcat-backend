@@ -76,7 +76,7 @@
                     <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
                        class="reserve-button">
                         马上预定
-                        <span>{{ meal.list_price }}RMB/人</span>
+                        <span class="mt5">{{ meal.list_price }}RMB/人</span>
                     </a>
 
                     <p class="what-is-fanju">你可以可以在享受美味的同时，认识有着相同兴趣的新朋友!<br></p>
@@ -102,7 +102,7 @@
 
                         <p class="work">{{ user.occupation|default:"" }}</p>
                         <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
-                                        src="/media{{ user.avatar_default_if_none }}"></a>
+                                        src="{{ MEDIA_URL }}{{ user.avatar_default_if_none }}"></a>
 
                     </div>
                 {% endfor %}
