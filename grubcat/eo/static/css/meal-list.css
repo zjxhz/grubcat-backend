@@ -9,6 +9,8 @@
     position: relative;
     top: -10px;
     text-align: center;
+    font-size: 1.65em;
+    font-weight: bold;
 }
 
 #meal-list {
@@ -25,9 +27,15 @@
     background: #ffffff;
 }
 
-.meal-cell-title {
-    font-weight: bold;
+.meal-cell h2{
     padding: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+.meal-cell-title {
+    padding: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
 }
 
 .meal-cell-title a:hover {
@@ -104,7 +112,7 @@
 .sidebar {
     float: right;
     width: 250px;
-    margin: 10px 25px 10px 0px;
+    margin: 10px 25px 10px 0;
 }
 
 .sidebar-box {
@@ -130,21 +138,21 @@
 
 .sidebar-box-inner p {
     color: #333;
-    margin: 10px 0px;
+    margin: 10px 0;
     padding-left: 5px;
 }
 
 .sidebar-box-inner img {
-    margin: 0px 5px 5px 0px;
+    margin: 0 5px 5px 0;
 }
 
 #recently-grubbed img {
-    border: 0px solid #ddd;
+    border: 0 solid #ddd;
 }
 
 #faq .sidebar-box-inner a {
     display: block;
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 #faq .sidebar-box-inner p {
