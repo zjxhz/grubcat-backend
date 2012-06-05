@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-    <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="{{ STATIC_URL }}css/meal-list.css" media="screen" rel="stylesheet" type="text/css">
+    {% assets "meal_list_css" %}
+        <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
 {% endblock %}
 {% block page_js %}
     <script type="text/javascript">

@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'image_cropping',
     'tastypie',
+    'django_assets',
 #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
@@ -140,11 +141,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages"
     )
 
-from easy_thumbnails import defaults
+#from easy_thumbnails import defaults
 
-THUMBNAIL_PROCESSORS = (
-                           'image_cropping.thumbnail_processors.crop_corners',
-                           ) + defaults.PROCESSORS
+#THUMBNAIL_PROCESSORS = (
+#                           'image_cropping.thumbnail_processors.crop_corners',
+ #                          ) + defaults.PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 

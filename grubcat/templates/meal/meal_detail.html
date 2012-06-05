@@ -1,26 +1,13 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load staticfiles %}{% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-    <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="{{ STATIC_URL }}css/meal-detail.css" media="screen" rel="stylesheet" type="text/css"/>
+    {% assets "meal_detail_css" %}
+        <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
     {#    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">#}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>
+{#    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>#}
     <style type="text/css">
-            /* .ui-widget-overlay {
-                background-color: #222;
-                opacity: .90;
-                filter: Alpha(Opacity = 90);
-                cursor: pointer;
-            }
-
-            .ui-dialog {
-                padding: 0;
-            }
-
-            .ui-dialog-titlebar {
-                display: none;
-            }*/
         #cboxOverlay {
             background-color: #222;
         }
