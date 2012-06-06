@@ -1,0 +1,65 @@
+{% load staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <meta content="杭州饭局,饭局，社交午餐，社交晚餐" name="keywords">
+    <meta content="饭局可以让你在享受美食的同时，认识有着相同兴趣的新朋友!" name="description">
+    {% block page_css %}
+        {% assets "base_css" %}
+            <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+{#        <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">#}
+    {% endblock %}
+    <script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-32417479-1']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
+</head>
+<body>
+
+{% block nav %}
+    <div id="main-nav" class="logged-out">
+        <div class="nav-inner">
+            <div class="logo">
+                <a href="/">
+                    <img width="198px" height="58px" alt="饭局"
+                         src="{{ STATIC_URL }}img/site-logo.png"></a>
+            </div>
+            <ul>
+                <li {% ifequal request.path_info "/meals/" %}class="current"{% endifequal %}
+                    {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a href="/meals/">饭局</a></li>
+                <li><a href="#">小组</a></li>
+                <li><a href="#">成员</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+<div id="page-container">
+    <div id="container-upper"></div>
+    <div id="container-middle" class="clearfix">
+        {% block main %}{% endblock %}
+    </div>
+    <div id="footer">
+        <img alt="Footer_shadows"
+             src="{{ STATIC_URL }}img/footer-shadow.png">
+
+        <p style="margin:5px 40px ">This is footer.</p>
+    </div>
+</div>
+{% block base_js %}
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+{% endblock %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#main-nav .nav-inner ul li").not(".current").hover(function () {
+            $(this).addClass("current");
+        }, function () {
+            $(this).removeClass("current");
+        });
+    })
+</script>
+{% block page_js %}{% endblock %}
+</body>
+</html>

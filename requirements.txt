@@ -1,0 +1,10 @@
+django
+simplejson
+wadofstuff-django-serializers
+BeautifulSoup
+django-image-cropping
+pil
+easy_thumbnails
+mimeparse
+python-dateutil
+django-tastypie
