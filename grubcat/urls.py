@@ -74,7 +74,7 @@ urlpatterns = patterns('',
         model=Meal, context_object_name="meal", template_name="meal/meal_detail.html"), name='meal_view'),
     # Example:
     # (r'^grubcat/', include('grubcat.foo.urls')),
-
+    (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
