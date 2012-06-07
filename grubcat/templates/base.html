@@ -7,12 +7,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}{% endblock %}</title>
+    <meta content="杭州饭局,饭局，社交午餐，社交晚餐" name="keywords">
+    <meta content="饭局可以让你在享受美食的同时，认识有着相同兴趣的新朋友!" name="description">
     {% block page_css %}
         {% assets "base_css" %}
             <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
 {#        <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">#}
     {% endblock %}
+    <script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-32417479-1']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
 </head>
 <body>
 
