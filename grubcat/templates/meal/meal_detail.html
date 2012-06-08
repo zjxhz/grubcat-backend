@@ -6,7 +6,7 @@
         <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     {#    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">#}
-{#    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>#}
+    {#    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>#}
     <style type="text/css">
         #cboxOverlay {
             background-color: #222;
@@ -40,109 +40,107 @@
         })
     </script>
 {% endblock %}
-{% block main %}
-    <div id="meal-page">
-        <div id="meal-main">
-            <div id="title" class="box-seperator">
-                <a id="creator" href="/host">
-                    <span class="host-name">由 {{ meal.host.user.username }} 发起</span>
-                    <img alt="Los Angeles Entrepreneurs" height="30"
-                         src="https://s3.amazonaws.com/grub_group_pics/344/small/entrepreneur_logo.png?1336411246"
-                         width="30">
-                </a>
+{% block content %}
+    <div id="meal-main">
+        <div id="title" class="box-seperator">
+            <a id="creator" href="/host">
+                <span class="host-name">由 {{ meal.host.user.username }} 发起</span>
+                <img alt="Los Angeles Entrepreneurs" height="30"
+                     src="https://s3.amazonaws.com/grub_group_pics/344/small/entrepreneur_logo.png?1336411246"
+                     width="30">
+            </a>
 
-                <h1>{{ meal.topic }}</h1>
+            <h1>{{ meal.topic }}</h1>
                 <span id="resturant-location">在 <a
                         class="resturant-name">{{ meal.restaurant.name }}</a> {{ meal.restaurant.address }} <a
                         class="map">查看地图</a> </span>
-            </div>
-            <p id="desc">{{ meal.introduction }}</p>
+        </div>
+        <p id="desc">{{ meal.introduction }}</p>
 
-            <div id="meal-container" class="clearfix box-seperator">
-                <div id="meal-grub">
-                    <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
-                       class="reserve-button">
-                        马上预定
-                        <span class="mt5">{{ meal.list_price }}RMB/人</span>
-                    </a>
+        <div id="meal-container" class="clearfix box-seperator">
+            <div id="meal-grub">
+                <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
+                   class="reserve-button">
+                    马上预定
+                    <span class="mt5">{{ meal.list_price }}RMB/人</span>
+                </a>
 
-                    <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>
+                <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>
                     <span class="date">{{ meal.time|date:"n" }}月{{ meal.time|date:"j" }}日 {{ meal.time|date:"D" }}
                     <br/>{{ meal.time|date:"G:i " }}</span>
-{#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
-                </div>
-                <div id="meal-img-wrapper">
-                    <img alt="{{ meal.topic }}" id="meal-photo"
-                         src="{{ meal.photo.url }}"
-                         width="385px">
-                </div>
+                {#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
             </div>
-            <div id="users" class="clearfix">
-                {% if meal.actual_persons %}
-                    <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
-                {% else %}
-                    <h1>现在还没有人参加饭局，赶快预定吧！</h1>
-                {% endif %}
-                {% for user in meal.participants.all %}
-                    <div class="user-wrapper">
-                        <h3 class="name">{{ user.user.username }}</h3>
-
-                        <p class="work">{{ user.occupation|default:"" }}</p>
-                        <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
-                                        src="{{ MEDIA_URL }}{{ user.avatar_default_if_none }}"></a>
-
-                    </div>
-                {% endfor %}
-
+            <div id="meal-img-wrapper">
+                <img alt="{{ meal.topic }}" id="meal-photo"
+                     src="{{ meal.photo.url }}"
+                     width="385px">
             </div>
         </div>
-        <div style="display: none">
-            <div id="menu-popup">
-                <div id="menu-container">
-                    <div class="ribbon ribbon-menu ribbon-notail">
-                        <div class="ribbon-right"></div>
-                        <div class="ribbon-title">
-                            Entrees&nbsp;
-                        </div>
-                    </div>
+        <div id="users" class="clearfix">
+            {% if meal.actual_persons %}
+                <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
+            {% else %}
+                <h1>现在还没有人参加饭局，赶快预定吧！</h1>
+            {% endif %}
+            {% for user in meal.participants.all %}
+                <div class="user-wrapper">
+                    <h3 class="name">{{ user.user.username }}</h3>
 
-                    <div class="content italic clearfix">
-                        {% for dish in meal.order.dishes.all %}
-                            <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
-                            <div class="dish-content"><h3>{{ dish.name }}</h3></div>
-                        {% endfor %}
+                    <p class="work">{{ user.occupation|default:"" }}</p>
+                    <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
+                                    src="{{ MEDIA_URL }}{{ user.avatar_default_if_none }}"></a>
+
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div style="display: none">
+        <div id="menu-popup">
+            <div id="menu-container">
+                <div class="ribbon ribbon-menu ribbon-notail">
+                    <div class="ribbon-right"></div>
+                    <div class="ribbon-title">
+                        Entrees&nbsp;
                     </div>
+                </div>
+
+                <div class="content italic clearfix">
+                    {% for dish in meal.order.dishes.all %}
+                        <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
+                        <div class="dish-content"><h3>{{ dish.name }}</h3></div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        <div class="sidebar">
-            <div class="faq">
-                <b>What is Grubwithus?</b>
+    </div>
+    <div class="sidebar  fr">
+        <div class="faq">
+            <b>What is Grubwithus?</b>
 
-                <p>Grubwithus is a social dining network that brings people together over delicious food. It's not just
-                    about the food or the people, though - it's about making new friends and forming lasting offline
-                    relationships.</p>
-                <b>How does this work?</b>
+            <p>Grubwithus is a social dining network that brings people together over delicious food. It's not just
+                about the food or the people, though - it's about making new friends and forming lasting offline
+                relationships.</p>
+            <b>How does this work?</b>
 
-                <p>It's easy - just book a seat at this meal. On the day of the meal, you just show up, enjoy a great
-                    dinner (usually family-style), and leave with new friends.</p>
-                <b>Cancellation Policy</b>
+            <p>It's easy - just book a seat at this meal. On the day of the meal, you just show up, enjoy a great
+                dinner (usually family-style), and leave with new friends.</p>
+            <b>Cancellation Policy</b>
 
-                <p>We get it - plans change, emergencies pop up. You can cancel a reservation up until 72 hours before
-                    the schedule date and time of the meal for full Grub Credit. Feel free to email us at
-                    info@grubwithus.com or call the Grubwithus Hotline at 1-888-478-2857, and we'll take care of it.</p>
-                <b>Meet awesome people</b>
+            <p>We get it - plans change, emergencies pop up. You can cancel a reservation up until 72 hours before
+                the schedule date and time of the meal for full Grub Credit. Feel free to email us at
+                info@grubwithus.com or call the Grubwithus Hotline at 1-888-478-2857, and we'll take care of it.</p>
+            <b>Meet awesome people</b>
 
-                <p>Grubwithus is thriving with all sorts of interesting people. You might meet successful entrepreneurs,
-                    aspiring actors, world travelers, business moguls, authors... there's only one way to find out!</p>
-                <b>Hassle-free pricing</b>
+            <p>Grubwithus is thriving with all sorts of interesting people. You might meet successful entrepreneurs,
+                aspiring actors, world travelers, business moguls, authors... there's only one way to find out!</p>
+            <b>Hassle-free pricing</b>
 
-                <p>Your Grubwithus purchase includes food, tax, and gratuity. Drinks can be purchased separately at the
-                    meal.</p>
-                <b>Book early to save</b>
+            <p>Your Grubwithus purchase includes food, tax, and gratuity. Drinks can be purchased separately at the
+                meal.</p>
+            <b>Book early to save</b>
 
-                <p>Book early to save money! With each reservation, the meal price increases.</p>
-            </div>
+            <p>Book early to save money! With each reservation, the meal price increases.</p>
         </div>
     </div>
 {% endblock %}

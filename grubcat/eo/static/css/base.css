@@ -588,8 +588,9 @@ img {
 }
 
 #main-nav {
-    background: url("../img/nav-background.png");
+    background: url("../img/nav-background.png?s");
     text-align: center;
+    _overflow:hidden;
     z-index: 999;
     width: 100%;
     top: 0;
@@ -647,21 +648,27 @@ img {
 }
 
 #page-container {
+    position: relative;
+    _margin-top:-50px;
 }
 
 #container-upper {
-    width: 1000px;
+    width: 1007px;
     height: 42px;
     margin: 50px auto 0 auto;
     background: url(../img/container_upper_shadower.png);
-    padding-left: 10px
 }
 
 #container-middle {
     background: url("../img/container_background.png");
     margin: 0 auto;
-    width: 1000px;
-    padding-left: 10px
+    width: 1007px;
+    height: 1%;
+}
+
+.content{
+    margin-left: 25px;
+    width: 983px;
 }
 
 .date-wrapper {
@@ -815,8 +822,7 @@ input[type="text"].cart_day {
 #footer {
     height: 150px;
     margin: 0 auto;
-    width: 1000px;
-    padding-left: 10px;
+    width: 1007px;
     background: url("../img/container_background.png");
 }
 

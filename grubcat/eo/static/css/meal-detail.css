@@ -13,19 +13,13 @@
     margin-right: -10px;
 }
 
-#meal-page {
-    width: 980px;
-}
-
 .box-seperator {
     border-bottom: 1px solid #bbb;
 }
 
 #meal-main {
     float: left;
-    width: 685px;
-    padding: 0 9px;
-    margin-left: 6px;
+    width: 690px;
     margin-top: -18px;
 }
 
@@ -48,21 +42,20 @@
     height: 255px;
 }
 
-#meal-page .sidebar {
+.sidebar {
     float: right;
     width: 250px;
-    padding: 0 17px 9px 9px;
+    padding: 0 25px 9px 9px;
     border-left: 1px solid #BBB;
-    margin-right: -13px;
     background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/5_percent_dark_bg-f7e0b46ba865187843637b4898fba798.png");
     margin-top: -23px;
 }
 
-#meal-page .faq {
+.faq {
     margin-top: 15px;
 }
 
-#meal-page .faq b {
+.faq b {
     text-decoration: none;
     margin-bottom: 10px;
     font-size: 115%;
@@ -70,7 +63,7 @@
     text-transform: uppercase;
 }
 
-#meal-page .faq p {
+.faq p {
     margin-top: 4px;
     margin-bottom: 10px;
     color: #333;
@@ -83,6 +76,7 @@
     position: relative;
     margin: 5px 0 15px 0;
     padding-bottom: 10px;
+    zoom:1;
 }
 
 #desc {
@@ -163,7 +157,7 @@ a.map {
 #creator {
     display: block;
     float: right;
-    padding: 11px 6px ;
+    padding: 11px 6px;
     border: 1px solid #CCC;
     background: #EEE;
     color: #444;
@@ -171,11 +165,10 @@ a.map {
     vertical-align: middle;
 }
 
-.host-name{
+.host-name {
     float: left;
     padding-right: 37px;
 }
-
 
 #creator:hover {
     border: 1px solid #bbb;
@@ -194,6 +187,7 @@ a.map {
     display: block;
     padding: 8px 0;
     width: 250px;
+    _background: #42A621;
     background: -moz-linear-gradient(top, #57D62D 0%, #42A621 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #57D62D), color-stop(100%, #42A621));
     background: -webkit-linear-gradient(top, #57D62D 0%, #42A621 100%);
@@ -244,7 +238,7 @@ a.map {
     margin: 10px auto auto;
 }
 
-.price{
+.price {
     font-size: 146%;
     font-weight: bold;
 }
@@ -253,6 +247,10 @@ a.map {
     font-size: 146%;
     font-weight: bold;
     color: #20538C;
+}
+
+#users{
+    width:100%;
 }
 
 #users h1 {
@@ -329,7 +327,7 @@ img.user-pic {
     margin-top: 10px;
     background: #8DC641;
     margin-left: 4px;
-    -webkit-box-shadow: inset 41px 0 19px -38px rgba(0,0,0,0.6);
+    -webkit-box-shadow: inset 41px 0 19px -38px rgba(0, 0, 0, 0.6);
 }
 
 #menu-popup .ribbon-right {
@@ -348,7 +346,7 @@ img.user-pic {
     font-size: 20px;
     padding: 0 30px 0 30px;
     color: white;
-    font-family: georgia,serif;
+    font-family: georgia, serif;
     font-style: italic;
 }
 
@@ -366,6 +364,7 @@ img.user-pic {
     font-style: normal;
     clear: right;
 }
+
 #menu-popup .content  p {
     margin-top: 0;
     font-size: 14px;
@@ -373,15 +372,17 @@ img.user-pic {
     clear: right;
 }
 
-.dish-pic{
+.dish-pic {
     float: left;
     clear: left;
     width: 55px;
 }
-.dish-content{
+
+.dish-content {
     width: 400px;
     float: left;
 }
-#menu-popup.ui-dialog-content{
+
+#menu-popup.ui-dialog-content {
     padding: 0;
 }

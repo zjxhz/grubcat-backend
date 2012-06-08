@@ -1,7 +1,6 @@
 #meal-list-city {
     border-bottom: 1px solid #bbb;
-    width: 970px;
-    margin-left: 8px;
+    width: 960px;
 
 }
 
@@ -15,12 +14,12 @@
 
 #meal-list {
     float: left;
-    width: 720px;
+    width: 707px;
 }
 
 .meal-cell {
     border: 1px solid #DDD;
-    margin: 10px 10px 30px 15px;
+    margin: 10px 10px 30px 0px;
     padding-right: 15px;
     position: relative;
     bottom: 0;
@@ -45,8 +44,8 @@
 .meal-img-wrapper {
     height: 210px;
     width: 376px;
-    float: left;
     position: relative;
+
 }
 
 .meal-img-wrapper a img {
@@ -81,6 +80,10 @@
     width: 30px;
 }
 
+.host img,.host span{
+    vertical-align: middle;
+}
+
 .meal-info .org span {
     line-height: 30px;
     margin-left: 5px;
@@ -113,6 +116,7 @@
     float: right;
     width: 250px;
     margin: 10px 25px 10px 0;
+    display: inline;
 }
 
 .sidebar-box {
