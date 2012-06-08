@@ -19,13 +19,13 @@
         })
     </script>
 {% endblock %}
-{% block main %}
+{% block content %}
     <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
     <div id="meal-list">
         {% for meal in meal_list %}
             <div class="meal-cell clearfix">
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
-                <div class="meal-img-wrapper">
+                <div class="meal-img-wrapper fl">
                     <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
 
                     <div class="date-wrapper">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="meal-info">
                     <div class="meal-location"><span>Mission</span></div>
-                    <div >
+                    <div class="host">
                         <img width="30px" height="30px" alt="Social San Francisco"
                              src="{{ STATIC_URL }}img/location.jpg"
                                 >
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                     </div>
-                    <input name="commit" type="submit" value="Create a Meal!">
+                    <input name="commit" class="button" type="submit" value="Create a Meal!">
                 </form>
             </div>
         </div>
