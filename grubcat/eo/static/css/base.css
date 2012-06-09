@@ -830,3 +830,5 @@ input[type="text"].cart_day {
     margin-left: 30px;
 }
 
+/*use DD_belatedPNG to fix IE png bug*/
+.png-fix{}

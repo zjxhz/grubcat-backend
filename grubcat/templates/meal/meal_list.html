@@ -36,14 +36,14 @@
                     <div class="time">{{ meal.time|date:"G:i " }}</div>
                 </div>
                 <div class="meal-info">
-                    <div class="meal-location"><span>Mission</span></div>
+                    <div class="meal-location png-fix"><span>Mission</span></div>
                     <div class="host">
                         <img width="30px" height="30px" alt="Social San Francisco"
                              src="{{ STATIC_URL }}img/location.jpg"
                                 >
-                        <span>Social San Francisco</span></div>
+                        <span class="png-fix">Social San Francisco</span></div>
                     <p>{{ meal.introduction }}</p>
-                    <a href="{{ meal.get_absolute_url }}">加入饭局</a>
+                    <a class="png-fix" href="{{ meal.get_absolute_url }}">加入饭局</a>
                 </div>
             </div>
             <div class="meal-cell-shadow">
