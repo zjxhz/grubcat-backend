@@ -17,7 +17,7 @@
      try{
     document.execCommand("BackgroundImageCache", false, true);
     }catch(e){}
-    DD_belatedPNG.fix("#container-middle,#creator img, #container-upper,.meal-info a,.meal-location,.meal-location span,#footer, .log img,.sidebar,li.current a, img,background");
+    DD_belatedPNG.fix(".png-fix");
     </script>
 <![endif]-->
     {% block page_css %}
@@ -34,7 +34,7 @@
         <div class="nav-inner">
             <div class="logo">
                 <a href="/">
-                    <img width="198px" height="58px" alt="饭局"
+                    <img class="png-fix" width="198px" height="58px" alt="饭局"
                          src="{{ STATIC_URL }}img/site-logo.png"></a>
             </div>
             <ul>
@@ -47,11 +47,11 @@
     </div>
 {% endblock %}
 <div id="page-container">
-    <div id="container-upper"></div>
-    <div id="container-middle"  >
+    <div id="container-upper" class="png-fix"></div>
+    <div id="container-middle" class="png-fix"  >
         <div class="content clearfix">{% block content %}{% endblock %}</div>
     </div>
-    <div id="footer">
+    <div id="footer" class="png-fix">
         <img alt="Footer_shadows"
              src="{{ STATIC_URL }}img/footer-shadow.png">
 
