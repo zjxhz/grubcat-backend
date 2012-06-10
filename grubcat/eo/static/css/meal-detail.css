@@ -20,7 +20,6 @@
 #meal-main {
     float: left;
     width: 690px;
-    margin-top: -18px;
 }
 
 #meal-grub {
@@ -45,15 +44,10 @@
 .sidebar {
     float: right;
     width: 250px;
-    padding: 0 25px 9px 9px;
+    padding: 0 0 9px 9px;
     border-left: 1px solid #BBB;
-    background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/5_percent_dark_bg-f7e0b46ba865187843637b4898fba798.png");
-    margin-top: -23px;
 }
 
-.faq {
-    margin-top: 15px;
-}
 
 .faq b {
     text-decoration: none;
@@ -74,7 +68,7 @@
 
 #title {
     position: relative;
-    margin: 5px 0 15px 0;
+    margin-bottom: 15px;
     padding-bottom: 10px;
     zoom:1;
 }

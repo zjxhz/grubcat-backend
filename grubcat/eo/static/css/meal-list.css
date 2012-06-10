@@ -1,6 +1,5 @@
 #meal-list-city {
     border-bottom: 1px solid #bbb;
-    width: 960px;
 
 }
 
@@ -115,7 +114,7 @@
 .sidebar {
     float: right;
     width: 250px;
-    margin: 10px 25px 10px 0;
+    margin: 10px 0 10px 0;
     display: inline;
 }
 
