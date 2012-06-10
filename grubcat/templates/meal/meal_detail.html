@@ -1,44 +1,15 @@
 {% extends "base.html" %}
-{% load staticfiles %}{% load assets %}
+{% load static from staticfiles %}{% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
     {% assets "meal_detail_css" %}
-        <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
-    {#    <link href="{{ STATIC_URL }}css/ui/jquery-ui-1.8.20.custom.css" media="screen" rel="stylesheet" type="text/css">#}
-    {#    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" media="screen" rel="stylesheet" type="text/css"/>#}
     <style type="text/css">
         #cboxOverlay {
             background-color: #222;
         }
     </style>
-{% endblock %}
-{% block page_js %}
-    {#    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.20.custom.min.js"></script>#}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-
-
-            $("#show-menu-link").click(function () {
-                $.colorbox({inline:true, href:"#menu-popup", width:500, close:""});
-                return false;
-            })
-            /*  var $menuDialog = $("#menu-popup").dialog({
-             modal:true,
-             autoOpen:false,
-             width:450,
-             minHeight:800,
-             resizable:false
-             });
-             $(".ui-widget-overlay").live("click", function () {
-             $menuDialog.dialog("close");
-             });
-             $("#show-menu-link").click(function () {
-             $menuDialog.dialog("open");
-             })*/
-        })
-    </script>
 {% endblock %}
 {% block content %}
     <div id="meal-main">
@@ -114,7 +85,7 @@
             </div>
         </div>
     </div>
-    <div class="sidebar  fr png-fix">
+    <div class="sidebar fr">
         <div class="faq">
             <b>What is Grubwithus?</b>
 

@@ -1,10 +1,10 @@
 import django
 from django.conf.urls.defaults import *
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
 from eo.apis import v1_api
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant,\
@@ -16,7 +16,6 @@ from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant
     get_recommended_following, register, messages, get_meals, get_meal,\
     meal_participants, view_or_send_meal_invitations,\
     accept_or_reject_meal_invitations, img_test, upload_app, add_dish
-from grubcat.eo.db import *
 from grubcat.eo.views import *
 from django.conf import settings
 
@@ -84,9 +83,7 @@ urlpatterns = patterns('',
 )
 
 if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT, }), )
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += staticfiles_urlpatterns()
 
 

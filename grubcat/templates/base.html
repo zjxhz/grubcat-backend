@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static from staticfiles %}
 {% load assets %}
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -11,7 +11,7 @@
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
     <!--[if IE 6]>
     {% assets "dd_fixPNG_js" %}
-        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
      try{
@@ -22,11 +22,11 @@
 <![endif]-->
     {% block page_css %}
         {% assets "base_css" %}
-            <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+            <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
-{#        <link href="{{ STATIC_URL }}css/base.css" media="screen" rel="stylesheet" type="text/css">#}
     {% endblock %}
-    </head>
+    {% include "ga.html" %}
+</head>
 <body>
 
 {% block nav %}
@@ -35,7 +35,7 @@
             <div class="logo">
                 <a href="/">
                     <img class="png-fix" width="198px" height="58px" alt="饭局"
-                         src="{{ STATIC_URL }}img/site-logo.png"></a>
+                         src="{% static 'img/site-logo.png' %}"></a>
             </div>
             <ul>
                 <li {% ifequal request.path_info "/meals/" %}class="current"{% endifequal %}
@@ -48,15 +48,15 @@
 {% endblock %}
 <div id="page-container">
     <div id="container-upper" class="png-fix"></div>
-    <div id="container-middle" class="png-fix"  >
+    <div id="container-middle" class="png-fix">
         <div class="content clearfix">{% block content %}{% endblock %}</div>
     </div>
-    <div id="footer" class="png-fix">
-        <img alt="Footer_shadows"
-             src="{{ STATIC_URL }}img/footer-shadow.png">
-
-        <p style="margin:5px 40px "></p>
-    </div>
+    {% block footer %}
+        <div id="footer" class="png-fix">
+            <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">
+            <p style="margin:5px 40px "></p>
+        </div>
+    {% endblock %}
 </div>
 {% block base_js %}
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
@@ -71,6 +71,5 @@
     })
 </script>
 {% block page_js %}{% endblock %}
-<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-32417479-1']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
 </body>
 </html>

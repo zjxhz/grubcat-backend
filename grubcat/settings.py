@@ -1,24 +1,25 @@
 # Django settings for grubcat project.
 import os
+from webassets.env import Environment
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-# ('Your Name', 'your_email@domain.com'),
-)
+    ('Peter', 'ddsfeifei@gmail.com'),
+    )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'fanju',                      # Or path to database file if using sqlite3.
+        'NAME': 'fanju', # Or path to database file if using sqlite3.
         'USER': 'fanju',
         'PASSWORD': 'fanju',
         'HOST': '',
         'PORT': '',
-        'OPTIONS': {"init_command": "SET storage_engine=INNODB",}
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
     }
 }
 #DATABASES = {
@@ -71,6 +72,8 @@ MEDIA_URL = '/media/'
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/home/fanju/webapps/static'
 
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
+
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
@@ -82,6 +85,13 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_assets.finders.AssetsFinder'
+    # other finders..
+    )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -96,7 +106,7 @@ MIDDLEWARE_CLASSES = (
     #    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
 ROOT_URLCONF = 'grubcat.urls'
@@ -106,7 +116,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
-#    'path/to/debug_toolbar/templates',
+    #    'path/to/debug_toolbar/templates',
     )
 
 INSTALLED_APPS = (
@@ -122,7 +132,7 @@ INSTALLED_APPS = (
     'image_cropping',
     'tastypie',
     'django_assets',
-#    'debug_toolbar'
+    #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     )
@@ -145,10 +155,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 #THUMBNAIL_PROCESSORS = (
 #                           'image_cropping.thumbnail_processors.crop_corners',
- #                          ) + defaults.PROCESSORS
+#                          ) + defaults.PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
 API_LIMIT_PER_PAGE = 5
 
-#Debug-toolbar settings
+#don't auto compress css/jss files, use command by manual
+ASSETS_AUTO_BUILD = False
