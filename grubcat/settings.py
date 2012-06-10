@@ -2,8 +2,8 @@
 import os
 from webassets.env import Environment
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = True
+TEMPLATE_DEBUG = True
 
 ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
