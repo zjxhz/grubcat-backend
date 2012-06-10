@@ -2,7 +2,7 @@
 import os
 from webassets.env import Environment
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
