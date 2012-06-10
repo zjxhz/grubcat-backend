@@ -164,7 +164,7 @@ API_LIMIT_PER_PAGE = 5
 #don't auto compress css/jss files, use command by manual
 ASSETS_AUTO_BUILD = False
 
-LOGGING_ROOT = "/home/fanju/logs/"
+LOGGING_ROOT = "/home/fanju/logs/user/"
 
 LOGGING = {
     'version': 1,
