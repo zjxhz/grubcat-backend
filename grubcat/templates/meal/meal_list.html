@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load static from staticfiles %}
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
     {% assets "meal_list_css" %}
-        <link href="{{ ASSET_URL }}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 {% block page_js %}
@@ -25,6 +25,7 @@
         {% for meal in meal_list %}
             <div class="meal-cell clearfix">
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+
                 <div class="meal-img-wrapper fl">
                     <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
 
@@ -39,7 +40,7 @@
                     <div class="meal-location png-fix"><span>Mission</span></div>
                     <div class="host">
                         <img width="30px" height="30px" alt="Social San Francisco"
-                             src="{{ STATIC_URL }}img/location.jpg"
+                             src="{% static 'img/location.jpg' %}"
                                 >
                         <span class="png-fix">Social San Francisco</span></div>
                     <p>{{ meal.introduction }}</p>
