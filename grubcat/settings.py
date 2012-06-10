@@ -3,7 +3,7 @@ import os
 from webassets.env import Environment
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
