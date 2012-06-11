@@ -1,8 +1,8 @@
 {% extends "base-small.html" %}
-{% load static from staticfiles %}{% load assets %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
 {% block page_css %}
     {% assets "account_css" %}
-        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 

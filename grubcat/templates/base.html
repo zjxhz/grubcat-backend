@@ -1,4 +1,5 @@
-{% load static from staticfiles %}
+{% load static_asset %}
+{% load static %}
 {% load assets %}
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -11,7 +12,7 @@
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
     <!--[if IE 6]>
     {% assets "dd_fixPNG_js" %}
-        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
      try{
@@ -22,7 +23,7 @@
 <![endif]-->
     {% block page_css %}
         {% assets "base_css" %}
-            <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
     {% include "ga.html" %}
