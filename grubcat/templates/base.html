@@ -49,14 +49,19 @@
 <div id="page-container">
     <div id="container-upper" class="png-fix"></div>
     <div id="container-middle" class="png-fix">
-        <div class="content clearfix">{% block content %}{% endblock %}</div>
-    </div>
-    {% block footer %}
-        <div id="footer" class="png-fix">
-            <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">
-            <p style="margin:5px 40px "></p>
+        <div class="content clearfix">
+            {% block content %}{% endblock %}
         </div>
-    {% endblock %}
+        {% block footer %}
+            <div id="footer" class="png-fix">
+                <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">
+
+                <p style="margin:5px 40px "></p>
+            </div>
+        {% endblock %}
+    </div>
+
+    <div id="container-lower" class="png-fix"></div>
 </div>
 {% block base_js %}
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
