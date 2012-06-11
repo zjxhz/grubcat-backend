@@ -13,6 +13,10 @@ meal_detail_css = Bundle(
     'css/base.css', 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
+account_css = Bundle(
+    'css/base.css', 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+)
+
 dd_fixPNG_js = Bundle(
     'js/DD_belatedPNG_0.0.8a.js', filters='jsmin', output='gen/DD_belatedPNG_0.0.8a.%(version)s.js'
 )
@@ -20,4 +24,7 @@ dd_fixPNG_js = Bundle(
 register('base_css', base_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
+register('account_css', account_css)
+
+
 register('dd_fixPNG_js', dd_fixPNG_js)
