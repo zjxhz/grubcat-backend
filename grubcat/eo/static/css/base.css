@@ -662,7 +662,11 @@ img {
 
 #container-middle {
     background: url("../img/container_background.png");
-    margin: 0 auto;
+}
+
+#container-lower{
+    height: 41px;
+    background: url("../img/container_lower_shadower.png");
 }
 
 .content{
