@@ -1,0 +1,26 @@
+#page-container{
+    width:568px;
+}
+
+#container-middle{
+    background: url(../img/small-container-bg.png)
+}
+.content {
+    margin: 0 auto;
+    width: 63%;
+}
+
+label{
+    display: block;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+input{
+    height: 36px;
+    margin-bottom: 10px;
+}
+
+ul.socail-login li{
+    float:left;
+}

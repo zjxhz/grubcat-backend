@@ -588,7 +588,7 @@ img {
 }
 
 #main-nav {
-    background: url("../img/nav-background.png");
+    background: url("../img/main-nav-bg.png");
     text-align: center;
     _overflow:hidden;
     z-index: 999;
@@ -641,7 +641,7 @@ img {
 
 .nav-inner ul li.current a, .nav-inner ul li.current a:hover {
     color: white;
-    background: url("../img/nav-background.png");
+    background: url("../img/main-nav-bg.png");
     -moz-box-shadow: inset 0 0 10px #000;
     -webkit-box-shadow: inset 0 0 10px #000;
     box-shadow: inset 0 0 10px #000;
@@ -661,13 +661,29 @@ img {
 }
 
 #container-middle {
-    background: url("../img/container_background.png");
+    background: url("../img/container-bg.png");
 }
 
 #container-lower{
     height: 41px;
-    background: url("../img/container_lower_shadower.png");
+    background: url("../img/container-lower-bg.png");
 }
+
+.small-page #container-upper {
+    height: 56px;
+    margin-top: 73px;
+    background: url(../img/small-container-upper-bg.png);
+}
+
+.small-page #container-middle {
+    background: url("../img/small-container-bg.png");
+}
+
+.small-page #container-lower{
+    height: 61px;
+    background: url("../img/small-container-lower-bg.png");
+}
+
 
 .content{
     margin: auto 25px;
@@ -823,7 +839,6 @@ input[type="text"].cart_day {
 
 #footer {
     height: 150px;
-    background: url("../img/container_background.png");
 }
 
 #footer img {
