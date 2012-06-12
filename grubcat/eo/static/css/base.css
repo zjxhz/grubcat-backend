@@ -865,3 +865,10 @@ input[type="text"].cart_day {
 
 /*use DD_belatedPNG to fix IE png bug*/
 .png-fix{}
+
+
+/*form*/
+.errorlist{
+    color: red;
+    margin-bottom: 10px;
+}

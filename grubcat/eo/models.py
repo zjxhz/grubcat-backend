@@ -269,7 +269,7 @@ class Meal(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'meal_view', [str(self.id)]
+        return 'meal_detail', [str(self.id)]
 
     class Meta:
         db_table = u'meal'
