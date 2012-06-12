@@ -12,7 +12,7 @@
         <p class="error">Sorry, that's not a valid username or password</p>
     {% endif %}
 
-    <form action="" method="post">
+    <form class="login-form" action="" method="post">
         <label for="username">邮箱</label>
         <input type="text" name="username" value="" id="username">
         <label for="password">密码</label>
@@ -21,22 +21,19 @@
         <input type="hidden" name="next" value="{{ next|escape }}"/>
 
         <div class="remember-wrapper">
-            <input name="user[remember_me]" type="hidden" value="0"><input checked="checked" checked_value="1"
-                                                                           id="user_remember_me"
-                                                                           name="user[remember_me]" type="checkbox"
-                                                                           unchecked_value="0" value="1"> Remember me
+            <input name="user[remember_me]" type="hidden" value="0">
+            <input checked="checked" checked_value="1"
+                   id="user_remember_me"
+                   name="user[remember_me]" type="checkbox"
+                   unchecked_value="0" value="1"> 下次自动登录
         </div>
 
         <div class="sign-up-button">
-
             <input class="showloading button-signup" name="commit" type="submit" value="Login">
         </div>
-        <p style="text-align:center;margin-top:25px">
-
-            <b>
-                <a href="/users/password/new" class="hover-link">Forgot your password?</a>
-                or <a href="/signup" class="register_link_on_sign_in hover-link">Don't have an account? Sign Up!</a>
-            </b>
+        <p class="forget-password">
+            <a href="/users/password/new" class="hover-link">Forgot your password?</a>
+            or <a href="/signup" class="register_link_on_sign_in hover-link">Don't have an account? Sign Up!</a>
         </p>
         <img alt="Footer_shadows"
              src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/footer_shadows-1d8468b2c2845e22b76638c6ed59eb7a.png"
@@ -44,25 +41,28 @@
 
     </form>
 
-    <h2>or login through ...</h2>
-    <ul class="socail-login">
-    <li class="authentication-button">
-        <a id="facebook_login_button" href="#"><img alt="facebook"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/facebook_64-26b08d6a1ce2ec9aabbc9021617b4f12.png"
-                                                    width="55"></a>
-    </li>
-    <li class="authentication-button">
-        <a id="twitter_login_button" href="#"><img alt="twitter"
-                                                   src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/twitter_64-6c0e801dae1243298c9d9bc288576bb8.png"
-                                                   width="55"></a>
-    </li>
-    <li class="authentication-button">
-        <a id="google_login_button" href="#"><img alt="google"
-                                                  src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/google_64-f11a4ec05f4813fffe5b629a1c50687a.png"
-                                                  width="55"></a>
+    <div class="social-login clearfix">
 
-    </li>
-    </ul>
+        <h2>or login through ...</h2>
+        <ul>
+            <li class="authentication-button">
+                <a id="facebook_login_button" href="#"><img alt="facebook"
+                                                            src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/facebook_64-26b08d6a1ce2ec9aabbc9021617b4f12.png"
+                                                            width="55"></a>
+            </li>
+            <li class="authentication-button">
+                <a id="twitter_login_button" href="#"><img alt="twitter"
+                                                           src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/twitter_64-6c0e801dae1243298c9d9bc288576bb8.png"
+                                                           width="55"></a>
+            </li>
+            <li class="authentication-button">
+                <a id="google_login_button" href="#"><img alt="google"
+                                                          src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/authbuttons/google_64-f11a4ec05f4813fffe5b629a1c50687a.png"
+                                                          width="55"></a>
+
+            </li>
+        </ul>
+    </div>
 
 {% endblock %}
 
