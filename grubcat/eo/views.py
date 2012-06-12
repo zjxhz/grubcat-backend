@@ -1,18 +1,15 @@
 # Create your views here.
 from datetime import datetime
 from decimal import Decimal
-from django.contrib import auth
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy
 from django.db import transaction
-from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm,\
