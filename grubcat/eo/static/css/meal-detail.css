@@ -1,0 +1,382 @@
+/*TODO remove height*/
+#meal-grub {
+    text-align: center;
+
+}
+
+#meal-container {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+#users {
+    margin-right: -10px;
+}
+
+.box-seperator {
+    border-bottom: 1px solid #bbb;
+}
+
+#meal-main {
+    float: left;
+    width: 690px;
+}
+
+#meal-grub {
+    float: left;
+    margin: 0 12px 0 0;
+    width: 275px;
+    background: white;
+    border: 1px solid #BBB;
+}
+
+#meal-img-wrapper {
+    border: 1px solid #DDD;
+    float: left;
+    position: relative;
+}
+
+#meal-img-wrapper img {
+    border: 4px solid white;
+    height: 255px;
+}
+
+.sidebar {
+    float: right;
+    width: 250px;
+    padding: 0 0 9px 9px;
+    border-left: 1px solid #BBB;
+}
+
+
+.faq b {
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-size: 115%;
+    color: #20538C;
+    text-transform: uppercase;
+}
+
+.faq p {
+    margin-top: 4px;
+    margin-bottom: 10px;
+    color: #333;
+    padding-left: 5px;
+    line-height: 137%;
+    font-size: 120%;
+}
+
+#title {
+    position: relative;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    zoom:1;
+}
+
+#desc {
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.user-wrapper {
+    float: left;
+    width: 208px;
+    height: 240px;
+    padding: 7px 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #DDD;
+    background: white;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    text-align: center;
+}
+
+.user-wrapper:hover {
+    border: 1px solid #bbb;
+    -webkit-box-shadow: inset 0 0 6px #ddd;
+}
+
+#title h1 {
+    margin-bottom: 10px;
+    font-size: 190%;
+    text-align: left;
+    font-weight: bold;
+}
+
+#resturant-location {
+    color: #444;
+}
+
+a.resturant-name {
+    font-size: 13px;
+    color: black;
+    text-decoration: underline;
+}
+
+a.map {
+    text-decoration: none;
+    font-family: helvetica, arial, sans-serif;
+    font-style: normal;
+    text-align: center;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-size: 100%;
+    background: -moz-linear-gradient(top, white 0%, #DDD 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #DDD));
+    background: -webkit-linear-gradient(top, white 0%, #DDD 100%);
+    background: -o-linear-gradient(top, white 0%, #DDD 100%);
+    background: -ms-linear-gradient(top, white 0%, #DDD 100%);
+    background: linear-gradient(top, white 0%, #DDD 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#dddddd', GradientType = 0);
+    color: #333;
+
+    float: none;
+    display: inline;
+    text-decoration: none;
+    border: 0;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    background: #CCC;
+    color: #333;
+    font-weight: normal;
+    text-shadow: none;
+    padding: 3px 7px;
+    margin-left: 5px;
+}
+
+#creator {
+    display: block;
+    float: right;
+    padding: 11px 6px;
+    border: 1px solid #CCC;
+    background: #EEE;
+    color: #444;
+    font-size: 110%;
+    vertical-align: middle;
+}
+
+.host-name {
+    float: left;
+    padding-right: 37px;
+}
+
+#creator:hover {
+    border: 1px solid #bbb;
+    -webkit-box-shadow: inset 0 0 6px #bbb;
+}
+
+#creator img {
+    position: absolute;
+    margin-left: 5px;
+    top: 5px;
+    right: 5px;
+}
+
+.reserve-button {
+    margin: 15px auto;
+    display: block;
+    padding: 8px 0;
+    width: 250px;
+    _background: #42A621;
+    background: -moz-linear-gradient(top, #57D62D 0%, #42A621 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #57D62D), color-stop(100%, #42A621));
+    background: -webkit-linear-gradient(top, #57D62D 0%, #42A621 100%);
+    background: -o-linear-gradient(top, #57D62D 0%, #42A621 100%);
+    background: -ms-linear-gradient(top, #57D62D 0%, #42A621 100%);
+    background: linear-gradient(top, #57D62D 0%, #42A621 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#57D62D', endColorstr = '#42A621', GradientType = 0);
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 6px;
+    color: white;
+    font-size: 210%;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 0 8px #888;
+    text-shadow: 0 1px 1px black;
+    border: 2px solid #EEE;
+    text-align: center
+}
+
+.reserve-button span {
+    font-size: 60%;
+    display: block;
+    font-weight: normal;
+    text-transform: none;
+}
+
+.what-is-fanju {
+    display: block;
+    float: left;
+    text-align: left;
+    padding: 11px;
+    background: #F7FF69;
+    margin-bottom: 12px;
+    font-size: 120%;
+    line-height: 140%;
+}
+
+.date {
+    border-bottom: 0;
+    font-size: 146%;
+    font-weight: bold;
+    color: #333;
+    padding-bottom: 10px;
+    display: block;
+    width: 90%;
+    margin: 10px auto auto;
+}
+
+.price {
+    font-size: 146%;
+    font-weight: bold;
+}
+
+.show-menu {
+    font-size: 146%;
+    font-weight: bold;
+    color: #20538C;
+}
+
+#users{
+    width:100%;
+}
+
+#users h1 {
+    margin-bottom: 8px;
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+h3.name {
+    font-size: 165%;
+    display: block;
+}
+
+.work {
+    color: #444;
+    display: block;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+img.user-pic {
+    margin: auto;
+    border: 2px solid white;
+    box-shadow: 0 0 4px #444;
+}
+
+.speech-outter {
+    margin: 10px 9px 12px 0;
+    position: relative;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    width: 193px;
+    border: 1px solid #CCC;
+    float: right;
+}
+
+.speech-arrow {
+    width: 15px;
+    height: 15px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    background: #E5E5E5;
+    left: -5px;
+    top: 6px;
+}
+
+.speech-inner {
+    padding: 10px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    position: relative;
+    text-align: left;
+    font-size: 120%;
+    line-height: 130%;
+    overflow: hidden;
+    background: #E5E5E5;
+    margin-top: -2px;
+}
+
+#menu-popup.ui-widget-content {
+    background-color: white;
+}
+
+#menu-popup .ribbon-menu {
+    position: relative;
+    width: 400px;
+    height: 41px;
+    margin-top: 10px;
+    background: #8DC641;
+    margin-left: 4px;
+    -webkit-box-shadow: inset 41px 0 19px -38px rgba(0, 0, 0, 0.6);
+}
+
+#menu-popup .ribbon-right {
+    width: 15px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: -15px;
+    background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/ribbons/green_ribbon_right-8bcf780b22c077dbe61e227fecf905d1.gif") no-repeat;
+}
+
+#menu-popup .ribbon-title {
+    position: relative;
+    top: 10px;
+    text-transform: none;
+    font-size: 20px;
+    padding: 0 30px 0 30px;
+    color: white;
+    font-family: georgia, serif;
+    font-style: italic;
+}
+
+#menu-popup .content {
+    padding: 5px 30px 0 30px;
+    font-size: 15px;
+    color: #666;
+    /*width: 500px;*/
+}
+
+#menu-popup .content h3 {
+    color: #222;
+    font-size: 16px;
+    padding: 10px 0 5px 0;
+    font-style: normal;
+    clear: right;
+}
+
+#menu-popup .content  p {
+    margin-top: 0;
+    font-size: 14px;
+    padding-left: 5px;
+    clear: right;
+}
+
+.dish-pic {
+    float: left;
+    clear: left;
+    width: 55px;
+}
+
+.dish-content {
+    width: 400px;
+    float: left;
+}
+
+#menu-popup.ui-dialog-content {
+    padding: 0;
+}
