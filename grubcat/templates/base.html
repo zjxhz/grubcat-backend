@@ -26,7 +26,6 @@
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
-    {% include "ga.html" %}
 </head>
 <body>
 
@@ -87,5 +86,6 @@
     })
 </script>
 {% block page_js %}{% endblock %}
+{% include "ga.html" %}
 </body>
 </html>
