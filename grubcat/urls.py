@@ -34,8 +34,8 @@ urlpatterns = patterns('',
     ('^region/$', get_regions),
     ('^region/(\d+)/restaurant/$', get_restaurants_in_region),
     ('^search_restaurant_list/$', restaurantList),
-#    ('^user_login/$', user_login),
-#    ('^user_logout/$', user_logout),
+    #    ('^user_login/$', user_login),
+    #    ('^user_logout/$', user_logout),
     ('^test_make_order/$', test_make_order),
     ('^make_order/$', make_order),
     ('^order/$', get_orders),
@@ -54,7 +54,7 @@ urlpatterns = patterns('',
     ('^user/(\d+)/followers/$', followers),
     ('^user/(\d+)/following/recommendations/$', get_recommended_following),
     ('^user/(\d+)/messages/$', messages),
-    ('^meal/$', get_meals),
+    #    ('^meal/$', get_meals),
     #   ('^meal/(\d+)/$', get_meal),
     ('^meal/(\d+)/participants/$', meal_participants),
     ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
@@ -71,7 +71,7 @@ urlpatterns = patterns('',
     ######################below is used for website urls
     # meal
     url(r'^$', MealListView.as_view(), name="index"),
-    (r'^meals/$', MealListView.as_view()),
+    url(r'^meal/$', MealListView.as_view(), name="meal_list"),
     url(r'^meal/(?P<pk>\d+)/$', DetailView.as_view(
         model=Meal, context_object_name="meal", template_name="meal/meal_detail.html"), name='meal_detail'),
 
@@ -79,15 +79,17 @@ urlpatterns = patterns('',
     url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
+    url(r'user/$', UserListView.as_view(), name="user_list"),
+    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
+        name="more_user"),
 
     #support
     (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
-
 )
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += staticfiles_urlpatterns()
+urlpatterns += staticfiles_urlpatterns()
 
 
 

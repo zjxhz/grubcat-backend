@@ -649,3 +649,17 @@ class MealListView(ListView):
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
+
+
+class UserListView(ListView):
+    queryset = User.objects.all()
+    template_name = "user/user_list.html"
+    context_object_name = "user_list"
+    paginate_by = 10
+
+
+class MoreUserListView(ListView):
+    queryset = User.objects.all()
+    template_name = "user/user_container.html"
+    context_object_name = "user_list"
+

@@ -1,0 +1,57 @@
+#container {
+    background: white;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    clear: both;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.box {
+    width: 223px;
+    margin: 5px;
+    background: #D8D5D2;
+    font-size: 11px;
+    line-height: 1.4em;
+    float: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.box img{
+    border: 2px solid white;
+}
+
+.shadow-small {
+    -webkit-box-shadow: 0 0px 4px #444;
+    -moz-box-shadow: 0 0px 4px #444;
+    box-shadow: 0 0px 4px #444;
+}
+
+.masonry,
+.masonry .masonry-brick {
+    -webkit-transition-duration: 0.7s;
+    -moz-transition-duration: 0.7s;
+    -ms-transition-duration: 0.7s;
+    -o-transition-duration: 0.7s;
+    transition-duration: 0.7s;
+}
+
+.masonry {
+    -webkit-transition-property: height, width;
+    -moz-transition-property: height, width;
+    -ms-transition-property: height, width;
+    -o-transition-property: height, width;
+    transition-property: height, width;
+}
+
+.masonry .masonry-brick {
+    -webkit-transition-property: left, right, top;
+    -moz-transition-property: left, right, top;
+    -ms-transition-property: left, right, top;
+    -o-transition-property: left, right, top;
+    transition-property: left, right, top;
+}
+#page_nav {clear: both; text-align: center; }

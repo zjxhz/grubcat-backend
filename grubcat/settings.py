@@ -1,6 +1,6 @@
 # Django settings for grubcat project.
 import os
-from webassets.env import Environment
+from django.core.urlresolvers import reverse_lazy
 
 DEBUG = False
 TEMPLATE_DEBUG = False
@@ -239,5 +239,5 @@ LOGGING = {
 }
 
 #account
-LOGIN_URL="/user/login"
-LOGIN_REDIRECT_URL="/"
+LOGIN_URL=reverse_lazy('login')
+LOGIN_REDIRECT_URL=reverse_lazy('index')
