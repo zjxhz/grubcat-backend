@@ -1,37 +1,28 @@
 <div id="user-container" class="transitions-enabled infinite-scroll clearfix">
     {% for user in user_list %}
-        <div class="box">
-            <p>
-                <a href="" title="{{ user.username }}"><img src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
-                                                            alt="{{ user.username }}"
-                                                            width="219" height="219"></a>
-            </p>
-        </div>
-    {% endfor %}
-
-    {% for user in user_list %}
-        <div class="box">
-            <p>
-                <a href="" title="{{ user.username }}"><img src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
-                                                            alt="{{ user.username }}"
-                                                            width="219" height="219"></a>
-            </p>
-        </div>
-    {% endfor %}
-
-    {% for user in user_list %}
-        <div class="box">
-            <p>
-                <a href="" title="{{ user.username }}"><img src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
-                                                            alt="{{ user.username }}"
-                                                            width="219" height="219"></a>
-            </p>
-        </div>
+        {% for user in user_list %}
+            {% for user in user_list %}
+                {% for user in user_list %}
+                    {% for user in user_list %}
+                        {% for user in user_list %}
+                            <div class="box">
+                                <p>
+                                    <a href="" title="{{ user.username }}"><img
+                                            src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
+                                            alt="{{ user.username }}"
+                                            width="219" height="219"></a>
+                                </p>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
     {% endfor %}
 
 
 </div>
 <div id="page-nav">
-    <a href="{% url more_user  2 %}"></a>
+    <a href="{% url more_user 2 %}"></a>
     {#        <a href="{% url more_user  page_obj.number %}"></a>#}
 </div>
