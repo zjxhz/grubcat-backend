@@ -655,7 +655,7 @@ class UserListView(ListView):
     queryset = User.objects.all()
     template_name = "user/user_list.html"
     context_object_name = "user_list"
-    paginate_by = 10
+    paginate_by = 2
 
 
 class MoreUserListView(ListView):
