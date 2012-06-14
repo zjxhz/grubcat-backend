@@ -443,7 +443,7 @@ class MealResource(ModelResource):
     
     class Meta:
         queryset = Meal.objects.all()
-        filtering = {'type': ALL,}
+        filtering = {'type': ALL,'time':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
 
