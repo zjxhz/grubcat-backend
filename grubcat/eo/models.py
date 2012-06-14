@@ -279,9 +279,9 @@ class MealComment(models.Model):
     meal = models.ForeignKey(Meal)
     from_person  = models.ForeignKey(UserProfile)
     comment = models.CharField(max_length=42)
-    timestamp  = models.DateTimeField
+    timestamp  = models.DateTimeField()
     class  Meta:
-        db_table = u'meal_comments'
+        db_table = u'meal_comment'
 
 class MealInvitation(models.Model):
     from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
