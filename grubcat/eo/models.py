@@ -227,7 +227,8 @@ class UserMessage(models.Model):
     class Meta:
         db_table = u'user_message'
 
-
+   
+    
 # Create a user profile if the profile does not exist
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -273,6 +274,14 @@ class Meal(models.Model):
 
     class Meta:
         db_table = u'meal'
+        
+class MealComment(models.Model):
+    meal = models.ForeignKey(Meal)
+    from_person  = models.ForeignKey(UserProfile)
+    comment = models.CharField(max_length=42)
+    timestamp  = models.DateTimeField
+    class  Meta:
+        db_table = u'meal_comments'
 
 class MealInvitation(models.Model):
     from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
