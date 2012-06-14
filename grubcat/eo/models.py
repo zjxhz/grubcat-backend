@@ -279,7 +279,7 @@ class MealComment(models.Model):
     meal = models.ForeignKey(Meal)
     from_person  = models.ForeignKey(UserProfile)
     comment = models.CharField(max_length=42)
-    timestamp  = models.DateTimeField()
+    timestamp  = models.DateTimeField(default=datetime.now())
     class  Meta:
         db_table = u'meal_comment'
 
