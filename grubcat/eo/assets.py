@@ -5,22 +5,26 @@ from django_assets import Bundle, register, env
 import django_assets
 from webassets.env import Environment
 
+#css below
 base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
+common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
 meal_list_css = Bundle(
-    'css/base.css', 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+    base_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    'css/base.css', 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    base_css, 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
 account_css = Bundle(
-    'css/base.css', 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    base_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    'css/base.css', 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
+    base_css, common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
+
+#js below
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
 )
@@ -31,7 +35,7 @@ fix_ie6_png_js = Bundle(
 
 water_fall_js = Bundle(
     'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
-    output='gen/water_fall.%(version)s.js'
+    output='gen/water-fall.%(version)s.js'
 )
 
 register('base_css', base_css)

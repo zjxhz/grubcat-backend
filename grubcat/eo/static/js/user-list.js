@@ -5,12 +5,12 @@ $(function () {
     $container.imagesLoaded(function () {
         $container.masonry({
             itemSelector:'.box',
-            isAnimated:!Modernizr.csstransitions,
-            animationOptions:{
-                duration:750,
-                easing:'linear',
-                queue:false
-            }
+            isAnimated:!Modernizr.csstransitions
+//            animationOptions:{
+//                duration:750,
+//                easing:'linear',
+//                queue:false
+//            }
         });
     });
 
@@ -19,10 +19,12 @@ $(function () {
             nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
             itemSelector:'.box', // selector for all items you'll retrieve
             animate:true,
-            donetext:"",
+            speed:500,
+//            debug:true,
             loading:{
-                finishedMsg:'',
-                img:'http://i.imgur.com/6RMhx.gif'
+                msgText:'加载中...',
+                finishedMsg:'已经是最后一页了',
+                img:'/static/img/ajax-loader.gif'
             }
         },
         // trigger Masonry as a callback
