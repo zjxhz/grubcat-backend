@@ -1,145 +1,170 @@
 <div id="user-container" class="transitions-enabled infinite-scroll clearfix">
     {% for user in user_list %}
-        <div class="box">
-            <div class="user-img">
-                <a href="" title="{{ user.username }}"><img class="shadow-small"
-                        src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
-                        alt="{{ user.username }}"
-                        width="219" height="219"></a>
+        {% for user in user_list %}
+            <div class="box">
+                <div class="user-img">
+                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                                                                src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none  }}"
+                                                                alt="{{ user.username }}"
+                                                                width="219" height="219"></a>
+                </div>
+                <div class="speech-outer">
+                    <div class="speech-arrow"></div>
+                    <div class="speech-inner">
+                        <p>"一起出去公益吧！"</p>
+
+                        <p class="common-interst">共同兴趣：公益</p>
+
+                        <div class="comments-wrapper">
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small"
+                                                                               alt="Matt-lowell-08fde25166ef-4740928"
+                                                                               height="30"
+                                                                               src="https://s3.amazonaws.com/grub_user_pics/8025/thumb/matt-lowell-08fde25166ef-4740928.jpg?2012"
+                                                                               width="30"></a>
+
+                                <div class="post-meal-comment-content">
+
+                                    <b><a href="/users/matt-lowell-08fde25166ef">Peter</a></b>
+                                    <span class="post-meal-comment-time">28 days ago</span><br>
+                                    有爱心的人，记得下次出去做公益活动的时候叫上我啊~
+                                </div>
+                            </div>
+
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1"
+                                                                              height="30"
+                                                                              src="https://s3.amazonaws.com/grub_user_pics/3503/thumb/aalia_dinner1.jpg?2011"
+                                                                              width="30"></a>
+
+                                <div class="post-meal-comment-content">
+
+                                    <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
+                                    <span class="post-meal-comment-time">13 days ago</span><br>
+                                    和你聊天很开心，大家互相学习！
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="speech-outer">
-                <div class="speech-arrow"></div>
-                <div class="speech-inner">
-                    <p>"一起出去公益吧！"</p>
+            <div class="box">
+                <div class="user-img">
+                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                                                                src="https://s3.amazonaws.com/grub_user_pics/551/medium/profile.jpg?2010"
+                                                                alt="{{ user.username }}"
+                                                                width="219" height="219"></a>
+                </div>
+                <div class="speech-outer">
+                    <div class="speech-arrow"></div>
+                    <div class="speech-inner">
+                        <p>"一起去旅游吧，领略世界风情，体验不同人生"</p>
 
-                    <p class="common-interst">共同兴趣：公益</p>
+                        <p class="common-interst">共同兴趣：环球旅游</p>
 
-                    <div class="comments-wrapper">
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small" alt="Matt-lowell-08fde25166ef-4740928"
-                                                                           height="30"
-                                                                           src="https://s3.amazonaws.com/grub_user_pics/8025/thumb/matt-lowell-08fde25166ef-4740928.jpg?2012"
-                                                                           width="30"></a>
+                        <div class="comments-wrapper">
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small"
+                                                                               alt="Matt-lowell-08fde25166ef-4740928"
+                                                                               height="30"
+                                                                               src="https://s3.amazonaws.com/grub_user_pics/22447/thumb/32259_796918461928_7705562_44609549_3008463_n.jpg?2012"
+                                                                               width="30"></a>
 
-                            <div class="post-meal-comment-content">
+                                <div class="post-meal-comment-content">
 
-                                <b><a href="/users/matt-lowell-08fde25166ef">Peter</a></b>
-                                <span class="post-meal-comment-time">28 days ago</span><br>
-                                有爱心的人，记得下次出去做公益活动的时候叫上我啊~
+                                    <b><a href="/users/matt-lowell-08fde25166ef">陈志斌</a></b>
+                                    <span class="post-meal-comment-time">28 days ago</span><br>
+                                    她有着一个迷人的微笑，和她聊天，开心~
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1" height="30"
-                                                                          src="https://s3.amazonaws.com/grub_user_pics/3503/thumb/aalia_dinner1.jpg?2011"
-                                                                          width="30"></a>
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1"
+                                                                              height="30"
+                                                                              src="https://s3.amazonaws.com/grub_user_pics/21095/thumb/kaua'i%20029.JPG?2011"
+                                                                              width="30"></a>
 
-                            <div class="post-meal-comment-content">
+                                <div class="post-meal-comment-content">
 
-                                <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
-                                <span class="post-meal-comment-time">13 days ago</span><br>
-                                和你聊天很开心，大家互相学习！
+                                    <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
+                                    <span class="post-meal-comment-time">13 days ago</span><br>
+                                    你是最棒的。
+                                </div>
                             </div>
+
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1"
+                                                                              height="30"
+                                                                              src="https://s3.amazonaws.com/grub_user_pics/21095/thumb/kaua'i%20029.JPG?2011"
+                                                                              width="30"></a>
+
+                                <div class="post-meal-comment-content">
+
+                                    <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
+                                    <span class="post-meal-comment-time">13 days ago</span><br>
+                                    你是最棒的。
+                                </div>
+                            </div>
+
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="user-img">
+                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                                                                src="https://s3.amazonaws.com/grub_user_pics/557/medium/GB%20Headshot.jpg?2010"
+                                                                alt="{{ user.username }}"
+                                                                width="219" height="219"></a>
+                </div>
+                <div class="speech-outer">
+                    <div class="speech-arrow"></div>
+                    <div class="speech-inner">
+                        <p>"一起去健身吧"</p>
+
+                        <p class="common-interst">共同兴趣：健身</p>
 
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="box">
-            <div class="user-img">
-                <a href="" title="{{ user.username }}"><img class="shadow-small"
-                        src="https://s3.amazonaws.com/grub_user_pics/551/medium/profile.jpg?2010"
-                        alt="{{ user.username }}"
-                        width="219" height="219"></a>
-            </div>
-            <div class="speech-outer">
-                <div class="speech-arrow"></div>
-                <div class="speech-inner">
-                    <p>"一起去旅游吧，领略世界风情，体验不同人生"</p>
+            <div class="box">
+                <div class="user-img">
+                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                                                                src="https://s3.amazonaws.com/grub_user_pics/41860/medium/deanna-chang-aea73264283299fe2008-4646096.jpg?2012"
+                                                                alt="{{ user.username }}"
+                                                                width="219" height="219"></a>
+                </div>
+                <div class="speech-outer">
+                    <div class="speech-arrow"></div>
+                    <div class="speech-inner">
+                        <p>"坚持每天读点书"</p>
 
-                    <p class="common-interst">共同兴趣：环球旅游</p>
+                        <p class="common-interst">共同兴趣：读书</p>
 
-                    <div class="comments-wrapper">
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small" alt="Matt-lowell-08fde25166ef-4740928"
-                                                                           height="30"
-                                                                           src="https://s3.amazonaws.com/grub_user_pics/22447/thumb/32259_796918461928_7705562_44609549_3008463_n.jpg?2012"
-                                                                           width="30"></a>
+                        <div class="comments-wrapper">
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small"
+                                                                               alt="Matt-lowell-08fde25166ef-4740928"
+                                                                               height="30"
+                                                                               src="https://s3.amazonaws.com/grub_user_pics/14088/thumb/14088_pic20110630-2-wjazdd.?2011"
+                                                                               width="30"></a>
 
-                            <div class="post-meal-comment-content">
+                                <div class="post-meal-comment-content">
 
-                                <b><a href="/users/matt-lowell-08fde25166ef">陈志斌</a></b>
-                                <span class="post-meal-comment-time">28 days ago</span><br>
-                                她有着一个迷人的微笑，和她聊天，开心~
+                                    <b><a href="/users/matt-lowell-08fde25166ef">Peter</a></b>
+                                    <span class="post-meal-comment-time">28 days ago</span><br>
+                                    听你讲国富论，真的很有感触啊
+                                </div>
                             </div>
+
+
                         </div>
-
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1" height="30"
-                                                                          src="https://s3.amazonaws.com/grub_user_pics/21095/thumb/kaua'i%20029.JPG?2011"
-                                                                          width="30"></a>
-
-                            <div class="post-meal-comment-content">
-
-                                <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
-                                <span class="post-meal-comment-time">13 days ago</span><br>
-                                你是最棒的。
-                            </div>
-                        </div>
-
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1" height="30"
-                                                                          src="https://s3.amazonaws.com/grub_user_pics/21095/thumb/kaua'i%20029.JPG?2011"
-                                                                          width="30"></a>
-
-                            <div class="post-meal-comment-content">
-
-                                <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
-                                <span class="post-meal-comment-time">13 days ago</span><br>
-                                你是最棒的。
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="box">
-            <div class="user-img">
-                <a href="" title="{{ user.username }}"><img class="shadow-small"
-                        src="https://s3.amazonaws.com/grub_user_pics/41860/medium/deanna-chang-aea73264283299fe2008-4646096.jpg?2012"
-                        alt="{{ user.username }}"
-                        width="219" height="219"></a>
-            </div>
-            <div class="speech-outer">
-                <div class="speech-arrow"></div>
-                <div class="speech-inner">
-                    <p>"坚持每天读点书"</p>
 
-                    <p class="common-interst">共同兴趣：读书</p>
-
-                    <div class="comments-wrapper">
-                        <div class="post-meal-comment clearfix">
-                            <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small" alt="Matt-lowell-08fde25166ef-4740928"
-                                                                           height="30"
-                                                                           src="https://s3.amazonaws.com/grub_user_pics/14088/thumb/14088_pic20110630-2-wjazdd.?2011"
-                                                                           width="30"></a>
-
-                            <div class="post-meal-comment-content">
-
-                                <b><a href="/users/matt-lowell-08fde25166ef">Peter</a></b>
-                                <span class="post-meal-comment-time">28 days ago</span><br>
-                                听你讲国富论，真的很有感触啊
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+        {% endfor %}{% endfor %}
 
 
 </div>
