@@ -263,7 +263,11 @@ class Meal(models.Model):
             if participant == user_profile:
                 return True
         return False
-
+    
+    @property
+    def comments(self):
+        return self.comments.all()
+        
     @property
     def left_persons(self):
         return self.max_persons  - self.actual_persons
@@ -276,7 +280,7 @@ class Meal(models.Model):
         db_table = u'meal'
         
 class MealComment(models.Model):
-    meal = models.ForeignKey(Meal)
+    meal = models.ForeignKey(Meal, related_name="comments")
     from_person  = models.ForeignKey(UserProfile)
     comment = models.CharField(max_length=42)
     timestamp  = models.DateTimeField(default=datetime.now())

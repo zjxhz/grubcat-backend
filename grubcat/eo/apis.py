@@ -8,7 +8,7 @@ from django.db.models.query_utils import Q
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
-    UserLocation, OrderDishes
+    UserLocation, OrderDishes, MealComment
 from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
@@ -441,12 +441,31 @@ class MealResource(ModelResource):
         super(MealResource, self).save_related(bundle)
         self.save_order_dishes(bundle, bundle.obj.order)
     
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/comments%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_comments'), name="api_get_comments"),
+        ]
+    
+    def get_comments(self, request, **kwargs):
+        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        meal_comment_resource = MealCommentResource()
+        return get_my_list(meal_comment_resource, obj.comments.all(), request)
+    
     class Meta:
         queryset = Meal.objects.all()
         filtering = {'type': ALL,'time':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
 
+class MealCommentResource(ModelResource):
+    from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
+    meal  = fields.ForeignKey(MealResource, 'meal')
+    
+    class Meta:
+        queryset = MealComment.objects.all()
+        filtering= {'meal': ALL}
+    
 class MealInvitationResource(ModelResource):
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
     to_person = fields.ForeignKey(UserResource, 'to_person', full=True)
@@ -476,3 +495,4 @@ v1_api.register(MealResource())
 v1_api.register(MealInvitationResource())
 v1_api.register(UserLocationResource())
 v1_api.register(OrderDishesResource())
+v1_api.register(MealCommentResource())
