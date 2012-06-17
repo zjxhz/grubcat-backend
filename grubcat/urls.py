@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from eo.apis import v1_api
+from eo.apis import v1_api, mobile_user_login, mobile_user_logout
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.views import hello, get_menu, get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
@@ -34,8 +34,8 @@ urlpatterns = patterns('',
     ('^region/$', get_regions),
     ('^region/(\d+)/restaurant/$', get_restaurants_in_region),
     ('^search_restaurant_list/$', restaurantList),
-    #    ('^user_login/$', user_login),
-    #    ('^user_logout/$', user_logout),
+    ('^api/v1/login/$',  mobile_user_login),
+    ('^api/v1/logout/$', mobile_user_logout),
     ('^test_make_order/$', test_make_order),
     ('^make_order/$', make_order),
     ('^order/$', get_orders),

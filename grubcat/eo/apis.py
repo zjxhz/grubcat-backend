@@ -1,11 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
 from django.conf.urls.defaults import url
+from django.contrib import auth
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
@@ -516,6 +519,27 @@ class MealInvitationResource(ModelResource):
                      }
         resource_name = 'invitation'
         
+def mobile_user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return createGeneralResponse('OK', "You've logged in", {"id":user.id})
+        else:
+            return createGeneralResponse('NOK', "Incorrect username or password")
+    else:
+        raise # not used by mobile client
+    
+def mobile_user_logout(request):
+    if request.method == 'POST':
+        logout(request)
+        return createGeneralResponse('OK',"You've logged out.")
+        # return HttpResponse("Hello world") # there is no response from the server even the code is so simple, might be bug of dotcloud
+        # raise Exception("what's going on here?") # enable this line to check that the code IS executed here
+    else:
+        raise # not used by mobile client      
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
 v1_api.register(DjangoUserResource())
