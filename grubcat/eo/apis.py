@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.query_utils import Q
+from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
@@ -21,6 +22,7 @@ from urllib import urlencode
 import base64
 import mimetypes
 import os
+import simplejson
 
 
 class Base64FileField(FileField):
@@ -92,6 +94,19 @@ def get_my_list(resource, queryset, request):
     to_be_serialized['objects'] = [resource.full_dehydrate(bundle) for bundle in bundles]
     to_be_serialized = resource.alter_list_data_to_serialize(request, to_be_serialized)
     return resource.create_response(request, to_be_serialized)
+
+def login_required(request):
+    response = {"status": "NOK", "info": "You were not logged in"}
+    return HttpResponse(simplejson.dumps(response))
+
+# Create a general response with status and message)
+def createGeneralResponse(status, message, extra_dict=None):
+    response = {}
+    response['status'] = status
+    response['info'] = message
+    if extra_dict:
+        response.update(extra_dict)
+    return HttpResponse(simplejson.dumps(response))
 
 class PageNumberPaginator(Paginator):
     def get_offset(self):
@@ -445,12 +460,35 @@ class MealResource(ModelResource):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_comments'), name="api_get_comments"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/participants%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('participants'), name="api_participants"),
         ]
     
     def get_comments(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         meal_comment_resource = MealCommentResource()
         return get_my_list(meal_comment_resource, obj.comments.all(), request)
+    
+    def participants(self, request, **kwargs):
+        meal = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        
+        if not request.user.is_authenticated():
+            return login_required(request)
+    
+        user = request.user
+        if request.method == 'POST':
+            if meal.participants.count() >= meal.max_persons:
+                return createGeneralResponse('NOK', "No available seat.")
+            if user.get_profile() == meal.host:
+                return createGeneralResponse('NOK', "You're the host.")
+            if meal.is_participant(user.get_profile()):
+                return createGeneralResponse('NOK', "You already joined.")
+            meal.participants.add(user.get_profile())
+            meal.actual_persons += 1
+            meal.save()
+            return createGeneralResponse('OK', "You've just joined the meal")
+        else:
+            raise
     
     class Meta:
         queryset = Meal.objects.all()
