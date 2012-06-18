@@ -18,9 +18,8 @@ class OrderCreateForm(ModelForm):
         model = Order
         fields = ('num_persons',)
         widgets = {
-            'num_persons': Select(choices=NUM_PERSON_CHOICE, ),
+            'num_persons': Select(choices=NUM_PERSON_CHOICE,),
             }
-
 
 class DishForm(ModelForm):
     class Meta:
