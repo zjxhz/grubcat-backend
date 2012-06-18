@@ -1,31 +1,101 @@
+#coding=utf-8
 # Create your views here.
 from datetime import datetime
-from decimal import Decimal
+import urlparse
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy
-from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm,\
     UploadFileForm
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order,\
-    OrderStatus, OrderDishes, BestRatingDish, RestaurantTag, Region, ImageTest,\
+    BestRatingDish, RestaurantTag, Region, ImageTest,\
     Relationship, UserMessage, Meal, MealInvitation
 from grubcat.eo.forms import *
 import simplejson
 import sys
 from django.conf import settings
 
-def hello(request):
-    session = request.session
-    return HttpResponse("Hello world")
 
+### Meal related views ###
+class MealListView(ListView):
+    queryset = Meal.objects.order_by("time")
+    template_name = "meal/meal_list.html"
+    context_object_name = "meal_list"
+    #TODO add filter to queyset
+
+### User related views ###
+class RegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'registration/register.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RegisterView, self).get_context_data(**kwargs)
+        context['next'] = self.get_success_url()
+        return context
+
+    def form_valid(self, form):
+        response = super(RegisterView, self).form_valid(form)
+        user = authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
+        login(self.request, user)
+        return response
+
+    def get_success_url(self):
+        success_url = self.request.REQUEST.get('next', '')
+        netloc = urlparse.urlparse(success_url)[1]
+        # Use default setting if redirect_to is empty
+        if not success_url:
+            success_url = reverse_lazy("index")
+        # Heavier security check -- don't allow redirection to a different host.
+        elif netloc and netloc != self.request.get_host():
+            success_url = reverse_lazy("index")
+        return success_url
+
+class UserListView(ListView):
+    queryset = User.objects.all()
+    template_name = "user/user_list.html"
+    context_object_name = "user_list"
+    paginate_by = 2
+
+### Order related views ###
+class OrderCreateView(CreateView):
+    form_class = OrderCreateForm
+    template_name = 'order/make_order.html'
+
+    def get_initial(self):
+        self.initial.update({'meal_id': self.kwargs['meal_id']})
+        return super(OrderCreateView, self).get_initial()
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderCreateView, self).get_context_data(**kwargs)
+        context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
+        return context
+
+    def form_valid(self, form):
+        order = form.save(False)
+        order.customer = self.request.user.get_profile()
+        order.meal_id = form.cleaned_data['meal_id']
+        order.status = 1 #TODO
+        order.total_price = order.meal.list_price * order.num_persons
+        return super(OrderCreateView, self).form_valid(form)
+
+class OrderDetailView(DetailView):
+    model=Order
+    context_object_name="order"
+    template_name="order/order_detail.html"
+
+    def get_object(self, queryset=None):
+        order = super(OrderDetailView,self).get_object()
+        if order.customer != self.request.user.get_profile():
+            print "user see other's order" #TODO raise an exception
+        return order
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
@@ -172,104 +242,54 @@ def get_menu(request):
     response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
     return response
 
-#def user_login(request):
-#    if request.method == 'POST':
-#        username = request.POST.get('username', '')
-#        password = request.POST.get('password', '')
-#        user = auth.authenticate(username=username, password=password)
-#        if user is not None and user.is_active:
-#            auth.login(request, user)
-#            return createGeneralResponse('OK', "You've logged in", {"id":user.id})
-#        else:
-#            return createGeneralResponse('NOK', "Incorrect username or password")
-#    else:
-#        return render_to_response("registration/login.html")
-
-#def user_logout(request):
-#    if request.method == 'POST':
-#        logout(request)
-#        return createGeneralResponse('OK',"You've logged out.")
-#        # return HttpResponse("Hello world") # there is no response from the server even the code is so simple, might be bug of dotcloud
-#        # raise Exception("what's going on here?") # enable this line to check that the code IS executed here
-#    else:
-#        return render_to_response("registration/logout.html")
-
-#def register(request):
-#    if request.method == 'POST':
-#        form = UserCreationForm(request.POST)
-#        if form.is_valid():
-#            form.save()
-#            return createGeneralResponse('OK', 'User created')
-#    else:
-#        form = UserCreationForm()
-#    return render_to_response("registration/register.html", {
-#        'form': form, })
-
-
-class RegisterView(CreateView):
-    form_class = UserCreationForm
-    template_name = 'registration/register.html'
-    success_url = reverse_lazy("index")
-
-    def form_valid(self, form):
-        response = super(RegisterView, self).form_valid(form);
-        user = authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
-        login(self.request, user)
-        return response
-
-
-def test_make_order(request):
-    return render_to_response("order/make_order.html")
-
-
-def login_required(request):
+def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
     return HttpResponse(simplejson.dumps(response))
 
 
-@transaction.commit_manually
-def make_order(request):
-    if not request.user.is_authenticated():
-        return login_required(request)
-    response = {}
-    try:
-        data = simplejson.loads(request.raw_post_data)
-        order = Order()
-        order.restaurant_id = data["restaurant_id"]
-        order.num_persons = data["num_persons"]
-        order.table = data["table_name"]
-        dishes = data["dishes"]
-        totalPrice = 0
-        for dish in dishes:
-            dish_id = dish["dish_id"]
-            print "got one dish id: %s" % dish_id
-            print "quantity: %s" % dish["quantity"]
-            quantity = dish["quantity"]
-            d = Dish.objects.get(id=dish_id)
-            totalPrice = totalPrice + d.price * Decimal(str(quantity))
-        order.total_price = totalPrice
-        order.created_time = datetime.now()
-        order.confirmed_time = datetime.now()
-        order.status = OrderStatus.CONFIRMED # Confirmed
-        order.customer_id = request.user.get_profile().id
-        order.save()
-        for dish in dishes:
-            dish_id = dish["dish_id"]
-            quantity = dish["quantity"]
-            od = OrderDishes()
-            od.order_id = order.id
-            od.dish_id = dish_id
-            od.quantity = quantity
-            od.save()
-        order.save()
-        transaction.commit()
-    except:
-        print "Unexpected error:", sys.exc_info()
-        transaction.rollback()
-        raise
-    response['status'] = 'OK'
-    response['info'] = "Order confirmed, total price: %s" % totalPrice
-    return HttpResponse(simplejson.dumps(response))
+#@transaction.commit_manually
+#def make_order(request):
+#    if not request.user.is_authenticated():
+#        return login_required_response(request)
+#    response = {}
+#    try:
+#        data = simplejson.loads(request.raw_post_data)
+#        order = Order()
+#        order.restaurant_id = data["restaurant_id"]
+#        order.num_persons = data["num_persons"]
+#        order.table = data["table_name"]
+#        dishes = data["dishes"]
+#        totalPrice = 0
+#        for dish in dishes:
+#            dish_id = dish["dish_id"]
+#            print "got one dish id: %s" % dish_id
+#            print "quantity: %s" % dish["quantity"]
+#            quantity = dish["quantity"]
+#            d = Dish.objects.get(id=dish_id)
+#            totalPrice = totalPrice + d.price * Decimal(str(quantity))
+#        order.total_price = totalPrice
+#        order.created_time = datetime.now()
+#        order.confirmed_time = datetime.now()
+#        order.status = ORDER_STATUS.CREATED # Confirmed
+#        order.customer_id = request.user.get_profile().id
+#        order.save()
+#        #        for dish in dishes:
+#        #            dish_id = dish["dish_id"]
+#        #            quantity = dish["quantity"]
+#        #            od = OrderDishes()
+#        #            od.order_id = order.id
+#        #            od.dish_id = dish_id
+#        #            od.quantity = quantity
+#        #            od.save()
+#        order.save()
+#        transaction.commit()
+#    except:
+#        print "Unexpected error:", sys.exc_info()
+#        transaction.rollback()
+#        raise
+#    response['status'] = 'OK'
+#    response['info'] = "Order confirmed, total price: %s" % totalPrice
+#    return HttpResponse(simplejson.dumps(response))
 
 
 def order_last_modified(request, order_id):
@@ -279,7 +299,7 @@ def order_last_modified(request, order_id):
 def get_order_by_id(request, order_id):
     print request.GET.get('ETag')
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     response = HttpResponse()
     # TODO check if the user has permission to view the order
     serializer = serializers.get_serializer("json")()
@@ -294,7 +314,7 @@ def get_order_by_id(request, order_id):
 
 def get_orders(request):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     response = HttpResponse()
     serializer = serializers.get_serializer("json")()
     orders = Order.objects.filter(customer__id=request.user.id).order_by("-created_time")
@@ -304,7 +324,7 @@ def get_orders(request):
 # get detailed information including dishes of all of the orders, not used by now
 def get_orders_detailed(request):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     response = HttpResponse()
     serializer = serializers.get_serializer("json")()
     orders = Order.objects.filter(customer__id=request.user.id)
@@ -325,7 +345,7 @@ def get_orders_detailed(request):
 
 def favorite_restaurant(request, id):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     response = {}
     profile = request.user.get_profile()
     if request.method == 'POST':
@@ -342,7 +362,7 @@ def favorite_restaurant(request, id):
 
 def favorite_restaurants(request):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     response = HttpResponse()
     profile = request.user.get_profile()
     serializer = serializers.get_serializer("json")()
@@ -363,7 +383,7 @@ def restaurant_rating(request, restaurant_id):
         return response
     elif request.method == 'POST':
         if not request.user.is_authenticated():
-            return login_required(request)
+            return login_required_response(request)
         data = simplejson.loads(request.raw_post_data)
         comments = data['comments']
         rating = float(data['rating'])
@@ -571,7 +591,7 @@ def get_meal(request, meal_id):
 
 def meal_participants(request, meal_id):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     user = request.user
     if request.method == 'POST':
         meal = Meal.objects.get(id=meal_id)
@@ -591,7 +611,7 @@ def meal_participants(request, meal_id):
 
 def view_or_send_meal_invitations(request, user_id):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     user = request.user
     if request.method == 'POST':
         to_user = User.objects.get(id=request.POST.get('to_user_id'))
@@ -614,7 +634,7 @@ def view_or_send_meal_invitations(request, user_id):
 
 def accept_or_reject_meal_invitations(request, user_id, invitation_id):
     if not request.user.is_authenticated():
-        return login_required(request)
+        return login_required_response(request)
     user = request.user
     i = MealInvitation.objects.get(id=invitation_id)
 
@@ -642,17 +662,3 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
         return getJsonResponse([i])
     else:
         raise
-
-
-class MealListView(ListView):
-    queryset = Meal.objects.order_by("time")
-    template_name = "meal/meal_list.html"
-    context_object_name = "meal_list"
-    #TODO add filter to queyset
-
-
-class UserListView(ListView):
-    queryset = User.objects.all()
-    template_name = "user/user_list.html"
-    context_object_name = "user_list"
-    paginate_by = 2

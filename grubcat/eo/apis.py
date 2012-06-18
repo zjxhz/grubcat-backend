@@ -12,7 +12,7 @@ from django.shortcuts import render_to_response
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
     DishOtherUom, Order, Relationship, UserMessage, Meal, MealInvitation, \
-    UserLocation, OrderDishes, MealComment
+    UserLocation, MealComment
 from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
@@ -392,7 +392,7 @@ class OrderResource(ModelResource):
     
     def dehydrate(self, bundle):
         for dish in bundle.data['dishes']:
-            order_dish = OrderDishes.objects.filter(order=bundle.obj).get(dish=dish.obj)
+#            order_dish = OrderDishes.objects.filter(order=bundle.obj).get(dish=dish.obj)
 #            dish.data['dish'] = dish.data
             dish.data['quantity'] = order_dish.quantity
 #        del bundle.data['dishes']
@@ -402,11 +402,11 @@ class OrderResource(ModelResource):
         queryset = Order.objects.all()
         filtering = {'customer':ALL,}
 
-class OrderDishesResource(ModelResource):
-    order = fields.ForeignKey(OrderResource, 'order')
-    dish = fields.ForeignKey(DishResource, 'dish')
-    class Meta:
-        queryset = OrderDishes.objects.all()
+#class OrderDishesResource(ModelResource):
+#    order = fields.ForeignKey(OrderResource, 'order')
+#    dish = fields.ForeignKey(DishResource, 'dish')
+#    class Meta:
+#        queryset = OrderDishes.objects.all()
         
 class UserMessageResource(ModelResource): 
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
@@ -442,12 +442,12 @@ class MealResource(ModelResource):
         bundle.data['order']['total_price']=totalPrice
         return bundle
     
-    def save_order_dishes(self, bundle, order):
-        for dish_bundle in bundle.data['order']['dishes']:
-            dish = Dish.objects.get(id=dish_bundle['id'])
-            order_dish=OrderDishes(order=order, dish=dish, quantity=dish_bundle['quantity'])
-            order_dish.save()
-        order.save()
+#    def save_order_dishes(self, bundle, order):
+#        for dish_bundle in bundle.data['order']['dishes']:
+#            dish = Dish.objects.get(id=dish_bundle['id'])
+#            order_dish=OrderDishes(order=order, dish=dish, quantity=dish_bundle['quantity'])
+#            order_dish.save()
+#        order.save()
 
     def save_related(self, bundle):
         """
@@ -556,5 +556,5 @@ v1_api.register(RelationshipResource())
 v1_api.register(MealResource())
 v1_api.register(MealInvitationResource())
 v1_api.register(UserLocationResource())
-v1_api.register(OrderDishesResource())
+#v1_api.register(OrderDishesResource())
 v1_api.register(MealCommentResource())
