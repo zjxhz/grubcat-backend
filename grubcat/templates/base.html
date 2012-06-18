@@ -1,0 +1,85 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
+    <meta content="饭聚，饭局，fanju,杭州饭局,美食社交，社交晚餐" name="keywords">
+    <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    <!--[if IE 6]>
+    {% assets "fix_ie6_png_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+<![endif]-->
+    {% block page_css %}
+        {% assets "base_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+    {% endblock %}
+</head>
+<body>
+
+{% block nav %}
+    <div id="main-nav" class="logged-out">
+        <div class="nav-inner">
+            <div class="logo">
+                <a href="/">
+                    <img class="png-fix" width="198px" height="58px" alt="饭局"
+                         src="{% static 'img/site-logo.png' %}"></a>
+            </div>
+            <ul>
+                <li {% ifequal request.path_info "/meal/" %}class="current"{% endifequal %}
+                    {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a href="{% url meal_list %}">饭局</a></li>
+                <li><a href="#">小组</a></li>
+                <li><a href="{% url user_list  %}">成员</a></li>
+            {% if request.user.is_authenticated %}
+                <a href="{% url logout %}" class="nav-sign png-fix" >退出</a>
+            {% else %}
+                <a href="{% url login %}?next={{ next|default:request.path_info  }}" class="nav-sign png-fix" >登录</a>
+                <a href="{% url register %}?next={{ next|default:request.path_info }}" class="nav-sign png-fix" >注册</a>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block page-container %}
+    <div id="page-container">
+        {% block container-inner %}
+            <div id="container-upper" class="png-fix"></div>
+            <div id="container-middle" class="png-fix">
+                <div class="content clearfix">
+                    {% block content %}{% endblock %}
+                </div>
+                {% block footer %}
+                    <div id="footer" class="png-fix">
+                        <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">
+
+                        <p style="margin:5px 40px "></p>
+                    </div>
+                {% endblock %}
+            </div>
+
+            <div id="container-lower" class="png-fix"></div>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block base_js %}
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+{% endblock %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#main-nav .nav-inner ul li").not(".current").hover(function () {
+            $(this).addClass("current");
+        }, function () {
+            $(this).removeClass("current");
+        });
+    })
+</script>
+{% block page_js %}{% endblock %}
+{% include "ga.html" %}
+</body>
+</html>

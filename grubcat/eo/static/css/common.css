@@ -1,0 +1,111 @@
+/*water-fall*/
+
+.box {
+    width: 223px;
+    margin: 5px;
+    /*background: #D8D5D2;*/
+    font-size: 11px;
+    line-height: 1.4em;
+    float: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.box img{
+    border: 2px solid white;
+}
+
+.shadow-small {
+    -webkit-box-shadow: 0 0px 4px #444;
+    -moz-box-shadow: 0 0px 4px #444;
+    box-shadow: 0 0px 4px #444;
+}
+
+.masonry,
+.masonry .masonry-brick {
+    -webkit-transition-duration: 0.7s;
+    -moz-transition-duration: 0.7s;
+    -ms-transition-duration: 0.7s;
+    -o-transition-duration: 0.7s;
+    transition-duration: 0.7s;
+}
+
+.masonry {
+    -webkit-transition-property: height, width;
+    -moz-transition-property: height, width;
+    -ms-transition-property: height, width;
+    -o-transition-property: height, width;
+    transition-property: height, width;
+}
+
+.masonry .masonry-brick {
+    -webkit-transition-property: left, right, top;
+    -moz-transition-property: left, right, top;
+    -ms-transition-property: left, right, top;
+    -o-transition-property: left, right, top;
+    transition-property: left, right, top;
+}
+#page_nav {clear: both; text-align: center; }
+
+#infscr-loading {
+    text-align: center;
+    z-index: 100;
+    position: fixed;
+    left: 45%;
+    bottom: 40px;
+    width: 200px;
+    padding: 10px;
+    background: black;
+    opacity: 0.8;
+    color: white;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+
+
+.speech-outer {
+    margin-top: 10px;
+    float: left;
+    position: relative;
+    margin-left: 7px;
+    width: 300px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.speech-arrow {
+    width: 15px;
+    height: 15px;
+    background: #D5D5D5;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    left: 45px;
+    top: -5px;
+}
+
+.speech-inner {
+    padding: 10px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    position: relative;
+    background: #D5D5D5;
+    text-align: left;
+    font-size: 120%;
+    line-height: 130%;
+    overflow: hidden;
+}
+
+.shadow {
+    -webkit-box-shadow: 0 0px 5px #444;
+    -moz-box-shadow: 0 0px 5px #444;
+    box-shadow: 0 0px 5px #444;
+}
