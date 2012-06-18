@@ -1,8 +1,32 @@
 {% extends "base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
 {% block title %}订单详情{% endblock %}
+{% block page_css %}
+    {% assets "order_css" %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
 {% block content %}
+    <div id="order_detail">
+        <div class="meal-title">
+            <h1>{{ order.meal.topic }}</h1>
 
-    <h1>{{ order.meal.topic }}</h1>
-    总价钱：{{ order.total_price }}
-    <p>验证码：909934343</p>
+                <p id="resturant-location"><a
+                        class="resturant-name">{{ order.meal.restaurant.name }}</a> {{ order.meal.restaurant.address }}
+                </p>
+        </div>
+
+        <div class="row">
+            <div class="span5"><img src="{%  static 'img/map-tmp.png' %}" alt="地图" width="380" height="300"></div>
+            <div class="span5">
+                <div class="auth-code"><h2>验证码：<span id="code">909934343</span></h2><p>该验证码是在您进入餐厅的时候，校验您的身份用的，请妥善保管！</p></div>
+                <div class="reminder"><h2>友情提醒：</h2>
+                    <p>如果您在就餐时需要其他的菜或者饮品，您可以额外购买！</p></div>
+                <div class="hotline"><h2>饭聚网热线：<br>0571-82811182</h2><p>如果您有任何问题，可以拨打我们的热线</p></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
