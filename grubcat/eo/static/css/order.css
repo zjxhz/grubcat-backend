@@ -90,3 +90,29 @@ form legend {
 #id_num_persons{
     width:70px;
 }
+
+/*order-detail page related*/
+#order_detail{
+    text-align: center;
+    width:90%;
+    margin: 0 auto 20px auto;
+}
+
+#order_detail h2{
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+#code{
+    font-size: 1.9em;
+}
+
+.auth-code, .reminder, .hotline{
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+.meal-title{
+    margin-bottom: 40px;
+}
