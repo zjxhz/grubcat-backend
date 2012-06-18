@@ -1,35 +1,23 @@
+{% extends "base.html" %}
+{% block title %}预定{% endblock %}
 {% block content %}
 
-  <form action="/make_order/" method="post">
-    <label for="restaurant_id">Restaurant ID:</label>
-    <input type="text" name="restaurant_id" value="" id="restaurant_id">
-    <br/>
-	<label for="num_persons">Number of persons:</label>
-    <input type="text" name="num_persons" value="" id="num_persons">
-	<br/>
-	<label for="table_name">Table name:</label>
-    <input type="text" name="table_name" value="" id="table_name">
-	<br/>
-	
-	<!--Dishes for testing purpose-->
-	<br/>
-	<label for="dishes">Dish 1:</label>
-    <input type="text" name="dishes" value="1" id="dishes">
-    <br/>
-	<label for="dishes">Dish 2:</label>
-    <input type="text" name="dishes" value="2" id="dishes">
-    <br/>
-	<label for="dishes">Dish 3:</label>
-    <input type="text" name="dishes" value="3" id="dishes">
-    <br/>
-	<!--
-	<input type="hidden" name="dishes" value="1">
-	<input type="hidden" name="dishes" value="2">
-	<input type="hidden" name="dishes" value="4">
-	-->
-	
-    <input type="submit" value="Confirm" />
-    <input type="hidden" name="next" value="{{ next|escape }}" />
-  </form>
+    {{ meal.topic }}
 
+    <form action="" method="post"> {% csrf_token %}
+
+        {{ form.as_p }}
+        <input type="hidden" name="meal_price" value="{{ meal.list_price }}" id="meal_price">
+
+        <p>总价钱：<span id="total_price">{{ meal.list_price }}</span> 元</p>
+        <input type="submit" value="支付"/>
+    </form>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+    $("#id_num_persons").change(function(){
+        $("#total_price").html($("#meal_price").val() * $(this).val());
+    })
+    </script>
 {% endblock %}

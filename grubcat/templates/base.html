@@ -39,8 +39,8 @@
             {% if request.user.is_authenticated %}
                 <a href="{% url logout %}" class="nav-sign png-fix" >退出</a>
             {% else %}
-                <a href="{% url login %}" class="nav-sign png-fix" >登录</a>
-                <a href="{% url register %}" class="nav-sign png-fix" >注册</a>
+                <a href="{% url login %}?next={{ next|default:request.path_info  }}" class="nav-sign png-fix" >登录</a>
+                <a href="{% url register %}?next={{ next|default:request.path_info }}" class="nav-sign png-fix" >注册</a>
             {% endif %}
             </ul>
         </div>

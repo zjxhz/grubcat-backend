@@ -16,7 +16,7 @@
                     {{ field.label_tag }} {{ field }}
                 </p>
             {% endfor %}
-
+            <input type="hidden" name="next" value="{{ next }}" />
             <p class="sign-up-button">
                 <input class="button-signup" name="commit" type="submit" value="注册">
             </p>

@@ -31,7 +31,7 @@
 
         <div id="meal-container" class="clearfix box-seperator">
             <div id="meal-grub">
-                <a href="/meals/network-mingle-vent-92bd06d7eba5/reservations/new?_track=purchase_button_clicked&amp;banner=standard-reserve-button"
+                <a href="{% url make_order meal.id %}"
                    class="reserve-button">
                     马上预定
                     <span class="mt5">{{ meal.list_price }}RMB/人</span>
