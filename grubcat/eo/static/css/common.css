@@ -103,3 +103,20 @@
     line-height: 130%;
     overflow: hidden;
 }
+
+.shadow {
+    -webkit-box-shadow: 0 0px 5px #444;
+    -moz-box-shadow: 0 0px 5px #444;
+    box-shadow: 0 0px 5px #444;
+}
+
+
+#resturant-location {
+    color: #444;
+}
+
+a.resturant-name {
+    font-size: 13px;
+    color: black;
+    text-decoration: underline;
+}

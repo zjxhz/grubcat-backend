@@ -23,6 +23,10 @@ user_list_css = Bundle(
     base_css, common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
+order_css=Bundle(
+    base_css, common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+)
+
 
 #js below
 user_list_js = Bundle(
@@ -43,6 +47,8 @@ register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
+register('order_css', order_css)
+
 
 register('user_list_js', user_list_js)
 register('fix_ie6_png_js', fix_ie6_png_js)

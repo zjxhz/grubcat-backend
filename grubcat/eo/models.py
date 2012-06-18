@@ -182,9 +182,9 @@ ORDER_STATUS = (
 class Order(models.Model):
     customer = models.ForeignKey('UserProfile', related_name='orders', editable=False)
     meal = models.ForeignKey('Meal', related_name='orders', editable=False)
-    num_persons = models.IntegerField(verbose_name=u"总人数")
+    num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(choices=ORDER_STATUS, editable=False)
-    total_price = models.FloatField(verbose_name=u'总价钱', editable=False)
+    total_price = models.FloatField(u'总价钱', editable=False)
     created_time = models.DateTimeField(editable=False,auto_now_add=True)
     confirmed_time = models.DateTimeField(null=True, editable=False)
     completed_time = models.DateTimeField(null=True, editable=False)

@@ -105,16 +105,6 @@
     font-weight: bold;
 }
 
-#resturant-location {
-    color: #444;
-}
-
-a.resturant-name {
-    font-size: 13px;
-    color: black;
-    text-decoration: underline;
-}
-
 a.map {
     text-decoration: none;
     font-family: helvetica, arial, sans-serif;

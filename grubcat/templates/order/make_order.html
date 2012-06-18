@@ -1,23 +1,77 @@
 {% extends "base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
 {% block title %}预定{% endblock %}
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    {% assets "order_css" %}
+    <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
 {% block content %}
+    <div class="make-order clearfix">
 
-    {{ meal.topic }}
+        <div class="order-info ">
 
-    <form action="" method="post"> {% csrf_token %}
+            <form id="order_info_form" action="" method="post" class="form-horizontal shadow"> {% csrf_token %}
+                <legend>订单信息</legend>
+                <fieldset>
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div class="control-group">
+                        <label class="control-label">价钱:</label>
 
-        {{ form.as_p }}
-        <input type="hidden" name="meal_price" value="{{ meal.list_price }}" id="meal_price">
+                        <div class="controls">
+                            <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="id_num_persons">人数:</label>
 
-        <p>总价钱：<span id="total_price">{{ meal.list_price }}</span> 元</p>
-        <input type="submit" value="支付"/>
-    </form>
+                        <div class="controls">
+                            {{ form.num_persons }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">总价钱:</label>
+
+                        <div class="controls">
+                            <label><span id="total_price" class="bl">{{ meal.list_price }}</span> 元</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-actions">
+                    <input type="submit" class="btn-large" value="买单"/>
+                </div>
+            </form>
+        </div>
+        <div class="meal-info ">
+            <p>
+
+            <h3>{{ meal.topic }}</h3></p>
+            <div class="meal-img-wrapper">
+                <a href="/meal/5/"><img width="376px" height="210px" src="/media/uploaded_images/2012/03/21/meal_5.jpg"></a>
+
+                <div class="date-wrapper">
+                    <span class="month">{{ meal.time|date:"n" }}月</span>
+                    <span class="day-num">{{ meal.time|date:"d" }}</span>
+                    <span class="day-text">{{ meal.time|date:"D" }}</span>
+                </div>
+                <div class="time">{{ meal.time|date:"G:i " }}</div>
+            </div>
+            <p class="meal-location">在 <strong>{{ meal.restaurant.name }}</strong> &nbsp;{{ meal.restaurant.address }}
+            </p>
+        </div>
+    </div>
 {% endblock %}
 
 {% block page_js %}
     <script type="text/javascript">
-    $("#id_num_persons").change(function(){
-        $("#total_price").html($("#meal_price").val() * $(this).val());
-    })
+        $("#id_num_persons").change(function () {
+            $("#total_price").html($("#meal_price").html() * $(this).val());
+        })
     </script>
 {% endblock %}
