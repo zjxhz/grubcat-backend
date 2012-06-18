@@ -8,3 +8,7 @@ easy_thumbnails
 mimeparse
 python-dateutil
 django-tastypie
+cssmin
+jsmin
+south
+webassets
