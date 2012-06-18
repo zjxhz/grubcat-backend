@@ -390,13 +390,13 @@ class OrderResource(ModelResource):
     restaurant = fields.ToOneField(RestaurantResource, 'restaurant')
     #meal = fields.ToOneField('eo.apis.MealResource', 'meal')
     
-    def dehydrate(self, bundle):
-        for dish in bundle.data['dishes']:
+#    def dehydrate(self, bundle):
+#        for dish in bundle.data['dishes']:
 #            order_dish = OrderDishes.objects.filter(order=bundle.obj).get(dish=dish.obj)
 #            dish.data['dish'] = dish.data
-            dish.data['quantity'] = order_dish.quantity
+#            dish.data['quantity'] = order_dish.quantity
 #        del bundle.data['dishes']
-        return bundle
+#        return bundle
         
     class Meta:
         queryset = Order.objects.all()
@@ -422,24 +422,24 @@ class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
     participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
-    order = fields.ToOneField('eo.apis.OrderResource', 'order', full=True)
+#    order = fields.ToOneField('eo.apis.OrderResource', 'order', full=True)
     photo = Base64FileField("photo")
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
         if not bundle.data.get('max_persons'):
             bundle.data['max_persons'] = bundle.data['min_persons']
-        bundle.data['order']['created_time'] = datetime.now()
-        bundle.data['order']['confirmed_time']=bundle.data['order']['created_time'] 
-        bundle.data['order']['status']=2
-        bundle.data['order']['customer'] = bundle.data['host']
-        bundle.data['order']['restaurant'] = bundle.data['restaurant']
-        totalPrice = 0
-        for dish_data in bundle.data['order']['dishes']:
-            dish = Dish.objects.get(id=dish_data['id'])
-            quantity = dish_data["quantity"]
-            totalPrice = totalPrice + dish.price * quantity
-        bundle.data['order']['total_price']=totalPrice
+#        bundle.data['order']['created_time'] = datetime.now()
+#        bundle.data['order']['confirmed_time']=bundle.data['order']['created_time'] 
+#        bundle.data['order']['status']=2
+#        bundle.data['order']['customer'] = bundle.data['host']
+#        bundle.data['order']['restaurant'] = bundle.data['restaurant']
+#        totalPrice = 0
+#        for dish_data in bundle.data['order']['dishes']:
+#            dish = Dish.objects.get(id=dish_data['id'])
+#            quantity = dish_data["quantity"]
+#            totalPrice = totalPrice + dish.price * quantity
+#        bundle.data['order']['total_price']=totalPrice
         return bundle
     
 #    def save_order_dishes(self, bundle, order):
@@ -449,15 +449,15 @@ class MealResource(ModelResource):
 #            order_dish.save()
 #        order.save()
 
-    def save_related(self, bundle):
-        """
-        Call the base impl and save additionally the dishes of the order.
-        
-        Tastypie seems not able to save related objects in a related object, e.g. in order to save a meal, related object
-        order should be saved, but order has related objects dishes, too.
-        """
-        super(MealResource, self).save_related(bundle)
-        self.save_order_dishes(bundle, bundle.obj.order)
+#    def save_related(self, bundle):
+#        """
+#        Call the base impl and save additionally the dishes of the order.
+#        
+#        Tastypie seems not able to save related objects in a related object, e.g. in order to save a meal, related object
+#        order should be saved, but order has related objects dishes, too.
+#        """
+#        super(MealResource, self).save_related(bundle)
+#        self.save_order_dishes(bundle, bundle.obj.order)
     
     def override_urls(self):
         return [
