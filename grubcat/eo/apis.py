@@ -407,7 +407,7 @@ class UserMessageResource(ModelResource):
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
-    participants = fields.ToManyField(UserResource, 'participants', null=True)
+    participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
     photo = Base64FileField("photo")
     
     def hydrate(self, bundle):
