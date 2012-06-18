@@ -388,25 +388,11 @@ class OrderResource(ModelResource):
     customer = fields.ToOneField('eo.apis.UserResource', 'customer')
     dishes = fields.ToManyField(DishResource, 'dishes', full=True)
     restaurant = fields.ToOneField(RestaurantResource, 'restaurant')
-    #meal = fields.ToOneField('eo.apis.MealResource', 'meal')
-    
-#    def dehydrate(self, bundle):
-#        for dish in bundle.data['dishes']:
-#            order_dish = OrderDishes.objects.filter(order=bundle.obj).get(dish=dish.obj)
-#            dish.data['dish'] = dish.data
-#            dish.data['quantity'] = order_dish.quantity
-#        del bundle.data['dishes']
-#        return bundle
         
     class Meta:
         queryset = Order.objects.all()
         filtering = {'customer':ALL,}
 
-#class OrderDishesResource(ModelResource):
-#    order = fields.ForeignKey(OrderResource, 'order')
-#    dish = fields.ForeignKey(DishResource, 'dish')
-#    class Meta:
-#        queryset = OrderDishes.objects.all()
         
 class UserMessageResource(ModelResource): 
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
@@ -421,50 +407,21 @@ class UserMessageResource(ModelResource):
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
-    participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
-#    order = fields.ToOneField('eo.apis.OrderResource', 'order', full=True)
+    participants = fields.ToManyField(UserResource, 'participants', null=True)
     photo = Base64FileField("photo")
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
         if not bundle.data.get('max_persons'):
             bundle.data['max_persons'] = bundle.data['min_persons']
-#        bundle.data['order']['created_time'] = datetime.now()
-#        bundle.data['order']['confirmed_time']=bundle.data['order']['created_time'] 
-#        bundle.data['order']['status']=2
-#        bundle.data['order']['customer'] = bundle.data['host']
-#        bundle.data['order']['restaurant'] = bundle.data['restaurant']
-#        totalPrice = 0
-#        for dish_data in bundle.data['order']['dishes']:
-#            dish = Dish.objects.get(id=dish_data['id'])
-#            quantity = dish_data["quantity"]
-#            totalPrice = totalPrice + dish.price * quantity
-#        bundle.data['order']['total_price']=totalPrice
         return bundle
-    
-#    def save_order_dishes(self, bundle, order):
-#        for dish_bundle in bundle.data['order']['dishes']:
-#            dish = Dish.objects.get(id=dish_bundle['id'])
-#            order_dish=OrderDishes(order=order, dish=dish, quantity=dish_bundle['quantity'])
-#            order_dish.save()
-#        order.save()
-
-#    def save_related(self, bundle):
-#        """
-#        Call the base impl and save additionally the dishes of the order.
-#        
-#        Tastypie seems not able to save related objects in a related object, e.g. in order to save a meal, related object
-#        order should be saved, but order has related objects dishes, too.
-#        """
-#        super(MealResource, self).save_related(bundle)
-#        self.save_order_dishes(bundle, bundle.obj.order)
     
     def override_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_comments'), name="api_get_comments"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/participants%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('participants'), name="api_participants"),
+                self.wrap_view('join'), name="api_join"),
         ]
     
     def get_comments(self, request, **kwargs):
@@ -472,7 +429,7 @@ class MealResource(ModelResource):
         meal_comment_resource = MealCommentResource()
         return get_my_list(meal_comment_resource, obj.comments.all(), request)
     
-    def participants(self, request, **kwargs):
+    def join(self, request, **kwargs):
         meal = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         
         if not request.user.is_authenticated():

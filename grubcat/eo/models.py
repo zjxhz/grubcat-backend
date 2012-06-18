@@ -300,7 +300,6 @@ class BestRatingDish(models.Model):
 
 class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant)
-    #    order = models.OneToOneField(Order, null=True)
     dishes = models.ManyToManyField(Dish, through='MealDishes')
     topic = models.CharField(max_length=64)
     introduction = models.CharField(max_length=1024)
