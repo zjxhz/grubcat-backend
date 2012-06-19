@@ -85,6 +85,9 @@ urlpatterns = patterns('',
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
 
+    #resturant
+    url(r'^resturant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="resturant_backend"),
+
     #support
     (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
 )
