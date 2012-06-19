@@ -41,7 +41,6 @@ urlpatterns = patterns('',
     ('^profile/favorite/restaurant/(\d+)/$', favorite_restaurant),
     ('^profile/favorite/restaurant/$', favorite_restaurants),
     ('^restaurant/new/$', add_restaurant),
-    ('^restaurant/(\d+)/dish/add/$', add_dish),
     ('^search/restaurant/$', query_restaurant_from_google),
 
     #social
@@ -87,7 +86,7 @@ urlpatterns = patterns('',
 
     #resturant
     url(r'^resturant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="resturant_backend"),
-
+    url(r'^resturant/(\d+)/dish/$', TemplateView.as_view(template_name="restaurant/add_dish.html"),name="add_dish"),
     #support
     (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
 )
