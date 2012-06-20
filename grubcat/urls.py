@@ -6,16 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.views import get_menu, get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
     get_order_by_id, get_user_profile, favorite_restaurant, favorite_restaurants,\
-    add_restaurant, get_following, remove_following, followers,\
+    get_following, remove_following, followers,\
     get_recommended_following, messages,\
     meal_participants, view_or_send_meal_invitations,\
-    accept_or_reject_meal_invitations, img_test, upload_app, add_dish
+    accept_or_reject_meal_invitations, img_test, upload_app
 from grubcat.eo.views import *
 from django.conf import settings
 
@@ -40,7 +41,6 @@ urlpatterns = patterns('',
     ('^profile/$', get_user_profile),
     ('^profile/favorite/restaurant/(\d+)/$', favorite_restaurant),
     ('^profile/favorite/restaurant/$', favorite_restaurants),
-    ('^restaurant/new/$', add_restaurant),
     ('^search/restaurant/$', query_restaurant_from_google),
 
     #social
@@ -84,9 +84,18 @@ urlpatterns = patterns('',
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
 
-    #resturant
-    url(r'^resturant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="resturant_backend"),
-    url(r'^resturant/(\d+)/dish/$', TemplateView.as_view(template_name="restaurant/add_dish.html"),name="add_dish"),
+    #resturant admin
+    url(r'^resturant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="resturant_admin"),
+    url(r'^resturant/chekin/$', CheckInFormView.as_view(), name="resturant_admin_checkin"),
+    url(r'^resturant/chekin/result/$', TemplateView.as_view(template_name="restaurant/checkin_result.html"),
+        name="resturant_admin_checkin_result"),
+    url(r'^resturant/menu/$', TemplateView.as_view(template_name="restaurant/menu.html"), name="resturant_admin_menu"),
+    url(r'^resturant/order/$', TemplateView.as_view(template_name="restaurant/order.html"),
+        name="resturant_admin_order")
+    ,
+    #    url(r'^resturant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="resturant_admin_menu"),
+    #    url(r'^resturant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="resturant_admin_menu"),
+
     #support
     (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
 )

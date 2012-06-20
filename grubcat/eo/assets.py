@@ -8,6 +8,11 @@ from webassets.env import Environment
 #css below
 base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
 common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
+
+bootstrap_css = Bundle(
+    'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'
+)
+
 meal_list_css = Bundle(
     base_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
@@ -23,14 +28,22 @@ user_list_css = Bundle(
     base_css, common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
-order_css=Bundle(
+order_css = Bundle(
     base_css, common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+)
+
+resturant_admin_css = Bundle(
+    'css/resturant-admin.css', filters='cssmin', output='gen/resturant-admin.%(version)s.css'
 )
 
 
 #js below
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
+)
+
+resturant_admin_js = Bundle(
+    'js/resturant-admin.js', filters='jsmin', output='gen/resturant-admin.%(version)s.js'
 )
 
 fix_ie6_png_js = Bundle(
@@ -42,14 +55,19 @@ water_fall_js = Bundle(
     output='gen/water-fall.%(version)s.js'
 )
 
+jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/water-fall.%(version)s.js')
+
 register('base_css', base_css)
+register('bootstrap_css', bootstrap_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('order_css', order_css)
+register('resturant_admin_css', resturant_admin_css)
 
-
+register('resturant_admin_js', resturant_admin_js)
 register('user_list_js', user_list_js)
 register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
+register('jquery_form_js', jquery_form_js)
