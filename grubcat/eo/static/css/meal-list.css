@@ -111,56 +111,6 @@
     text-shadow: 0 1px 1px black;
 }
 
-.sidebar {
-    float: right;
-    width: 250px;
-    margin: 10px 0 10px 0;
-    display: inline;
-}
-
-.sidebar-box {
-    border: 1px solid #ccc;
-    padding: 1px;
-    background: #ffffff;
-    margin-bottom: 10px;
-}
-
-.sidebar-box-title {
-    background: #EEE;
-    padding: 7px;
-    font-weight: bold;
-}
-
-.sidebar-box-inner {
-    padding: 7px;
-}
-
-.sidebar-box-inner a {
-    color: #20538c;
-}
-
-.sidebar-box-inner p {
-    color: #333;
-    margin: 10px 0;
-    padding-left: 5px;
-}
-
-.sidebar-box-inner img {
-    margin: 0 5px 5px 0;
-}
-
-#recently-grubbed img {
-    border: 0 solid #ddd;
-}
-
-#faq .sidebar-box-inner a {
-    display: block;
-    margin: 10px 0;
-}
-
-#faq .sidebar-box-inner p {
-    display: none;
-}
 
 #create-a-meal {
     text-align: center;
@@ -169,6 +119,11 @@
 #create-a-meal .sidebar-box-inner {
     padding: 22px 7px;
 }
+
+#recently-grubbed img {
+    border: 0 solid #ddd;
+}
+
 
 #create-a-meal input[type="submit"] {
     font-size: 120%;

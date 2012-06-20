@@ -14,10 +14,10 @@ bootstrap_css = Bundle(
 )
 
 meal_list_css = Bundle(
-    base_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+    base_css, common_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    base_css, 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    base_css, common_css,'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
 account_css = Bundle(

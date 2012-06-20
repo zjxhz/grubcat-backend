@@ -12,10 +12,15 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#nav-meal").addClass("current");
-            $("#faq .sidebar-box-inner a").toggle(function () {
-                $(this).next("p").show();
-            }, function () {
-                $(this).next("p").hide();
+            $("#faq .sidebar-box-inner a").click(function () {
+                var $next = $(this).next("p");
+                var speed = 100;
+                if ($next.is(":visible")) {
+                    $(this).next("p").slideUp(speed);
+                } else {
+                    $(this).siblings("p:visible").slideUp(speed);
+                    $(this).next("p").slideDown(speed);
+                }
             })
         })
     </script>
@@ -54,49 +59,7 @@
     </div>
 
     <div class="sidebar">
-        <div id="faq" class="sidebar-box">
-            <div class="sidebar-box-title">FAQ</div>
-            <div class="sidebar-box-inner">
-                <a>What is Grubwithus?</a>
-
-                <p>Grubwithus is a social dining network that brings individuals together at great restaurants. Meet new
-                    people, maintain old friendships and have fun social meal experiences!</p>
-                <a>How does it work?</a>
-
-                <p>You book individual reservations for the meals you want to attend and prepay online. The meal price,
-                    tax and gratuity are included, so you just show up to the meal, have a great dinner, and leave with
-                    new friends! Any drinks you order at the restaurant will be separately paid by you at the end of the
-                    meal.</p>
-                <a class="hidden">What happens if less than 4 people reserve a meal?</a>
-
-                <p class="hidden">Your credit card is not charged until 4 or more people reserve the meal. If, on the
-                    day of the meal, less than 4 people have reserved, the meal will be cancelled.</p>
-                <a class="hidden">Why does the meal price increase per reservation?</a>
-
-                <p class="hidden">We reward you for booking early! The meal price increases as demand increases.</p>
-
-                <div class="hidden">
-                    <a>Are there refunds?</a>
-
-                    <p style="display: none; ">Like any sporting event or concert, all sales are final. You can,
-                        however, transfer your ticket to anyone at anytime.</p>
-                    <a>What about dietary restrictions?</a>
-
-                    <p>Each restaurant tries to make its menu as veggie friendly as possible, but if you have dietary
-                        restrictions, please check the meal's menu before reserving. </p>
-                    <a>How are meals created?</a>
-
-                    <p>Most meals are created by our users or dining groups! </p>
-                    <a>Why do some meals have restaurants that aren't visible?</a>
-
-                    <p>Our main goal is to build and maintain friendships, with food being a very tasty benefit. You'll
-                        always know the restaurant's neighborhood, but to prevent restaurant cancellations, we usually
-                        add a partner restaurant only when the meal tips. Rest assured that you'll always enjoy a good
-                        meal with new friends!</p>
-
-                </div>
-            </div>
-        </div>
+        {% include "support/faq_sidebar.html" %}
         <div id="recently-grubbed" class="sidebar-box">
             <div class="sidebar-box-title">Recently Grubbed</div>
             <div class="sidebar-box-inner">
