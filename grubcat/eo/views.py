@@ -7,11 +7,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm,\
     UploadFileForm
@@ -96,6 +96,14 @@ class OrderDetailView(DetailView):
         if order.customer != self.request.user.get_profile():
             print "user see other's order" #TODO raise an exception
         return order
+
+
+#resturant admin related views
+class CheckInFormView(FormView):
+    template_name="restaurant/checkin.html"
+    form_class=CheckInForm
+    success_url = reverse_lazy("resturant_admin_checkin_result")
+
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
@@ -212,9 +220,9 @@ def get_restaurant_list_by_geo(request):
         elif order_by == 'cost':
             restaurants = sortedDictValues(cost_restaurant_dict)
         elif order_by == 'rating':
-            print "before reverse: %s" % sortedDictValues(rating_restaurant_dict)
+            print "before reverse_lazy: %s" % sortedDictValues(rating_restaurant_dict)
             restaurants = sortedDictValues(rating_restaurant_dict)
-            restaurants.reverse()
+            restaurants.reverse_lazy()
             # print "Restaruants in range %s meters: %s" % (rangeInMeter, distance_restaurant_dict)
         writeJson(restaurants, response)
     except:
@@ -454,31 +462,6 @@ def get_regions(request):
 def get_restaurants_in_region(request, region_id):
     return getJsonResponse(Region.objects.get(id=region_id).restaurant_set.all())
 
-
-'''HTML VIEWS, which are supported to be used by web browser'''
-
-def add_dish(request, restaurant_id):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            new_user = form.save()
-            return createGeneralResponse('OK', 'User created')
-    else:
-        form = DishForm()
-        return render_to_response("restaurant/add_dish.html", {
-            'form': form, })
-
-
-def add_restaurant(request):
-    if request.method == 'POST':
-        form = RestaurantCreationForm(request.POST)
-        if form.is_valid():
-            #new_user = form.save()
-            return createGeneralResponse('OK', 'User created')
-    else:
-        form = RestaurantCreationForm()
-        return render_to_response("restaurant/add_restaurant.html", {
-            'form': form, })
 
 '''For TEST only'''
 
