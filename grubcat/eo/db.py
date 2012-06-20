@@ -29,7 +29,7 @@ def getRestaurantList(url):
     print 'fetching store list from ' + url
     html = getWebPageContent(url, True)
     print 'done, analyzing...'
-    soup = BeautifulSoup(html)  
+    soup = BeautifulSoup(html)
     storeInfoList = soup.findAll('div', {"class":"store-info"})
     for storeInfo in storeInfoList:
         storeLink = storeInfo.div.a['href']
@@ -73,9 +73,9 @@ def deleteOldData():
         os.remove('eo/img/tel/' + fname)
     Restaurant.objects.all().delete()
     Dish.objects.all().delete()
-    
+
 def gendata(request):
-    deleteOldData()    
+    deleteOldData()
     pageIndex=1
     while pageIndex <= 1:
         url='http://bendi.koubei.com/search/searchstore.html?city=2595&option.cpurl=1001402&option.navcat=1001402&page='+str(pageIndex)+'#anchor-search'
@@ -131,6 +131,6 @@ def do_query_restaurant_from_google(name):
     response = getWebPageContent(url, False)
     print "response: %s" % response
     return simplejson.loads(response)['responseData']['results']
-    
 
-    
+
+

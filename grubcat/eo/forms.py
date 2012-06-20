@@ -62,7 +62,7 @@ class RestaurantCreationForm(forms.ModelForm):
         # r.tags
 
 
-#resturant admin related
+#restaurant admin related
 class CheckInForm(forms.Form):
     authcode = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))
 

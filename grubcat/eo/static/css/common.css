@@ -111,11 +111,11 @@
 }
 
 
-#resturant-location {
+#restaurant-location {
     color: #444;
 }
 
-a.resturant-name {
+a.restaurant-name {
     font-size: 13px;
     color: black;
     text-decoration: underline;
@@ -143,7 +143,7 @@ a.resturant-name {
 }
 
 .sidebar-box-inner {
-    padding: 7px;
+    padding: 1px 7px;
     line-height: 130%;
 }
 

@@ -32,8 +32,8 @@ order_css = Bundle(
     base_css, common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
-resturant_admin_css = Bundle(
-    'css/resturant-admin.css', filters='cssmin', output='gen/resturant-admin.%(version)s.css'
+restaurant_admin_css = Bundle(
+    'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 
@@ -42,8 +42,8 @@ user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
 )
 
-resturant_admin_js = Bundle(
-    'js/resturant-admin.js', filters='jsmin', output='gen/resturant-admin.%(version)s.js'
+restaurant_admin_js = Bundle(
+    'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
 )
 
 fix_ie6_png_js = Bundle(
@@ -64,9 +64,9 @@ register('meal_detail_css', meal_detail_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('order_css', order_css)
-register('resturant_admin_css', resturant_admin_css)
+register('restaurant_admin_css', restaurant_admin_css)
 
-register('resturant_admin_js', resturant_admin_js)
+register('restaurant_admin_js', restaurant_admin_js)
 register('user_list_js', user_list_js)
 register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
