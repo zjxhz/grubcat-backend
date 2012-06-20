@@ -409,6 +409,7 @@ class MealResource(ModelResource):
     host = fields.ForeignKey(UserResource, 'host', full=True)
     participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
     photo = Base64FileField("photo")
+    likes = fields.ToManyField(UserResource, 'likes', full=True)
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
@@ -422,6 +423,8 @@ class MealResource(ModelResource):
                 self.wrap_view('get_comments'), name="api_get_comments"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/participants%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('join'), name="api_join"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/likes%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('like'), name="api_like"),
         ]
     
     def get_comments(self, request, **kwargs):
@@ -447,6 +450,27 @@ class MealResource(ModelResource):
             meal.actual_persons += 1
             meal.save()
             return createGeneralResponse('OK', "You've just joined the meal")
+        else:
+            raise
+        
+    def like(self, request, **kwargs):
+        meal = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        
+        if not request.user.is_authenticated():
+            return login_required(request)
+
+        user = request.user
+        if request.method == 'POST':
+            if meal.liked(user.get_profile()):
+                return createGeneralResponse('NOK', "You've already liked")
+            meal.likes.add(user.get_profile())
+            meal.save()
+            return createGeneralResponse('OK', "Thank you for liking this meal")
+        elif request.method == 'DELETE':
+            if meal.liked(user.get_profile()):
+                meal.likes.remove(user.get_profile())
+                meal.save()
+            return createGeneralResponse('OK', "You don't like the meal anymore")
         else:
             raise
     
