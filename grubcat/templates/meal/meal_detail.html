@@ -87,32 +87,23 @@
         </div>
     </div>
     <div class="sidebar fr">
-        <div class="faq">
-            <b>What is Grubwithus?</b>
-
-            <p>Grubwithus is a social dining network that brings people together over delicious food. It's not just
-                about the food or the people, though - it's about making new friends and forming lasting offline
-                relationships.</p>
-            <b>How does this work?</b>
-
-            <p>It's easy - just book a seat at this meal. On the day of the meal, you just show up, enjoy a great
-                dinner (usually family-style), and leave with new friends.</p>
-            <b>Cancellation Policy</b>
-
-            <p>We get it - plans change, emergencies pop up. You can cancel a reservation up until 72 hours before
-                the schedule date and time of the meal for full Grub Credit. Feel free to email us at
-                info@grubwithus.com or call the Grubwithus Hotline at 1-888-478-2857, and we'll take care of it.</p>
-            <b>Meet awesome people</b>
-
-            <p>Grubwithus is thriving with all sorts of interesting people. You might meet successful entrepreneurs,
-                aspiring actors, world travelers, business moguls, authors... there's only one way to find out!</p>
-            <b>Hassle-free pricing</b>
-
-            <p>Your Grubwithus purchase includes food, tax, and gratuity. Drinks can be purchased separately at the
-                meal.</p>
-            <b>Book early to save</b>
-
-            <p>Book early to save money! With each reservation, the meal price increases.</p>
-        </div>
+        {% include "support/faq_sidebar.html" %}
     </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#faq .sidebar-box-inner a").click(function () {
+                var $next = $(this).next("p");
+                var speed = 100;
+                if ($next.is(":visible")) {
+                    $(this).next("p").slideUp(speed);
+                } else {
+                    $(this).siblings("p:visible").slideUp(speed);
+                    $(this).next("p").slideDown(speed);
+                }
+            })
+        })
+    </script>
 {% endblock %}

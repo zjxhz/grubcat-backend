@@ -120,3 +120,52 @@ a.resturant-name {
     color: black;
     text-decoration: underline;
 }
+
+
+.sidebar {
+    float: right;
+    width: 250px;
+    margin: 10px 0 10px 0;
+    display: inline;
+}
+
+.sidebar-box {
+    border: 1px solid #ccc;
+    padding: 1px;
+    background: #ffffff;
+    margin-bottom: 10px;
+}
+
+.sidebar-box-title {
+    background: #EEE;
+    padding: 7px;
+    font-weight: bold;
+}
+
+.sidebar-box-inner {
+    padding: 7px;
+    line-height: 130%;
+}
+
+.sidebar-box-inner a {
+    color: #20538c;
+}
+
+.sidebar-box-inner p {
+    color: #333;
+    margin: 10px 0;
+    padding-left: 5px;
+}
+
+.sidebar-box-inner img {
+    margin: 0 5px 5px 0;
+}
+
+#faq .sidebar-box-inner a {
+    display: block;
+    margin: 10px 0;
+}
+
+#faq .sidebar-box-inner p {
+    display: none;
+}
