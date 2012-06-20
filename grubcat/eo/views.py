@@ -98,11 +98,11 @@ class OrderDetailView(DetailView):
         return order
 
 
-#resturant admin related views
+#restaurant admin related views
 class CheckInFormView(FormView):
     template_name="restaurant/checkin.html"
     form_class=CheckInForm
-    success_url = reverse_lazy("resturant_admin_checkin_result")
+    success_url = reverse_lazy("restaurant_admin_checkin_result")
 
 
 def writeJson(qs, response, relations=None):

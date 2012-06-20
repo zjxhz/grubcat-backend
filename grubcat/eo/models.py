@@ -1,5 +1,6 @@
 # coding=utf-8
 from datetime import datetime
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.query_utils import Q
@@ -73,6 +74,8 @@ class Restaurant(models.Model):
 
     class Meta:
         db_table = u'restaurant'
+        verbose_name=u'餐厅'
+        verbose_name_plural=u'餐厅'
 
 
 class RestaurantInfo(models.Model):
@@ -185,17 +188,16 @@ class Order(models.Model):
     num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(choices=ORDER_STATUS, editable=False)
     total_price = models.FloatField(u'总价钱', editable=False)
-    created_time = models.DateTimeField(editable=False,auto_now_add=True)
+    created_time = models.DateTimeField(editable=False, auto_now_add=True)
     confirmed_time = models.DateTimeField(null=True, editable=False)
     completed_time = models.DateTimeField(null=True, editable=False)
 
     @models.permalink
     def get_absolute_url(self):
-        return 'order_detail', [str(self.meal_id),str(self.id)]
+        return 'order_detail', [str(self.meal_id), str(self.id)]
 
     class Meta:
         db_table = u'order'
-
 
 
 class MealDishes(models.Model):

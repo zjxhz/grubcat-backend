@@ -14,7 +14,7 @@
         {% assets "bootstrap_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
-        {% assets "resturant_admin_css" %}
+        {% assets "restaurant_admin_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
@@ -28,9 +28,9 @@
                 {#                <li class="nav-header">#}
                 {#                    List header#}
                 {#                </li>#}
-                <li class="active"><a id="checkin" href="{% url resturant_admin_checkin %}"></i> 就餐管理</a></li>
-                <li><a href="{% url resturant_admin_menu %}">菜单管理</a></li>
-                <li><a href="{% url resturant_admin_order %}">订单历史</a></li>
+                <li class="active"><a id="checkin" href="{% url restaurant_admin_checkin %}"></i> 就餐管理</a></li>
+                <li><a href="{% url restaurant_admin_menu %}">菜单管理</a></li>
+                <li><a href="{% url restaurant_admin_order %}">订单历史</a></li>
                 <li><a href=""><i class="icon-user"></i> 退出</a></li>
             </ul>
             {#            <dl class="nav nav-tabs nav-stacked">#}
@@ -52,7 +52,7 @@
      <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            //resturant admin page's left menu logic;ajax load page
+            //restaurant admin page's left menu logic;ajax load page
             $("#nav-menu .nav a").click(function () {
                 $(this).parent().siblings().removeClass("active");
                 $(this).parent().addClass("active");

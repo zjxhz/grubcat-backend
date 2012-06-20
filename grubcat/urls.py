@@ -84,17 +84,17 @@ urlpatterns = patterns('',
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
 
-    #resturant admin
-    url(r'^resturant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="resturant_admin"),
-    url(r'^resturant/chekin/$', CheckInFormView.as_view(), name="resturant_admin_checkin"),
-    url(r'^resturant/chekin/result/$', TemplateView.as_view(template_name="restaurant/checkin_result.html"),
-        name="resturant_admin_checkin_result"),
-    url(r'^resturant/menu/$', TemplateView.as_view(template_name="restaurant/menu.html"), name="resturant_admin_menu"),
-    url(r'^resturant/order/$', TemplateView.as_view(template_name="restaurant/order.html"),
-        name="resturant_admin_order")
+    #restaurant admin
+    url(r'^restaurant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="restaurant_admin"),
+    url(r'^restaurant/chekin/$', CheckInFormView.as_view(), name="restaurant_admin_checkin"),
+    url(r'^restaurant/chekin/result/$', TemplateView.as_view(template_name="restaurant/checkin_result.html"),
+        name="restaurant_admin_checkin_result"),
+    url(r'^restaurant/menu/$', TemplateView.as_view(template_name="restaurant/menu.html"), name="restaurant_admin_menu"),
+    url(r'^restaurant/order/$', TemplateView.as_view(template_name="restaurant/order.html"),
+        name="restaurant_admin_order")
     ,
-    #    url(r'^resturant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="resturant_admin_menu"),
-    #    url(r'^resturant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="resturant_admin_menu"),
+    #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
+    #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
 
     #support
     (r'^support/$', TemplateView.as_view(template_name="support/support.html")),
