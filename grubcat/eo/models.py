@@ -307,7 +307,8 @@ class Meal(models.Model):
     photo = models.FileField(null=True, upload_to='uploaded_images/%Y/%m/%d')
     time = models.DateTimeField()
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
-    participants = models.ManyToManyField(UserProfile)
+    participants = models.ManyToManyField(UserProfile, related_name="meals")
+    likes = models.ManyToManyField(UserProfile, related_name="liked_meals")
     actual_persons = models.IntegerField(default=1, null=True)
     min_persons = models.IntegerField()
     max_persons = models.IntegerField(default=0, null=True) # not used for now, min_persons = max_persons
@@ -319,7 +320,13 @@ class Meal(models.Model):
             if participant == user_profile:
                 return True
         return False
-
+    
+    def liked(self, user_profile):
+        for like in self.likes.all():
+            if like == user_profile:
+                return True
+        return False
+        
     @property
     def comments(self):
         return self.comments.all()
