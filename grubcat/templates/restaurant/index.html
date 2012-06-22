@@ -31,7 +31,7 @@
                 <li class="active"><a id="checkin" href="{% url restaurant_admin_checkin %}"></i> 就餐管理</a></li>
                 <li><a href="{% url restaurant_admin_menu %}">菜单管理</a></li>
                 <li><a href="{% url restaurant_admin_order %}">订单历史</a></li>
-                <li><a href=""><i class="icon-user"></i> 退出</a></li>
+                <li><a id="logout" href="{% url logout %}"><i class="icon-user"></i> 退出</a></li>
             </ul>
             {#            <dl class="nav nav-tabs nav-stacked">#}
             {#                <dt>Interactions</dt>#}
@@ -58,10 +58,11 @@
                 $(this).parent().addClass("active");
 
                 var href = $(this).attr('href');
-                if (href && href != "#") {
+                if (href && href != "#" && href != "{% url logout %}") {
                     $("#content").load(href );
+                    return false;
                 }
-                return false;
+
             })
 
             $(".nav a:first").click();
