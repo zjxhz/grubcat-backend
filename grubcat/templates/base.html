@@ -33,15 +33,20 @@
             </div>
             <ul>
                 <li {% ifequal request.path_info "/meal/" %}class="current"{% endifequal %}
-                    {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a href="{% url meal_list %}">饭局</a></li>
+                    {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a
+                        href="{% url meal_list %}">饭局</a></li>
                 <li><a href="#">小组</a></li>
                 <li><a href="{% url user_list  %}">成员</a></li>
-            {% if request.user.is_authenticated %}
-                <a href="{% url logout %}" class="nav-sign png-fix" >退出</a>
-            {% else %}
-                <a href="{% url login %}?next={{ next|default:request.path_info  }}" class="nav-sign png-fix" >登录</a>
-                <a href="{% url register %}?next={{ next|default:request.path_info }}" class="nav-sign png-fix" >注册</a>
-            {% endif %}
+                {% if request.user.is_authenticated %}
+                    <a href="{% url logout %}" class="nav-sign png-fix">退出</a>
+                    {% if request.user.restaurant %}
+                        <a href="{% url restaurant_admin %}" class="nav-sign png-fix">餐厅后台</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url login %}?next={{ next|default:request.path_info  }}" class="nav-sign png-fix">登录</a>
+                    <a href="{% url register %}?next={{ next|default:request.path_info }}"
+                       class="nav-sign png-fix">注册</a>
+                {% endif %}
             </ul>
         </div>
     </div>
