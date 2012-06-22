@@ -10,24 +10,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Restaurant.user'
         db.add_column(u'restaurant', 'user',
-                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True, null=True),
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name='restaurant', unique=True, null=True, to=orm['auth.User']),
                       keep_default=False)
-
-        # Adding M2M table for field likes on 'Meal'
-        db.create_table(u'meal_likes', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('meal', models.ForeignKey(orm['eo.meal'], null=False)),
-            ('userprofile', models.ForeignKey(orm['eo.userprofile'], null=False))
-        ))
-        db.create_unique(u'meal_likes', ['meal_id', 'userprofile_id'])
 
 
     def backwards(self, orm):
         # Deleting field 'Restaurant.user'
         db.delete_column(u'restaurant', 'user_id')
-
-        # Removing M2M table for field likes on 'Meal'
-        db.delete_table('meal_likes')
 
 
     models = {
@@ -233,7 +222,7 @@ class Migration(SchemaMigration):
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['eo.RestaurantTag']", 'symmetrical': 'False'}),
             'tel': ('django.db.models.fields.CharField', [], {'max_length': '60'}),
             'tel2': ('django.db.models.fields.CharField', [], {'max_length': '60', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True', 'null': 'True'})
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'restaurant'", 'unique': 'True', 'null': 'True', 'to': "orm['auth.User']"})
         },
         'eo.restaurantinfo': {
             'Meta': {'object_name': 'RestaurantInfo', 'db_table': "u'restaurant_info'"},
