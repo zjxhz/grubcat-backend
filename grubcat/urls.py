@@ -9,6 +9,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout
 from eo.db import query_restaurant_from_google, updateLatLng
+from eo.decorators import restaurant_login_required
 from eo.views import get_menu, get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
@@ -85,12 +86,15 @@ urlpatterns = patterns('',
         name="more_user"),
 
     #restaurant admin
-    url(r'^restaurant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="restaurant_admin"),
-    url(r'^restaurant/chekin/$', CheckInFormView.as_view(), name="restaurant_admin_checkin"),
-    url(r'^restaurant/chekin/result/$', TemplateView.as_view(template_name="restaurant/checkin_result.html"),
+    url(r'^restaurant/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/index.html")),
+        name="restaurant_admin"),
+    url(r'^restaurant/chekin/$', restaurant_login_required(CheckInFormView.as_view()), name="restaurant_admin_checkin"),
+    url(r'^restaurant/chekin/result/$',
+        restaurant_login_required(TemplateView.as_view(template_name="restaurant/checkin_result.html")),
         name="restaurant_admin_checkin_result"),
-    url(r'^restaurant/menu/$', TemplateView.as_view(template_name="restaurant/menu.html"), name="restaurant_admin_menu"),
-    url(r'^restaurant/order/$', TemplateView.as_view(template_name="restaurant/order.html"),
+    url(r'^restaurant/menu/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/menu.html")),
+        name="restaurant_admin_menu"),
+    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_admin_order")
     ,
     #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
