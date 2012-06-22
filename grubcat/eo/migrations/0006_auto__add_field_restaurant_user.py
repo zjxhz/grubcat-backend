@@ -15,7 +15,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting field 'Restaurant.user'
+        # Deleting field 'Restaurant.user '
         db.delete_column(u'restaurant', 'user_id')
 
 
