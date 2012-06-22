@@ -39,6 +39,7 @@ class Region(models.Model):
 
 
 class Restaurant(models.Model):
+    user = models.OneToOneField(User, null=True,related_name="restaurant")
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
     longitude = models.FloatField(null=True)

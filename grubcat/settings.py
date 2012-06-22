@@ -242,3 +242,7 @@ LOGGING = {
 #account
 LOGIN_URL=reverse_lazy('login')
 LOGIN_REDIRECT_URL=reverse_lazy('index')
+
+try:
+    from settings_dev import *
+except Exception: pass
