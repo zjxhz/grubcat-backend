@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    {% assets "meal_list_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+{% block page_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#nav-meal").addClass("current");
+            $("#faq .sidebar-box-inner a").click(function () {
+                var $next = $(this).next("p");
+                var speed = 100;
+                if ($next.is(":visible")) {
+                    $(this).next("p").slideUp(speed);
+                } else {
+                    $(this).siblings("p:visible").slideUp(speed);
+                    $(this).next("p").slideDown(speed);
+                }
+            })
+        })
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
+    <div id="meal-list">
+        {% for meal in meal_list %}
+            <div class="meal-cell clearfix">
+                <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+
+                <div class="meal-img-wrapper fl">
+                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
+
+                    <div class="date-wrapper">
+                        <span class="month">{{ meal.time|date:"n" }}月</span>
+                        <span class="day-num">{{ meal.time|date:"d" }}</span>
+                        <span class="day-text">{{ meal.time|date:"D" }}</span>
+                    </div>
+                    <div class="time">{{ meal.time|date:"G:i " }}</div>
+                </div>
+                <div class="meal-info">
+                    <div class="meal-location png-fix"><span>Mission</span></div>
+                    <div class="host">
+                        <img width="30px" height="30px" alt="Social San Francisco"
+                             src="{% static 'img/location.jpg' %}"
+                                >
+                        <span class="png-fix">Social San Francisco</span></div>
+                    <p>{{ meal.introduction }}</p>
+                    <a class="png-fix" href="{{ meal.get_absolute_url }}">加入饭局</a>
+                </div>
+            </div>
+            <div class="meal-cell-shadow">
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="sidebar">
+        {% include "support/faq_sidebar.html" %}
+        <div id="recently-grubbed" class="sidebar-box">
+            <div class="sidebar-box-title">Recently Grubbed</div>
+            <div class="sidebar-box-inner">
+                <a href="/users/rebecca-fleming-947a466e2319"><img alt="Rebecca Fleming"
+                                                                   src="https://s3.amazonaws.com/grub_user_pics/14387/thumb/48990_127_7977_n.jpg?1309917037"
+                                                                   width="50px" height="50px"></a>
+                <a href="/users/benguild"><img alt="Ben Guild"
+                                               src="https://s3.amazonaws.com/grub_user_pics/22941/thumb/2011avatar_l.jpg?1326412555"
+                                               width="50px" height="50px"></a>
+                <a href="/users/rob-kwok-9388eddc317c"><img alt="Rob Kwok"
+                                                            src="https://s3.amazonaws.com/grub_user_pics/22031/thumb/100_0471.JPG?1326043786"
+                                                            width="50px" height="50px"></a>
+                <a href="/users/katsuya-noguchi-290c225a1e7e"><img alt="Katsuya Noguchi"
+                                                                   src="https://s3.amazonaws.com/grub_user_pics/28374/thumb/ebbf868d7b8cc864af9ddf828e3c777a-IMG_0025.jpg?1329692562"
+                                                                   width="50px" height="50px"></a>
+                <a href="/users/joe-masciocco-aad267521659"><img alt="Joe Masciocco"
+                                                                 src="https://s3.amazonaws.com/grub_user_pics/17199/thumb/Grub%20Pic.png?1314989835"
+                                                                 width="50px" height="50px"></a>
+                <a href="/users/lauraigomez"><img alt="Laura Gómez"
+                                                  src="https://s3.amazonaws.com/grub_user_pics/12991/thumb/mememme.jpeg?1307811260"
+                                                  width="50px" height="50px"></a>
+                <a href="/users/jenny-ng-824a6f060aa2"><img alt="Jenny N"
+                                                            src="https://s3.amazonaws.com/grub_user_pics/11272/thumb/Photo%2029.jpg?1306726017"
+                                                            width="50px" height="50px"></a>
+                <a href="/users/keith-erwood-a61e92a1c9d06e0b2d69"><img alt="Keith Erwood"
+                                                                        src="https://s3.amazonaws.com/grub_user_pics/38791/thumb/Keith%20Headshot.JPG?1336056383"
+                                                                        width="50px" height="50px"></a>
+                <a href="/users/elizabeth-knopf"><img alt="Elizabeth Knopf"
+                                                      src="https://s3.amazonaws.com/grub_user_pics/2517/thumb/2517_pic20110521-1-1ncdlcb-0.?1306013138"
+                                                      width="50px" height="50px"></a>
+                <a href="/users/andrew-ritter-bffbde4c432ca6d3af3d"><img alt="Andrew Ritter"
+                                                                         src="https://s3.amazonaws.com/grub_user_pics/33829/thumb/33829_pic20120412-16-1d1epfd.?1334273756"
+                                                                         width="50px" height="50px"></a>
+                <a href="/users/ben-323-361a95623eef"><img alt="Ben Davidow"
+                                                           src="https://s3.amazonaws.com/grub_user_pics/27070/thumb/me323.jpg?1327772462"
+                                                           width="50px" height="50px"></a>
+                <a href="/users/mika-kasumov-76a9edc2ed43"><img alt="Mika Kasumov"
+                                                                src="https://s3.amazonaws.com/grub_user_pics/10377/thumb/10377_pic20110521-1-ims2vh-0.?1306011622"
+                                                                width="50px" height="50px"></a>
+            </div>
+        </div>
+        <div id="create-a-meal" class="sidebar-box">
+            <div class="sidebar-box-title">Don't see a meal you like?</div>
+            <div class="sidebar-box-inner">
+                <form accept-charset="UTF-8" action="/create-a-meal" method="get">
+                    <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>
+                    <input class="cart_day hasDatepicker" id="cart_day" name="cyo[day]" readonly="readonly" size="30"
+                           type="text" value="May 15, 2012">
+
+                    <div class="dk_container dk_theme_default" id="dk_container_cart_time" tabindex=""
+                         style="display: block; "><a class="dk_toggle"><span class="dk_label">7:00 PM</span></a>
+
+                        <div class="dk_options hidden">
+                            <ul class="dk_options_inner ">
+                                <li class=""><a data-dk-dropdown-value="07:00">7:00 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="07:30">7:30 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="08:00">8:00 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="08:30">8:30 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="09:00">9:00 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="09:30">9:30 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="10:00">10:00 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="10:30">10:30 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="11:00">11:00 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="11:30">11:30 AM</a></li>
+                                <li class=""><a data-dk-dropdown-value="12:00">12:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="12:30">12:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="13:00">1:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="13:30">1:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="14:00">2:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="14:30">2:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="15:00">3:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="15:30">3:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="16:00">4:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="16:30">4:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="17:00">5:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="17:30">5:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="18:00">6:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="18:30">6:30 PM</a></li>
+                                <li class="dk_option_current"><a data-dk-dropdown-value="19:00">7:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="19:30">7:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="20:00">8:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="20:30">8:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="21:00">9:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="21:30">9:30 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="22:00">10:00 PM</a></li>
+                                <li class=""><a data-dk-dropdown-value="22:30">10:30 PM</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input name="commit" class="button" type="submit" value="Create a Meal!">
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

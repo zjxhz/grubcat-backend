@@ -1,0 +1,76 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}餐厅后台管理|饭聚网{% endblock %}</title>
+    <meta content="饭聚，饭局，fanju,杭州饭局,美食社交，社交晚餐" name="keywords">
+    <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    {% block page_css %}
+        {% assets "bootstrap_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+        {% assets "restaurant_admin_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+    {% endblock %}
+</head>
+<body>
+<div class="container">
+    <div class="well" id="header"><h1>{{ request.user.restaurant.name }}</h1></div>
+    <div class="row">
+        <div id="nav-menu" class="span2">
+            <ul class="nav nav-tabs nav-stacked">
+                {#                <li class="nav-header">#}
+                {#                    List header#}
+                {#                </li>#}
+                <li class="active"><a id="checkin" href="{% url restaurant_admin_checkin %}"></i> 就餐管理</a></li>
+                <li><a href="{% url restaurant_admin_menu %}">菜单管理</a></li>
+                <li><a href="{% url restaurant_admin_order %}">订单历史</a></li>
+                <li><a id="logout" href="{% url logout %}"><i class="icon-off"></i> 退出</a></li>
+            </ul>
+            {#            <dl class="nav nav-tabs nav-stacked">#}
+            {#                <dt>Interactions</dt>#}
+            {#                <dd><a href="draggable/index.html">Draggable</a></dd>#}
+            {#                <dd><a href="droppable/index.html">Droppable</a></dd>#}
+            {#                <dd><a href="resizable/index.html">Resizable</a></dd>#}
+            {#                <dd><a href="selectable/index.html">Selectable</a></dd>#}
+            {#                <dd><a href="sortable/index.html">Sortable</a></dd>#}
+            {#            </dl>#}
+        </div>
+        <div id="content" class="span10">
+            <div id="inner-content">{% block content %} {% endblock %}</div>
+        </div>
+    </div>
+</div>
+{% block base_js %}
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+     <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //restaurant admin page's left menu logic;ajax load page
+            $("#nav-menu .nav a").click(function () {
+                $(this).parent().siblings().removeClass("active");
+                $(this).parent().addClass("active");
+
+                var href = $(this).attr('href');
+                if (href && href != "#" && href != "{% url logout %}") {
+                    $("#content").load(href );
+                    return false;
+                }
+
+            })
+
+            $(".nav a:first").click();
+        })
+    </script>
+{% endblock %}
+{#<script type="text/javascript">#}
+{#</script>#}
+{% block page_js %}{% endblock %}
+</body>
+</html>
