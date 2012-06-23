@@ -39,7 +39,7 @@ class Region(models.Model):
 
 
 class Restaurant(models.Model):
-    user = models.OneToOneField(User, null=True,related_name="restaurant")
+    user = models.OneToOneField(User, null=True, related_name="restaurant")
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
     longitude = models.FloatField(null=True)
@@ -75,8 +75,8 @@ class Restaurant(models.Model):
 
     class Meta:
         db_table = u'restaurant'
-        verbose_name=u'餐厅'
-        verbose_name_plural=u'餐厅'
+        verbose_name = u'餐厅'
+        verbose_name_plural = u'餐厅'
 
 
 class RestaurantInfo(models.Model):
@@ -121,44 +121,40 @@ class DishTag(models.Model):
 class DishCategory(models.Model):
     menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(max_length=45)
-    parent_category = models.ForeignKey('self', null=True) #not used temporary
+    #    parent_category = models.ForeignKey('self', null=True) #not used temporary
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s' % self.name
 
     class Meta:
         db_table = u'dish_category'
 
 
 class Dish(models.Model):
-    number = models.IntegerField()
-    name = models.CharField(max_length=135)
-    pic = models.CharField(max_length=765, blank=True)
-    price = models.FloatField()
-    restaurant = models.ForeignKey(Restaurant)
+    number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
+    name = models.CharField(u'菜名', max_length=135)
+    pic = models.CharField(u'图片', max_length=765, blank=True)
+    price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
+    #    desc = models.CharField(u'描述',max_length=765,blank=True)
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
     menu = models.ForeignKey(Menu, related_name='dishes', null=True)
-    ingredient = models.CharField(max_length=765, blank=True)
-    cooking = models.CharField(max_length=765, blank=True)
-    taste = models.CharField(max_length=18)
-    uom = models.CharField(max_length=30)
-    has_other_uom = models.IntegerField(default=0)
-    available = models.IntegerField(default=0)
-    is_mandatory = models.IntegerField(default=0)
-    is_recommended = models.IntegerField(default=0)
-    tags = models.ManyToManyField(DishTag)
-    categories = models.ManyToManyField(DishCategory)
+    #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
+    #    cooking = models.CharField(u'烹饪做法',max_length=765, blank=True)
+    #    taste = models.CharField(u'口味',max_length=18)
+    #    is_mandatory = models.BooleanField(default=False)
+    unit = models.CharField(u'单位', max_length=30, default=u'份')
+    available = models.BooleanField(u'目前是否可以提供', default=True)
+    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
+    tags = models.ManyToManyField(DishTag, verbose_name=u'标签', blank=True, null=True)
+    categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', )
+
+    def __unicode__(self):
+        return u'%s' % self.name
 
     class Meta:
         db_table = u'dish'
-
-
-class DishOtherUom(models.Model):
-    price = models.DecimalField(max_digits=11, decimal_places=0)
-    uom = models.CharField(max_length=10)
-    dish = models.ForeignKey(Dish, related_name='other_uom')
-
-    class Meta:
-        db_table = u'dish_other_uom'
+        verbose_name = u'菜'
+        verbose_name_plural = u'菜'
 
 
 class Rating(models.Model):
@@ -323,13 +319,13 @@ class Meal(models.Model):
             if participant == user_profile:
                 return True
         return False
-    
+
     def liked(self, user_profile):
         for like in self.likes.all():
             if like == user_profile:
                 return True
         return False
-        
+
     @property
     def comments(self):
         return self.comments.all()

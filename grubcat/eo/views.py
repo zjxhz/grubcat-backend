@@ -13,7 +13,7 @@ from django.shortcuts import render_to_response
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
-from eo.forms import DishForm, RestaurantCreationForm, ImgTestForm,\
+from eo.forms import DishForm, ImgTestForm,\
     UploadFileForm
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order,\
     BestRatingDish, RestaurantTag, Region, ImageTest,\
