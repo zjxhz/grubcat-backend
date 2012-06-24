@@ -103,6 +103,17 @@ class CheckInFormView(FormView):
     form_class=CheckInForm
     success_url = reverse_lazy("restaurant_admin_checkin_result")
 
+class DishListView(ListView):
+    template_name="restaurant/menu.html"
+    context_object_name = "dish_list"
+
+    def get_queryset(self):
+        return Dish.objects.filter(restaurant=self.request.user.restaurant)
+
+
+
+
+
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()

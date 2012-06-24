@@ -1,26 +1,39 @@
 {% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
 
 {% block title %}就餐管理{% endblock %}
 
 {% block content %}
-    <table class="table table-striped table-bordered table-condensed">
+    <a class="addlink fr mb10">添加一道菜</a>
+    <table id="dish-list" class="table table-striped table-bordered ">
         <thead>
         <tr>
-            <th>菜名</th>
-            <th>价钱</th>
-            <th>单位</th>
-            <th>目前可供</th>
-            <th>分类</th>
+            <th class="tc" >菜名</th>
+            <th class="tc" >价钱(元)</th>
+            <th class="tc" >单位</th>
+            <th class="tc span2">分类</th>
+            <th class="span2 tc">是否可供</th>
+            <th class="span2 tc">操作</th>
         </tr>
         </thead>
         <tody>
+            {% for dish in dish_list %}
             <tr>
-                <td>菠萝油条虾</td>
-                <td>48.00</td>
-                <td>份</td>
-                <td>可供</td>
-                <td>主菜 热菜</td>
+                <td>{{ dish.name }}</td>
+                <td class="tr">{{ dish.price }}</td>
+                <td class="tc" >{{ dish.unit }}</td>
+                <td>{% for cat in dish.categories.all %}{{ cat.name}}&nbsp;{% endfor %}</td>
+
+                <td class="tc" >
+                    {% if dish.available %}
+                    <img src="{% static 'img/icon-yes.gif'%}" alt="目前可以供应">&nbsp;可供
+                {% else %}
+                        <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
+                {% endif %}
+
+                <td class="tc" ><a class="changelink mr10">编辑</a><a class="dellink">删除</a></td>
             </tr>
+            {% endfor %}
         </tody>
     </table>
     <div id="nav-active-id" style="display: none">nav-menu</div>

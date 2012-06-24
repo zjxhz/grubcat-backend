@@ -7,6 +7,32 @@
     border: 4px solid white;
 }
 
+.addlink,.changelink,.dellink{
+    padding-left: 12px;
+}
+
+.addlink{
+    background: url(../img/icon_addlink.gif) 0 4px  no-repeat;
+}
+.changelink{
+    background: url(../img/icon_changelink.gif) 0 4px  no-repeat;
+}
+.dellink{
+    background: url(../img/icon_deletelink.gif) 0 4px  no-repeat;
+}
+
+#dish-list td{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#dish-list .tc{
+    text-align: center;
+}
+
+#dish-list .tr{
+    text-align: right;
+}
 /*html {*/
     /*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
 /*}*/
