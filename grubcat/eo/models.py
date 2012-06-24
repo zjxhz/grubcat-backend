@@ -172,29 +172,35 @@ class Rating(models.Model):
 
 
 ORDER_STATUS = (
-    (1, 'CREATED'),
-    (2, 'PAIED'),
+    (1, '已创建'),
+    (2, '已支付'),
+    (3, '已完成')
     )
 #    CONFIRMED = 2
 #  COMPLETED = 4
 
 
 class Order(models.Model):
-    customer = models.ForeignKey('UserProfile', related_name='orders', editable=False)
-    meal = models.ForeignKey('Meal', related_name='orders', editable=False)
+    customer = models.ForeignKey('UserProfile', related_name='orders', verbose_name=u'客户')
+    meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
-    status = models.IntegerField(choices=ORDER_STATUS, editable=False)
-    total_price = models.FloatField(u'总价钱', editable=False)
-    created_time = models.DateTimeField(editable=False, auto_now_add=True)
-    confirmed_time = models.DateTimeField(null=True, editable=False)
-    completed_time = models.DateTimeField(null=True, editable=False)
+    status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, )
+    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=2)
+    created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
+    paid_time = models.DateTimeField(u'支付时间', blank=True, null=True)
+    completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
 
     @models.permalink
     def get_absolute_url(self):
         return 'order_detail', [str(self.meal_id), str(self.id)]
 
+    def __unicode__(self):
+        return "%s %s" % (self.meal.topic, self.customer.user.username)
+
     class Meta:
         db_table = u'order'
+        verbose_name = u'订单'
+        verbose_name_plural = u'订单'
 
 
 class MealDishes(models.Model):
@@ -298,20 +304,20 @@ class BestRatingDish(models.Model):
 
 
 class Meal(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
     dishes = models.ManyToManyField(Dish, through='MealDishes')
-    topic = models.CharField(max_length=64)
-    introduction = models.CharField(max_length=1024)
-    list_price = models.IntegerField()
-    photo = models.FileField(null=True, upload_to='uploaded_images/%Y/%m/%d')
-    time = models.DateTimeField()
-    host = models.ForeignKey(UserProfile, null=True, related_name="host_user")
-    participants = models.ManyToManyField(UserProfile, related_name="meals")
-    likes = models.ManyToManyField(UserProfile, related_name="liked_meals")
-    actual_persons = models.IntegerField(default=1, null=True)
-    min_persons = models.IntegerField()
-    max_persons = models.IntegerField(default=0, null=True) # not used for now, min_persons = max_persons
-    type = models.IntegerField() # THEMES, DATES
+    topic = models.CharField(u'主题', max_length=64)
+    introduction = models.CharField(u'简介', max_length=1024)
+    list_price = models.DecimalField(u'价钱', max_digits=6, decimal_places=2)
+    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d') #todo move to menu
+    time = models.DateTimeField(u'时间', )
+    host = models.ForeignKey(UserProfile, null=True, related_name="host_user", verbose_name=u'发起者', )
+    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
+    likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True, null=True)
+    actual_persons = models.IntegerField(u'实际参加人数', default=0)
+    min_persons = models.IntegerField(u'最少参加人数', )
+    max_persons = models.IntegerField(u'最多参加人数', default=0) # not used for now, min_persons = max_persons
+    type = models.IntegerField(default=0) # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
     def is_participant(self, user_profile):
@@ -338,8 +344,13 @@ class Meal(models.Model):
     def get_absolute_url(self):
         return 'meal_detail', [str(self.id)]
 
+    def __unicode__(self):
+        return self.topic
+
     class Meta:
         db_table = u'meal'
+        verbose_name = u'饭局'
+        verbose_name_plural = u'饭局'
 
 
 class MealComment(models.Model):
