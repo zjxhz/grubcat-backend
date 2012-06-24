@@ -100,6 +100,8 @@ urlpatterns = patterns('',
         name="restaurant_dish_add"),
     url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
+    url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(DishDeleteView.as_view()),
+        name="restaurant_dish_del"),
 
 #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),

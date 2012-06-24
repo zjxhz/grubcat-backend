@@ -31,10 +31,11 @@
                         <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
                 {% endif %}
 
-                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="changelink mr10">编辑</a><a class="dellink">删除</a></td>
+                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="changelink mr10">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink">删除</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <div id="nav-active-id" style="display: none">nav-menu</div>
 {% endblock %}
+

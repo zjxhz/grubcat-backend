@@ -33,6 +33,14 @@
 #dish-list .tr{
     text-align: right;
 }
+
+.confirm-del{
+    font-weight: normal;
+}
+
+.confirm-del span{
+    font-weight: bold;
+}
 /*html {*/
     /*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
 /*}*/

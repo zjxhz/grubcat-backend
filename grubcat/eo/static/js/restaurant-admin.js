@@ -10,6 +10,7 @@ $(document).ready(function () {
     };
     // bind form using 'ajaxForm'
     $('#checkin-form').ajaxForm(options);
+
 })
 
 
