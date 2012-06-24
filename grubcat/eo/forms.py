@@ -25,6 +25,7 @@ class OrderCreateForm(ModelForm):
 class DishForm(ModelForm):
     class Meta:
         model = Dish
+        exclude=("restaurant","menu")
 
 
 class UploadFileForm(forms.Form):

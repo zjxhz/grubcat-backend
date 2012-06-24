@@ -12,3 +12,4 @@ cssmin
 jsmin
 south
 webassets
+django_forms_bootstrap
