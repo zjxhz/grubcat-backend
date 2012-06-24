@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+    $("#restaurant-nav li").removeClass("active");
+    $("#"+$("#nav-active-id").html()).addClass("active")
+
     var options = {
         target:        '#result'   // target element(s) to be updated with server response
 //        beforeSubmit:  showRequest,  // pre-submit callback
