@@ -70,8 +70,7 @@ class OrderCreateView(CreateView):
     template_name = 'order/make_order.html'
 
     def get_initial(self):
-        self.initial.update({'meal_id': self.kwargs['meal_id']})
-        return super(OrderCreateView, self).get_initial()
+        return {'meal_id': self.kwargs['meal_id']}
 
     def get_context_data(self, **kwargs):
         context = super(OrderCreateView, self).get_context_data(**kwargs)
