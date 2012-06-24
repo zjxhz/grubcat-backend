@@ -108,16 +108,6 @@ class Menu(models.Model):
         db_table = u'menu'
 
 
-class DishTag(models.Model):
-    name = models.CharField(max_length=15)
-
-    def __unicode__(self):
-        return u'%s' % (self.name)
-
-    class Meta:
-        db_table = u'dish_tag'
-
-
 class DishCategory(models.Model):
     menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(max_length=45)
@@ -145,7 +135,6 @@ class Dish(models.Model):
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前是否可以提供', default=True)
     is_recommended = models.BooleanField(u'是否推荐菜', default=False)
-    tags = models.ManyToManyField(DishTag, verbose_name=u'标签', blank=True, null=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', )
 
     def __unicode__(self):

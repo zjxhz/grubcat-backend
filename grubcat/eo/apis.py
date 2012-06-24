@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
-    RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, DishTag, \
+    RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, \
     Order, Relationship, UserMessage, Meal, MealInvitation, \
     UserLocation, MealComment
 from tastypie import fields
@@ -235,25 +235,13 @@ class DishCategoryResource(ModelResource):
     class Meta:
         queryset = DishCategory.objects.all()       
         
-class DishTagResrouce(ModelResource):
-    class Meta:
-        queryset = DishTag.objects.all()
-        paginator_class = PageNumberPaginator
-        
 class DishResource(ModelResource):
-    tags = fields.ToManyField(DishTagResrouce, 'tags', full=True)
-#    other_uom = fields.ToManyField('eo.apis.DishOtherUomResource', 'other_uom', full=True, null=True)
     categories = fields.ToManyField(DishCategoryResource, 'categories', full=True, null=True)
     class Meta:
         queryset = Dish.objects.all()
         paginator_class = PageNumberPaginator
 
-#class DishOtherUomResource(ModelResource):
-#    class Meta:
-#        queryset = DishOtherUom.objects.all()
-#        paginator_class = PageNumberPaginator
-
-#TODO what if pagination is needed for comments?              
+#TODO what if pagination is needed for comments?
 class RestaurantResource(ModelResource):
     tags = fields.ToManyField('eo.apis.RestaurantTagResource', 'tags')
     regions = fields.ToManyField('eo.apis.RegionResource', 'regions')

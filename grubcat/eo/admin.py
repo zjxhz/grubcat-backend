@@ -1,5 +1,5 @@
 from django.contrib import admin
-from eo.models import Restaurant, Dish, DishTag, DishCategory, Order, Meal
+from eo.models import Restaurant, Dish, DishCategory, Order, Meal
 
 class DishAdmin(admin.ModelAdmin):
     list_display = ('restaurant', 'name', 'price', 'unit', 'available', 'is_recommended',)
