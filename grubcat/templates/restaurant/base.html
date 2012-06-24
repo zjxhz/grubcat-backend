@@ -11,6 +11,9 @@
     <meta content="饭聚，饭局，fanju,杭州饭局,美食社交，社交晚餐" name="keywords">
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
     {% block page_css %}
+        {% assets "base_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
         {% assets "bootstrap_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}

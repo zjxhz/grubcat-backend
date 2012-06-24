@@ -92,15 +92,14 @@ urlpatterns = patterns('',
     url(r'^restaurant/chekin/result/$',
         restaurant_login_required(TemplateView.as_view(template_name="restaurant/checkin_result.html")),
         name="restaurant_admin_checkin_result"),
-    url(r'^restaurant/menu/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/menu.html")),
+    url(r'^restaurant/menu/$', restaurant_login_required(DishListView.as_view()),
         name="restaurant_admin_menu"),
     url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_admin_order"),
     #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
-
     #support
-    url(r'^support/$', TemplateView.as_view(template_name="support/support.html"),name="support")
+    url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support")
 )
 
 if settings.DEBUG:
