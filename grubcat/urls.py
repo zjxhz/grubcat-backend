@@ -86,7 +86,7 @@ urlpatterns = patterns('',
         name="more_user"),
 
     #restaurant admin
-    url(r'^restaurant/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/index.html")),
+    url(r'^restaurant/$', restaurant_login_required(CheckInFormView.as_view()),
         name="restaurant_admin"),
     url(r'^restaurant/chekin/$', restaurant_login_required(CheckInFormView.as_view()), name="restaurant_admin_checkin"),
     url(r'^restaurant/chekin/result/$',

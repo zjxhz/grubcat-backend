@@ -1,4 +1,8 @@
+{% extends "restaurant/base.html" %}
 
+{% block title %}就餐管理{% endblock %}
+
+{% block content %}
     <form id="checkin-form" action="{% url restaurant_admin_checkin %}" method="post" class="well form-search">
         {{ form.authcode }}
         &nbsp;&nbsp;
@@ -8,4 +12,5 @@
     <div id="result" class="row">
 
     </div>
-    {% include "restaurant/admin.js.html" %}
+    <div id="nav-active-id" style="display: none">nav-checkin</div>
+{% endblock %}
