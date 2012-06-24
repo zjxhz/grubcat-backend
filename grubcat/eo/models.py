@@ -121,11 +121,11 @@ class DishCategory(models.Model):
 
 
 class Dish(models.Model):
-    number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
     name = models.CharField(u'菜名', max_length=135)
     price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
     menu = models.ForeignKey(Menu, related_name='dishes', null=True, blank=True)
+    #    number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
     #    desc = models.CharField(u'描述',max_length=765,blank=True)
     #    pic = models.CharField(u'图片', max_length=765, blank=True)
     #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
