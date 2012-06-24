@@ -494,7 +494,13 @@ def mobile_user_login(request):
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.is_active:
             auth.login(request, user)
-            return createGeneralResponse('OK', "You've logged in", {"id":user.id})
+            user_resource = UserResource()
+            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
+            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+            dic = simplejson.loads(serialized)
+            dic['status'] = 'OK'
+            dic['info'] = "You've logged in"
+            return HttpResponse(simplejson.dumps(dic), content_type ='application/json')
         else:
             return createGeneralResponse('NOK', "Incorrect username or password")
     else:
