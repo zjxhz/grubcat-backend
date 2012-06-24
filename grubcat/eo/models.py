@@ -123,18 +123,18 @@ class DishCategory(models.Model):
 class Dish(models.Model):
     number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
     name = models.CharField(u'菜名', max_length=135)
-    pic = models.CharField(u'图片', max_length=765, blank=True)
     price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
-    #    desc = models.CharField(u'描述',max_length=765,blank=True)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
-    menu = models.ForeignKey(Menu, related_name='dishes', null=True)
+    menu = models.ForeignKey(Menu, related_name='dishes', null=True, blank=True)
+    #    desc = models.CharField(u'描述',max_length=765,blank=True)
+    #    pic = models.CharField(u'图片', max_length=765, blank=True)
     #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
     #    cooking = models.CharField(u'烹饪做法',max_length=765, blank=True)
     #    taste = models.CharField(u'口味',max_length=18)
     #    is_mandatory = models.BooleanField(default=False)
+    #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前是否可以提供', default=True)
-    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', )
 
     def __unicode__(self):
