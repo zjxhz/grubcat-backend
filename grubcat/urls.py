@@ -98,7 +98,10 @@ urlpatterns = patterns('',
         name="restaurant_admin_order"),
     url(r'^restaurant/dish/add$', restaurant_login_required(DishCreateView.as_view()),
         name="restaurant_dish_add"),
-    #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
+    url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(DishUpdateView.as_view()),
+        name="restaurant_dish_edit"),
+
+#    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support")

@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse_lazy, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, ImgTestForm,\
     UploadFileForm
@@ -112,13 +112,20 @@ class DishListView(ListView):
 
 class DishCreateView(CreateView):
     form_class = DishForm
-    template_name = "restaurant/dish_add.html"
+    template_name = "restaurant/dish_add_edit.html"
     success_url = reverse_lazy("restaurant_admin_menu")
 
     def form_valid(self, form):
         dish = form.save(False)
         dish.restaurant = self.request.user.restaurant
         return super(DishCreateView, self).form_valid(form)
+
+class DishUpdateView(UpdateView):
+    form_class = DishForm
+    model = Dish
+    template_name = "restaurant/dish_add_edit.html"
+    success_url = reverse_lazy("restaurant_admin_menu")
+
 
 
 def writeJson(qs, response, relations=None):
