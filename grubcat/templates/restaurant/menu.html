@@ -31,7 +31,7 @@
                         <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
                 {% endif %}
 
-                <td class="tc" ><a class="changelink mr10">编辑</a><a class="dellink">删除</a></td>
+                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="changelink mr10">编辑</a><a class="dellink">删除</a></td>
             </tr>
             {% endfor %}
         </tbody>
