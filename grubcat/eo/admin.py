@@ -2,8 +2,8 @@ from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal
 
 class DishAdmin(admin.ModelAdmin):
-    list_display = ('restaurant', 'name', 'price', 'unit', 'available', 'is_recommended',)
-    list_editable = ('name', 'price', 'unit', 'available', 'is_recommended',)
+    list_display = ('restaurant', 'name', 'price', 'unit', 'available',)
+    list_editable = ('name', 'price', 'unit', 'available', )
     list_display_links = ('restaurant',)
     list_filter = ('restaurant',)
     ordering = ('restaurant',)
