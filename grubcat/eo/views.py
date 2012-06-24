@@ -110,9 +110,15 @@ class DishListView(ListView):
     def get_queryset(self):
         return Dish.objects.filter(restaurant=self.request.user.restaurant)
 
+class DishCreateView(CreateView):
+    form_class = DishForm
+    template_name = "restaurant/dish_add.html"
+    success_url = reverse_lazy("restaurant_admin_menu")
 
-
-
+    def form_valid(self, form):
+        dish = form.save(False)
+        dish.restaurant = self.request.user.restaurant
+        return super(DishCreateView, self).form_valid(form)
 
 
 def writeJson(qs, response, relations=None):

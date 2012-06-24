@@ -96,6 +96,8 @@ urlpatterns = patterns('',
         name="restaurant_admin_menu"),
     url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_admin_order"),
+    url(r'^restaurant/dish/add$', restaurant_login_required(DishCreateView.as_view()),
+        name="restaurant_dish_add"),
     #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
     #support

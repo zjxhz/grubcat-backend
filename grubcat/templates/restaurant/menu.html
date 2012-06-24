@@ -4,8 +4,8 @@
 {% block title %}就餐管理{% endblock %}
 
 {% block content %}
-    <a class="addlink fr mb10">添加一道菜</a>
-    <table id="dish-list" class="table table-striped table-bordered ">
+    <a href="{% url restaurant_dish_add %}" class="addlink fr mb10 mr20">添加一道菜</a>
+    <table id="dish-list" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
             <th class="tc" >菜名</th>
@@ -16,7 +16,7 @@
             <th class="span2 tc">操作</th>
         </tr>
         </thead>
-        <tody>
+        <tbody>
             {% for dish in dish_list %}
             <tr>
                 <td>{{ dish.name }}</td>
@@ -34,7 +34,7 @@
                 <td class="tc" ><a class="changelink mr10">编辑</a><a class="dellink">删除</a></td>
             </tr>
             {% endfor %}
-        </tody>
+        </tbody>
     </table>
     <div id="nav-active-id" style="display: none">nav-menu</div>
 {% endblock %}

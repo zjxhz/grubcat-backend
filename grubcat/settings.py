@@ -132,7 +132,8 @@ INSTALLED_APPS = (
     'image_cropping',
     'tastypie',
     'django_assets',
-    'south'
+    'south',
+    'django_forms_bootstrap'
     #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
