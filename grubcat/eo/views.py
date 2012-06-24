@@ -9,9 +9,9 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from eo.forms import DishForm, ImgTestForm,\
     UploadFileForm
@@ -58,6 +58,7 @@ class RegisterView(CreateView):
             success_url = reverse_lazy("index")
         return success_url
 
+
 class UserListView(ListView):
     queryset = User.objects.all()
     template_name = "user/user_list.html"
@@ -85,13 +86,14 @@ class OrderCreateView(CreateView):
         order.total_price = order.meal.list_price * order.num_persons
         return super(OrderCreateView, self).form_valid(form)
 
+
 class OrderDetailView(DetailView):
-    model=Order
-    context_object_name="order"
-    template_name="order/order_detail.html"
+    model = Order
+    context_object_name = "order"
+    template_name = "order/order_detail.html"
 
     def get_object(self, queryset=None):
-        order = super(OrderDetailView,self).get_object()
+        order = super(OrderDetailView, self).get_object()
         if order.customer != self.request.user.get_profile():
             print "user see other's order" #TODO raise an exception
         return order
@@ -99,16 +101,18 @@ class OrderDetailView(DetailView):
 
 #restaurant admin related views
 class CheckInFormView(FormView):
-    template_name="restaurant/checkin.html"
-    form_class=CheckInForm
+    template_name = "restaurant/checkin.html"
+    form_class = CheckInForm
     success_url = reverse_lazy("restaurant_admin_checkin_result")
 
+
 class DishListView(ListView):
-    template_name="restaurant/menu.html"
+    template_name = "restaurant/menu.html"
     context_object_name = "dish_list"
 
     def get_queryset(self):
         return Dish.objects.filter(restaurant=self.request.user.restaurant)
+
 
 class DishCreateView(CreateView):
     form_class = DishForm
@@ -120,12 +124,25 @@ class DishCreateView(CreateView):
         dish.restaurant = self.request.user.restaurant
         return super(DishCreateView, self).form_valid(form)
 
+
 class DishUpdateView(UpdateView):
     form_class = DishForm
     model = Dish
     template_name = "restaurant/dish_add_edit.html"
     success_url = reverse_lazy("restaurant_admin_menu")
 
+
+class DishDeleteView(DeleteView):
+    model = Dish
+    form_class = DishForm
+    context_object_name = "dish"
+    template_name = "restaurant/dish_confirm_delete.html"
+    success_url = reverse_lazy("restaurant_admin_menu")
+
+    def get_object(self):
+        dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
+            restaurant=self.request.user.restaurant)
+        return dish
 
 
 def writeJson(qs, response, relations=None):
@@ -272,6 +289,7 @@ def get_menu(request):
 
     response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
     return response
+
 
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
