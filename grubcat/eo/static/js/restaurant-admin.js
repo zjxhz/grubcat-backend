@@ -3,12 +3,13 @@ $(document).ready(function () {
     $("#restaurant-nav li").removeClass("active");
     $("#"+$("#nav-active-id").html()).addClass("active")
 
-    $(".dellink").click(function() {
+    $("a.dellink").click(function() {
+        var $link = $(this);
+        var href = $link.attr('href');
         $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
-            confirm: function() {$.post($(this).attr('href'), function(){
-                alert('del sucessfully')
-            }) },
-            decline: function() { alert("You said no? Right choice!") }
+            confirm: function() {$.post(href, function(){
+                $link.parents("tr").fadeOut(1000);
+            }) }
         });
 
         event.preventDefault();
