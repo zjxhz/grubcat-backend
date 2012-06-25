@@ -1,6 +1,7 @@
 {% extends "restaurant/base.html" %}
 {% load static from staticfiles %}
-
+{% load static_asset %}
+{% load assets %}
 {% block title %}就餐管理{% endblock %}
 
 {% block page_css %}
@@ -9,13 +10,16 @@
 {% endblock %}
 
 {% block page_js %}
-    <script type="text/javascript" src="{% static 'js/jquery.controls.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dialog2.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dialog2.helpers.js' %}"></script>
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     {{ block.super }}
 {% endblock %}
 {% block content %}
-    <a href="{% url restaurant_dish_add %}" class="open-dialog addlink fr mb10 mr20">添加一道菜</a>
+    <a href="{% url restaurant_dish_add %}" class="open-dialog addlink fr mb10 mr20" title="添加一道菜">添加一道菜</a>
     <table id="dish-list" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -42,7 +46,7 @@
                         <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
                 {% endif %}
 
-                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="changelink mr10">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink">删除</a></td>
+                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink mr10" title="编辑">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink">删除</a></td>
             </tr>
             {% endfor %}
         </tbody>

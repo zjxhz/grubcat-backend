@@ -1,15 +1,26 @@
 $(document).ready(function () {
-
+    $(document).controls();
     $("#restaurant-nav li").removeClass("active");
     $("#"+$("#nav-active-id").html()).addClass("active")
 
+    $(".dellink").click(function() {
+        $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
+            confirm: function() {$.post($(this).attr('href'), function(){
+                alert('del sucessfully')
+            }) },
+            decline: function() { alert("You said no? Right choice!") }
+        });
+
+        event.preventDefault();
+    });
+
+
     var options = {
         target:        '#result'   // target element(s) to be updated with server response
-//        beforeSubmit:  showRequest,  // pre-submit callback
-//        success:       showResponse  // post-submit callback
     };
     // bind form using 'ajaxForm'
     $('#checkin-form').ajaxForm(options);
+
 
 })
 

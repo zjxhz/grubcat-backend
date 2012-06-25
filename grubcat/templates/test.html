@@ -1,0 +1,44 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "restaurant_admin_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link href="{% static 'css/jquery.dialog2.css' %}" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "restaurant_admin_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+</head>
+<body>
+
+<div class="container well">
+    <a class="open-dialog" closeOnEscape="true" closeOnOverlayClick="true" showCloseHandle="true" data-dialog-class="wide" title="tiltl1"
+        href="{% url restaurant_dish_add %} #inner-content"></a>
+
+    <a class="ajax" closeOnEscape="false" closeOnOverlayClick="false" showCloseHandle="false"
+       rel="sample1-dialog">ajax</a>
+
+</div>
+
+
+
+</body>
+</html>

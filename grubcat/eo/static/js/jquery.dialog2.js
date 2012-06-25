@@ -343,7 +343,7 @@
                     .trigger("dialog2.before-open")
                     .addClass("opened")
                     .parent()
-                        .show()
+                        .fadeIn(600)
                         .end()
                     .trigger("dialog2.opened");
                     
@@ -768,7 +768,6 @@
 
 			// Save response for use in complete callback
 			response = arguments;
-
 			// See if a selector was specified
 			self.html( selector ?
 
@@ -777,13 +776,13 @@
 
 					// inject the contents of the document in, removing the scripts
 					// to avoid any 'Permission Denied' errors in IE
-					.append( responseText.replace( rscript, "" ) )
+                    .append( responseText.replace(/<script(.|\s)*?\/script>/g, "") )
 
 					// Locate the specified elements
 					.find( selector ) :
 
 				// If not, just inject the full result
-				responseText );
+				responseText);
 
 		});
 

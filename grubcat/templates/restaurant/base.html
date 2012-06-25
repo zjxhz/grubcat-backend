@@ -21,6 +21,15 @@
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
+    {% block base_js %}
+        <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    {% endblock %}
+    {% block page_js %}
+        {% assets "restaurant_admin_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
+    {% endblock %}
+
 </head>
 <body>
 <div class="container">
@@ -42,13 +51,5 @@
         </div>
     </div>
 </div>
-{% block base_js %}
-    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
-{% endblock %}
-{% block page_js %}
-    {% assets "restaurant_admin_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-{% endblock %}
 </body>
 </html>
