@@ -54,7 +54,7 @@ water_fall_js = Bundle(
     'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
     output='gen/water-fall.%(version)s.js'
 )
-jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/water-fall.%(version)s.js')
+jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
 
 jquery_ajax_bootstrap_js = Bundle(
     'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
