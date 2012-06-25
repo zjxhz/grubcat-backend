@@ -46,7 +46,7 @@
                         <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
                 {% endif %}
 
-                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink mr10" title="编辑">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink">删除</a></td>
+                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink mr10" title="编辑">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink" data-dialog-class="span2">删除</a></td>
             </tr>
             {% endfor %}
         </tbody>

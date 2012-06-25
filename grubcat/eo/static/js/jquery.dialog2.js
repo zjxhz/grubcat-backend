@@ -671,7 +671,8 @@
         },
         "en": {
             cancel: "Cancel"
-        }
+        },
+
     };
     
     var lang = $.fn.dialog2.localization["en"];
