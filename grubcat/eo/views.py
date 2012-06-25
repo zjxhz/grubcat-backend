@@ -122,7 +122,9 @@ class DishCreateView(CreateView):
     def form_valid(self, form):
         dish = form.save(False)
         dish.restaurant = self.request.user.restaurant
-        return super(DishCreateView, self).form_valid(form)
+        super(DishCreateView, self).form_valid(form)
+        content= r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        return HttpResponse(content=content)
 
 
 class DishUpdateView(UpdateView):
@@ -130,6 +132,11 @@ class DishUpdateView(UpdateView):
     model = Dish
     template_name = "restaurant/dish_add_edit.html"
     success_url = reverse_lazy("restaurant_admin_menu")
+
+    def form_valid(self, form):
+        super(DishUpdateView, self).form_valid(form)
+        content= r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        return HttpResponse(content=content)
 
 
 class DishDeleteView(DeleteView):

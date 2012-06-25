@@ -672,10 +672,15 @@
         "en": {
             cancel: "Cancel"
         },
+        "zh":{
+            cancel: "取消",
+            yes:"确定",
+            no:"取消"
+        }
 
     };
     
-    var lang = $.fn.dialog2.localization["en"];
+    var lang = $.fn.dialog2.localization["zh"];
     
     /**
      * Localizes a given key using the selected language
