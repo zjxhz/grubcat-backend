@@ -21,7 +21,7 @@ meal_detail_css = Bundle(
 )
 
 account_css = Bundle(
-    base_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    base_css, common_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
