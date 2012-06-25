@@ -1,7 +1,10 @@
 {% extends "restaurant/base.html" %}
-
+{% load static from staticfiles %}
 {% block title %}就餐管理{% endblock %}
-
+{% block page_js %}
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+    {{ block.super }}
+{% endblock %}
 {% block content %}
     <form id="checkin-form" action="{% url restaurant_admin_checkin %}" method="post" class="well form-search">
         {{ form.authcode }}
