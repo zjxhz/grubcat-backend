@@ -151,6 +151,10 @@ class DishDeleteView(DeleteView):
             restaurant=self.request.user.restaurant)
         return dish
 
+    def delete(self, request, *args, **kwargs):
+        super(DishDeleteView, self).delete(request, *args, **kwargs)
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        return HttpResponse(content=content)
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
