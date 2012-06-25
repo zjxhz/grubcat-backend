@@ -17,7 +17,7 @@ meal_list_css = Bundle(
     base_css, common_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    base_css, common_css,'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    base_css, common_css, 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
 account_css = Bundle(
@@ -54,8 +54,12 @@ water_fall_js = Bundle(
     'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
     output='gen/water-fall.%(version)s.js'
 )
-
 jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/water-fall.%(version)s.js')
+
+jquery_ajax_bootstrap_js = Bundle(
+    'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
+    output='gen/jquery.ajax.bootstrap.js.%(version)s.js'
+)
 
 register('base_css', base_css)
 register('bootstrap_css', bootstrap_css)
@@ -71,3 +75,4 @@ register('user_list_js', user_list_js)
 register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
+register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
