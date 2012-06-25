@@ -1,28 +1,38 @@
 $(document).ready(function () {
-    $(document).controls();
-    $("#restaurant-nav li").removeClass("active");
-    $("#"+$("#nav-active-id").html()).addClass("active")
 
-    $("a.dellink").click(function() {
+    $("#restaurant-nav li").removeClass("active");
+    $("#" + $("#nav-active-id").html()).addClass("active")
+
+    $("a.dellink").click(function () {
         var $link = $(this);
         var href = $link.attr('href');
         $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
-            confirm: function() {$.post(href, function(){
-                $link.parents("tr").fadeOut(1000);
-            }) }
+            title:'确认',
+            confirm:function () {
+                $.post(href, function () {
+                    $link.parents("tr").fadeOut(300);
+                })
+            }
         });
-
         event.preventDefault();
     });
 
-
-    var options = {
-        target:        '#result'   // target element(s) to be updated with server response
-    };
     // bind form using 'ajaxForm'
-    $('#checkin-form').ajaxForm(options);
+    $('#checkin-form').ajaxForm({target:'#result' });
 
-
+    $("#modal-dialog").live("dialog2.content-update", function (e, data) {
+        // got the dialog as this object. Do something with it!
+        var e = $(this);
+        var autoclose = e.find("a.auto-close");
+        if (autoclose.length > 0) {
+            e.dialog2('close');
+            var href = autoclose.attr('href');
+            if (href) {
+                window.location.href = href;
+            }
+        }
+    });
+    $(document).controls();
 })
 
 
@@ -39,7 +49,7 @@ function showRequest(formData, jqForm, options) {
 }
 
 // post-submit callback
-function showResponse(responseText, statusText, xhr, $form)  {
+function showResponse(responseText, statusText, xhr, $form) {
     alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
         '\n\nThe output div should have already been updated with the responseText.');
 }
