@@ -26,19 +26,29 @@
     {% assets "restaurant_admin_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    <script type="text/javascript" src="{% static_asset 'js/bootstrap/bootstrap-tooltip.js' %}"></script>
 </head>
 <body>
 
-<div class="container well">
-    <a class="open-dialog" closeOnEscape="true" closeOnOverlayClick="true" showCloseHandle="true" data-dialog-class="wide" title="tiltl1"
-        href="{% url restaurant_dish_add %} #inner-content"></a>
+<div class="container well hero-unit">
 
-    <a class="ajax" closeOnEscape="false" closeOnOverlayClick="false" showCloseHandle="false"
-       rel="sample1-dialog">ajax</a>
-
+    <a id="tooltip" >test tooltip</a>
 </div>
 
-
+<script type="text/javascript">
+    $(function(){
+        var $tooltip = $("#tooltip").tooltip({
+            placement:'bottom',
+            title:'<div class="alert alert-success">删除成功</div>',
+            delay: { show: 1500, hide: 12200 },
+            trigger:'manual'
+        })
+        $("a").click(function(){
+            $tooltip.tooltip('toggle')
+            return false;
+        })
+    })
+</script>
 
 </body>
 </html>
