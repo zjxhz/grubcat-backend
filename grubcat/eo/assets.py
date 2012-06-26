@@ -62,6 +62,7 @@ jquery_ajax_bootstrap_js = Bundle(
 )
 
 register('base_css', base_css)
+register('common_css', common_css)
 register('bootstrap_css', bootstrap_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
