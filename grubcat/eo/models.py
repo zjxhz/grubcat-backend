@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from image_cropping.fields import ImageRatioField, ImageCropField
+import random
 
 # Create your models here.
 class Company(models.Model):
@@ -173,11 +174,12 @@ class Order(models.Model):
     customer = models.ForeignKey('UserProfile', related_name='orders', verbose_name=u'客户')
     meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
-    status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, )
+    status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
     total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=2)
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     paid_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
+    code  = models.CharField(max_length = 12, null=True, unique=True)
 
     @models.permalink
     def get_absolute_url(self):
@@ -185,7 +187,23 @@ class Order(models.Model):
 
     def __unicode__(self):
         return "%s %s" % (self.meal.topic, self.customer.user.username)
-
+    
+    def get_random_code(self):
+        return random.randint(10000000,99999999)
+    
+    def gen_code(self):
+        r = self.get_random_code()
+        while Order.objects.filter(code=str(r)).count() > 0:
+            r = self.get_random_code()
+        
+        self.code = str(r)     
+        
+    def save(self, *args, **kwargs):
+        self.gen_code()
+        self.meal.join(self.customer, self.num_persons)
+        self.meal.save()
+        super(Order,self).save(*args, **kwargs)
+        
     class Meta:
         db_table = u'order'
         verbose_name = u'订单'
@@ -292,6 +310,12 @@ class BestRatingDish(models.Model):
         db_table = u'best_rating_dish'
 
 
+class NoAvailableSeatsError(Exception):
+    pass
+
+class AlreadyJoinedError(Exception):
+    pass
+
 class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
     dishes = models.ManyToManyField(Dish, through='MealDishes')
@@ -309,6 +333,15 @@ class Meal(models.Model):
     type = models.IntegerField(default=0) # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
+    def join(self, user_profile, num_persons):
+        if self.actual_persons + num_persons > self.max_persons:
+            raise NoAvailableSeatsError
+        if self.is_participant(user_profile):
+            raise AlreadyJoinedError
+        self.participants.add(user_profile)
+        self.actual_persons += num_persons
+            
+        
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist
             if participant == user_profile:

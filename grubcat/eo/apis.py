@@ -187,9 +187,22 @@ class UserResource(ModelResource):
         return get_my_list(restaurant_resource, obj.favorite_restaurants.all(), request)
     
     def get_order(self, request, **kwargs):
-        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        if not request.user.is_authenticated():
+            return login_required(request)
+        user_profile = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         order_resource = OrderResource()
-        return order_resource.get_list(request, customer=obj)
+
+        if request.method == 'POST':
+            order = Order()
+            order.meal = Meal.objects.get(id=request.POST.get('meal_id'))
+            order.num_persons = int(request.POST.get('num_persons'))
+            order.customer = user_profile
+            order.total_price = request.POST.get('total_price')
+            order.created_time = datetime.now()
+            order.save()
+            return createGeneralResponse('OK', "You've just joined the meal")
+        else:
+            return order_resource.get_list(request, customer=user_profile)
     
     def get_following(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
@@ -371,16 +384,7 @@ class MenuResource(ModelResource):
     class Meta:
         queryset = Menu.objects.all()
 
-class OrderResource(ModelResource):        
-    customer = fields.ToOneField('eo.apis.UserResource', 'customer')
-    dishes = fields.ToManyField(DishResource, 'dishes', full=True)
-    restaurant = fields.ToOneField(RestaurantResource, 'restaurant')
-        
-    class Meta:
-        queryset = Order.objects.all()
-        filtering = {'customer':ALL,}
-
-        
+       
 class UserMessageResource(ModelResource): 
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
     to_person = fields.ForeignKey(UserResource, 'to_person', full=True )
@@ -408,8 +412,6 @@ class MealResource(ModelResource):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_comments'), name="api_get_comments"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/participants%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('join'), name="api_join"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/likes%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('like'), name="api_like"),
         ]
@@ -418,28 +420,7 @@ class MealResource(ModelResource):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         meal_comment_resource = MealCommentResource()
         return get_my_list(meal_comment_resource, obj.comments.all(), request)
-    
-    def join(self, request, **kwargs):
-        meal = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
-        
-        if not request.user.is_authenticated():
-            return login_required(request)
-    
-        user = request.user
-        if request.method == 'POST':
-            if meal.participants.count() >= meal.max_persons:
-                return createGeneralResponse('NOK', "No available seat.")
-            if user.get_profile() == meal.host:
-                return createGeneralResponse('NOK', "You're the host.")
-            if meal.is_participant(user.get_profile()):
-                return createGeneralResponse('NOK', "You already joined.")
-            meal.participants.add(user.get_profile())
-            meal.actual_persons += 1
-            meal.save()
-            return createGeneralResponse('OK', "You've just joined the meal")
-        else:
-            raise
-        
+           
     def like(self, request, **kwargs):
         meal = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         
@@ -486,6 +467,15 @@ class MealInvitationResource(ModelResource):
                      'to_person': ALL_WITH_RELATIONS,
                      }
         resource_name = 'invitation'
+
+class OrderResource(ModelResource):        
+    meal = fields.ForeignKey(MealResource,'meal')
+    customer = fields.ToOneField(UserResource, 'customer')
+        
+    class Meta:
+        queryset = Order.objects.all()
+        filtering = {'customer':ALL,}
+
         
 def mobile_user_login(request):
     if request.method == 'POST':
