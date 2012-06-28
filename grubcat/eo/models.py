@@ -44,8 +44,8 @@ class Restaurant(models.Model):
     user = models.OneToOneField(User, null=True, related_name="restaurant")
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
-    longitude = models.FloatField(null=True)
     latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
     tel = models.CharField(max_length=60)
     tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(max_length=6000, blank=True)
@@ -204,11 +204,12 @@ class Order(models.Model):
 
 #    @transaction.commit_on_success
     def cancel(self):
-        self.meal.participants.remove(self.customer)
-        self.meal.actual_persons -= self.num_persons
-        self.meal.save()
-        self.status=OrderStatus.CANCELED
-        self.save()
+        if self.status != OrderStatus.CANCELED:
+            self.meal.participants.remove(self.customer)
+            self.meal.actual_persons -= self.num_persons
+            self.meal.save()
+            self.status=OrderStatus.CANCELED
+            self.save()
 
     def get_random_code(self):
         return random.randint(10000000,99999999)
