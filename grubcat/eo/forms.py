@@ -38,6 +38,6 @@ class ImgTestForm(ModelForm):
         model = ImageTest
 
 #restaurant admin related
-class CheckInForm(forms.Form):
-    authcode = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))
+class OrderCheckInForm(forms.Form):
+    code = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))
 

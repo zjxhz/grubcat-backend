@@ -199,7 +199,7 @@ class Order(models.Model):
 
     def save(self, *args, **kargs):
         if not self.code:
-           self.gen_code()
+            self.gen_code()
         super(Order, self).save(*args, **kargs)
 
 #    @transaction.commit_on_success
@@ -212,13 +212,13 @@ class Order(models.Model):
 
     def get_random_code(self):
         return random.randint(10000000,99999999)
-    
+
     def gen_code(self):
         r = self.get_random_code()
         while Order.objects.filter(code=str(r)).count() > 0:
             r = self.get_random_code()
         self.code = str(r)
-        
+
     class Meta:
         db_table = u'order'
         verbose_name = u'订单'
