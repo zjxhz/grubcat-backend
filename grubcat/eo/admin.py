@@ -1,3 +1,4 @@
+#coding=utf-8
 from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal
 
@@ -10,9 +11,15 @@ class DishAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('meal', 'customer', 'status', 'num_persons', 'total_price',)
+    list_display = ('id','meal', 'customer', 'status', 'num_persons', 'total_price',)
     list_filter = ('meal', 'status')
-    ordering = ('meal', 'status',)
+    ordering = ('-id','meal', 'status',)
+    actions = ['cancel_order']
+    def cancel_order(self, request, queryset):
+        for order in queryset:
+            order.cancel()
+        self.message_user(request, "订单取消成功!")
+    cancel_order.short_description = u"取消订单"
 
 
 class MealAdmin(admin.ModelAdmin):
