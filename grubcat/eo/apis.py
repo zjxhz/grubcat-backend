@@ -200,7 +200,7 @@ class UserResource(ModelResource):
             order.total_price = request.POST.get('total_price')
             order.created_time = datetime.now()
             order.meal.join(order)
-            return createGeneralResponse('OK', "You've just joined the meal")
+            return createGeneralResponse('OK', "You've just joined the meal",{"code":order.code})
         else:
             return order_resource.get_list(request, customer=user_profile)
     
