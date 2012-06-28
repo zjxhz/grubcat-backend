@@ -82,9 +82,11 @@ class OrderCreateView(CreateView):
         order = form.save(False)
         order.customer = self.request.user.get_profile()
         order.meal_id = form.cleaned_data['meal_id']
-        order.status = 1 #TODO
+        order.status = OrderStatus.CREATED
         order.total_price = order.meal.list_price * order.num_persons
-        return super(OrderCreateView, self).form_valid(form)
+        response = super(OrderCreateView, self).form_valid(form)
+        order.meal.join(order)
+        return response
 
 
 class OrderDetailView(DetailView):

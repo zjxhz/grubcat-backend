@@ -2,7 +2,8 @@
 from datetime import datetime
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models, transaction
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from image_cropping.fields import ImageRatioField, ImageCropField
@@ -160,11 +161,18 @@ class Rating(models.Model):
     class Meta:
         db_table = u'rating'
 
+class OrderStatus():
+    CREATED=1
+    PAYIED=2
+    COMPLETED=3
+    CANCELED=4
+
 
 ORDER_STATUS = (
     (1, '已创建'),
     (2, '已支付'),
-    (3, '已完成')
+    (3, '已完成'),
+    (4, '已取消')
     )
 #    CONFIRMED = 2
 #  COMPLETED = 4
@@ -187,7 +195,21 @@ class Order(models.Model):
 
     def __unicode__(self):
         return "%s %s" % (self.meal.topic, self.customer.user.username)
-    
+
+
+    def save(self, *args, **kargs):
+        if not self.code:
+           self.gen_code()
+        super(Order, self).save(*args, **kargs)
+
+#    @transaction.commit_on_success
+    def cancel(self):
+        self.meal.participants.remove(self.customer)
+        self.meal.actual_persons -= self.num_persons
+        self.meal.save()
+        self.status=OrderStatus.CANCELED
+        self.save()
+
     def get_random_code(self):
         return random.randint(10000000,99999999)
     
@@ -195,14 +217,7 @@ class Order(models.Model):
         r = self.get_random_code()
         while Order.objects.filter(code=str(r)).count() > 0:
             r = self.get_random_code()
-        
-        self.code = str(r)     
-        
-    def save(self, *args, **kwargs):
-        self.gen_code()
-        self.meal.join(self.customer, self.num_persons)
-        self.meal.save()
-        super(Order,self).save(*args, **kwargs)
+        self.code = str(r)
         
     class Meta:
         db_table = u'order'
@@ -333,15 +348,17 @@ class Meal(models.Model):
     type = models.IntegerField(default=0) # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
-    def join(self, user_profile, num_persons):
-        if self.actual_persons + num_persons > self.max_persons:
+    @transaction.commit_on_success
+    def join(self, order):
+        if self.actual_persons + order.num_persons > self.max_persons:
             raise NoAvailableSeatsError
-        if self.is_participant(user_profile):
+        if self.is_participant(order.customer):
             raise AlreadyJoinedError
-        self.participants.add(user_profile)
-        self.actual_persons += num_persons
-            
-        
+        self.participants.add(order.customer)
+        self.actual_persons += order.num_persons
+        self.save()
+        order.save()
+
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist
             if participant == user_profile:
