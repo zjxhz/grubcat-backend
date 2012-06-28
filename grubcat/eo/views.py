@@ -7,9 +7,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse_lazy, reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template.response import TemplateResponse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -99,13 +100,35 @@ class OrderDetailView(DetailView):
         if order.customer != self.request.user.get_profile():
             print "user see other's order" #TODO raise an exception
         return order
-
+#
+#class OrderCheckInView(DetailView):
+#    model = Order
+#    context_object_name = "order"
+#    template_name = "restaurant/checkin_result.html"
+#
+#    def get_object(self, queryset=None):
+#        order = super(OrderCheckInView, self).get_object()
+#        if order.meal.restaurant != self.request.user.restaurant:
+#            print "user see other restaurants order" #TODO raise an exception
+#        return order
 
 #restaurant admin related views
-class CheckInFormView(FormView):
+class OrderCheckInView(FormView):
     template_name = "restaurant/checkin.html"
-    form_class = CheckInForm
-    success_url = reverse_lazy("restaurant_admin_checkin_result")
+    form_class = OrderCheckInForm
+
+    def form_valid(self, form):
+        code = form.cleaned_data['code']
+        order = Order.objects.filter(code=code)
+
+        #TODO uncomment this below
+        if order:
+            order = order[0]
+#        if order and order[0].meal.restaurant == self.request.user.restaurant:
+#            order = order[0]
+#        else:
+#            order = None
+        return render_to_response("restaurant/checkin_result.html",{'order':order})
 
 
 class DishListView(ListView):
