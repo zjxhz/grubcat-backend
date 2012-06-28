@@ -1,0 +1,54 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "restaurant_admin_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link href="{% static 'css/jquery.dialog2.css' %}" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "restaurant_admin_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript" src="{% static_asset 'js/bootstrap/bootstrap-tooltip.js' %}"></script>
+</head>
+<body>
+
+<div class="container well hero-unit">
+
+    <a id="tooltip" >test tooltip</a>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        var $tooltip = $("#tooltip").tooltip({
+            placement:'bottom',
+            title:'<div class="alert alert-success">删除成功</div>',
+            delay: { show: 1500, hide: 12200 },
+            trigger:'manual'
+        })
+        $("a").click(function(){
+            $tooltip.tooltip('toggle')
+            return false;
+        })
+    })
+</script>
+
+</body>
+</html>

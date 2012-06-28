@@ -1,0 +1,118 @@
+.controls label {
+    padding-top: 5px
+}
+
+/*#make_order{*/
+/*padding-top: 20px;*/
+/*}*/
+
+.make-order{
+
+}
+
+.order-info {
+    float: left;
+    padding-right: 45px;
+    padding-left: 45px;
+    padding-top: 10px;
+    border-right: 1px solid #bbb;
+}
+.meal-info {
+    float: left;
+    padding-right: 45px;
+    padding-left: 45px;
+    width: 395px;
+    margin-left:-1px;
+    border-left: 1px solid #bbb;
+}
+
+#order_info_form .form-actions {
+    padding-left: 95px;
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+#order_info_form .control-label {
+    width: 90px;
+}
+
+#order_info_form .controls {
+    margin-left: 115px;
+}
+
+#order_info_form {
+    margin: auto;
+    padding: 0;
+    z-index: 1;
+    position: relative;
+    font-size: 120%;
+    width: 235px;
+    background: white;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+#order_info_form legend{
+    margin-bottom: 10px;
+    color: #ffffff;
+    text-shadow: none;
+    font-weight: bold;
+    font-size: 1.0em;
+    background: #222;
+    background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#222));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#444444', endColorstr='#222222');
+    background: -moz-linear-gradient(top, #444, #222);
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    -moz-border-radius-topleft: 4px;
+}
+
+.meal-img-wrapper img {
+    border: 4px solid white;
+}
+
+form legend {
+    text-align: center;
+}
+
+.meal-img-wrapper {
+    height: 210px;
+    width: 376px;
+    position: relative;
+}
+
+.meal-location{
+    margin-top:15px;
+}
+
+#id_num_persons{
+    width:70px;
+}
+
+/*order-detail page related*/
+#order_detail{
+    text-align: center;
+    width:90%;
+    margin: 0 auto 20px auto;
+}
+
+#order_detail h2{
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+#code{
+    font-size: 1.9em;
+}
+
+.auth-code, .reminder, .hotline{
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+.meal-title{
+    margin-bottom: 40px;
+}
