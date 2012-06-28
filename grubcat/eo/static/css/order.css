@@ -94,7 +94,6 @@ form legend {
 /*order-detail page related*/
 #order_detail{
     text-align: center;
-    width:90%;
     margin: 0 auto 20px auto;
 }
 
@@ -115,4 +114,9 @@ form legend {
 
 .meal-title{
     margin-bottom: 40px;
+}
+
+#map{
+    width: 540px;
+    height: 330px;
 }
