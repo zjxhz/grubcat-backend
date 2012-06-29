@@ -8,7 +8,7 @@
         </tr>
         <tr>
             <th>预定时间</th>
-            <td>{{ order.meal.time }}</td>
+            <td>{{ order.meal.time|date:"n" }}月{{ order.meal.time|date:"j" }}日  {{ order.meal.time|date:"G:i " }}</td>
         </tr>
         <tr>
             <th>就餐桌号</th>
