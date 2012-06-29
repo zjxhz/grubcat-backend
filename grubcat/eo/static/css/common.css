@@ -469,3 +469,15 @@ a.restaurant-name {
 #faq .sidebar-box-inner p {
     display: none;
 }
+
+.error{
+    margin: auto auto;
+    width: 800px;
+    padding: 40px;
+}
+
+.error h3{
+    text-align: center;
+    font-weight: normal;
+    font-size: 16px;
+}
