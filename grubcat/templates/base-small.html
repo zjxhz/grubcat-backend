@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block page-container %}
+    <div id="page-container" class="small-page">
+        {% block container-inner %}
+            {{ block.super }}
+        {% endblock %}
+    </div>
+{% endblock %}

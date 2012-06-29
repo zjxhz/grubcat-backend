@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="error">
+    {% if exception  %}
+        <h3>{{ exception.message }}</h3>
+    {% else %}
+        <h3>对不起出错了</h3>
+    {% endif %}
+    </div>
+
+{% endblock %}
