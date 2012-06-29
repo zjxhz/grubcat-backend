@@ -14,7 +14,7 @@ $(document).ready(function () {
                 })
             }
         });
-        event.preventDefault();
+        return false;
     });
 
     // bind form using 'ajaxForm'
