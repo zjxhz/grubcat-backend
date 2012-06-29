@@ -244,7 +244,6 @@ class RelationshipResource(ModelResource):
                      'to_person': ALL_WITH_RELATIONS,}
 
 class DishCategoryResource(ModelResource):
-    parent_category = fields.ForeignKey('self', 'parent_category', null=True, full=True)
     class Meta:
         queryset = DishCategory.objects.all()       
         
