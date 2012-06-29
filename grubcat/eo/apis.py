@@ -468,7 +468,7 @@ class MealInvitationResource(ModelResource):
         resource_name = 'invitation'
 
 class OrderResource(ModelResource):        
-    meal = fields.ForeignKey(MealResource,'meal')
+    meal = fields.ForeignKey(MealResource,'meal', full=True)
     customer = fields.ToOneField(UserResource, 'customer')
         
     class Meta:
