@@ -106,6 +106,7 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'eo.exceptions.ProcessExceptionMiddleware',
     #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
@@ -243,6 +244,8 @@ LOGGING = {
 #account
 LOGIN_URL=reverse_lazy('login')
 LOGIN_REDIRECT_URL=reverse_lazy('index')
+
+SHOW_EXCEPTION_DETAIL=False
 
 try:
     from settings_dev import *

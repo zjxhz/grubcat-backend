@@ -10,6 +10,8 @@ from image_cropping.fields import ImageRatioField, ImageCropField
 import random
 
 # Create your models here.
+from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
+
 class Company(models.Model):
     name = models.CharField(max_length=135)
 
@@ -326,12 +328,6 @@ class BestRatingDish(models.Model):
         db_table = u'best_rating_dish'
 
 
-class NoAvailableSeatsError(Exception):
-    pass
-
-class AlreadyJoinedError(Exception):
-    pass
-
 class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
     dishes = models.ManyToManyField(Dish, through='MealDishes')
@@ -354,7 +350,7 @@ class Meal(models.Model):
         if self.actual_persons + order.num_persons > self.max_persons:
             raise NoAvailableSeatsError
         if self.is_participant(order.customer):
-            raise AlreadyJoinedError
+            raise AlreadyJoinedError()
         self.participants.add(order.customer)
         self.actual_persons += order.num_persons
         self.save()
