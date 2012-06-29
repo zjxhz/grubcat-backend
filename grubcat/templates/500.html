@@ -2,6 +2,12 @@
 
 {% block content %}
 
-    <p>500</p>
+    <div class="error">
+    {% if exception  %}
+        <h3>{{ exception.message }}</h3>
+    {% else %}
+        <h3>对不起出错了</h3>
+     </div>
+    {% endif %}
 
 {% endblock %}

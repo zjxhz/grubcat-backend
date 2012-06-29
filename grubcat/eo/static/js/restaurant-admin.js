@@ -33,6 +33,8 @@ $(document).ready(function () {
         }
     });
     $(document).controls();
+    $('button').attr('hidefocus',true);
+
 })
 
 
