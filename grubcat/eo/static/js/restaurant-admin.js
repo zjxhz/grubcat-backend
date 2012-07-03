@@ -18,7 +18,13 @@ $(document).ready(function () {
     });
 
     // bind form using 'ajaxForm'
-    $('#checkin-form').ajaxForm({target:'#result' });
+    $('#checkin-form').ajaxForm({target:'#result',beforeSubmit:function(){
+        var code = $("#id_code").val();
+        if(!code || code.length != 8){
+            alert('请输入8位验证码！')
+            return false;
+        }
+    } });
 
     $("#modal-dialog").live("dialog2.content-update", function (e, data) {
         // got the dialog as this object. Do something with it!
