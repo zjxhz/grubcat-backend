@@ -127,6 +127,7 @@ def use_order(request):
         order_id = request.POST.get('id')
         order = Order.objects.get(id=order_id, code=code)
         order.completed_time = now()
+        order.status = OrderStatus.USED
         order.save()
         return createSucessJsonResponse('使用订单成功')
 
@@ -208,7 +209,7 @@ def creatJsonResponse(status, message, extra_dict=None):
     response = {'status': status, 'message': message}
     if extra_dict:
         response.update(extra_dict)
-    return HttpResponse(simplejson.dumps(response),content_type='application/json',)
+    return HttpResponse(simplejson.dumps(response), content_type='application/json', )
 
 # Create a general response with status and message)
 def createSucessJsonResponse(message, extra_dict=None):

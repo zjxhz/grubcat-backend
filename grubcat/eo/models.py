@@ -166,14 +166,14 @@ class Rating(models.Model):
 class OrderStatus():
     CREATED=1
     PAYIED=2
-    COMPLETED=3
+    USED=3
     CANCELED=4
 
 
 ORDER_STATUS = (
     (1, '已创建'),
     (2, '已支付'),
-    (3, '已完成'),
+    (3, '已使用'),
     (4, '已取消')
     )
 #    CONFIRMED = 2
