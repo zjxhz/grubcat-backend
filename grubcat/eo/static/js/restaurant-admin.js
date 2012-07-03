@@ -32,10 +32,7 @@ $(document).ready(function () {
             }
         }
     });
-    $(document).controls();
-    $('button').attr('hidefocus',true);
-
-})
+});
 
 
 // pre-submit callback

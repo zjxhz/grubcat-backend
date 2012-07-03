@@ -17,6 +17,11 @@
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {{ block.super }}
+    <script type="text/javascript">
+     $(function(){
+         $(document).controls();
+     })
+    </script>
 {% endblock %}
 {% block content %}
     <a href="{% url restaurant_dish_add %}" class="open-dialog addlink fr mb10 mr20" title="添加一道菜" rel="modal-dialog">添加一道菜</a>

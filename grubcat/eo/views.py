@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.response import TemplateResponse
+from django.utils.timezone import now
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -100,17 +101,6 @@ class OrderDetailView(DetailView):
         if order.customer != self.request.user.get_profile():
             print "user see other's order" #TODO raise an exception
         return order
-#
-#class OrderCheckInView(DetailView):
-#    model = Order
-#    context_object_name = "order"
-#    template_name = "restaurant/checkin_result.html"
-#
-#    def get_object(self, queryset=None):
-#        order = super(OrderCheckInView, self).get_object()
-#        if order.meal.restaurant != self.request.user.restaurant:
-#            print "user see other restaurants order" #TODO raise an exception
-#        return order
 
 #restaurant admin related views
 class OrderCheckInView(FormView):
@@ -124,11 +114,21 @@ class OrderCheckInView(FormView):
         #TODO uncomment this below
         if order:
             order = order[0]
-#        if order and order[0].meal.restaurant == self.request.user.restaurant:
-#            order = order[0]
-#        else:
-#            order = None
-        return render_to_response("restaurant/checkin_result.html",{'order':order})
+            #        if order and order[0].meal.restaurant == self.request.user.restaurant:
+        #            order = order[0]
+        #        else:
+        #            order = None
+        return render_to_response("restaurant/checkin_result.html", {'order': order})
+
+
+def use_order(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        order_id = request.POST.get('id')
+        order = Order.objects.get(id=order_id, code=code)
+        order.completed_time = now()
+        order.save()
+        return createSucessJsonResponse('使用订单成功')
 
 
 class DishListView(ListView):
@@ -148,7 +148,7 @@ class DishCreateView(CreateView):
         dish = form.save(False)
         dish.restaurant = self.request.user.restaurant
         super(DishCreateView, self).form_valid(form)
-        content= r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
         return HttpResponse(content=content)
 
 
@@ -160,7 +160,7 @@ class DishUpdateView(UpdateView):
 
     def form_valid(self, form):
         super(DishUpdateView, self).form_valid(form)
-        content= r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
         return HttpResponse(content=content)
 
 
@@ -180,6 +180,7 @@ class DishDeleteView(DeleteView):
         super(DishDeleteView, self).delete(request, *args, **kwargs)
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
         return HttpResponse(content=content)
+
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
@@ -201,6 +202,17 @@ def createGeneralResponse(status, message, extra_dict=None):
     if extra_dict:
         response.update(extra_dict)
     return HttpResponse(simplejson.dumps(response))
+
+# Create a general response with status and message)
+def creatJsonResponse(status, message, extra_dict=None):
+    response = {'status': status, 'message': message}
+    if extra_dict:
+        response.update(extra_dict)
+    return HttpResponse(simplejson.dumps(response),content_type='application/json',)
+
+# Create a general response with status and message)
+def createSucessJsonResponse(message, extra_dict=None):
+    return creatJsonResponse('ok', message, extra_dict)
 
 # get distance in meter, code from google maps
 def getDistance( lng1, lat1, lng2, lat2):

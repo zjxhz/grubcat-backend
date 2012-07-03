@@ -213,6 +213,9 @@ class Order(models.Model):
             self.status=OrderStatus.CANCELED
             self.save()
 
+    def is_completed(self):
+        return bool( self.completed_time )
+
     def get_random_code(self):
         return random.randint(10000000,99999999)
 
