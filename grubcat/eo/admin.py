@@ -11,7 +11,7 @@ class DishAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','meal', 'customer', 'created_time','status', 'num_persons', 'code','total_price',)
+    list_display = ('id','meal', 'customer', 'created_time','completed_time','status', 'num_persons', 'code','total_price',)
     list_filter = ('meal', 'status')
     ordering = ('-id','meal', 'status',)
     actions = ['cancel_order']
