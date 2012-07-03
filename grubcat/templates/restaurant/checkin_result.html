@@ -1,32 +1,60 @@
 {% if order %}
-<div class="span4">
-    <table class="table table-striped table-bordered table-condensed">
-        <tbody>
-        <tr>
-            <th>用户名</th>
-            <td>{{ order.customer.user.username }}</td>
-        </tr>
-        <tr>
-            <th>预定时间</th>
-            <td>{{ order.meal.time|date:"n" }}月{{ order.meal.time|date:"j" }}日  {{ order.meal.time|date:"G:i " }}</td>
-        </tr>
-        <tr>
-            <th>就餐桌号</th>
-            <td><strong>16</strong></td>
-        </tr>
-        <tr>
-            <th>就餐人数</th>
-            <td>{{ order.num_persons }}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<div class="span6">
-    <div id="meal-img-wrapper">
-        <img alt="饭局主题5" id="meal-photo" src="{{ order.meal.photo.url }}" width="376px"
-             height="210px">
+    {% if order.is_completed %}
+        <div class="span10">
+            <h3 class="alert alert-error">
+                    订单已经使用过！使用时间：{{ order.completed_time|date:"n" }}月{{ order.completed_time|date:"j" }}日 {{ order.completed_time|date:"G:i " }}</h3>
+        </div>
+    {% else %}
+        <div id="check-in-title" class="span10 check-in-title">
+            <div class="span3"><h3>订单还未使用过！</h3></div>
+            <div class="span5">
+                <form id="use-order-form" action="{% url restaurant_use_order %}" method="post" class="form-inline">
+                    <input type="hidden" name="code" value="{{ order.code }}">
+                    <input type="hidden" name="id" value="{{ order.id }}">
+                    <button type="submit" class="btn btn-success pull-right btn-use">使用</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="span4">
+        <table class="table table-striped table-bordered table-condensed">
+            <tbody>
+            <tr>
+                <th>用户名</th>
+                <td>{{ order.customer.user.username }}</td>
+            </tr>
+            <tr>
+                <th>预定时间</th>
+                <td>{{ order.meal.time|date:"n" }}月{{ order.meal.time|date:"j" }}日 {{ order.meal.time|date:"G:i " }}</td>
+            </tr>
+            <tr>
+                <th>就餐桌号</th>
+                <td><strong>16</strong></td>
+            </tr>
+            <tr>
+                <th>就餐人数</th>
+                <td>{{ order.num_persons }}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-</div>
+
+    <div class="span6">
+        <div id="meal-img-wrapper">
+            <img alt="饭局主题5" id="meal-photo" src="{{ order.meal.photo.url }}" width="376px"
+                 height="210px">
+        </div>
+    </div>
 {% else %}
-    <div class="span10"> <h3 class="alert alert-error" >订单不存在！</h3></div>
+    <div class="span10"><h3 class="alert alert-error">订单不存在！</h3></div>
 {% endif %}
+
+<script type="text/javascript">
+    $("#use-order-form").ajaxForm({
+        dataType:'json',
+        success:function (data) {
+            $("#check-in-title").html('<h3 class="span4">' + data.message + '</h3>')
+        }
+    })
+</script>
