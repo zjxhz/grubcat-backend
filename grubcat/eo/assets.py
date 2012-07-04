@@ -61,6 +61,8 @@ jquery_ajax_bootstrap_js = Bundle(
     output='gen/jquery.ajax.bootstrap.js.%(version)s.js'
 )
 
+jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/js/jquery-ui-1.8.21.custom%(version)s.js')
+
 register('base_css', base_css)
 register('common_css', common_css)
 register('bootstrap_css', bootstrap_css)
@@ -77,3 +79,5 @@ register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
 register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
+register('jquery_ui_js', jquery_ui_js)
+

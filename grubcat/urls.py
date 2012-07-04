@@ -103,7 +103,7 @@ urlpatterns = patterns('',
     url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_order"),
     url(r'^restaurant/menu/$',
-        restaurant_login_required(add_order),
+        restaurant_login_required(add_menu),
         name="restaurant_menu"),
 
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
