@@ -1,5 +1,7 @@
 {% extends "restaurant/base.html" %}
 {% load static from staticfiles %}
+{% load assets %}
+{% load static_asset %}
 {% block title %}套餐管理{% endblock %}
 {% block page_css %}
     <link rel="stylesheet" href="{% static 'css/ui/smoothness/jquery-ui-1.8.21.custom.css' %}">
@@ -16,64 +18,79 @@
     </style>
 {% endblock %}
 {% block page_js %}
-    <script type="text/javascript" src="{% static 'js/jquery-ui-1.8.21.custom.min.js' %}"></script>
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     {{ block.super }}
     <script>
+        function helperMasker(){
+            return $(this).clone().addClass("helper").css("width", $(this).width())
+        }
+
+        function hideDishes(dishId){
+            $("#dish-container [dish-id=" + dishId +"]").hide();
+//            $.each($("#dish-container [dish-id=" + dishId +"]").hide(), function(i, item){
+//                if(!$(item).siblings("dd:visible")[0])
+//                {
+//                    $(item).siblings("dt:visible").fadeOut(1000);
+//                }
+//            });
+        }
+
+        function showDishes(dishId){
+            $("#dish-container [dish-id=" + dishId +"]").fadeIn(1000);
+        }
+
         $(function () {
 
-            $("#dish-container dd").draggable({
-                connectToSortable:"#menu-container dl.category",
-                revert:"invalid",
-                helper:function () {
-                    return $(this).clone().addClass("helper").css("width", $(this).width())
-                },
-                cursor:"move",
-                opacity:0.35,
-                start:function () {
-
-                }
-            });
+            //drag category
             $("#dish-container dt").draggable({
                 connectToSortable:"#menu-container",
                 revert:"invalid",
-                helper:function () {
-                    return $(this).clone().addClass("helper").css("width", $(this).width())
-                },
+                helper:helperMasker,
                 cursor:"move",
-                opacity:0.35,
-                start:function () {
-
-                }
+                opacity:0.35
             });
 
+            //drage dish
+            $("#dish-container dd").draggable({
+                connectToSortable:"#menu-container dl.category",
+                revert:"invalid",
+                helper:helperMasker,
+                cursor:"move",
+                opacity:0.35
 
-//            $("#dish-container").droppable({
-//                accept:"dd"
-////                hoverClass:"ui-state-highlight"
-//            })
-
+            });
 
             $("#menu-container").sortable({
                 cursor:"move",
                 placeholder:"ui-state-highlight",
-                revert:true,
-                forcePlaceholderSize:true
+                forcePlaceholderSize:true,
+                containment:"#menu-container",
+                receive:function(e, ui){
+                    var categoryId = ui.sender.attr('category-id');
+                    if($(this).find('dt[category-id=' +categoryId + ']').size()>=2)
+                    {
+//                       ui.sender.css('color','red').sortable('cancel');
+                    }
+                }
             });
 
-
-//            $("#dish-container dl.category").sortable({
-//                placeholder:"ui-state-highlight",
-//                connectWith:"#menu-container dl.category",
-//                items: "dd"
-//            });
             $("#menu-container dl.category").sortable({
                 cursor:"move",
                 placeholder:"ui-state-highlight",
                 connectWith:"#menu-container dl.category",
                 items:"dd",
-                revert:"invalid"
-
+                revert:"invalid",
+                receive:function(e, ui){
+                    hideDishes(ui.sender.attr("dish-id"));
+                }
             });
+
+            $("#menu-container dd").live('dblclick',function(e){
+                $(this).fadeOut(1000).remove();
+                showDishes($(this).attr("dish-id"))
+            })
 
             $("body").disableSelection();
         });
@@ -89,10 +106,10 @@
         <div id="dish-container" class="span5">
             {% for category in categories %}
                 <dl class="category">
-                    <dt>{{ category.name }}</dt>
+                    <dt category-id="{{ category.id }}" >{{ category.name }}</dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
-                            <dd>{{ dish.name }}</dd>
+                            <dd  id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}" >{{ dish.name }}</dd>
                         {% endif %}
                     {% endfor %}
                 </dl>
@@ -102,26 +119,26 @@
                     <dt>无分类</dt>
                     {% for dish in dishes %}
                         {% if not dish.categories.all %}
-                            <dd>{{ dish.name }}</dd>
+                            <dd dish-id="{{ dish.id }}" >{{ dish.name }}</dd>
                         {% endif %}
                     {% endfor %}
                 </dl>
             {% endif %}
         </div>
         <div id="menu-container" class="span5">
-            <dl class="category">
-                <dt>热菜</dt>
-                <dd>11</dd>
-            </dl>
-            <dl class="category">
-                <dt>冷菜</dt>
-                <dd>21</dd>
-            </dl>
-
-            <dl class="category">
-                <dt>海鲜</dt>
-                <dd>31</dd>
-            </dl>
+{#            <dl class="category">#}
+{#                <dt>热菜</dt>#}
+{#                <dd>11</dd>#}
+{#            </dl>#}
+{#            <dl class="category">#}
+{#                <dt>冷菜</dt>#}
+{#                <dd>21</dd>#}
+{#            </dl>#}
+{##}
+{#            <dl class="category">#}
+{#                <dt>海鲜</dt>#}
+{#                <dd>31</dd>#}
+{#            </dl>#}
 
         </div>
     </div>

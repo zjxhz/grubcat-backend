@@ -184,14 +184,14 @@ class DishDeleteView(DeleteView):
         return HttpResponse(content=content)
 
 
-def add_order(request):
+def add_menu(request):
     '''添加一个套餐'''
     if request.method == 'GET':
     #        categories = DishCategory.dish_set.filter()
     #        dishes = Dish.objects.filter(restaurant=request.user.restaurant)
         dishes = Dish.objects.filter(restaurant=request.user.restaurant)
         categories_id_list = dishes.values_list("categories").distinct()
-        categories = DishCategory.objects.filter(id__in=categories_id_list)
+        categories = DishCategory.objects.filter(id__in=categories_id_list).order_by("-id")
 
         existNoneCategory = False
         for cat in categories_id_list:
