@@ -192,7 +192,15 @@ def add_order(request):
         dishes = Dish.objects.filter(restaurant=request.user.restaurant)
         categories_id_list = dishes.values_list("categories").distinct()
         categories = DishCategory.objects.filter(id__in=categories_id_list)
-    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories})
+
+        existNoneCategory = False
+        for cat in categories_id_list:
+            if None in cat:
+                existNoneCategory = True
+                break
+
+
+    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
 
 
 def writeJson(qs, response, relations=None):

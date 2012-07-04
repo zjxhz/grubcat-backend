@@ -47,7 +47,6 @@
             });
 
 
-
 //            $("#dish-container").droppable({
 //                accept:"dd"
 ////                hoverClass:"ui-state-highlight"
@@ -83,22 +82,31 @@
 
 {% block content %}
     <div class="well">
-    请拖动左边的菜到右边的框中：（未全部完成）
+        请拖动左边的菜到右边的框中：（未全部完成）
     </div>
 
     <div class="row">
         <div id="dish-container" class="span5">
             {% for category in categories %}
                 <dl class="category">
-                    <dt class="category" >{{ category.name }}</dt>
+                    <dt>{{ category.name }}</dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
                             <dd>{{ dish.name }}</dd>
                         {% endif %}
                     {% endfor %}
                 </dl>
-
             {% endfor %}
+            {% if existNoneCategory %}
+                <dl class="category">
+                    <dt>无分类</dt>
+                    {% for dish in dishes %}
+                        {% if not dish.categories.all %}
+                            <dd>{{ dish.name }}</dd>
+                        {% endif %}
+                    {% endfor %}
+                </dl>
+            {% endif %}
         </div>
         <div id="menu-container" class="span5">
             <dl class="category">
