@@ -18,9 +18,9 @@ $(document).ready(function () {
     });
 
     // bind form using 'ajaxForm'
-    $('#checkin-form').ajaxForm({target:'#result',beforeSubmit:function(){
+    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
         var code = $("#id_code").val();
-        if(!code || code.length != 8){
+        if (!code || code.length != 8) {
             alert('请输入8位验证码！')
             return false;
         }

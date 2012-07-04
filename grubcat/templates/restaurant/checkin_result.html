@@ -1,5 +1,5 @@
 {% if order %}
-    {% if order.is_completed %}
+    {% if order.is_used %}
         <div class="span10">
             <h3 class="alert alert-error">
                     订单已经使用过！使用时间：{{ order.completed_time|date:"n" }}月{{ order.completed_time|date:"j" }}日 {{ order.completed_time|date:"G:i " }}</h3>

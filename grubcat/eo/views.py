@@ -122,6 +122,7 @@ class OrderCheckInView(FormView):
 
 
 def use_order(request):
+    '''用户就餐时，餐厅管理员标记订单为已使用'''
     if request.method == 'POST':
         code = request.POST.get('code')
         order_id = request.POST.get('id')
@@ -133,7 +134,7 @@ def use_order(request):
 
 
 class DishListView(ListView):
-    template_name = "restaurant/menu.html"
+    template_name = "restaurant/dish.html"
     context_object_name = "dish_list"
 
     def get_queryset(self):
@@ -143,13 +144,13 @@ class DishListView(ListView):
 class DishCreateView(CreateView):
     form_class = DishForm
     template_name = "restaurant/dish_add_edit.html"
-    success_url = reverse_lazy("restaurant_admin_menu")
+    success_url = reverse_lazy("restaurant_dish_list")
 
     def form_valid(self, form):
         dish = form.save(False)
         dish.restaurant = self.request.user.restaurant
         super(DishCreateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
         return HttpResponse(content=content)
 
 
@@ -157,11 +158,11 @@ class DishUpdateView(UpdateView):
     form_class = DishForm
     model = Dish
     template_name = "restaurant/dish_add_edit.html"
-    success_url = reverse_lazy("restaurant_admin_menu")
+    success_url = reverse_lazy("restaurant_dish_list")
 
     def form_valid(self, form):
         super(DishUpdateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
         return HttpResponse(content=content)
 
 
@@ -170,7 +171,7 @@ class DishDeleteView(DeleteView):
     form_class = DishForm
     context_object_name = "dish"
     template_name = "restaurant/dish_confirm_delete.html"
-    success_url = reverse_lazy("restaurant_admin_menu")
+    success_url = reverse_lazy("restaurant_dish_list")
 
     def get_object(self):
         dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
@@ -179,8 +180,19 @@ class DishDeleteView(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         super(DishDeleteView, self).delete(request, *args, **kwargs)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_admin_menu')
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
         return HttpResponse(content=content)
+
+
+def add_order(request):
+    '''添加一个套餐'''
+    if request.method == 'GET':
+    #        categories = DishCategory.dish_set.filter()
+    #        dishes = Dish.objects.filter(restaurant=request.user.restaurant)
+        dishes = Dish.objects.filter(restaurant=request.user.restaurant)
+        categories_id_list = dishes.values_list("categories").distinct()
+        categories = DishCategory.objects.filter(id__in=categories_id_list)
+    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories})
 
 
 def writeJson(qs, response, relations=None):
@@ -319,25 +331,25 @@ def get_restaurant_list_by_geo(request):
         raise
     return  response
 
-
-def get_menu(request):
-    response = HttpResponse()
-    restaurant = Restaurant.objects.get(id=request.GET.get('id'))
-
-    menu = restaurant.menu
-    jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
-
-    categories = menu.categories.all()
-    jsonCategories = simplejson.loads(serializers.serialize('json', categories))
-    jsonMenu['categories'] = jsonCategories
-
-    dishes = restaurant.dish_set.all() #Dish.objects.filter(restaurant_id=restaurant.id)
-    jsonDishes = simplejson.loads(
-        serializers.serialize('json', dishes, excludes=('restaurant'), relations=('tags', 'categories',)))
-    jsonMenu['dishes'] = jsonDishes
-
-    response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
-    return response
+#
+#def get_menu(request):
+#    response = HttpResponse()
+#    restaurant = Restaurant.objects.get(id=request.GET.get('id'))
+#
+#    menu = restaurant.menu
+#    jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
+#
+#    categories = menu.categories.all()
+#    jsonCategories = simplejson.loads(serializers.serialize('json', categories))
+#    jsonMenu['categories'] = jsonCategories
+#
+#    dishes = restaurant.dish_set.all() #Dish.objects.filter(restaurant_id=restaurant.id)
+#    jsonDishes = simplejson.loads(
+#        serializers.serialize('json', dishes, excludes=('restaurant'), relations=('tags', 'categories',)))
+#    jsonMenu['dishes'] = jsonDishes
+#
+#    response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
+#    return response
 
 
 def login_required_response(request):
