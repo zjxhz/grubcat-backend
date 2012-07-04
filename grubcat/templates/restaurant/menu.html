@@ -11,6 +11,10 @@
             height: 1.5em;
         }
 
+        dt{
+            margin-top: 10px;
+        }
+
         .helper {
             border: 1px solid #000000;
             padding: 2px;
@@ -23,12 +27,12 @@
     {% endassets %}
     {{ block.super }}
     <script>
-        function helperMasker(){
+        function helperMasker() {
             return $(this).clone().addClass("helper").css("width", $(this).width())
         }
 
-        function hideDishes(dishId){
-            $("#dish-container [dish-id=" + dishId +"]").hide();
+        function hideDishes(dishId) {
+            $("#dish-container [dish-id=" + dishId + "]").hide();
 //            $.each($("#dish-container [dish-id=" + dishId +"]").hide(), function(i, item){
 //                if(!$(item).siblings("dd:visible")[0])
 //                {
@@ -37,14 +41,14 @@
 //            });
         }
 
-        function showDishes(dishId){
-            $("#dish-container [dish-id=" + dishId +"]").fadeIn(1000);
+        function showDishes(dishId) {
+            $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
         }
 
         $(function () {
 
             //drag category
-            $("#dish-container dt").draggable({
+            $("#dish-container dt, #dish-container dd").draggable({
                 connectToSortable:"#menu-container",
                 revert:"invalid",
                 helper:helperMasker,
@@ -52,42 +56,42 @@
                 opacity:0.35
             });
 
-            //drage dish
-            $("#dish-container dd").draggable({
-                connectToSortable:"#menu-container dl.category",
-                revert:"invalid",
-                helper:helperMasker,
-                cursor:"move",
-                opacity:0.35
-
-            });
-
             $("#menu-container").sortable({
                 cursor:"move",
                 placeholder:"ui-state-highlight",
                 forcePlaceholderSize:true,
                 containment:"#menu-container",
-                receive:function(e, ui){
-                    var categoryId = ui.sender.attr('category-id');
-                    if($(this).find('dt[category-id=' +categoryId + ']').size()>=2)
-                    {
-//                       ui.sender.css('color','red').sortable('cancel');
-                    }
-                }
-            });
+//                receive:function (e, ui) {
+//
+//                    ui.item.fadeOut().fadeIn()
+//                    var categoryId = ui.sender.attr('category-id');
+////                    if($(this).find('dt[category-id=' +categoryId + ']').size()>=2)
+////                    {
+//////                       ui.sender.css('color','red').sortable('cancel');
+////                    }
+//                }
+                receive:function (e, ui) {
 
-            $("#menu-container dl.category").sortable({
-                cursor:"move",
-                placeholder:"ui-state-highlight",
-                connectWith:"#menu-container dl.category",
-                items:"dd",
-                revert:"invalid",
-                receive:function(e, ui){
                     hideDishes(ui.sender.attr("dish-id"));
                 }
             });
 
-            $("#menu-container dd").live('dblclick',function(e){
+//            $("#menu-container dl.category").sortable({
+//                cursor:"move",
+//                placeholder:"ui-state-highlight",
+//                connectWith:"#menu-container dl.category",
+//                items:"dd",
+//                revert:"invalid",
+//                receive:function (e, ui) {
+//                    hideDishes(ui.sender.attr("dish-id"));
+//                }
+//            });
+
+            $("#menu-container dt").live('dblclick', function (e) {
+                $(this).fadeOut(1000).remove();
+            })
+
+            $("#menu-container dd").live('dblclick', function (e) {
                 $(this).fadeOut(1000).remove();
                 showDishes($(this).attr("dish-id"))
             })
@@ -104,41 +108,31 @@
 
     <div class="row">
         <div id="dish-container" class="span5">
-            {% for category in categories %}
-                <dl class="category">
-                    <dt category-id="{{ category.id }}" >{{ category.name }}</dt>
+            <dl class="category">
+                {% for category in categories %}
+                    <dt class="category" category-id="{{ category.id }}">{{ category.name }}</dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
-                            <dd  id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}" >{{ dish.name }}</dd>
+                            <dd id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}">{{ dish.name }}</dd>
                         {% endif %}
                     {% endfor %}
-                </dl>
-            {% endfor %}
-            {% if existNoneCategory %}
-                <dl class="category">
-                    <dt>无分类</dt>
-                    {% for dish in dishes %}
-                        {% if not dish.categories.all %}
-                            <dd dish-id="{{ dish.id }}" >{{ dish.name }}</dd>
-                        {% endif %}
-                    {% endfor %}
-                </dl>
-            {% endif %}
+                {% endfor %}
+            </dl>
         </div>
         <div id="menu-container" class="span5">
-{#            <dl class="category">#}
-{#                <dt>热菜</dt>#}
-{#                <dd>11</dd>#}
-{#            </dl>#}
-{#            <dl class="category">#}
-{#                <dt>冷菜</dt>#}
-{#                <dd>21</dd>#}
-{#            </dl>#}
-{##}
-{#            <dl class="category">#}
-{#                <dt>海鲜</dt>#}
-{#                <dd>31</dd>#}
-{#            </dl>#}
+            {#            <dl class="category">#}
+            {#                <dt>热菜</dt>#}
+            {#                <dd>11</dd>#}
+            {#            </dl>#}
+            {#            <dl class="category">#}
+            {#                <dt>冷菜</dt>#}
+            {#                <dd>21</dd>#}
+            {#            </dl>#}
+            {##}
+            {#            <dl class="category">#}
+            {#                <dt>海鲜</dt>#}
+            {#                <dd>31</dd>#}
+            {#            </dl>#}
 
         </div>
     </div>
