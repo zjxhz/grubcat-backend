@@ -103,18 +103,18 @@ class RatingPic(models.Model):
         db_table = u'rating_pic'
 
 
-class Menu(models.Model):
-    restaurant = models.OneToOneField(Restaurant)
-    cover = models.CharField(max_length=255, null=True)
-    menu_timestamp = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = u'menu'
+#class Menu(models.Model):
+#    restaurant = models.OneToOneField(Restaurant)
+#    cover = models.CharField(max_length=255, null=True)
+#    menu_timestamp = models.DateTimeField(auto_now=True)
+#
+#    class Meta:
+#        db_table = u'menu'
 
 
 class DishCategory(models.Model):
-    menu = models.ForeignKey(Menu, related_name="categories")
-    name = models.CharField(max_length=45)
+#    menu = models.ForeignKey(Menu, related_name="categories")
+    name = models.CharField(max_length=45,unique=True)
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
 
     def __unicode__(self):
@@ -122,13 +122,15 @@ class DishCategory(models.Model):
 
     class Meta:
         db_table = u'dish_category'
+        verbose_name = u'菜的分类'
+        verbose_name_plural = u'菜的分类'
 
 
 class Dish(models.Model):
     name = models.CharField(u'菜名', max_length=135)
     price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
-    menu = models.ForeignKey(Menu, related_name='dishes', null=True, blank=True)
+#    menu = models.ForeignKey(Menu, related_name='dishes', null=True, blank=True)
     #    number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
     #    desc = models.CharField(u'描述',max_length=765,blank=True)
     #    pic = models.CharField(u'图片', max_length=765, blank=True)
@@ -139,7 +141,7 @@ class Dish(models.Model):
     #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前是否可以提供', default=True)
-    categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', )
+    categories = models.ManyToManyField(DishCategory, verbose_name=u'分类',null=True,blank=True )
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -176,8 +178,6 @@ ORDER_STATUS = (
     (3, '已使用'),
     (4, '已取消')
     )
-#    CONFIRMED = 2
-#  COMPLETED = 4
 
 
 class Order(models.Model):
@@ -189,7 +189,7 @@ class Order(models.Model):
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     paid_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
-    code  = models.CharField(max_length = 12, null=True, unique=True)
+    code  = models.CharField(u'订单验证码',max_length = 12, null=True, unique=True)
 
     @models.permalink
     def get_absolute_url(self):
@@ -213,8 +213,8 @@ class Order(models.Model):
             self.status=OrderStatus.CANCELED
             self.save()
 
-    def is_completed(self):
-        return bool( self.completed_time )
+    def is_used(self):
+        return self.status == OrderStatus.USED
 
     def get_random_code(self):
         return random.randint(10000000,99999999)

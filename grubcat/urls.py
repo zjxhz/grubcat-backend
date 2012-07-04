@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.decorators import restaurant_login_required
-from eo.views import get_menu, get_restaurant_list_by_geo, get_restaurant,\
+from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
     get_order_by_id, get_user_profile, favorite_restaurant, favorite_restaurants,\
@@ -25,7 +25,7 @@ from django.conf import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    ('^get_menu/$', get_menu),
+#    ('^get_menu/$', get_menu),
     ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     ('^restaurant/(\d+)/$', get_restaurant),
     ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
@@ -88,22 +88,27 @@ urlpatterns = patterns('',
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(OrderCheckInView.as_view()),
         name="restaurant_admin"),
-    url(r'^restaurant/chekin/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_admin_checkin"),
-    url(r'^restaurant/menu/$', restaurant_login_required(DishListView.as_view()),
-        name="restaurant_admin_menu"),
-    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
-        name="restaurant_admin_order"),
+    url(r'^restaurant/chekin/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_checkin")
+    ,
     url(r'^restaurant/order/use/$', restaurant_login_required(use_order),
         name="restaurant_use_order"),
+    url(r'^restaurant/dish/$', restaurant_login_required(DishListView.as_view()),
+        name="restaurant_dish_list"),
     url(r'^restaurant/dish/add/$', restaurant_login_required(DishCreateView.as_view()),
         name="restaurant_dish_add"),
     url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
     url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(DishDeleteView.as_view()),
         name="restaurant_dish_del"),
-(r'^test/$',TemplateView.as_view(template_name="test.html")),
-#    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
-    #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_admin_menu"),
+    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
+        name="restaurant_order"),
+    url(r'^restaurant/menu/$',
+        restaurant_login_required(add_order),
+        name="restaurant_menu"),
+
+    (r'^test/$', TemplateView.as_view(template_name="test.html")),
+    #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
+    #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support")
 )

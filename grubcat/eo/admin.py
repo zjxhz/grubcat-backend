@@ -9,6 +9,8 @@ class DishAdmin(admin.ModelAdmin):
     list_filter = ('restaurant',)
     ordering = ('restaurant',)
 
+class DishCategoryAdmin(admin.ModelAdmin):
+    pass
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id','meal', 'customer', 'created_time','completed_time','status', 'num_persons', 'code','total_price',)
@@ -31,4 +33,5 @@ admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Restaurant)
 admin.site.register(Dish, DishAdmin)
+admin.site.register(DishCategory, DishCategoryAdmin)
 #admin.site.register(DishCategory)

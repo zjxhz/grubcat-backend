@@ -6,7 +6,7 @@
     {{ block.super }}
 {% endblock %}
 {% block content %}
-    <form id="checkin-form" action="{% url restaurant_admin_checkin %}" method="post" class="well form-search">
+    <form id="checkin-form" action="{% url restaurant_checkin %}" method="post" class="well form-search">
         {{ form.code }}
         &nbsp;&nbsp; &nbsp;&nbsp;
         <button type="submit" class="btn btn-primary">查询</button>

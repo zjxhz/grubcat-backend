@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
-    RestaurantInfo, Rating, BestRatingDish, Dish, Menu, DishCategory, \
+    RestaurantInfo, Rating, BestRatingDish, Dish,  DishCategory, \
     Order, Relationship, UserMessage, Meal, MealInvitation, \
     UserLocation, MealComment
 from tastypie import fields
@@ -377,11 +377,11 @@ class RegionResource(ModelResource):
     class Meta:
         queryset = Region.objects.all()
 
-class MenuResource(ModelResource):
-    categories = fields.ToManyField('eo.apis.DishCategoryResource', 'categories', full=True)
-    dishes = fields.ToManyField('eo.apis.DishResource', 'dishes', full=True)
-    class Meta:
-        queryset = Menu.objects.all()
+#class MenuResource(ModelResource):
+#    categories = fields.ToManyField('eo.apis.DishCategoryResource', 'categories', full=True)
+#    dishes = fields.ToManyField('eo.apis.DishResource', 'dishes', full=True)
+#    class Meta:
+#        queryset = Menu.objects.all()
 
        
 class UserMessageResource(ModelResource): 
@@ -512,7 +512,7 @@ v1_api.register(RegionResource())
 v1_api.register(RestaurantInfoResource())
 v1_api.register(RatingResource())
 v1_api.register(DishResource())
-v1_api.register(MenuResource())
+#v1_api.register(MenuResource())
 v1_api.register(DishCategoryResource())
 v1_api.register(OrderResource())
 v1_api.register(RelationshipResource())
