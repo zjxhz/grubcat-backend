@@ -11,7 +11,7 @@
             height: 18px;
         }
 
-        dt{
+        dt {
             margin-top: 10px;
         }
 
@@ -19,58 +19,60 @@
             border: 1px solid #000000;
             padding: 2px;
         }
-    .tag {
+
+        .tag {
             background-color: #94BF17;
             color: white;
             border-radius: 3px;
             padding: 2px 4px;
             cursor: default;
-            min-width: 100px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             display: inline-block;
             vertical-align: middle;
             margin: 5px 6px 5px 20px;
-    }
-    #menu-container .tag{
-        display: block;
-    }
-    dt.tag{
-        display: block;
-        margin-left: 1px;
-        color: #666;
-        background: #e4ff4e;
-        border: 1px solid #DDD;
-    }
-
-    #dish-container dt{
-        width: 180px;
-    }
-
-        #menu-container dt{
-           width: 277px;
         }
-        #menu-container dd{
+
+        #menu-container .tag {
+            display: block;
+        }
+
+        dt.tag {
+            display: block;
+            margin-left: 1px;
+            color: #666;
+            background: #e4ff4e;
+            border: 1px solid #DDD;
+        }
+
+        #dish-container dt {
+            width: 180px;
+        }
+
+        #menu-container dt {
+            width: 277px;
+        }
+
+        #menu-container dd {
             width: 240px;
         }
 
-    .dish-info{
-        float: right;;
-    }
+        #menu-container .dish-info {
+            float: right;;
+        }
 
-    #dish-container .dish-info{
-        display: none;
-        float: none;
-    }
-
-        #dish-container .close{
+        #dish-container .close {
             display: none;
         }
 
-        #dish-container .dish-info .price{
-            display: block;
+        #dish-container .unit, #dish-container .num{
+            display: none;
         }
+
+    #dish-container .price{
+        float:right;
+    }
     </style>
 {% endblock %}
 {% block page_js %}
@@ -113,8 +115,7 @@
             });
 
 
-
-            $("#dish-container dd,#dish-container dt").dblclick( function (e) {
+            $("#dish-container dd,#dish-container dt").dblclick(function (e) {
                 $(this).clone().appendTo($("#menu-container")).fadeIn();
                 hideDishes($(this).attr("dish-id"))
             })
@@ -154,8 +155,12 @@
                             href="#" class="close cb">&times;</a></dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
-                            <dd class="tag" id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
-                                <a  href="#" class="close">&times;</a>  <span class="dish-info"> <span class="price">{{ dish.price}}</span> 元/{{dish.unit }} &times; <span class="num">3</span>&nbsp;&nbsp;  </span></dd>
+                            <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
+                                <a href="#" class="close">&times;</a>
+
+                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
+                                        class="unit"> /{{ dish.unit }} &times; </span><a
+                                        class="num">3</a>&nbsp;&nbsp; </span></dd>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
