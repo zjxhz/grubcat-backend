@@ -8,7 +8,7 @@
     {{ block.super }}
     <style>
         dt, dd {
-            height: 1.5em;
+            height: 18px;
         }
 
         dt{
@@ -25,7 +25,7 @@
             border-radius: 3px;
             padding: 2px 4px;
             cursor: default;
-            max-width: 200px;
+            min-width: 100px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -36,10 +36,41 @@
     #menu-container .tag{
         display: block;
     }
-
-    #menu-container .price{
-        float: right;
+    dt.tag{
+        display: block;
+        margin-left: 1px;
+        color: #666;
+        background: #e4ff4e;
+        border: 1px solid #DDD;
     }
+
+    #dish-container dt{
+        width: 180px;
+    }
+
+        #menu-container dt{
+           width: 277px;
+        }
+        #menu-container dd{
+            width: 240px;
+        }
+
+    .dish-info{
+        float: right;;
+    }
+
+    #dish-container .dish-info{
+        display: none;
+        float: none;
+    }
+
+        #dish-container .close{
+            display: none;
+        }
+
+        #dish-container .dish-info .price{
+            display: block;
+        }
     </style>
 {% endblock %}
 {% block page_js %}
@@ -54,12 +85,6 @@
 
         function hideDishes(dishId) {
             $("#dish-container [dish-id=" + dishId + "]").hide();
-//            $.each($("#dish-container [dish-id=" + dishId +"]").hide(), function(i, item){
-//                if(!$(item).siblings("dd:visible")[0])
-//                {
-//                    $(item).siblings("dt:visible").fadeOut(1000);
-//                }
-//            });
         }
 
         function showDishes(dishId) {
@@ -82,40 +107,34 @@
                 placeholder:"ui-state-highlight",
                 forcePlaceholderSize:true,
                 containment:"#menu-container",
-//                receive:function (e, ui) {
-//
-//                    ui.item.fadeOut().fadeIn()
-//                    var categoryId = ui.sender.attr('category-id');
-////                    if($(this).find('dt[category-id=' +categoryId + ']').size()>=2)
-////                    {
-//////                       ui.sender.css('color','red').sortable('cancel');
-////                    }
-//                }
                 receive:function (e, ui) {
-
                     hideDishes(ui.sender.attr("dish-id"));
                 }
             });
 
-//            $("#menu-container dl.category").sortable({
-//                cursor:"move",
-//                placeholder:"ui-state-highlight",
-//                connectWith:"#menu-container dl.category",
-//                items:"dd",
-//                revert:"invalid",
-//                receive:function (e, ui) {
-//                    hideDishes(ui.sender.attr("dish-id"));
-//                }
-//            });
+
+
+            $("#dish-container dd,#dish-container dt").dblclick( function (e) {
+                $(this).clone().appendTo($("#menu-container")).fadeIn();
+                hideDishes($(this).attr("dish-id"))
+            })
 
             $("#menu-container dt").live('dblclick', function (e) {
                 $(this).fadeOut(1000).remove();
             })
-
+            $("#menu-container dt .close").live('click', function (e) {
+                $(this).parents("dt").fadeOut(1000).remove();
+                return false;
+            })
             $("#menu-container dd").live('dblclick', function (e) {
                 $(this).fadeOut(1000).remove();
                 showDishes($(this).attr("dish-id"))
+            });
+            $("#menu-container dd .close").live('click', function (e) {
+                $(this).parents("dd").fadeOut(1000).remove();
+                showDishes($($(this).parents("dd")).attr("dish-id"))
             })
+
 
             $("body").disableSelection();
         });
@@ -131,11 +150,12 @@
         <div id="dish-container" class="span5">
             <dl class="category">
                 {% for category in categories %}
-                    <dt class="category" category-id="{{ category.id }}">{{ category.name }}</dt>
+                    <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
+                            href="#" class="close cb">&times;</a></dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
-                            <dd class="tag" id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}">{{ dish.name }}
-                                <span class="price">{{ dish.price}} 元/{{dish.unit }}</span> </dd>
+                            <dd class="tag" id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
+                                <a  href="#" class="close">&times;</a>  <span class="dish-info"> <span class="price">{{ dish.price}}</span> 元/{{dish.unit }} &times; <span class="num">3</span>&nbsp;&nbsp;  </span></dd>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
