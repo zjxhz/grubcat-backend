@@ -66,13 +66,25 @@
             display: none;
         }
 
-        #dish-container .unit, #dish-container .num{
+        #dish-container .unit, #dish-container .num {
             display: none;
         }
 
-    #dish-container .price{
-        float:right;
-    }
+        #dish-container .price {
+            float: right;
+        }
+
+        #menu-container dt, #menu-container dd {
+            margin: 5px auto;
+        }
+
+        .help-title {
+            margin: 5px 2px;
+        }
+
+        .help-content {
+            color: #555;
+        }
     </style>
 {% endblock %}
 {% block page_js %}
@@ -94,6 +106,11 @@
         }
 
         $(function () {
+
+
+            $(".help-title a").click(function () {
+                $(".help-content").slideToggle(1000);
+            })
 
             //drag category
             $("#dish-container dt, #dish-container dd").draggable({
@@ -144,11 +161,18 @@
 
 {% block content %}
     <div class="well">
-        请拖动左边的菜到右边的框中：（未全部完成）
+        <div class="help-title"><a href="#">操作帮助</a></div>
+        <div class="help-content" style="display: none">
+            <p>如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
+            </p>
+
+            <p>如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类，从套餐中删除这道菜或者分类</p>
+
+            <p>如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整顺序</p></div>
     </div>
 
     <div class="row">
-        <div id="dish-container" class="span5">
+        <div id="dish-container" class="span6">
             <dl class="category">
                 {% for category in categories %}
                     <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
@@ -166,7 +190,7 @@
                 {% endfor %}
             </dl>
         </div>
-        <div id="menu-container" class="span5">
+        <div id="menu-container" class="span4">
         </div>
     </div>
     <div id="nav-active-id" style="display: none">nav-menu</div>
