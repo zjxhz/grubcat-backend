@@ -19,6 +19,27 @@
             border: 1px solid #000000;
             padding: 2px;
         }
+    .tag {
+            background-color: #94BF17;
+            color: white;
+            border-radius: 3px;
+            padding: 2px 4px;
+            cursor: default;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 5px 6px 5px 20px;
+    }
+    #menu-container .tag{
+        display: block;
+    }
+
+    #menu-container .price{
+        float: right;
+    }
     </style>
 {% endblock %}
 {% block page_js %}
@@ -113,27 +134,14 @@
                     <dt class="category" category-id="{{ category.id }}">{{ category.name }}</dt>
                     {% for dish in dishes %}
                         {% if category in dish.categories.all %}
-                            <dd id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}">{{ dish.name }}</dd>
+                            <dd class="tag" id="{{ category.id }}-{{ dish.id }}" dish-id="{{ dish.id }}">{{ dish.name }}
+                                <span class="price">{{ dish.price}} 元/{{dish.unit }}</span> </dd>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
             </dl>
         </div>
         <div id="menu-container" class="span5">
-            {#            <dl class="category">#}
-            {#                <dt>热菜</dt>#}
-            {#                <dd>11</dd>#}
-            {#            </dl>#}
-            {#            <dl class="category">#}
-            {#                <dt>冷菜</dt>#}
-            {#                <dd>21</dd>#}
-            {#            </dl>#}
-            {##}
-            {#            <dl class="category">#}
-            {#                <dt>海鲜</dt>#}
-            {#                <dd>31</dd>#}
-            {#            </dl>#}
-
         </div>
     </div>
     <div id="nav-active-id" style="display: none">nav-menu</div>
