@@ -38,23 +38,74 @@ $(document).ready(function () {
             }
         }
     });
+
+    if ($("#dish-container")[0]) {
+        $(".help-title a.help-link").click(function () {
+            $(".help-content").slideToggle(1000);
+            $("a.hide-link").toggleClass('hide')
+            return false;
+        })
+
+        $(".help-title a.hide-link").click(function () {
+            $(".help-content").slideUp(1000);
+            $(this).hide();
+            return false;
+        })
+
+        //drag category
+        $("#dish-container dt, #dish-container dd").draggable({
+            connectToSortable:"#menu-container",
+            revert:"invalid",
+            helper:helperMasker,
+            cursor:"move",
+            opacity:0.35
+        });
+
+        $("#menu-container").sortable({
+            cursor:"move",
+            placeholder:"ui-state-highlight",
+            forcePlaceholderSize:true,
+            containment:"#menu-container",
+            receive:function (e, ui) {
+                hideDishes(ui.sender.attr("dish-id"));
+            }
+        });
+
+
+        $("#dish-container dd,#dish-container dt").dblclick(function (e) {
+            $(this).clone().appendTo($("#menu-container")).fadeIn();
+            hideDishes($(this).attr("dish-id"))
+        })
+
+        $("#menu-container dt").live('dblclick', function (e) {
+            $(this).fadeOut(1000).remove();
+        })
+        $("#menu-container dt .close").live('click', function (e) {
+            $(this).parents("dt").fadeOut(1000).remove();
+            return false;
+        })
+        $("#menu-container dd").live('dblclick', function (e) {
+            $(this).fadeOut(1000).remove();
+            showDishes($(this).attr("dish-id"))
+        });
+        $("#menu-container dd .close").live('click', function (e) {
+            $(this).parents("dd").fadeOut(1000).remove();
+            showDishes($($(this).parents("dd")).attr("dish-id"))
+        })
+
+        $("body").disableSelection();
+    }
+
 });
 
-
-// pre-submit callback
-function showRequest(formData, jqForm, options) {
-    // formData is an array; here we use $.param to convert it to a string to display it
-    // but the form plugin does this for you automatically when it submits the data
-    var queryString = $.param(formData);
-
-    alert('About to submit: \n\n' + queryString);
-
-//    $("#result").html("")
-    return true;
+function helperMasker() {
+    return $(this).clone().addClass("helper").css("width", $(this).width())
 }
 
-// post-submit callback
-function showResponse(responseText, statusText, xhr, $form) {
-    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
-        '\n\nThe output div should have already been updated with the responseText.');
+function hideDishes(dishId) {
+    $("#dish-container [dish-id=" + dishId + "]").hide();
+}
+
+function showDishes(dishId) {
+    $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
 }
