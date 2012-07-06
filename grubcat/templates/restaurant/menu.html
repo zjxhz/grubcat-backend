@@ -52,10 +52,12 @@
 
         #menu-container dt {
             width: 277px;
+            margin: 5px auto;
         }
 
         #menu-container dd {
             width: 240px;
+            margin: 5px 26px;
         }
 
         #menu-container .dish-info {
@@ -74,17 +76,23 @@
             float: right;
         }
 
-        #menu-container dt, #menu-container dd {
-            margin: 5px auto;
-        }
-
         .help-title {
             margin: 5px 2px;
+            float: right;
         }
 
         .help-content {
             color: #555;
+            margin:5px 2px;
+
         }
+
+     .hide-link{
+         margin-left: 20px;
+     }
+
+
+
     </style>
 {% endblock %}
 {% block page_js %}
@@ -108,8 +116,16 @@
         $(function () {
 
 
-            $(".help-title a").click(function () {
+            $(".help-title a.help-link").click(function () {
                 $(".help-content").slideToggle(1000);
+                $("a.hide-link").toggleClass('hide')
+                return false;
+            })
+
+            $(".help-title a.hide-link").click(function(){
+                $(".help-content").slideUp(1000);
+                $(this).hide();
+                return false;
             })
 
             //drag category
@@ -161,14 +177,15 @@
 
 {% block content %}
     <div class="well">
-        <div class="help-title"><a href="#">操作帮助</a></div>
+        <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link" >操作帮助</a> </div>
         <div class="help-content" style="display: none">
-            <p>如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
+            <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
             </p>
 
-            <p>如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类，从套餐中删除这道菜或者分类</p>
+            <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
 
-            <p>如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整顺序</p></div>
+            <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+            <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p></div>
     </div>
 
     <div class="row">
@@ -177,15 +194,13 @@
                 {% for category in categories %}
                     <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
                             href="#" class="close cb">&times;</a></dt>
-                    {% for dish in dishes %}
-                        {% if category in dish.categories.all %}
+                    {% for dish in category.my_dishes %}
                             <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
                                 <a href="#" class="close">&times;</a>
 
                                 <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
                                         class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">3</a>&nbsp;&nbsp; </span></dd>
-                        {% endif %}
+                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
                     {% endfor %}
                 {% endfor %}
             </dl>
