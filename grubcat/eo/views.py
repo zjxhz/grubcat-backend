@@ -187,20 +187,21 @@ class DishDeleteView(DeleteView):
 def add_menu(request):
     '''添加一个套餐'''
     if request.method == 'GET':
-    #        categories = DishCategory.dish_set.filter()
-    #        dishes = Dish.objects.filter(restaurant=request.user.restaurant)
-        dishes = Dish.objects.filter(restaurant=request.user.restaurant)
-        categories_id_list = dishes.values_list("categories").distinct()
-        categories = DishCategory.objects.filter(id__in=categories_id_list).order_by("-id")
 
-        existNoneCategory = False
-        for cat in categories_id_list:
-            if None in cat:
-                existNoneCategory = True
-                break
+        categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).distinct()
+
+        for cat in categories:
+            cat.my_dishes = cat.dish_set.filter(restaurant=request.user.restaurant)
+
+        #        existNoneCategory = False
+        #        for cat in categories_id_list:
+        #            if None in cat:
+        #                existNoneCategory = True
+        #                break
 
 
-    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
+        #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
+    return render_to_response("restaurant/menu.html", {'categories': categories})
 
 
 def writeJson(qs, response, relations=None):
