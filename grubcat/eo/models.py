@@ -275,6 +275,7 @@ class UserProfile(models.Model):
     college = models.CharField(max_length=64, null=True)
     work_for = models.CharField(max_length=64, null=True)
     occupation = models.CharField(max_length=64, null=True)
+    motto = models.CharField(max_length=140, null=True)
 
     @property
     def followers(self):
