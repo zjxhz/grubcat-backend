@@ -188,7 +188,7 @@ def add_menu(request):
     '''添加一个套餐'''
     if request.method == 'GET':
 
-        categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
+        categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).distinct()
 
         for cat in categories:
             cat.my_dishes = cat.dish_set.filter(restaurant=request.user.restaurant)
