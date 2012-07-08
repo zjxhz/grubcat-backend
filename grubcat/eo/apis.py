@@ -446,6 +446,7 @@ class MealResource(ModelResource):
         filtering = {'type': ALL,'time':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
+        ordering = ['time']
 
 class MealCommentResource(ModelResource):
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
@@ -472,8 +473,9 @@ class OrderResource(ModelResource):
     customer = fields.ToOneField(UserResource, 'customer')
         
     class Meta:
-        queryset = Order.objects.all()
+        queryset = Order.objects.exclude(status=4)
         filtering = {'customer':ALL,}
+        ordering = ['created_time','meal']
 
         
 def mobile_user_login(request):
