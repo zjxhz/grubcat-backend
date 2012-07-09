@@ -206,8 +206,18 @@ class UserResource(ModelResource):
             return order_resource.get_list(request, customer=user_profile)
     
     def get_following(self, request, **kwargs):
-        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
-        return get_my_list(self, obj.following.all(), request) 
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        me = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'POST':
+            user_to_be_followed = User.objects.get(id=request.POST.get('user_id'))
+            relationship = Relationship(from_person=me, to_person=user_to_be_followed.get_profile())
+            relationship.save()
+            return createGeneralResponse('OK', 'You are now following %s' % user_to_be_followed)
+        else:
+            obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            return get_my_list(self, obj.following.all(), request) 
     
     def get_followers(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
@@ -218,9 +228,24 @@ class UserResource(ModelResource):
         return get_my_list(self, obj.recommended_following.all(), request) 
     
     def get_messages(self, request, **kwargs):
-        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
-        message_resource = UserMessageResource()
-        return message_resource.get_list(request, to_person=obj)
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        to_person = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'POST':
+            from_person = request.user.get_profile()
+            text = request.POST.get('message')
+            message_type = request.POST.get('type', '0')
+            message = UserMessage(from_person=from_person,
+                                  to_person=to_person, 
+                                  message=text,
+                                  timestamp=datetime.now(), 
+                                  type=message_type)
+            message.save()
+            return createGeneralResponse('OK', 'Message sent to %s' % to_person)
+        else:
+            message_resource = UserMessageResource()
+            return message_resource.get_list(request, to_person=to_person)
     
     def get_invitation(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
