@@ -163,21 +163,23 @@ class UserResource(ModelResource):
     
     def override_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/favorite%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/favorite%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_favorite'), name="api_get_favorite"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/order%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/order%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_order'), name="api_get_order"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/following%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/following/(?P<following_user_id>\d+)%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('following_detail'), name="api_following_detail"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/following%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_following'), name="api_get_following"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/followers%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/followers%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_followers'), name="api_get_followers"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/following/recommendations%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/following/recommendations%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_recommended_following'), name="api_get_recommended_following"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/messages%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/messages%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_messages'), name="api_get_messages"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/invitation%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/invitation%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_invitation'), name="api_get_invitation"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/meal%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/meal%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_meal'), name="api_get_meal"),
         ]
     
@@ -219,6 +221,20 @@ class UserResource(ModelResource):
             obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
             return get_my_list(self, obj.following.all(), request) 
     
+    def following_detail(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        to_person_id = kwargs['following_user_id']
+        del(kwargs['following_user_id'])
+        me = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'DELETE':
+            user_to_be_not_followed = User.objects.get(id=to_person_id)
+            relationship = Relationship.objects.get(from_person=me, to_person=user_to_be_not_followed.get_profile()) 
+            relationship.delete()
+            return createGeneralResponse('OK', 'You are not following %s anymore' % user_to_be_not_followed)
+        else:
+            raise
+        
     def get_followers(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         return get_my_list(self, obj.followers.all(), request) 
@@ -303,7 +319,7 @@ class RestaurantResource(ModelResource):
     
     def override_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/rating%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/rating%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_rating'), name="api_get_rating"),
         ]
     
@@ -383,7 +399,7 @@ class BestRatingDishResource(ModelResource):
 class RestaurantTagResource(ModelResource):
     def override_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/restaurant%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/restaurant%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_restaurants'), name="api_get_restaurants"),
         ]
     
@@ -435,9 +451,9 @@ class MealResource(ModelResource):
     
     def override_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/comments%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_comments'), name="api_get_comments"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/likes%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/likes%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('like'), name="api_like"),
         ]
     
