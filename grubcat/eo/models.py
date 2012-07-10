@@ -250,6 +250,7 @@ class Relationship(models.Model):
 
     class Meta:
         db_table = u'relationship'
+        unique_together = ('from_person','to_person')
 
 
 class UserLocation(models.Model):
