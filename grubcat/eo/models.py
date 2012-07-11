@@ -277,6 +277,7 @@ class UserProfile(models.Model):
     work_for = models.CharField(max_length=64, null=True)
     occupation = models.CharField(max_length=64, null=True)
     motto = models.CharField(max_length=140, null=True)
+    weibo_id = models.CharField(max_length=20, null=True)
 
     @property
     def followers(self):

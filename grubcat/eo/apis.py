@@ -7,15 +7,17 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.query_utils import Q
+from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
-    RestaurantInfo, Rating, BestRatingDish, Dish,  DishCategory, \
-    Order, Relationship, UserMessage, Meal, MealInvitation, \
-    UserLocation, MealComment
+    RestaurantInfo, Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
+    UserMessage, Meal, MealInvitation, UserLocation, MealComment
 from tastypie import fields
 from tastypie.api import Api
+from tastypie.authentication import Authentication
 from tastypie.authorization import Authorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.exceptions import BadRequest
 from tastypie.fields import FileField
 from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
@@ -519,6 +521,50 @@ class OrderResource(ModelResource):
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
 
+#class CreateUserResource(ModelResource):
+#    def obj_create(self, bundle, request=None, **kwargs):
+#        weibo_id = bundle.data['weibo_id']
+#        username, password=bundle.data.get('username'), bundle.data.get('password')
+#        if weibo_id:
+#            username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
+#        try:
+#            user = User.objects.create_user(username, '', password)
+#            bundle.obj = user
+#            user_profile = user.get_profile()
+#            if weibo_id:
+#                user_profile.weibo_id = weibo_id
+#            auth.login(request, user)
+#                 
+#        except IntegrityError:
+#            raise BadRequest('NOK', "That username already exists")
+#        return bundle;
+#    
+#    class Meta:
+##        allowed_methods = ['post']
+#        object_class = User
+##        authentication = Authentication()
+##        authorization = Authorization()
+#        fields = ['username']
+        
+def mobile_user_register(request):
+    if request.method == 'POST':
+        weibo_id = request.POST.get('weibo_id')
+        username, password=request.POST.get('username'), request.POST.get('password')
+        if weibo_id:
+            username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
+        try:
+            user = User.objects.create_user(username, '', password)
+            user_profile = user.get_profile()
+            if weibo_id:
+                user_profile.weibo_id = weibo_id
+                user_profile.save()
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+            return createGeneralResponse('OK', "New user created and now you've logged in")
+        except IntegrityError:
+            return createGeneralResponse('NOK', "That username already exists")
+    else:
+        raise # not used by mobile client     
         
 def mobile_user_login(request):
     if request.method == 'POST':
