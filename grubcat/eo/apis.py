@@ -27,6 +27,8 @@ import base64
 import mimetypes
 import os
 import simplejson
+from django.core.exceptions import ObjectDoesNotExist
+
 
 
 class Base64FileField(FileField):
@@ -545,27 +547,51 @@ class OrderResource(ModelResource):
 ##        authentication = Authentication()
 ##        authorization = Authorization()
 #        fields = ['username']
-        
+
+
+def createLoggedInResponse(loggedInuser):
+    user_resource = UserResource()
+    ur_bundle = user_resource.build_bundle(obj=loggedInuser.get_profile())
+    serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+    dic = simplejson.loads(serialized)
+    dic['status'] = 'OK'
+    dic['info'] = "You've logged in"
+    return HttpResponse(simplejson.dumps(dic), content_type ='application/json')
+            
 def mobile_user_register(request):
     if request.method == 'POST':
-        weibo_id = request.POST.get('weibo_id')
         username, password=request.POST.get('username'), request.POST.get('password')
-        if weibo_id:
-            username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
         try:
             user = User.objects.create_user(username, '', password)
-            user_profile = user.get_profile()
-            if weibo_id:
-                user_profile.weibo_id = weibo_id
-                user_profile.save()
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
-            return createGeneralResponse('OK', "New user created and now you've logged in")
+            return createLoggedInResponse(user)
         except IntegrityError:
             return createGeneralResponse('NOK', "That username already exists")
     else:
         raise # not used by mobile client     
-        
+
+def weibo_user_login(request):
+    if request.method == 'POST':
+        access_token = request.POST.get('access_token')
+        weibo_id = request.POST.get('weibo_id')
+        if request.user.is_authenticated():
+            # a logged in user, could be logged in as an ordinary user which has no weibo account set, so set weibo account
+            # next time when the user logs in as a weibo user, we will know which user who he really is
+            user_profile = request.user.get_profile()
+            user_profile.weibo_id = weibo_id
+            user_profile.weibo_access_token = access_token
+            user_profile.save()
+            return createLoggedInResponse(request.user)
+        else:
+            # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
+            # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
+            user = auth.authenticate(token=access_token, weibo_id=weibo_id)
+            auth.login(request, user)
+            return createLoggedInResponse(user)
+    else:
+        raise # not used by mobile client   
+       
 def mobile_user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username', '')
@@ -593,6 +619,7 @@ def mobile_user_logout(request):
         # raise Exception("what's going on here?") # enable this line to check that the code IS executed here
     else:
         raise # not used by mobile client      
+    
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
 v1_api.register(DjangoUserResource())

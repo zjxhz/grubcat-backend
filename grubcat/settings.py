@@ -110,6 +110,7 @@ MIDDLEWARE_CLASSES = (
     #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend','eo.middlewares.WeiboAuthenticationBackend')
 ROOT_URLCONF = 'grubcat.urls'
 
 TEMPLATE_DIRS = (
