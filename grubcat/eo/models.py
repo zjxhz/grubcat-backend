@@ -264,6 +264,7 @@ class UserLocation(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    name = models.CharField(max_length=30, null=True)
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
