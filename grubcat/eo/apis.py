@@ -1,12 +1,10 @@
 from datetime import datetime
-from decimal import Decimal
+
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
@@ -14,20 +12,15 @@ from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     UserMessage, Meal, MealInvitation, UserLocation, MealComment
 from tastypie import fields
 from tastypie.api import Api
-from tastypie.authentication import Authentication
 from tastypie.authorization import Authorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
-from tastypie.exceptions import BadRequest
 from tastypie.fields import FileField
 from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
-import mimetypes
-import os
 import simplejson
-from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -154,14 +147,16 @@ class UserResource(ModelResource):
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     following = fields.ToManyField('self', 'following', null=True)
     
-    def mergeOneToOneField(self, bundle, field_name):
+    def mergeOneToOneField(self, bundle, field_name, exclude_fields=None):
         if bundle.data[field_name]:
             for key in bundle.data[field_name].data:
+                if key == "id": #never ever combine ids as there should be only one, which is the one from UserResource
+                    continue
                 bundle.data[key] = bundle.data[field_name].data[key]
             del bundle.data[field_name]
     
     def dehydrate(self, bundle):
-        self.mergeOneToOneField(bundle, 'user')
+        self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
     
@@ -586,7 +581,8 @@ def weibo_user_login(request):
         else:
             # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
-            user = auth.authenticate(token=access_token, weibo_id=weibo_id)
+            post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
+            user = auth.authenticate(**post_dict)
             auth.login(request, user)
             return createLoggedInResponse(user)
     else:
