@@ -1,8 +1,11 @@
 #coding=utf-8
+from ajax_select import make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal
 
-class DishAdmin(admin.ModelAdmin):
+class DishAdmin(AjaxSelectAdmin):
+    form = make_ajax_form(Dish,{'categories':'dish_category'})
     list_display = ('restaurant', 'name', 'price', 'unit', 'available',)
     list_editable = ('name', 'price', 'unit', 'available', )
     list_display_links = ('restaurant',)

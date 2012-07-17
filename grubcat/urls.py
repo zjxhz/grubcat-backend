@@ -20,6 +20,7 @@ from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     accept_or_reject_meal_invitations, img_test, upload_app
 from grubcat.eo.views import *
 from django.conf import settings
+from ajax_select import urls as ajax_select_urls
 
 # Uncomment the next two lines to enable the admin:
 admin.autodiscover()
@@ -112,7 +113,9 @@ urlpatterns = patterns('',
     #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
     #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
     #support
-    url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support")
+    url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),
+
+    (r'^admin/lookups/', include(ajax_select_urls)),
 )
 
 if settings.DEBUG:

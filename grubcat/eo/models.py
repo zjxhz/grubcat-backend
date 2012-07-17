@@ -114,7 +114,7 @@ class RatingPic(models.Model):
 
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
-    name = models.CharField(max_length=45,unique=True)
+    name = models.CharField(u'菜名',max_length=45,unique=True)
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
 
     def __unicode__(self):
