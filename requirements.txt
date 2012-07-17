@@ -13,3 +13,4 @@ jsmin
 south
 webassets
 django_forms_bootstrap
+django-ajax-selects
