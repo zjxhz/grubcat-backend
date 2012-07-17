@@ -16,7 +16,7 @@
 
 {% block content %}
     <div class="well">
-        <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link" >操作帮助</a> </div>
+        <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link">操作帮助</a></div>
         <div class="help-content" style="display: none">
             <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
             </p>
@@ -24,9 +24,14 @@
             <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
 
             <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+
             <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p></div>
     </div>
 
+    <div class="well">
+        <a class="btn btn-primary fr" href="#">保存套餐</a>
+        <a class="add-category fr" href="#">添加分类</a>
+    </div>
     <div class="row">
         <div id="dish-container" class="span6">
             <dl class="category">
@@ -34,8 +39,8 @@
                     <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
                             href="#" class="close cb">&times;</a></dt>
                     {% for dish in category.my_dishes %}
-                            <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
-                                <a href="#" class="close">&times;</a>
+                        <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
+                            <a href="#" class="close">&times;</a>
 
                                 <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
                                         class="unit"> /{{ dish.unit }} &times; </span><a
