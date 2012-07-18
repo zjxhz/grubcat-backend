@@ -132,6 +132,11 @@ def use_order(request):
         order.save()
         return createSucessJsonResponse('使用订单成功')
 
+def add_dish_category(request):
+    if request.method == 'POST':
+        category_name = request.POST.get('category-name')
+        category = DishCategory.objects.get_or_create(name=category_name)
+        return createSucessJsonResponse('成功',{'id':category[0].id,'name':category[0].name,'created':category[1]})
 
 class DishListView(ListView):
     template_name = "restaurant/dish.html"
@@ -201,7 +206,8 @@ def add_menu(request):
 
 
         #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
-    return render_to_response("restaurant/menu.html", {'categories': categories})
+        category_form = DishCategoryForm()
+    return render_to_response("restaurant/menu.html", {'categories': categories,'category_form':category_form})
 
 
 def writeJson(qs, response, relations=None):

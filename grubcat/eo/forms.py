@@ -23,10 +23,14 @@ class OrderCreateForm(ModelForm):
 
 
 class DishForm(ModelForm):
+#    categories = forms.ModelMultipleChoiceField()
     class Meta:
         model = Dish
         exclude=("restaurant","menu")
 
+class DishCategoryForm(ModelForm):
+    class Meta:
+        model = DishCategory
 
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50, required=False)
