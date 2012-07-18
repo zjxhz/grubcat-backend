@@ -158,6 +158,10 @@ dt.tag {
     padding: 5px 14px;
 }
 
+#add-category-dialog{
+    margin-top: 20px;
+}
+
 
 /*html {*/
 /*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
