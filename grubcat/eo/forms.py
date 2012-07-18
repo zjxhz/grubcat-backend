@@ -23,7 +23,12 @@ class OrderCreateForm(ModelForm):
 
 
 class DishForm(ModelForm):
-#    categories = forms.ModelMultipleChoiceField()
+
+    def __init__(self, restaurant=None, *args, **kwargs):
+        super(DishForm, self).__init__(*args, **kwargs)
+        self.fields['categories'].queryset = DishCategory.objects.filter(restaurant=restaurant)
+        self.fields['categories'].help_text = ''
+
     class Meta:
         model = Dish
         exclude=("restaurant","menu")

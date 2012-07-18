@@ -5,7 +5,7 @@ from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal
 
 class DishAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(Dish,{'categories':'dish_category'})
+#    form = make_ajax_form(Dish,{'categories':'dish_category'})
     list_display = ('restaurant', 'name', 'price', 'unit', 'available',)
     list_editable = ('name', 'price', 'unit', 'available', )
     list_display_links = ('restaurant',)

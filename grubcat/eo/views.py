@@ -132,11 +132,13 @@ def use_order(request):
         order.save()
         return createSucessJsonResponse('使用订单成功')
 
+
 def add_dish_category(request):
     if request.method == 'POST':
         category_name = request.POST.get('category-name')
-        category = DishCategory.objects.get_or_create(name=category_name)
-        return createSucessJsonResponse('成功',{'id':category[0].id,'name':category[0].name,'created':category[1]})
+        category = DishCategory.objects.get_or_create(name=category_name, restaurant_id=request.user.restaurant.id)
+        return createSucessJsonResponse('成功', {'id': category[0].id, 'name': category[0].name, 'created': category[1]})
+
 
 class DishListView(ListView):
     template_name = "restaurant/dish.html"
@@ -150,6 +152,11 @@ class DishCreateView(CreateView):
     form_class = DishForm
     template_name = "restaurant/dish_add_edit.html"
     success_url = reverse_lazy("restaurant_dish_list")
+
+    def get_form_kwargs(self):
+        kwargs = super(DishCreateView, self).get_form_kwargs()
+        kwargs.update({"restaurant": self.request.user.restaurant})
+        return kwargs
 
     def form_valid(self, form):
         dish = form.save(False)
@@ -169,6 +176,11 @@ class DishUpdateView(UpdateView):
         super(DishUpdateView, self).form_valid(form)
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
         return HttpResponse(content=content)
+
+    def get_form_kwargs(self):
+        kwargs = super(DishUpdateView, self).get_form_kwargs()
+        kwargs.update({"restaurant": self.request.user.restaurant})
+        return kwargs
 
 
 class DishDeleteView(DeleteView):
@@ -192,7 +204,6 @@ class DishDeleteView(DeleteView):
 def add_menu(request):
     '''添加一个套餐'''
     if request.method == 'GET':
-
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
         for cat in categories:
@@ -203,11 +214,15 @@ def add_menu(request):
         #            if None in cat:
         #                existNoneCategory = True
         #                break
-
+        dishes_with_no_category = Dish.objects.filter(restaurant=request.user.restaurant,
+            categories__isnull=True).order_by("-id")
+        categories_with_no_dish = DishCategory.objects.filter(restaurant=request.user.restaurant,
+            dish__isnull=True).order_by("-id")
 
         #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
         category_form = DishCategoryForm()
-    return render_to_response("restaurant/menu.html", {'categories': categories,'category_form':category_form})
+    return render_to_response("restaurant/menu.html", {'categories': categories, 'category_form': category_form,
+                                                       'dishes_with_no_category': dishes_with_no_category,'categories_with_no_dish':categories_with_no_dish})
 
 
 def writeJson(qs, response, relations=None):
