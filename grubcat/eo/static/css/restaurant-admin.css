@@ -153,6 +153,15 @@ dt.tag {
 }
 
 
+.add-category{
+    background: url(../img/icon_addlink.gif) 1px 8px no-repeat;
+    padding: 5px 14px;
+}
+
+#add-category-dialog{
+    margin-top: 20px;
+}
+
 
 /*html {*/
 /*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
