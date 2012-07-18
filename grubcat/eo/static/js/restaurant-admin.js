@@ -1,0 +1,111 @@
+$(document).ready(function () {
+
+    $("#restaurant-nav li").removeClass("active");
+    $("#" + $("#nav-active-id").html()).addClass("active")
+
+    $("a.dellink").click(function () {
+        var $link = $(this);
+        var href = $link.attr('href');
+        $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
+            title:'确认',
+            confirm:function () {
+                $.post(href, function () {
+                    $link.parents("tr").fadeOut(300);
+                })
+            }
+        });
+        return false;
+    });
+
+    // bind form using 'ajaxForm'
+    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
+        var code = $("#id_code").val();
+        if (!code || code.length != 8) {
+            alert('请输入8位验证码！')
+            return false;
+        }
+    } });
+
+    $("#modal-dialog").live("dialog2.content-update", function (e, data) {
+        // got the dialog as this object. Do something with it!
+        var e = $(this);
+        var autoclose = e.find("a.auto-close");
+        if (autoclose.length > 0) {
+            e.dialog2('close');
+            var href = autoclose.attr('href');
+            if (href) {
+                window.location.href = href;
+            }
+        }
+    });
+
+    if ($("#dish-container")[0]) {
+        $(".help-title a.help-link").click(function () {
+            $(".help-content").slideToggle(1000);
+            $("a.hide-link").toggleClass('hide')
+            return false;
+        })
+
+        $(".help-title a.hide-link").click(function () {
+            $(".help-content").slideUp(1000);
+            $(this).hide();
+            return false;
+        })
+
+        //drag category
+        $("#dish-container dt, #dish-container dd").draggable({
+            connectToSortable:"#menu-container",
+            revert:"invalid",
+            helper:helperMasker,
+            cursor:"move",
+            opacity:0.35
+        });
+
+        $("#menu-container").sortable({
+            cursor:"move",
+            placeholder:"ui-state-highlight",
+            forcePlaceholderSize:true,
+            containment:"#menu-container",
+            receive:function (e, ui) {
+                hideDishes(ui.sender.attr("dish-id"));
+            }
+        });
+
+
+        $("#dish-container dd,#dish-container dt").dblclick(function (e) {
+            $(this).clone().appendTo($("#menu-container")).fadeIn();
+            hideDishes($(this).attr("dish-id"))
+        })
+
+        $("#menu-container dt").live('dblclick', function (e) {
+            $(this).fadeOut(1000).remove();
+        })
+        $("#menu-container dt .close").live('click', function (e) {
+            $(this).parents("dt").fadeOut(1000).remove();
+            return false;
+        })
+        $("#menu-container dd").live('dblclick', function (e) {
+            $(this).fadeOut(1000).remove();
+            showDishes($(this).attr("dish-id"))
+        });
+        $("#menu-container dd .close").live('click', function (e) {
+            $(this).parents("dd").fadeOut(1000).remove();
+            showDishes($($(this).parents("dd")).attr("dish-id"))
+        })
+
+        $("body").disableSelection();
+    }
+
+});
+
+function helperMasker() {
+    return $(this).clone().addClass("helper").css("width", $(this).width())
+}
+
+function hideDishes(dishId) {
+    $("#dish-container [dish-id=" + dishId + "]").hide();
+}
+
+function showDishes(dishId) {
+    $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
+}
