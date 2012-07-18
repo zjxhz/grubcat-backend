@@ -1,0 +1,180 @@
+#meal-img-wrapper {
+    border: 1px solid #DDD;
+    width: 385px;
+    margin-left: 30px;
+}
+
+#meal-img-wrapper img {
+    border: 4px solid white;
+}
+
+.addlink, .changelink, .dellink {
+    padding-left: 12px;
+}
+
+.addlink {
+    background: url(../img/icon_addlink.gif) 0 4px no-repeat;
+}
+
+.changelink {
+    background: url(../img/icon_changelink.gif) 0 4px no-repeat;
+}
+
+.dellink {
+    background: url(../img/icon_deletelink.gif) 0 4px no-repeat;
+}
+
+#dish-list td {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#dish-list .tc {
+    text-align: center;
+}
+
+#dish-list .tr {
+    text-align: right;
+}
+
+.confirm-del {
+    font-weight: normal;
+}
+
+.confirm-del span {
+    font-weight: bold;
+}
+
+.btn-use {
+    margin-right: 324px;
+}
+
+.check-in-title {
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+    padding: 8px 0px 8px 0px;
+    margin-bottom: 18px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+/*套餐管理*/
+#dish-container, #menu-container{
+    margin-left: 18px;
+    border: 1px solid #DDD;
+    min-height: 500px;
+}
+
+dt, dd {
+    height: 18px;
+}
+
+dt {
+    margin-top: 10px;
+}
+
+.helper {
+    border: 1px solid #000000;
+    padding: 2px;
+}
+
+.tag {
+    background-color: #94BF17;
+    color: white;
+    border-radius: 3px;
+    padding: 2px 4px;
+    cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 5px 6px 5px 20px;
+}
+
+#menu-container .tag {
+    display: block;
+}
+
+dt.tag {
+    display: block;
+    margin-left: 1px;
+    color: #666;
+    background: #e4ff4e;
+    border: 1px solid #DDD;
+}
+
+#dish-container dt {
+    width: 180px;
+}
+
+#menu-container dt {
+    width: 277px;
+    margin: 5px auto;
+}
+
+#menu-container dd {
+    width: 240px;
+    margin: 5px 26px;
+}
+
+#menu-container .dish-info {
+    float: right;;
+}
+
+#dish-container .close {
+    display: none;
+}
+
+#dish-container .unit, #dish-container .num {
+    display: none;
+}
+
+#dish-container .price {
+    float: right;
+}
+
+.help-title {
+    margin: 5px 2px;
+    float: right;
+}
+
+.help-content {
+    color: #555;
+    margin:5px 2px;
+
+}
+
+.hide-link{
+    margin-left: 20px;
+}
+
+
+.add-category{
+    background: url(../img/icon_addlink.gif) 1px 8px no-repeat;
+    padding: 5px 14px;
+}
+
+#add-category-dialog{
+    margin-top: 20px;
+}
+
+
+/*html {*/
+/*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
+/*}*/
+
+/*#header{*/
+/*margin: 20px 2px 25px;*/
+/*padding-bottom: 10px;*/
+/*border-bottom: 1px solid #aaa;*/
+/*}*/
+
+/*.container{*/
+/*background-color: #fff;*/
+/*height: 500px;*/
+/*padding: 10px;*/
+/*}*/
