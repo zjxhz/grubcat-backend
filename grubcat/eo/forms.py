@@ -26,7 +26,7 @@ class DishForm(ModelForm):
 
     def __init__(self, restaurant=None, *args, **kwargs):
         super(DishForm, self).__init__(*args, **kwargs)
-        self.fields['categories'].queryset = DishCategory.objects.filter(restaurant=restaurant)
+        self.fields['categories'].queryset = DishCategory.objects.filter(Q(restaurant=restaurant) | Q(restaurant__isnull=True))
         self.fields['categories'].help_text = ''
 
     class Meta:

@@ -136,8 +136,13 @@ def use_order(request):
 def add_dish_category(request):
     if request.method == 'POST':
         category_name = request.POST.get('category-name')
-        category = DishCategory.objects.get_or_create(name=category_name, restaurant_id=request.user.restaurant.id)
-        return createSucessJsonResponse('成功', {'id': category[0].id, 'name': category[0].name, 'created': category[1]})
+        result = DishCategory.objects.get_or_create(name=category_name)
+        category = result[0]
+        created = result[1]
+        if created:
+            category.restaurant_id = request.user.restaurant.id
+            category.save()
+        return createSucessJsonResponse('成功', {'id': category.id, 'name': category.name, 'created': created})
 
 
 class DishListView(ListView):
@@ -216,13 +221,15 @@ def add_menu(request):
         #                break
         dishes_with_no_category = Dish.objects.filter(restaurant=request.user.restaurant,
             categories__isnull=True).order_by("-id")
-        categories_with_no_dish = DishCategory.objects.filter(restaurant=request.user.restaurant,
-            dish__isnull=True).order_by("-id")
+        categories_with_no_dish = DishCategory.objects.filter(Q(dish__isnull=True),
+            Q(restaurant=request.user.restaurant) | Q(restaurant__isnull=True)
+        ).order_by("-id")
 
         #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
         category_form = DishCategoryForm()
     return render_to_response("restaurant/menu.html", {'categories': categories, 'category_form': category_form,
-                                                       'dishes_with_no_category': dishes_with_no_category,'categories_with_no_dish':categories_with_no_dish})
+                                                       'dishes_with_no_category': dishes_with_no_category,
+                                                       'categories_with_no_dish': categories_with_no_dish})
 
 
 def writeJson(qs, response, relations=None):
