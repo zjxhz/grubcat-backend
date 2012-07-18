@@ -39,6 +39,7 @@ $(document).ready(function () {
         }
     });
 
+//    for menu page
     if ($("#dish-container")[0]) {
         $(".help-title a.help-link").click(function () {
             $(".help-content").slideToggle(1000);
@@ -72,8 +73,8 @@ $(document).ready(function () {
         });
 
 
-        $("#dish-container dd,#dish-container dt").dblclick(function (e) {
-            $(this).clone().appendTo($("#menu-container")).fadeIn();
+        $("#dish-container dd,#dish-container dt").live('dblclick',function (e) {
+            $(this).clone().appendTo($("#menu-container")).hide().fadeIn(1000);
             hideDishes($(this).attr("dish-id"))
         })
 
@@ -94,6 +95,57 @@ $(document).ready(function () {
         })
 
         $("body").disableSelection();
+
+        $("#add-category").submit(function(){
+            return false;
+        })
+
+        $("#add-category-link").click(function(){
+            $("#add-category-dialog").dialog({
+                autoOpen:true,
+                modal: true,
+                width:250,
+                resizable:false,
+                position:['center',100],
+                buttons: {
+                    确定: function () {
+                        var $category = $("#category-name");
+                        if(!$category.val())
+                        {
+                            $category.focus();
+                        } else
+                        {
+                            //submit request
+                            $("#add-dish-category").ajaxSubmit(function(data){
+                                //create category
+                                var $category_dt;
+                                if(Boolean(data.created))
+                                {
+                                    $category_dt=$('<dt class="category tag ui-draggable" category-id="' + data.id +'">'+ data.name +'<a href="#" class="close cb">×</a></dt>')
+                                    $category_dt.hide().appendTo($("#dish-list")).draggable({
+                                        connectToSortable:"#menu-container",
+                                        revert:"invalid",
+                                        helper:helperMasker,
+                                        cursor:"move",
+                                        opacity:0.35
+                                    }).show();
+                                } else
+                                {
+                                    $category_dt = $("#dish-list [category-id=" + data.id + "]")
+                                }
+                                $category_dt.dblclick();
+                                $category.val("");
+                                $("#add-category-dialog").dialog("close");
+                            })
+                        }
+                    },
+                    取消: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            return false;
+        })
     }
 
 });

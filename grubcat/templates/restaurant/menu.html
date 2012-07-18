@@ -2,18 +2,21 @@
 {% load static from staticfiles %}
 {% load assets %}
 {% load static_asset %}
+{% load bootstrap_tags %}
 {% block title %}套餐管理{% endblock %}
 {% block page_css %}
-    <link rel="stylesheet" href="{% static 'css/ui/smoothness/jquery-ui-1.8.21.custom.css' %}">
     {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
 {% endblock %}
 {% block page_js %}
     {% assets "jquery_ui_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     {{ block.super }}
 {% endblock %}
-
 {% block content %}
     <div class="well">
         <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link">操作帮助</a></div>
@@ -29,12 +32,12 @@
     </div>
 
     <div class="well">
-        <a class="btn btn-primary fr" href="#">保存套餐</a>
-        <a class="add-category fr" href="#">添加分类</a>
+        <a class="btn btn-primary fr" href="#" >保存套餐</a>
+        <a class="add-category fr" href="#" id="add-category-link" >添加分类</a>
     </div>
     <div class="row">
         <div id="dish-container" class="span6">
-            <dl class="category">
+            <dl id="dish-list">
                 {% for category in categories %}
                     <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
                             href="#" class="close cb">&times;</a></dt>
@@ -51,6 +54,11 @@
         </div>
         <div id="menu-container" class="span4">
         </div>
+    </div>
+    <div class="hide" id="add-category-dialog" title="添加分类">
+        <form id="add-dish-category" class="form" action="{% url add_dish_category %}" method="post">
+            <input type="text" id="category-name" name="category-name" class="input" placeholder="请输入分类名称">
+        </form>
     </div>
     <div id="nav-active-id" style="display: none">nav-menu</div>
 {% endblock %}
