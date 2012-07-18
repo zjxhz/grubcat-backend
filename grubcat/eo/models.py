@@ -115,6 +115,7 @@ class RatingPic(models.Model):
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(u'菜名',max_length=45,unique=True)
+#    if restaurant is null,it means the category is public, all restaurant can see the category
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True )
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
 

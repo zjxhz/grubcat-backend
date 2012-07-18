@@ -13,7 +13,7 @@ class DishAdmin(AjaxSelectAdmin):
     ordering = ('restaurant',)
 
 class DishCategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display =('name', 'restaurant')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id','meal', 'customer', 'created_time','completed_time','status', 'num_persons', 'code','total_price',)
