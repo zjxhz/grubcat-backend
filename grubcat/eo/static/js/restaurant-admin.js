@@ -73,7 +73,7 @@ $(document).ready(function () {
         });
 
 
-        $("#dish-container dd,#dish-container dt").live('dblclick',function (e) {
+        $("#dish-container dd,#dish-container dt").live('dblclick', function (e) {
             $(this).clone().appendTo($("#menu-container")).hide().fadeIn(1000);
             hideDishes($(this).attr("dish-id"))
         })
@@ -96,32 +96,29 @@ $(document).ready(function () {
 
         $("body").disableSelection();
 
-        $("#add-category").submit(function(){
+        $("#add-category").submit(function () {
             return false;
         })
 
-        $("#add-category-link").click(function(){
+        $("#add-category-link").click(function () {
             $("#add-category-dialog").dialog({
                 autoOpen:true,
-                modal: true,
+                modal:true,
                 width:250,
                 resizable:false,
-                position:['center',100],
-                buttons: {
-                    确定: function () {
+                position:['center', 100],
+                buttons:{
+                    确定:function () {
                         var $category = $("#category-name");
-                        if(!$category.val())
-                        {
+                        if (!$category.val()) {
                             $category.focus();
-                        } else
-                        {
+                        } else {
                             //submit request
-                            $("#add-dish-category").ajaxSubmit(function(data){
+                            $("#add-dish-category").ajaxSubmit(function (data) {
                                 //create category
                                 var $category_dt;
-                                if(Boolean(data.created))
-                                {
-                                    $category_dt=$('<dt class="category tag ui-draggable" category-id="' + data.id +'">'+ data.name +'<a href="#" class="close cb">×</a></dt>')
+                                if (Boolean(data.created)) {
+                                    $category_dt = $('<dt class="category tag ui-draggable" category-id="' + data.id + '">' + data.name + '<a href="#" class="close cb">×</a></dt>')
                                     $category_dt.hide().appendTo($("#dish-list")).draggable({
                                         connectToSortable:"#menu-container",
                                         revert:"invalid",
@@ -129,8 +126,7 @@ $(document).ready(function () {
                                         cursor:"move",
                                         opacity:0.35
                                     }).show();
-                                } else
-                                {
+                                } else {
                                     $category_dt = $("#dish-list [category-id=" + data.id + "]")
                                 }
                                 $category_dt.dblclick();
@@ -139,11 +135,35 @@ $(document).ready(function () {
                             })
                         }
                     },
-                    取消: function () {
+                    取消:function () {
                         $(this).dialog("close");
                     }
                 }
             });
+            return false;
+        })
+
+        $("#save-menu").click(function () {
+            var postData = {};
+//            TODO chagne to #menu-container
+            var $menuItems = $("#dish-list").children();
+            var items = $menuItems.map(function( i, elem ){
+                $item = $(elem);
+                if($item.is(".dish"))
+                {
+//                , num:$item.find(">.num").text()
+                    return  {type:"dish", id:  $item.attr('dish-id') };
+                } else
+                {
+                    return  {type:"category", id:  $item.attr('category-id') };
+                }
+
+            }).get();
+            postData = {num_persons:8,average_price:30,items:items}
+
+            $.post($(this).attr("href"), JSON.stringify(postData), function(data){
+                alert(data.message)
+            }, "json")
             return false;
         })
     }

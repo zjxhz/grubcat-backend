@@ -32,14 +32,14 @@
     </div>
 
     <div class="well">
-        <a class="btn btn-primary fr" href="#">保存套餐</a>
+        <a class="btn btn-primary fr" id="save-menu" href="{% url add_menu %}">保存套餐</a>
         <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
     </div>
     <div class="row">
         <div id="dish-container" class="span6">
             <dl id="dish-list">
                 {% for dish in dishes_with_no_category %}
-                    <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
+                    <dd class="tag dish" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
                         <a href="#" class="close">&times;</a>
 
                                 <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
@@ -50,7 +50,7 @@
                     <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
                             href="#" class="close cb">&times;</a></dt>
                     {% for dish in category.my_dishes %}
-                        <dd class="tag" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
+                        <dd class="tag dish" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
                             <a href="#" class="close">&times;</a>
 
                                 <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span

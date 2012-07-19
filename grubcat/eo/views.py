@@ -208,7 +208,17 @@ class DishDeleteView(DeleteView):
 
 def add_menu(request):
     '''添加一个套餐'''
-    if request.method == 'GET':
+    if request.method == 'POST':
+        print request.raw_post_data
+        menu = simplejson.loads(request.raw_post_data)
+        num_persons = menu['num_persons']
+        average_price = menu['average_price']
+        items = menu['items']
+        print num_persons
+        print(average_price)
+        print(items)
+        return createSucessJsonResponse()
+    elif request.method == 'GET':
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
         for cat in categories:
@@ -227,7 +237,7 @@ def add_menu(request):
 
         #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
         category_form = DishCategoryForm()
-    return render_to_response("restaurant/menu.html", {'categories': categories, 'category_form': category_form,
+    return render_to_response("restaurant/menu.html", {'request':request,'categories': categories, 'category_form': category_form,
                                                        'dishes_with_no_category': dishes_with_no_category,
                                                        'categories_with_no_dish': categories_with_no_dish})
 
@@ -261,7 +271,7 @@ def creatJsonResponse(status, message, extra_dict=None):
     return HttpResponse(simplejson.dumps(response), content_type='application/json', )
 
 # Create a general response with status and message)
-def createSucessJsonResponse(message, extra_dict=None):
+def createSucessJsonResponse(message=u"成功", extra_dict=None):
     return creatJsonResponse('ok', message, extra_dict)
 
 # get distance in meter, code from google maps
