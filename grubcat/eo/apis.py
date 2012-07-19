@@ -180,6 +180,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_invitation'), name="api_get_invitation"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/meal%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_meal'), name="api_get_meal"),
+             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/feeds%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_feeds'), name="api_get_feeds"),
         ]
     
     
@@ -219,6 +221,16 @@ class UserResource(ModelResource):
         else:
             obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
             return get_my_list(self, obj.following.all(), request) 
+        
+    def get_feeds(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        me = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'GET':
+            return get_my_list(OrderResource(), me.feeds, request) 
+        else:
+            raise
     
     def following_detail(self, request, **kwargs):
         if not request.user.is_authenticated():
@@ -511,7 +523,7 @@ class MealInvitationResource(ModelResource):
 
 class OrderResource(ModelResource):        
     meal = fields.ForeignKey(MealResource,'meal', full=True)
-    customer = fields.ToOneField(UserResource, 'customer')
+    customer = fields.ToOneField(UserResource, 'customer', full=True)
         
     class Meta:
         queryset = Order.objects.exclude(status=4)

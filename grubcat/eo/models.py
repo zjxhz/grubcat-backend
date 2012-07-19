@@ -290,7 +290,14 @@ class UserProfile(models.Model):
     @property
     def meals(self):
         return Meal.objects.filter(Q(host=self) | Q(participants=self))
-
+    
+    @property
+    def feeds(self):
+        """
+        orders that the followings create
+        """
+        return Order.objects.filter(customer__in=self.following.all())
+        
     @property
     def invitations(self):
         """ Invitation sent from others.
