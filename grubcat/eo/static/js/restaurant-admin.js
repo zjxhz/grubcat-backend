@@ -145,17 +145,15 @@ $(document).ready(function () {
 
         $("#save-menu").click(function () {
             var postData = {};
-//            TODO chagne to #menu-container
-            var $menuItems = $("#dish-list").children();
+            var $menuItems = $("#menu-container").children();
             var items = $menuItems.map(function( i, elem ){
                 $item = $(elem);
                 if($item.is(".dish"))
                 {
-//                , num:$item.find(">.num").text()
-                    return  {type:"dish", id:  $item.attr('dish-id') };
+                    return  { id:  $item.attr('dish-id'), num:$item.find(" .num").text() };
                 } else
                 {
-                    return  {type:"category", id:  $item.attr('category-id') };
+                    return  { id:  $item.attr('category-id') };
                 }
 
             }).get();

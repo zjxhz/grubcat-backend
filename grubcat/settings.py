@@ -102,11 +102,13 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'eo.exceptions.ProcessExceptionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
+    'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'eo.exceptions.ProcessExceptionMiddleware',
+
     #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 

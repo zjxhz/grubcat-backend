@@ -209,26 +209,31 @@ class DishDeleteView(DeleteView):
 def add_menu(request):
     '''添加一个套餐'''
     if request.method == 'POST':
-        print request.raw_post_data
-        menu = simplejson.loads(request.raw_post_data)
-        num_persons = menu['num_persons']
-        average_price = menu['average_price']
-        items = menu['items']
-        print num_persons
-        print(average_price)
-        print(items)
-        return createSucessJsonResponse()
+        menu_json = simplejson.loads(request.raw_post_data)
+        num_persons = menu_json['num_persons']
+        average_price = menu_json['average_price']
+        menu = Menu(restaurant = request.user.restaurant, num_persons=num_persons,average_price=average_price )
+        menu.save()
+
+        items = menu_json['items']
+        for item in items:
+            if 'num' in item:
+                #dish
+                dish = Dish(id= item['id'])
+                dish_item = MenuItem(menu=menu,object=dish,num= item['num'] )
+                dish_item.save()
+            else:
+                #category
+                dish_category = DishCategory(id= item['id'])
+                category_item = MenuItem(menu=menu,object=dish_category )
+                category_item.save()
+        return createSucessJsonResponse(u'保存套餐成功')
     elif request.method == 'GET':
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
         for cat in categories:
             cat.my_dishes = cat.dish_set.filter(restaurant=request.user.restaurant)
 
-        #        existNoneCategory = False
-        #        for cat in categories_id_list:
-        #            if None in cat:
-        #                existNoneCategory = True
-        #                break
         dishes_with_no_category = Dish.objects.filter(restaurant=request.user.restaurant,
             categories__isnull=True).order_by("-id")
         categories_with_no_dish = DishCategory.objects.filter(Q(dish__isnull=True),
