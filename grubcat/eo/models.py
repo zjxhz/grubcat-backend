@@ -2,6 +2,8 @@
 from datetime import datetime
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.db.models.query_utils import Q
@@ -103,13 +105,27 @@ class RatingPic(models.Model):
         db_table = u'rating_pic'
 
 
-#class Menu(models.Model):
-#    restaurant = models.OneToOneField(Restaurant)
-#    cover = models.CharField(max_length=255, null=True)
-#    menu_timestamp = models.DateTimeField(auto_now=True)
-#
-#    class Meta:
-#        db_table = u'menu'
+class Menu(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
+    num_persons = models.SmallIntegerField(u'人数')
+    average_price = models.DecimalField(u'均价',max_digits=8,decimal_places=1)
+    created_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = u'menu'
+
+class MenuItem(models.Model):
+    '''
+    菜单的项，可能是菜有可能是分类
+    '''
+    menu = models.ForeignKey(Menu,related_name='items')
+    #use generic relation to respresent dish or category foreign keys
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    object = generic.GenericForeignKey()
+    num = models.SmallIntegerField(u'份数',default=0)
+
 
 
 class DishCategory(models.Model):
@@ -132,8 +148,6 @@ class Dish(models.Model):
     name = models.CharField(u'菜名', max_length=135)
     price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
-#    menu = models.ForeignKey(Menu, related_name='dishes', null=True, blank=True)
-    #    number = models.IntegerField(u'编号')#一个餐厅内的编号，是否有必要
     desc = models.CharField(u'描述',max_length=765,blank=True)
     #    pic = models.CharField(u'图片', max_length=765, blank=True)
     #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
@@ -351,7 +365,7 @@ class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
     list_price = models.DecimalField(u'价钱', max_digits=6, decimal_places=2)
-    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d') #todo move to menu
+    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     time = models.DateTimeField(u'时间', )
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user", verbose_name=u'发起者', )
     participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
