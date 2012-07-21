@@ -190,7 +190,6 @@ class DishUpdateView(UpdateView):
 
 class DishDeleteView(DeleteView):
     model = Dish
-    form_class = DishForm
     context_object_name = "dish"
     template_name = "restaurant/dish_confirm_delete.html"
     success_url = reverse_lazy("restaurant_dish_list")
@@ -205,6 +204,29 @@ class DishDeleteView(DeleteView):
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
         return HttpResponse(content=content)
 
+class MenuDeleteView(DeleteView):
+    model = Menu
+    context_object_name = "dish"
+    template_name = "restaurant/dish_confirm_delete.html"
+    success_url = reverse_lazy("restaurant_dish_list")
+
+    def get_object(self):
+        dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
+            restaurant=self.request.user.restaurant)
+        return dish
+
+    def delete(self, request, *args, **kwargs):
+        super(DishDeleteView, self).delete(request, *args, **kwargs)
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
+        return HttpResponse(content=content)
+
+
+class MenuListView(ListView):
+    template_name = "restaurant/menu.html"
+    context_object_name = "menu_list"
+
+    def get_queryset(self):
+        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.NORMAL)
 
 def add_menu(request):
     '''添加一个套餐'''
@@ -227,7 +249,7 @@ def add_menu(request):
                 dish_category = DishCategory(id= item['id'])
                 category_item = MenuItem(menu=menu,object=dish_category )
                 category_item.save()
-        return createSucessJsonResponse(u'保存套餐成功')
+        return createSucessJsonResponse(u'保存套餐成功',extra_dict = {'url':reverse('menu_list'),})
     elif request.method == 'GET':
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
@@ -242,10 +264,19 @@ def add_menu(request):
 
         #    return render_to_response("restaurant/menu.html", {'dishes': dishes, 'categories': categories,'existNoneCategory':existNoneCategory})
         category_form = DishCategoryForm()
-    return render_to_response("restaurant/menu.html", {'request':request,'categories': categories, 'category_form': category_form,
+    return render_to_response("restaurant/add_menu.html", {'request':request,'categories': categories, 'category_form': category_form,
                                                        'dishes_with_no_category': dishes_with_no_category,
                                                        'categories_with_no_dish': categories_with_no_dish})
 
+def del_menu(request, pk):
+#    if request.method == 'POST':
+    try:
+        menu = Menu.objects.get(pk=pk)
+        menu.status = MenuStatus.DELETED
+        menu.save()
+    except ObjectDoesNotExist:
+        pass
+    return createSucessJsonResponse(extra_dict = {'url':reverse('menu_list'),})
 
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()

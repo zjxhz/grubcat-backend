@@ -1,3 +1,15 @@
+.confirm .ui-dialog-titlebar{
+    display: none;
+}
+
+.confirm .ui-dialog-content{
+    margin-top: 15px;
+}
+
+.confirm .ui-widget-header{
+    display: none;
+}
+
 #meal-img-wrapper {
     border: 1px solid #DDD;
     width: 385px;
@@ -62,7 +74,7 @@
 }
 
 /*套餐管理*/
-#dish-container, #menu-container{
+#dish-container, #menu-container {
     margin-left: 18px;
     border: 1px solid #DDD;
     min-height: 500px;
@@ -121,8 +133,12 @@ dt.tag {
     margin: 5px 26px;
 }
 
-#menu-container .dish-info {
+.dish-info {
     float: right;;
+}
+
+#dish-container .dish-info {
+    float: none;;
 }
 
 #dish-container .close {
@@ -144,24 +160,44 @@ dt.tag {
 
 .help-content {
     color: #555;
-    margin:5px 2px;
+    margin: 5px 2px;
 
 }
 
-.hide-link{
+.hide-link {
     margin-left: 20px;
 }
 
-
-.add-category{
+.add-category {
     background: url(../img/icon_addlink.gif) 1px 8px no-repeat;
     padding: 5px 14px;
 }
 
-#add-category-dialog{
+#add-category-dialog {
     margin-top: 20px;
 }
 
+/*menu list */
+
+#menu-list {
+    padding: 0px;
+    position: relative;
+}
+
+.menu-container {
+    margin-top: 25px;
+    border: 1px solid #DDD;
+    padding-top: 10px;
+    width:375px;
+}
+
+.menu-items {
+    margin-left: 5px;
+}
+
+.menu-items dd.dish {
+    width: 240px;
+}
 
 /*html {*/
 /*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/

@@ -104,6 +104,13 @@ class RatingPic(models.Model):
     class Meta:
         db_table = u'rating_pic'
 
+MENU_STATUS = (
+    (0,'正常'),
+    (1,'已删除')
+)
+class MenuStatus:
+    NORMAL = 0
+    DELETED = 1
 
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant)
@@ -111,9 +118,15 @@ class Menu(models.Model):
     num_persons = models.SmallIntegerField(u'人数')
     average_price = models.DecimalField(u'均价',max_digits=8,decimal_places=1)
     created_time = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(u'状态',choices=MENU_STATUS, default=0)
+
+    def __unicode__(self):
+        return u'套餐%s' % self.id
 
     class Meta:
         db_table = u'menu'
+        verbose_name = u'套餐'
+        verbose_name_plural = u'套餐'
 
 class MenuItem(models.Model):
     '''

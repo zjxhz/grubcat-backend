@@ -3,43 +3,47 @@ $(document).ready(function () {
     $("#restaurant-nav li").removeClass("active");
     $("#" + $("#nav-active-id").html()).addClass("active")
 
-    $("a.dellink").click(function () {
-        var $link = $(this);
-        var href = $link.attr('href');
-        $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
-            title:'确认',
-            confirm:function () {
-                $.post(href, function () {
-                    $link.parents("tr").fadeOut(300);
-                })
+    //dish list page
+    if ($("#dish-list")[0]) {
+
+        $("a.dellink").click(function () {
+            var $link = $(this);
+            var href = $link.attr('href');
+            $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
+                title:'确认',
+                confirm:function () {
+                    $.post(href, function () {
+                        $link.parents("tr").fadeOut(300);
+                    })
+                }
+            });
+            return false;
+        });
+
+        // bind form using 'ajaxForm'
+        $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
+            var code = $("#id_code").val();
+            if (!code || code.length != 8) {
+                alert('请输入8位验证码！')
+                return false;
+            }
+        } });
+
+        $("#modal-dialog").live("dialog2.content-update", function (e, data) {
+            // got the dialog as this object. Do something with it!
+            var e = $(this);
+            var autoclose = e.find("a.auto-close");
+            if (autoclose.length > 0) {
+                e.dialog2('close');
+                var href = autoclose.attr('href');
+                if (href) {
+                    window.location.href = href;
+                }
             }
         });
-        return false;
-    });
+    }
 
-    // bind form using 'ajaxForm'
-    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
-        var code = $("#id_code").val();
-        if (!code || code.length != 8) {
-            alert('请输入8位验证码！')
-            return false;
-        }
-    } });
-
-    $("#modal-dialog").live("dialog2.content-update", function (e, data) {
-        // got the dialog as this object. Do something with it!
-        var e = $(this);
-        var autoclose = e.find("a.auto-close");
-        if (autoclose.length > 0) {
-            e.dialog2('close');
-            var href = autoclose.attr('href');
-            if (href) {
-                window.location.href = href;
-            }
-        }
-    });
-
-//    for menu page
+//    for add menu page
     if ($("#dish-container")[0]) {
         $(".help-title a.help-link").click(function () {
             $(".help-content").slideToggle(1000);
@@ -144,29 +148,73 @@ $(document).ready(function () {
         })
 
         $("#save-menu").click(function () {
+
+            if ($("#menu-container").children().length == 0) {
+                alert("请拖拽左边的分类或者菜到邮编的套餐栏中")
+                return false;
+            }
+            $(this).addClass("disabled")
             var postData = {};
             var $menuItems = $("#menu-container").children();
-            var items = $menuItems.map(function( i, elem ){
+            var items = $menuItems.map(function (i, elem) {
                 $item = $(elem);
-                if($item.is(".dish"))
-                {
-                    return  { id:  $item.attr('dish-id'), num:$item.find(" .num").text() };
-                } else
-                {
-                    return  { id:  $item.attr('category-id') };
+                if ($item.is(".dish")) {
+                    return  { id:$item.attr('dish-id'), num:$item.find(" .num").text() };
+                } else {
+                    return  { id:$item.attr('category-id') };
                 }
 
             }).get();
-            postData = {num_persons:8,average_price:30,items:items}
+            postData = {num_persons:8, average_price:30, items:items}
 
-            $.post($(this).attr("href"), JSON.stringify(postData), function(data){
-                alert(data.message)
+            $.post($(this).attr("href"), JSON.stringify(postData), function (data) {
+                window.location.href=data.url
             }, "json")
             return false;
         })
+
+
+    }
+//end of add menu page
+
+//for menu list page
+    if ($("#menu-list")[0]) {
+        var $container = $('#menu-list');
+
+        $container.masonry({
+            itemSelector:'.menu-container',
+            columnWidth:375,
+            gutterWidth:30
+
+        });
+        $(".dellink").click(function (e) {
+            var delUrl = $(this).attr('href');
+            $("<div>确定要删除套餐吗？</div>").dialog({
+                autoOpen:true,
+                dialogClass:"confirm",
+                modal:true,
+                width:200,
+                height:110,
+                resizable:false,
+                position:['center', 100],
+                buttons:{
+                    确定:function () {
+                        $.post(delUrl,function(data){
+                            window.location.href=data.url
+                        },'json')
+                    },
+                    取消:function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            return false;
+        })
+
     }
 
-});
+})
+;
 
 function helperMasker() {
     return $(this).clone().addClass("helper").css("width", $(this).width())
