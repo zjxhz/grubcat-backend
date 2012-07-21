@@ -26,7 +26,7 @@ from ajax_select import urls as ajax_select_urls
 admin.autodiscover()
 
 urlpatterns = patterns('',
-#    ('^get_menu/$', get_menu),
+    #    ('^get_menu/$', get_menu),
     ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     ('^restaurant/(\d+)/$', get_restaurant),
     ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
@@ -89,41 +89,30 @@ urlpatterns = patterns('',
         name="more_user"),
 
     #restaurant admin
-    url(r'^restaurant/$', restaurant_login_required(OrderCheckInView.as_view()),
-        name="restaurant_admin"),
+    url(r'^restaurant/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_admin"),
     url(r'^restaurant/chekin/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_checkin")
     ,
-    url(r'^restaurant/order/use/$', restaurant_login_required(use_order),
-        name="restaurant_use_order"),
-    url(r'^restaurant/dish/$', restaurant_login_required(DishListView.as_view()),
-        name="restaurant_dish_list"),
-    url(r'^restaurant/dish/add/$', restaurant_login_required(DishCreateView.as_view()),
-        name="restaurant_dish_add"),
+    url(r'^restaurant/order/use/$', restaurant_login_required(use_order), name="restaurant_use_order"),
+    url(r'^restaurant/dish/$', restaurant_login_required(DishListView.as_view()), name="restaurant_dish_list"),
+    url(r'^restaurant/dish/add/$', restaurant_login_required(DishCreateView.as_view()), name="restaurant_dish_add"),
     url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
     url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(DishDeleteView.as_view()),
         name="restaurant_dish_del"),
-    url(r'^restaurant/dish_category/add/$', restaurant_login_required(add_dish_category),
-        name="add_dish_category"),
+    url(r'^restaurant/dish_category/add/$', restaurant_login_required(add_dish_category), name="add_dish_category"),
     url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_order"),
-    url(r'^restaurant/menu/$',
-        restaurant_login_required(MenuListView.as_view()),
-        name="menu_list"),
-    url(r'^restaurant/menu/add/$',
-        restaurant_login_required(add_menu),
-        name="add_menu"),
-    url(r'^restaurant/menu/del/(?P<pk>\d+)/$',
-        restaurant_login_required(del_menu),
-        name="del_menu"),
+    url(r'^restaurant/menu/$', restaurant_login_required(MenuListView.as_view()), name="menu_list"),
+    url(r'^restaurant/menu/add/$', restaurant_login_required(add_menu), name="add_menu"),
+    url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(del_menu), name="del_menu"),
+    url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(edit_menu), name="edit_menu"),
 
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
-    #    url(r'^restaurant/login/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
-    #    url(r'^restaurant/logout/$', TemplateView.as_view(template_name="restaurant/menu.html"),name="restaurant_dish_list"),
+
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),
 
-    (r'^admin/lookups/', include(ajax_select_urls)),
+    #    (r'^admin/lookups/', include(ajax_select_urls)),
 )
 
 if settings.DEBUG:

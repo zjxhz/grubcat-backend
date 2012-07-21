@@ -21,17 +21,14 @@
     {{ block.super }}
 {% endblock %}
 {% block content %}
-
-    <div class="well">
-        <a class="add-category fr" href="{% url add_menu %}" id="add-category-link">添加套餐</a>
-    </div>
-    <div id="menu-list" class="">
+    <a class="add-category addlink fr" href="{% url add_menu %}" id="add-category-link">添加套餐</a>
+    <div id="menu-list" >
         {% for menu in menu_list %}
             <div class="menu-container">
-                <div class="fr">
-                    <a href="/restaurant/dish/edit/205/" class="changelink mr10" title="编辑"
+                <div class="fr actions">
+                    <a href="{% url edit_menu menu.id %}" class="changelink mr10" title="编辑"
                        rel="modal-dialog">编辑</a> <br/>
-                    <a href="{% url del_menu menu.id %}" class="dellink" >删除</a></div>
+                    <a href="{% url del_menu menu.id %}" class="dellink">删除</a></div>
                 <dl class="menu-items w300">
                     {% for item in menu.items.all %}
                         {% ifequal item.content_type.model  'dishcategory' %}
