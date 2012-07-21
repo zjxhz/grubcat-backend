@@ -15,62 +15,42 @@
     {% assets "jquery_form_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    {% assets "water_fall_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     {{ block.super }}
 {% endblock %}
 {% block content %}
-    <div class="well">
-        <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link">操作帮助</a></div>
-        <div class="help-content" style="display: none">
-            <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
-            </p>
-
-            <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
-
-            <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
-
-            <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p></div>
-    </div>
 
     <div class="well">
-        <a class="btn btn-primary fr" id="save-menu" href="{% url add_menu %}">保存套餐</a>
-        <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
+        <a class="add-category fr" href="{% url add_menu %}" id="add-category-link">添加套餐</a>
     </div>
-    <div class="row">
-        <div id="dish-container" class="span6">
-            <dl id="dish-list">
-                {% for dish in dishes_with_no_category %}
-                    <dd class="tag dish" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
-                        <a href="#" class="close">&times;</a>
+    <div id="menu-list" class="">
+        {% for menu in menu_list %}
+            <div class="menu-container">
+                <div class="fr">
+                    <a href="/restaurant/dish/edit/205/" class="changelink mr10" title="编辑"
+                       rel="modal-dialog">编辑</a> <br/>
+                    <a href="{% url del_menu menu.id %}" class="dellink" >删除</a></div>
+                <dl class="menu-items w300">
+                    {% for item in menu.items.all %}
+                        {% ifequal item.content_type.model  'dishcategory' %}
+                            <dt class="category tag" category-id="{{ item.object.id }}">{{ item.object.name }}
+                            </dt>
+                        {% endifequal %}
+                        {% ifequal item.content_type.model  'dish' %}
+                            <dd class="tag dish" dish-id="{{ item.object.id }}"><span
+                                    class="dish-name">{{ item.object.name }}</span>
 
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
-                {% endfor %}
-                {% for category in categories %}
-                    <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
-                            href="#" class="close cb">&times;</a></dt>
-                    {% for dish in category.my_dishes %}
-                        <dd class="tag dish" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
-                            <a href="#" class="close">&times;</a>
-
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
+                                <span class="dish-info"> <span class="price">{{ item.object.price }} 元</span><span
+                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
+                            </dd>
+                        {% endifequal %}
                     {% endfor %}
-                {% endfor %}
-                {% for category in categories_with_no_dish %}
-                    <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
-                            href="#" class="close cb">&times;</a></dt>
-                {% endfor %}
-            </dl>
-        </div>
-        <div id="menu-container" class="span4">
-        </div>
-    </div>
-    <div class="hide" id="add-category-dialog" title="添加分类">
-        <form id="add-dish-category" class="form" action="{% url add_dish_category %}" method="post">
-            <input type="text" id="category-name" name="category-name" class="input" placeholder="请输入分类名称">
-        </form>
+                </dl>
+            </div>
+        {% endfor %}
     </div>
     <div id="nav-active-id" style="display: none">nav-menu</div>
 {% endblock %}
