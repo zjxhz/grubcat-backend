@@ -45,15 +45,15 @@ $(document).ready(function () {
 
 //    for add menu page
     if ($("#dish-container")[0]) {
-        $(".help-title a.help-link").click(function () {
-            $(".help-content").slideToggle(1000);
-            $("a.hide-link").toggleClass('hide')
-            return false;
-        })
 
-        $(".help-title a.hide-link").click(function () {
-            $(".help-content").slideUp(1000);
-            $(this).hide();
+        $("#add-menu-help-link").click(function () {
+            $("#add-menu-help-dialog").dialog({
+                autoOpen:true,
+                title:"操作帮助",
+                modal:true,
+                width:550,
+                position:['center', 100]
+            });
             return false;
         })
 
@@ -168,7 +168,7 @@ $(document).ready(function () {
             postData = {num_persons:8, average_price:30, items:items}
 
             $.post($(this).attr("href"), JSON.stringify(postData), function (data) {
-                window.location.href=data.url
+                window.location.href = data.url
             }, "json")
             return false;
         })
@@ -199,9 +199,9 @@ $(document).ready(function () {
                 position:['center', 100],
                 buttons:{
                     确定:function () {
-                        $.post(delUrl,function(data){
-                            window.location.href=data.url
-                        },'json')
+                        $.post(delUrl, function (data) {
+                            window.location.href = data.url
+                        }, 'json')
                     },
                     取消:function () {
                         $(this).dialog("close");

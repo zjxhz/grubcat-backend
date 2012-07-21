@@ -18,9 +18,8 @@
     {{ block.super }}
 {% endblock %}
 {% block content %}
-    <div class="well">
-        <div class="help-title"><a class="hide-link hide" href="#">隐藏</a> <a href="#" class="help-link">操作帮助</a></div>
-        <div class="help-content" style="display: none">
+    <div class="hide" id="add-menu-help-dialog">
+        <div class="help-content" >
             <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
             </p>
 
@@ -32,6 +31,8 @@
     </div>
 
     <div class="well">
+        <a class="fl" href="#" id="add-menu-help-link">操作帮助</a>
+
         <a class="btn btn-primary fr" id="save-menu" href="{% url add_menu %}">保存套餐</a>
         <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
     </div>
@@ -52,7 +53,6 @@
                     {% for dish in category.my_dishes %}
                         <dd class="tag dish" dish-id="{{ dish.id }}"><span class="dish-name">{{ dish.name }}</span>
                             <a href="#" class="close">&times;</a>
-
                                 <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
                                         class="unit"> /{{ dish.unit }} &times; </span><a
                                         class="num">1</a>&nbsp;&nbsp; </span></dd>
@@ -65,6 +65,23 @@
             </dl>
         </div>
         <div id="menu-container" class="span4">
+            {% for item in menu.items.all %}
+                {% ifequal item.content_type.model  'dishcategory' %}
+                    <dt class="category tag" category-id="{{ item.object.id }}">{{ item.object.name }}
+                        <a href="#" class="close cb">&times;</a>
+                    </dt>
+                {% endifequal %}
+                {% ifequal item.content_type.model  'dish' %}
+                    <dd class="tag dish" dish-id="{{ item.object.id }}"><span
+                            class="dish-name">{{ item.object.name }}</span>
+                        <a href="#" class="close">&times;</a>
+
+                                <span class="dish-info"> <span class="price">{{ item.object.price }} 元</span><span
+                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
+                    </dd>
+                {% endifequal %}
+            {% endfor %}
         </div>
     </div>
     <div class="hide" id="add-category-dialog" title="添加分类">
