@@ -33,6 +33,14 @@ class MealListView(ListView):
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
+class MealDetailView(DetailView):
+    model=Meal
+    context_object_name="meal"
+    template_name="meal/meal_detail.html"
+    queryset = Meal.objects.select_related('restaurant','host__user').prefetch_related('participants__user')
+
+
+
 ### User related views ###
 class RegisterView(CreateView):
     form_class = UserCreationForm
@@ -95,6 +103,7 @@ class OrderDetailView(DetailView):
     model = Order
     context_object_name = "order"
     template_name = "order/order_detail.html"
+    queryset = Order.objects.select_related('meal__restaurant')
 
     def get_object(self, queryset=None):
         order = super(OrderDetailView, self).get_object()

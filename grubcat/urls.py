@@ -72,8 +72,7 @@ urlpatterns = patterns('',
     # meal
     url(r'^$', MealListView.as_view(), name="index"),
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
-    url(r'^meal/(?P<pk>\d+)/$', DetailView.as_view(
-        model=Meal, context_object_name="meal", template_name="meal/meal_detail.html"), name='meal_detail'),
+    url(r'^meal/(?P<pk>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='make_order'),
