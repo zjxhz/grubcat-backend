@@ -150,7 +150,7 @@ class DishListView(ListView):
     context_object_name = "dish_list"
 
     def get_queryset(self):
-        return Dish.objects.filter(restaurant=self.request.user.restaurant)
+        return Dish.objects.filter(restaurant=self.request.user.restaurant).prefetch_related('categories')
 
 
 class DishCreateView(CreateView):
