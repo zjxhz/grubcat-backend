@@ -59,18 +59,18 @@ $(document).ready(function () {
 
         //drag category
         $("#dish-container dt, #dish-container dd").draggable({
-            connectToSortable:"#menu-container",
+            connectToSortable:"#menu-items",
             revert:"invalid",
             helper:helperMasker,
             cursor:"move",
             opacity:0.35
         });
 
-        $("#menu-container").sortable({
+        $("#menu-items").sortable({
             cursor:"move",
             placeholder:"ui-state-highlight",
             forcePlaceholderSize:true,
-            containment:"#menu-container",
+            containment:"#menu-items",
             receive:function (e, ui) {
                 hideDishes(ui.sender.attr("dish-id"));
             }
@@ -78,31 +78,28 @@ $(document).ready(function () {
 
 
         $("#dish-container dd,#dish-container dt").live('dblclick', function (e) {
-            $(this).clone().appendTo($("#menu-container")).hide().fadeIn(1000);
+            $(this).clone().appendTo($("#menu-items")).hide().fadeIn(1000);
             hideDishes($(this).attr("dish-id"))
         })
 
-        $("#menu-container dt").live('dblclick', function (e) {
+        $("#menu-items dt").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
         })
-        $("#menu-container dt .close").live('click', function (e) {
+        $("#menu-items dt .close").live('click', function (e) {
             $(this).parents("dt").fadeOut(1000).remove();
             return false;
         })
-        $("#menu-container dd").live('dblclick', function (e) {
+        $("#menu-items dd").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
             showDishes($(this).attr("dish-id"))
         });
-        $("#menu-container dd .close").live('click', function (e) {
+        $("#menu-items dd .close").live('click', function (e) {
             $(this).parents("dd").fadeOut(1000).remove();
             showDishes($($(this).parents("dd")).attr("dish-id"))
         })
 
-        $("body").disableSelection();
+        $("#menu-container,#dish-container").disableSelection();
 
-        $("#add-category").submit(function () {
-            return false;
-        })
 
         $("#add-category-link").click(function () {
             $("#add-category-dialog").dialog({
@@ -124,7 +121,7 @@ $(document).ready(function () {
                                 if (Boolean(data.created)) {
                                     $category_dt = $('<dt class="category tag ui-draggable" category-id="' + data.id + '">' + data.name + '<a href="#" class="close cb">×</a></dt>')
                                     $category_dt.hide().appendTo($("#dish-list")).draggable({
-                                        connectToSortable:"#menu-container",
+                                        connectToSortable:"#menu-items",
                                         revert:"invalid",
                                         helper:helperMasker,
                                         cursor:"move",
@@ -147,15 +144,15 @@ $(document).ready(function () {
             return false;
         })
 
-        $("#save-menu").click(function () {
+        $("#save-menu-form").submit(function () {
 
-            if ($("#menu-container").children().length == 0) {
+            if ($("#menu-items").children().length == 0) {
                 alert("请拖拽左边的分类或者菜到邮编的套餐栏中")
                 return false;
             }
-            $(this).addClass("disabled")
+            $("#save-menu-btn").addClass("disabled")
             var postData = {};
-            var $menuItems = $("#menu-container").children();
+            var $menuItems = $("#menu-items").children();
             var items = $menuItems.map(function (i, elem) {
                 $item = $(elem);
                 if ($item.is(".dish")) {
@@ -165,7 +162,7 @@ $(document).ready(function () {
                 }
 
             }).get();
-            postData = {num_persons:8, average_price:30, items:items}
+            postData = {num_persons:$("#id_num_persons").val(), average_price:$("#id_average_price").val(), items:items}
 
             $.post($(this).attr("href"), JSON.stringify(postData), function (data) {
                 window.location.href = data.url
@@ -196,7 +193,7 @@ $(document).ready(function () {
                 width:200,
                 height:110,
                 resizable:false,
-                position:['center', 100],
+                position:'center',
                 buttons:{
                     确定:function () {
                         $.post(delUrl, function (data) {

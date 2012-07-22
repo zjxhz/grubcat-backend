@@ -29,6 +29,10 @@
                     <a href="{% url edit_menu menu.id %}" class="changelink mr10" title="编辑"
                        rel="modal-dialog">编辑</a> <br/>
                     <a href="{% url del_menu menu.id %}" class="dellink">删除</a></div>
+                <span class="menu-info">
+                   就餐人数：<span class="num-persons">{{ menu.num_persons }}</span>人    均价：<span class="average-price">{{ menu.average_price }}</span> 元/人
+                </span>
+
                 <dl class="menu-items w300">
                     {% for item in menu.items.all %}
                         {% ifequal item.content_type.model  'dishcategory' %}

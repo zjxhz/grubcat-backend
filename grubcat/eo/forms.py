@@ -37,6 +37,12 @@ class DishCategoryForm(ModelForm):
     class Meta:
         model = DishCategory
 
+class MenuForm(ModelForm):
+    class Meta:
+        model = Menu
+        fields  = ('num_persons','average_price') # TODO 'photo'
+
+
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50, required=False)
     file = forms.FileField()
