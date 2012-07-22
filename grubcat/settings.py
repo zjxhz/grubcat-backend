@@ -171,16 +171,6 @@ API_LIMIT_PER_PAGE = 5
 #don't auto compress css/jss files, use command by manual
 ASSETS_AUTO_BUILD = False
 
-#ajax select
-AJAX_LOOKUP_CHANNELS = {
-    #   pass a dict with the model and the field to search against
-    'dish_category'  : ("eo.lookups",'DishCategoryLookup')
-}
-# magically include jqueryUI/js/css
-AJAX_SELECT_BOOTSTRAP = True
-AJAX_SELECT_INLINES = 'inline'
-#end ajax select
-
 LOGGING_ROOT = "/home/fanju/logs/user/"
 
 LOGGING = {

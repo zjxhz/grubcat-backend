@@ -94,6 +94,10 @@ dt {
     margin-top: 10px;
 }
 
+#menu-items{
+    min-height: 500px;
+}
+
 .helper {
     border: 1px solid #000000;
     padding: 2px;
@@ -183,6 +187,10 @@ dt.tag {
     margin-top: 20px;
 }
 
+#save-menu-btn{
+    margin: 0 5px 0 185px;
+}
+
 /*menu list */
 
 #menu-list {
@@ -208,6 +216,16 @@ dt.tag {
 
 .actions{
     margin-top: 3px;
+}
+
+.menu-info{
+    margin-left: 8px;
+    background-color: yellow;
+    color:#555;
+}
+
+span.num-persons, span.average-price{
+    font-weight: bold;
 }
 
 /*html {*/

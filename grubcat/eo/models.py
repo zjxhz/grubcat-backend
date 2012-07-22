@@ -115,7 +115,7 @@ class MenuStatus:
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
-    num_persons = models.SmallIntegerField(u'人数')
+    num_persons = models.SmallIntegerField(u'就餐人数')
     average_price = models.DecimalField(u'均价',max_digits=8,decimal_places=1)
     created_time = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(u'状态',choices=MENU_STATUS, default=0)
@@ -233,7 +233,6 @@ class Order(models.Model):
             self.gen_code()
         super(Order, self).save(*args, **kargs)
 
-#    @transaction.commit_on_success
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
             self.meal.participants.remove(self.customer)
@@ -389,7 +388,6 @@ class Meal(models.Model):
     type = models.IntegerField(default=0) # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
-    @transaction.commit_on_success
     def join(self, order):
         if self.actual_persons + order.num_persons > self.max_persons:
             raise NoAvailableSeatsError
