@@ -146,6 +146,16 @@ $(document).ready(function () {
 
         $("#save-menu-form").submit(function () {
 
+            if (!$("#id_num_persons").val()) {
+                alert("请输入就餐人数")
+                return false;
+            }
+
+            if (!$("#id_average_price").val()) {
+                alert("请输入均价")
+                return false;
+            }
+
             if ($("#menu-items").children().length == 0) {
                 alert("请拖拽左边的分类或者菜到邮编的套餐栏中")
                 return false;
@@ -165,7 +175,14 @@ $(document).ready(function () {
             postData = {num_persons:$("#id_num_persons").val(), average_price:$("#id_average_price").val(), items:items}
 
             $.post($(this).attr("href"), JSON.stringify(postData), function (data) {
-                window.location.href = data.url
+                if (data.status == 'OK') {
+                    window.location.href = data.url
+                } else {
+                    var error = data.info;
+                    alert("您的输入有误，请重新输入")
+                    $("#save-menu-btn").removeClass("disabled")
+                }
+
             }, "json")
             return false;
         })

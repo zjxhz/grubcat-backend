@@ -215,9 +215,13 @@ class MenuListView(ListView):
 def add_edit_menu(request,pk=None):
     '''添加或者删除一个套餐，如果传入pk则是编辑，否则是添加'''
     if request.method == 'POST':
+
         menu_json = simplejson.loads(request.raw_post_data)
         num_persons = menu_json['num_persons']
         average_price = menu_json['average_price']
+        menu_form = MenuForm({'num_persons':num_persons,'average_price':average_price})
+        if not menu_form.is_valid():
+            return createGeneralResponse(ERROR, menu_form.errors, extra_dict={'url': reverse('menu_list'), })
         menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price)
         menu.save()
 
@@ -290,6 +294,9 @@ def getJsonResponse(qs, relations=None):
     writeJson(qs, response, relations)
     return response
 
+SUCESS = "OK"
+ERROR = 'NOK'
+
 # Create a general response with status and message)
 def createGeneralResponse(status, message, extra_dict=None):
     response = {}
@@ -308,7 +315,7 @@ def creatJsonResponse(status, message, extra_dict=None):
 
 # Create a general response with status and message)
 def createSucessJsonResponse(message=u"成功", extra_dict=None):
-    return creatJsonResponse('ok', message, extra_dict)
+    return creatJsonResponse('OK', message, extra_dict)
 
 # get distance in meter, code from google maps
 def getDistance( lng1, lat1, lng2, lat2):
