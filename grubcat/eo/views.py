@@ -210,7 +210,10 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.NORMAL)
+        qs =  Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.NORMAL)
+        for menu in qs:
+            menu.menu_items = menu.items.select_related('content_type').prefetch_related('object' ).all()
+        return qs
 
 def add_edit_menu(request,pk=None):
     '''添加或者删除一个套餐，如果传入pk则是编辑，否则是添加'''

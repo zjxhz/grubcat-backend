@@ -34,7 +34,7 @@
                 </span>
 
                 <dl class="menu-items w300">
-                    {% for item in menu.items.all %}
+                    {% for item in menu.menu_items  %}
                         {% ifequal item.content_type.model  'dishcategory' %}
                             <dt class="category tag" category-id="{{ item.object.id }}">{{ item.object.name }}
                             </dt>
