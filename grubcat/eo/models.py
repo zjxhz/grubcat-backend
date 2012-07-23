@@ -10,6 +10,7 @@ from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from image_cropping.fields import ImageRatioField, ImageCropField
 import random
+from taggit.managers import TaggableManager
 
 # Create your models here.
 from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
@@ -308,6 +309,7 @@ class UserProfile(models.Model):
     motto = models.CharField(max_length=140, null=True)
     weibo_id = models.CharField(max_length=20, null=True)
     weibo_access_token = models.CharField(max_length=128, null=True)
+    tags = TaggableManager()
 
     @property
     def followers(self):

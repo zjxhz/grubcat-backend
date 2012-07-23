@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'south',
     'django_forms_bootstrap',
     'ajax_select',
+    'taggit',
     #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',

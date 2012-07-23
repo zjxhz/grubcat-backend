@@ -21,6 +21,8 @@ from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
 import simplejson
+from taggit.models import Tag
+
 
 
 
@@ -180,8 +182,10 @@ class UserResource(ModelResource):
                 self.wrap_view('get_invitation'), name="api_get_invitation"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/meal%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_meal'), name="api_get_meal"),
-             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/feeds%s$" % (self._meta.resource_name, trailing_slash()),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/feeds%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_feeds'), name="api_get_feeds"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/tags%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_tags'), name="api_get_tags"),    
         ]
     
     
@@ -281,11 +285,25 @@ class UserResource(ModelResource):
     def get_meal(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         return get_my_list(MealResource(), obj.meals, request)
+    
+    def get_tags(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'POST':
+            tag = request.POST.get('tag')
+            user.tags.add(tag)
+            return createGeneralResponse('OK', 'tag %s added' % tag)
+        else:
+            return get_my_list(TagResource(), user.tags.all(), request) 
+            raise
         
     class Meta:
         queryset = UserProfile.objects.all()
         resource_name = 'user'
         filtering = {'from_user':ALL,}
+
 
 class RelationshipResource(ModelResource):
     from_person = fields.ForeignKey(UserProfile, 'from_person')
@@ -530,6 +548,11 @@ class OrderResource(ModelResource):
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
 
+class TagResource(ModelResource):
+    class Meta:
+        queryset = Tag.objects.all()
+        filtering = {'name': ALL}
+    
 #class CreateUserResource(ModelResource):
 #    def obj_create(self, bundle, request=None, **kwargs):
 #        weibo_id = bundle.data['weibo_id']
@@ -646,3 +669,4 @@ v1_api.register(MealInvitationResource())
 v1_api.register(UserLocationResource())
 #v1_api.register(OrderDishesResource())
 v1_api.register(MealCommentResource())
+v1_api.register(TagResource())
