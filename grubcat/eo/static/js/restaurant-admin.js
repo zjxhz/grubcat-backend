@@ -2,7 +2,27 @@ $(document).ready(function () {
 
     $("#restaurant-nav li").removeClass("active");
     $("#" + $("#nav-active-id").html()).addClass("active")
+    // bind form using 'ajaxForm'
+    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
+        var code = $("#id_code").val();
+        if (!code || code.length != 8) {
+            alert('请输入8位验证码！')
+            return false;
+        }
+    } });
 
+    $("#modal-dialog").live("dialog2.content-update", function (e, data) {
+        // got the dialog as this object. Do something with it!
+        var e = $(this);
+        var autoclose = e.find("a.auto-close");
+        if (autoclose.length > 0) {
+            e.dialog2('close');
+            var href = autoclose.attr('href');
+            if (href) {
+                window.location.href = href;
+            }
+        }
+    });
     //dish list page
     if ($("#dish-list")[0]) {
 
@@ -20,27 +40,7 @@ $(document).ready(function () {
             return false;
         });
 
-        // bind form using 'ajaxForm'
-        $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
-            var code = $("#id_code").val();
-            if (!code || code.length != 8) {
-                alert('请输入8位验证码！')
-                return false;
-            }
-        } });
 
-        $("#modal-dialog").live("dialog2.content-update", function (e, data) {
-            // got the dialog as this object. Do something with it!
-            var e = $(this);
-            var autoclose = e.find("a.auto-close");
-            if (autoclose.length > 0) {
-                e.dialog2('close');
-                var href = autoclose.attr('href');
-                if (href) {
-                    window.location.href = href;
-                }
-            }
-        });
     }
 
 //    for add menu page
