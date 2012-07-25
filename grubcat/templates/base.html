@@ -77,7 +77,9 @@
     </div>
 {% endblock %}
 {% block base_js %}
-    <script type="text/javascript" src="{% static 'js/jquery-1.7.2.min.js' %}"></script>
+    {% assets "base_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
 {% endblock %}
 <script type="text/javascript">
     $(document).ready(function () {
