@@ -1,19 +1,18 @@
 # coding=utf-8
 from datetime import datetime
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import models, transaction
+from django.db import models
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
+from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
 from image_cropping.fields import ImageRatioField, ImageCropField
-import random
 from taggit.managers import TaggableManager
+from taggit.models import GenericTaggedItemBase, Tag
+import random
 
 # Create your models here.
-from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
 
 class Company(models.Model):
     name = models.CharField(max_length=135)
@@ -280,7 +279,17 @@ class UserLocation(models.Model):
     class Meta:
         db_table = u"user_location"
 
-
+class UserTag(Tag): 
+    image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
+    
+    class Meta:
+        db_table = u'user_tag'
+        
+class TaggedUser(GenericTaggedItemBase):
+    tag =  models.ForeignKey(UserTag)
+    class Meta:
+        db_table = u'tagged_user'
+    
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     name = models.CharField(max_length=30, null=True)
@@ -299,7 +308,7 @@ class UserProfile(models.Model):
     motto = models.CharField(max_length=140, null=True)
     weibo_id = models.CharField(max_length=20, null=True)
     weibo_access_token = models.CharField(max_length=128, null=True)
-    tags = TaggableManager()
+    tags = TaggableManager(through=TaggedUser)
 
     @property
     def followers(self):
