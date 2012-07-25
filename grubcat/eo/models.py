@@ -32,14 +32,14 @@ class RestaurantTag(models.Model):
         db_table = u'restaurant_tag'
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s' % self.name
 
 
 class Region(models.Model):
     name = models.CharField(max_length=64)
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s' % self.name
 
     class Meta:
         db_table = u'region'
@@ -49,8 +49,8 @@ class Restaurant(models.Model):
     user = models.OneToOneField(User, null=True, related_name="restaurant")
     name = models.CharField(max_length=135)
     address = models.CharField(max_length=765)
-    latitude = models.FloatField(null=True)
-    longitude = models.FloatField(null=True)
+    latitude = models.FloatField(null=True,blank=True)
+    longitude = models.FloatField(null=True,blank=True)
     tel = models.CharField(max_length=60)
     tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(max_length=6000, blank=True)
@@ -105,13 +105,14 @@ class RatingPic(models.Model):
     class Meta:
         db_table = u'rating_pic'
 
-MENU_STATUS = (
-    (0,'正常'),
-    (1,'已删除')
-)
 class MenuStatus:
     NORMAL = 0
     DELETED = 1
+
+MENU_STATUS = (
+    (MenuStatus.NORMAL, '正常'),
+    (MenuStatus.DELETED, '已删除')
+)
 
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant)
@@ -139,8 +140,6 @@ class MenuItem(models.Model):
     object_id = models.PositiveIntegerField()
     object = generic.GenericForeignKey()
     num = models.SmallIntegerField(u'份数',default=0)
-
-
 
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
@@ -203,10 +202,10 @@ class OrderStatus():
 
 
 ORDER_STATUS = (
-    (1, '已创建'),
-    (2, '已支付'),
-    (3, '已使用'),
-    (4, '已取消')
+    (OrderStatus.CREATED, '已创建'),
+    (OrderStatus.PAYIED, '已支付'),
+    (OrderStatus.USED, '已使用'),
+    (OrderStatus.CANCELED, '已取消')
     )
 
 
@@ -258,15 +257,6 @@ class Order(models.Model):
         db_table = u'order'
         verbose_name = u'订单'
         verbose_name_plural = u'订单'
-
-
-class MealDishes(models.Model):
-    meal = models.ForeignKey('Meal')
-    dish = models.ForeignKey(Dish)
-    quantity = models.FloatField()
-
-    class Meta:
-        db_table = u'meal_dishes'
 
 
 class Relationship(models.Model):
@@ -374,19 +364,25 @@ class BestRatingDish(models.Model):
 
 
 class Meal(models.Model):
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
-    dishes = models.ManyToManyField(Dish, through='MealDishes')
+
+    time = models.DateTimeField(u'开始时间', )
+    region = models.ForeignKey(Region,verbose_name=u'区域')
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
-    list_price = models.DecimalField(u'价钱', max_digits=6, decimal_places=2)
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=2)
+    min_persons = models.IntegerField(u'参加人数', )
+    extra_requests = models.CharField(u'其它要求',max_length=128,null=True,blank=True)
+
+    max_persons = models.IntegerField(u'最多参加人数', default=0) # not used for now,
+
+
     photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
-    time = models.DateTimeField(u'时间', )
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅') #TODO retrieve from menu
+    menu = models.ForeignKey(Menu,verbose_name=u'菜单',null=True)
     host = models.ForeignKey(UserProfile, null=True, related_name="host_user", verbose_name=u'发起者', )
     participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True, null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
-    min_persons = models.IntegerField(u'最少参加人数', )
-    max_persons = models.IntegerField(u'最多参加人数', default=0) # not used for now, min_persons = max_persons
     type = models.IntegerField(default=0) # THEMES, DATES
     privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 

@@ -36,9 +36,10 @@ class MenuItemInline(admin.StackedInline):
     model = MenuItem
 
 class MenuAdmin(admin.ModelAdmin):
-    list_display = ('restaurant','id','num_persons','average_price')
-    list_filter = ('restaurant',)
+    list_display = ('restaurant','status','id','num_persons','average_price',)
+    list_filter = ('restaurant','status')
     inlines = [MenuItemInline,]
+    ordering = ('status',)
 
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)

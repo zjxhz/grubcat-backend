@@ -73,6 +73,7 @@ urlpatterns = patterns('',
     url(r'^$', MealListView.as_view(), name="index"),
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
     url(r'^meal/(?P<pk>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
+    url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='make_order'),

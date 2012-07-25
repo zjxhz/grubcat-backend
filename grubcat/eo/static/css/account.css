@@ -78,3 +78,7 @@ input {
 .forget-password, {
     float: left
 }
+
+input[type="text"], input[type="password"], input[type="email"], input[type="user[email]"], .referral-link, .find-by-name {
+    width:100%;
+}
