@@ -5,6 +5,17 @@ from django.forms.widgets import *
 from grubcat.eo.models import *
 
 
+class MealForm(ModelForm):
+    time = forms.SplitDateTimeField(input_date_formats='yyyy-MM-dd',input_time_formats='HH:mm')
+    class Meta:
+        model = Meal
+        fields = ('time','region','topic','introduction','min_persons','list_price','extra_requests')
+        widgets = {
+            'introduction': Textarea(),
+            'extra_requests':Textarea(),
+        }
+
+
 NUM_PERSON_CHOICE = [(x, "%s人" % x) for x in range(1, 10)]
 
 class OrderCreateForm(ModelForm):

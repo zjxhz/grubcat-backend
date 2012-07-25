@@ -25,6 +25,28 @@ import simplejson
 import sys
 from django.conf import settings
 
+### Order related views ###
+class MealCreateView(CreateView):
+    form_class = MealForm
+    template_name = 'meal/create_meal.html'
+
+#    def get_initial(self):
+#        return {'meal_id': self.kwargs['meal_id']}
+
+#    def get_context_data(self, **kwargs):
+#        context = super(OrderCreateView, self).get_context_data(**kwargs)
+#        context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
+#        return context
+#
+#    def form_valid(self, form):
+#        order = form.save(False)
+#        order.customer = self.request.user.get_profile()
+#        order.meal_id = form.cleaned_data['meal_id']
+#        order.status = OrderStatus.CREATED
+#        order.total_price = order.meal.list_price * order.num_persons
+#        response = super(OrderCreateView, self).form_valid(form)
+#        order.meal.join(order)
+#        return response
 
 ### Meal related views ###
 class MealListView(ListView):
