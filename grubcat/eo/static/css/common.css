@@ -224,29 +224,6 @@ input[type="text"].cart_day {
     box-shadow: none;
 }
 
-.dk_toggle {
-    background: url("../img/time-pickker-bg.png") no-repeat 90% center;
-    border: 1px solid #CCC;
-    color: #333;
-    padding: 7px 45px 7px 10px;
-    text-shadow: white 1px 1px 0;
-    text-align: left;
-}
-
-.dk_toggle {
-    display: -moz-inline-stack;
-    display: inline-block;
-    position: relative;
-    zoom: 1;
-}
-
-#dk_container_cart_time .dk_toggle {
-    background-image: url("../img/time-pickker-icon.png");
-    background-position: 12px center;
-    padding: 12px 10px 12px 45px;
-    width: 120px;
-    text-align: left;
-}
 
 .button, .resumator-button, .resumator-apply-button, .join, input[type="submit"], .view-more {
     text-decoration: none;
@@ -273,11 +250,6 @@ input[type="text"].cart_day {
     background: -webkit-gradient(linear, left top, left bottom, from(#2C496B), to(#28415E));
     color: white;
 }
-
-.dk_container.dk_theme_default {
-    margin: 10px;
-}
-
 #footer {
     height: 150px;
 }
