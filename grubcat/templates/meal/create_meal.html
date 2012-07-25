@@ -28,15 +28,30 @@
 {% endblock %}
 
 {% block page_js %}
-    {% assets "jquery_form_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-    {% assets "jquery_ajax_bootstrap_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
+{#    {% assets "jquery_form_js" %}#}
+{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+{#    {% endassets %}#}
+{#    {% assets "jquery_ajax_bootstrap_js" %}#}
+{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+{#    {% endassets %}#}
+{#    {% assets "jquery_ui_js" %}#}
+{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+{#    {% endassets %}#}
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function () {
+//            $('#start_date').dropkick({width: 120});
+            $("select.pretty").dropkick( );
+            $('#start_time').dropkick({width: 120});
+
+//            $("#start_date").datepicker({
+//                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
+//                dateFormat: 'M dd, yy',
+//                defaultDate: "Aug 04, 2012",
+//                numberOfMonths: 1,
+//                minDate: '+4D',
+//                maxDate: '+3M'
+//            })
 
             $("#extra_request_link").click(function () {
                 $("#more-options").slideToggle(500);
@@ -57,10 +72,10 @@
                 <div class="control-group  ">
 
                     <div class="controls">
-                        <input type="text" name="time_0" id="id_time_0" class="w100" value="2012年7月25日 星期三"
+                        <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日 星期三"
                                placeholder="开始日期">
 
-                        <select name="id_time_1" id="id_time_1" class="w100">
+                        <select name="id_time_1" id="start_time" class="pretty">
                             <option value="" selected="selected">下午 7:00</option>
                         </select>
                     </div>
@@ -77,7 +92,7 @@
 
                     <div class="controls">
 
-                        <select name="list_price" id="list_price" class="">
+                        <select name="list_price" id="list_price" class="pretty">
                             <option value="1">25 元/人</option>
                             <option value="1">30 元/人</option>
                             <option value="" selected="selected">35 元/人</option>
@@ -85,7 +100,7 @@
                             <option value="4">45 元/人</option>
                         </select>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <select name="min_persons" id="min_persons" class="">
+                        <select name="min_persons" id="min_persons" class="pretty">
                             <option value="1">3人</option>
                             <option value="1">4人</option>
                             <option value="1">5人</option>
@@ -126,7 +141,7 @@
                 <div id="more-options" class="hide">
                     <div class="control-group">
                         <div class="controls">
-                            <select name="id_num_pay_for" id="id_num_pay_for" class="input-small">
+                            <select name="id_num_pay_for" id="id_num_pay_for" class="pretty">
                                 <option value="1" selected="selected">1人</option>
                                 <option value="1">2人</option>
                                 <option value="1">3人</option>
