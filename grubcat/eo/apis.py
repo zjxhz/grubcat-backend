@@ -9,7 +9,7 @@ from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
-    UserMessage, Meal, MealInvitation, UserLocation, MealComment
+    UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag
 from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
@@ -552,7 +552,12 @@ class TagResource(ModelResource):
     class Meta:
         queryset = Tag.objects.all()
         filtering = {'name': ALL}
+        
+class UserTagResource(ModelResource):
     
+    class Meta:
+        queryset = UserTag.objects.all()
+            
 #class CreateUserResource(ModelResource):
 #    def obj_create(self, bundle, request=None, **kwargs):
 #        weibo_id = bundle.data['weibo_id']
@@ -670,3 +675,4 @@ v1_api.register(UserLocationResource())
 #v1_api.register(OrderDishesResource())
 v1_api.register(MealCommentResource())
 v1_api.register(TagResource())
+v1_api.register(UserTagResource())
