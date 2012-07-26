@@ -7,7 +7,9 @@ from webassets.env import Environment
 
 #css below
 base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
-common_css = Bundle('css/dropkick.css', 'css/common.css',filters='cssmin', output='gen/common.%(version)s.css')
+common_css = Bundle('css/common.css','css/form.css',filters='cssmin', output='gen/common.%(version)s.css')
+
+dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.%(version)s.css')
 
 bootstrap_css = Bundle(
     'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'

@@ -4,8 +4,13 @@
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-    {{ block.super }}
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
     {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "common_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     <style type="text/css">
@@ -41,8 +46,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
 //            $('#start_date').dropkick({width: 120});
-            $("select.pretty").dropkick( );
-            $('#start_time').dropkick({width: 120});
+         //   $("select.pretty").dropkick( );
+          //  $('#start_time').dropkick({width: 120});
 
 //            $("#start_date").datepicker({
 //                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
@@ -143,17 +148,17 @@
                         <div class="controls">
                             <select name="id_num_pay_for" id="id_num_pay_for" class="pretty">
                                 <option value="1" selected="selected">1人</option>
-                                <option value="1">2人</option>
-                                <option value="1">3人</option>
-                                <option value="1">4人</option>
-                                <option value="1">5人</option>
-                                <option value="1">6人</option>
-                                <option value="1">7人</option>
-                                <option value="">8人</option>
-                                <option value="3">9人</option>
-                                <option value="4">10人</option>
-                                <option value="3">11人</option>
-                                <option value="4">12人</option>
+                                <option value="2">2人</option>
+                                <option value="3">3人</option>
+                                <option value="4">4人</option>
+                                <option value="5">5人</option>
+                                <option value="6">6人</option>
+                                <option value="7">7人</option>
+                                <option value="8">8人</option>
+                                <option value="9">9人</option>
+                                <option value="10">10人</option>
+                                <option value="11">11人</option>
+                                <option value="12">12人</option>
                             </select>
                             <span class="help-inline">为1人买单</span>
                         </div>
@@ -170,8 +175,7 @@
                 </div>
 
                 <div class="form-actions pull-right">
-                    <input type="submit" class="btn btn-primary" value="确定"/>
-                    <a href="#" class="btn close-dialog">取消</a>
+                    <input type="submit" class="btn-order btn-large" value="确定"/>
                 </div>
             </form>
 
