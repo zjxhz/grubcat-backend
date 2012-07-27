@@ -30,11 +30,11 @@
 {% block nav %}
     <div id="main-nav" class="logged-out">
         <div class="nav-inner">
-            <div class="logo">
-                <a href="/">
-                    <img class="png-fix" width="198px" height="58px" alt="饭局"
-                         src="{% static 'img/site-logo.png' %}"></a>
-            </div>
+{#            <div class="logo">#}
+{#                <a href="/">#}
+{#                    <img class="png-fix" width="198px" height="58px" alt="饭局"#}
+{#                         src="{% static 'img/site-logo.png' %}"></a>#}
+{#            </div>#}
             <ul>
                 <li {% ifequal request.path_info "/meal/" %}class="current"{% endifequal %}
                     {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a
