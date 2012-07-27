@@ -7,7 +7,9 @@ from webassets.env import Environment
 
 #css below
 base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
-common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
+common_css = Bundle('css/common.css','css/form.css',filters='cssmin', output='gen/common.%(version)s.css')
+
+dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.%(version)s.css')
 
 bootstrap_css = Bundle(
     'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'
@@ -38,6 +40,10 @@ restaurant_admin_css = Bundle(
 
 
 #js below
+jquery_js = Bundle('js/jquery-1.7.2.min.js' ,output='gen/jquery-1.7.2.%(version)s.js')
+
+base_js = Bundle( jquery_js, 'js/jquery.dropkick-1.0.0.js','js/common.js',filters='jsmin', output="gen/base.%(version)s.js")
+
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
 )
@@ -73,6 +79,8 @@ register('user_list_css', user_list_css)
 register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 
+register('jquery_js', jquery_js)
+register('base_js', base_js)
 register('restaurant_admin_js', restaurant_admin_js)
 register('user_list_js', user_list_js)
 register('fix_ie6_png_js', fix_ie6_png_js)

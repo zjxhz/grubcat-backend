@@ -9,6 +9,7 @@ $(document).ready(function () {
             alert('请输入8位验证码！')
             return false;
         }
+        $("#result").html("");
     } });
 
     $("#modal-dialog").live("dialog2.content-update", function (e, data) {
