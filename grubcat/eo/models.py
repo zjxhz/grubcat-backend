@@ -286,7 +286,7 @@ class UserTag(Tag):
         db_table = u'user_tag'
         
 class TaggedUser(GenericTaggedItemBase):
-    tag =  models.ForeignKey(UserTag)
+    tag =  models.ForeignKey(UserTag, related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
     class Meta:
         db_table = u'tagged_user'
     

@@ -141,7 +141,16 @@ class DjangoUserResource(ModelResource):
 class UserLocationResource(ModelResource):
     class Meta:
         queryset = UserLocation.objects.all()        
+
+class TagResource(ModelResource):
+    class Meta:
+        queryset = Tag.objects.all()
+        filtering = {'name': ALL}
         
+class UserTagResource(ModelResource):
+    class Meta:
+        queryset = UserTag.objects.all()
+                
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
@@ -296,7 +305,7 @@ class UserResource(ModelResource):
             user.tags.add(tag)
             return createGeneralResponse('OK', 'tag %s added' % tag)
         else:
-            return get_my_list(TagResource(), user.tags.all(), request) 
+            return get_my_list(UserTagResource(), user.tags.all(), request) 
             raise
         
     class Meta:
@@ -547,16 +556,6 @@ class OrderResource(ModelResource):
         queryset = Order.objects.exclude(status=4)
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
-
-class TagResource(ModelResource):
-    class Meta:
-        queryset = Tag.objects.all()
-        filtering = {'name': ALL}
-        
-class UserTagResource(ModelResource):
-    
-    class Meta:
-        queryset = UserTag.objects.all()
             
 #class CreateUserResource(ModelResource):
 #    def obj_create(self, bundle, request=None, **kwargs):
