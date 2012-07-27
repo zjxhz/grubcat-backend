@@ -1,0 +1,55 @@
+    {% load static_asset %}
+    {% load static from staticfiles %}
+    {% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}餐厅后台管理|饭聚网{% endblock %}</title>
+    <meta content="饭聚，饭局，fanju,杭州饭局,美食社交，社交晚餐" name="keywords">
+    <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    {% block page_css %}
+        {% assets "base_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+        {% assets "bootstrap_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+        {% assets "restaurant_admin_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+    {% endblock %}
+    {% block base_js %}
+        <script type="text/javascript" src="{% static 'js/jquery-1.7.2.min.js' %}"></script>
+    {% endblock %}
+    {% block page_js %}
+        {% assets "restaurant_admin_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
+    {% endblock %}
+
+</head>
+<body>
+<div class="container">
+    <div class="well" id="header"><h1>{{ request.user.restaurant.name }}</h1></div>
+    <div class="row">
+        <div class="span2">
+            <ul id="restaurant-nav" class="nav nav-tabs nav-stacked">
+                <li id="nav-checkin" class="active"><a href="{% url restaurant_checkin %}"><i
+                        class="icon-user"></i> 客人就餐</a></li>
+                <li id="nav-dish"><a href="{% url restaurant_dish_list %}"><i class="icon-list"></i> 菜单管理</a></li>
+                <li id="nav-menu"><a href="{% url menu_list %}"><i class="icon-th"></i> 套餐管理</a></li>
+                <li id="nav-order-history"><a href="{% url restaurant_order %}"> <i class="icon-list-alt"></i>
+                    订单历史</a></li>
+                <li id="nav-logout"><a href="{% url logout %}"><i class="icon-off"></i> 退出</a></li>
+            </ul>
+        </div>
+        <div id="content" class="span10">
+            {% block content %} {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
