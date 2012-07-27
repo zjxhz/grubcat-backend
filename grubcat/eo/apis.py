@@ -301,9 +301,15 @@ class UserResource(ModelResource):
         
         user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'POST':
-            tag = request.POST.get('tag')
-            user.tags.add(tag)
-            return createGeneralResponse('OK', 'tag %s added' % tag)
+            if request.POST.get('tags'):
+                tags = [token.strip() for token in request.POST.get('tags').split(',')]
+                user.tags.set(*tags)
+                return createGeneralResponse('OK', 'tags %s set' % tags)
+            elif request.POST.get('tag'):
+                user.tags.add(request.POST.get('tag'))
+                return createGeneralResponse('OK', 'tag %s added' % request.POST.get('tag'))
+            else:
+                raise
         else:
             return get_my_list(UserTagResource(), user.tags.all(), request) 
             raise
