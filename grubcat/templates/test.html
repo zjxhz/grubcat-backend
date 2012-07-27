@@ -1,0 +1,27 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {% assets "my_bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+
+</div>
+<script type="text/javascript">
+    $(function () {
+    })
+</script>
+
+</body>
+</html>
