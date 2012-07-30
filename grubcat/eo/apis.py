@@ -322,8 +322,7 @@ class UserResource(ModelResource):
             return login_required(request)
         user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'GET':
-            recommended_users = user.tags.similar_objects()
-            return get_my_list(UserResource(), recommended_users, request)
+            return get_my_list(UserResource(), user.recommendations, request)
         else:
             raise
             
