@@ -337,7 +337,16 @@ class UserProfile(models.Model):
             return self.avatar
         else:
             return "/uploaded_images/anno.png"
-
+    
+    @property
+    def recommendations(self):
+        recommended_list = self.tags.similar_objects()
+        recommended_not_followed = [u for u in recommended_list if u not in self.following.all()]
+        if len(recommended_not_followed) > 5:
+            return recommended_not_followed
+        else:
+            return UserProfile.objects.exclude(id__in=self.following.values('id'))
+        
     def __unicode__(self):
         return self.user.username
 
