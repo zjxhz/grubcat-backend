@@ -32,7 +32,7 @@ input[type="text"].cart_day {
 }
 
 
-.button, .btn-order, .btn-create-meal, .resumator-button, .resumator-apply-button, .join, .view-more {
+.button, .btn-order, .btn-signup, .btn-login,.btn-create-meal, .resumator-button, .resumator-apply-button, .join, .view-more {
     text-decoration: none;
     color: white;
     padding: 7px 18px;
@@ -52,7 +52,7 @@ input[type="text"].cart_day {
     border: 1px solid #2F3C5C;
 }
 
-.button:hover,.btn-order:hover, .btn-create-meal:hover, .join:hover,.view-more:hover {
+.button:hover,.btn-order:hover,.btn-signup:hover,.btn-login:hover, .btn-create-meal:hover, .join:hover,.view-more:hover {
     background: -webkit-gradient(linear, left top, left bottom, from(#2C496B), to(#28415E));
     color: white;
 }

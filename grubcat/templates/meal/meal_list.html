@@ -11,6 +11,7 @@
 {% block page_js %}
     <script type="text/javascript">
         $(document).ready(function () {
+            $("select.pretty").dropkick( );
             $("#nav-meal").addClass("current");
             $("#faq .sidebar-box-inner a").click(function () {
                 var $next = $(this).next("p");
@@ -101,7 +102,7 @@
                                                                 width="50px" height="50px"></a>
             </div>
         </div>
-        <div id="create-a-meal" class="sidebar-box">
+      {% comment %}  <div id="create-a-meal" class="sidebar-box">
             <div class="sidebar-box-title">Don't see a meal you like?</div>
             <div class="sidebar-box-inner">
                 <form accept-charset="UTF-8" action="/create-a-meal" method="get">
@@ -146,7 +147,7 @@
                     <a class="btn" href="{% url create_meal %}">发起饭局</a>
                 </form>
             </div>
-        </div>
+        </div>{% endcomment %}
     </div>
 
 {% endblock %}
