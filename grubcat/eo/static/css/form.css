@@ -1,0 +1,58 @@
+
+input[type="text"], input[type="password"], input[type="email"], input[type="user[email]"], .referral-link, .find-by-name {
+    color: #333;
+    font-size: 13px;
+    height: 25px;
+    border: 1px solid #CCC;
+    padding: 0;
+    text-indent: 5px;
+    -webkit-box-shadow: inset #eee 2px 3px 3px;
+    -moz-box-shadow: inset #eee 2px 3px 3px;
+    box-shadow: inset #eee 2px 3px 3px;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+input[type="text"].cart_day {
+    width: 120px;
+    background: whiteSmoke url("../img/date-pickker-icon.png") no-repeat 12px center;
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-weight: bold;
+    line-height: 14px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    padding: 6px 15px 6px 40px;
+    box-shadow: none;
+}
+
+
+.button, .btn-order, .btn-create-meal, .resumator-button, .resumator-apply-button, .join, .view-more {
+    text-decoration: none;
+    color: white;
+    padding: 7px 18px;
+    font-family: helvetica, arial, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    background: #446D9C;
+    display: inline-block;
+    text-align: center;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 5px #444;
+    -moz-box-shadow: 0 0 5px #444;
+    box-shadow: 0 0 5px #444;
+    text-shadow: 0 1px 2px black;
+    border: 1px solid #2F3C5C;
+}
+
+.button:hover,.btn-order:hover, .btn-create-meal:hover, .join:hover,.view-more:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#2C496B), to(#28415E));
+    color: white;
+}

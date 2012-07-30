@@ -1,0 +1,57 @@
+{% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
+{% load assets %}
+{% load static_asset %}
+{% load bootstrap_tags %}
+{% block title %}套餐管理{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+{% endblock %}
+{% block page_js %}
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "water_fall_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+    <a class="add-category addlink fr" href="{% url add_menu %}" id="add-category-link">添加套餐</a>
+    <div id="menu-list" >
+        {% for menu in menu_list %}
+            <div class="menu-container">
+                <div class="fr actions">
+                    <a href="{% url edit_menu menu.id %}" class="changelink mr10" title="编辑"
+                       rel="modal-dialog">编辑</a> <br/>
+                    <a href="{% url del_menu menu.id %}" class="dellink">删除</a></div>
+                <span class="menu-info">
+                   就餐人数：<span class="num-persons">{{ menu.num_persons }}</span>人    均价：<span class="average-price">{{ menu.average_price }}</span> 元/人
+                </span>
+
+                <dl class="menu-items w300">
+                    {% for item in menu.menu_items  %}
+                        {% ifequal item.content_type.model  'dishcategory' %}
+                            <dt class="category tag" category-id="{{ item.object.id }}">{{ item.object.name }}
+                            </dt>
+                        {% endifequal %}
+                        {% ifequal item.content_type.model  'dish' %}
+                            <dd class="tag dish" dish-id="{{ item.object.id }}"><span
+                                    class="dish-name">{{ item.object.name }}</span>
+
+                                <span class="dish-info"> <span class="price">{{ item.object.price }} 元</span><span
+                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
+                            </dd>
+                        {% endifequal %}
+                    {% endfor %}
+                </dl>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="nav-active-id" style="display: none">nav-menu</div>
+{% endblock %}
