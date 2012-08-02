@@ -23,6 +23,12 @@
             width: 120px;
         }
 
+        #resturant-list{
+            width:200px;
+            height: 250px;
+            overflow: auto;
+        }
+
         .form-actions {
             width: 100px;
             float: left;
@@ -33,21 +39,21 @@
 {% endblock %}
 
 {% block page_js %}
-{#    {% assets "jquery_form_js" %}#}
-{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-{#    {% endassets %}#}
-{#    {% assets "jquery_ajax_bootstrap_js" %}#}
-{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-{#    {% endassets %}#}
-{#    {% assets "jquery_ui_js" %}#}
-{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-{#    {% endassets %}#}
+    {#    {% assets "jquery_form_js" %}#}
+    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+    {#    {% endassets %}#}
+    {#    {% assets "jquery_ajax_bootstrap_js" %}#}
+    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+    {#    {% endassets %}#}
+    {#    {% assets "jquery_ui_js" %}#}
+    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+    {#    {% endassets %}#}
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function () {
 //            $('#start_date').dropkick({width: 120});
-         //   $("select.pretty").dropkick( );
-          //  $('#start_time').dropkick({width: 120});
+            //   $("select.pretty").dropkick( );
+            //  $('#start_time').dropkick({width: 120});
 
 //            $("#start_date").datepicker({
 //                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
@@ -62,6 +68,12 @@
                 $("#more-options").slideToggle(500);
                 return false;
             })
+
+            $("#let-fanjon-choose-link").click(function () {
+                $("#menu-info").hide();
+                $("#let-fanjoin-choose").show();
+                return false;
+            })
         })
     </script>
 {% endblock %}
@@ -69,116 +81,368 @@
 {% block content %}
 
     <div class="row">
-        <div class="span6 offset2">
-            <form id="create_meal_form" action="{% url create_meal %}" method="post"
-                  class="form form-horizontal"> {% csrf_token %}
+    <div class="span12">
+    <form id="create_meal_form" action="{% url create_meal %}" method="post"
+          class="form form-horizontal"> {% csrf_token %}
 
-                <div class="control-group  ">
+    <fieldset>
 
-                    <div class="controls">
-                        <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日 星期三"
-                               placeholder="开始日期">
+        <legend>1、饭局信息</legend>
 
-                        <select name="id_time_1" id="start_time" class="pretty">
-                            <option value="" selected="selected">下午 7:00</option>
-                        </select>
-                    </div>
+        <div class="control-group ">
+
+            <label class="control-label" for="id_topic">主题</label>
+
+            <div class="controls">
+                <input id="id_topic" type="text" name="topic" maxlength="64"
+                       class="input-xlarge">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="id_introduction">简介</label>
+
+            <div class="controls">
+                <textarea id="id_introduction" rows="5" cols="40" name="introduction" class="input-xlarge"
+                          placeholder="少于200个字"></textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="id_privacy">是否公开</label>
+
+            <div class="controls">
+                <select name="privacy" id="id_privacy" class="pretty input-xlarge">
+                    <option value="1" selected="selected">公开：所有人可以加餐</option>
+                    <option value="2">私有：仅邀请的人可以参加</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+
+    <legend>2、餐厅信息</legend>
+    <div class="control-group">
+        <label class="control-label" for="id_privacy">就餐时间</label>
+
+        <div class="controls">
+            <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日 星期三"
+                   placeholder="开始日期">
+
+            <select name="id_time_1" id="start_time" class="pretty">
+                <option value="" selected="selected">下午 7:00</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="id_min_persons">就餐人数</label>
+
+        <div class="controls">
+
+            <select name="min_persons" id="id_min_persons" class="pretty">
+                <option value="1">3人</option>
+                <option value="1">4人</option>
+                <option value="1">5人</option>
+                <option value="1">6人</option>
+                <option value="1">7人</option>
+                <option value="" selected="selected">8人</option>
+                <option value="3">9人</option>
+                <option value="4">10人</option>
+                <option value="3">11人</option>
+                <option value="4">12人</option>
+            </select>
+        </div>
+    </div>
+    <div id="choose-menu" class="row">
+    <div id="choose-restaurant" class="fl span4">
+        <div id="resturant-list" >
+            <ul>
+                <li class="restaurant-selector" id="restaurant-selector-2242" data-menu="2242" data-name="Brand BBQ">
+                    <img alt="Screen%20shot%202012-07-18%20at%209.41.44%20am"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11892/thumb/Screen%20Shot%202012-07-18%20at%209.41.44%20AM.png?1342629759">
+                    <span class="rest-price">$23</span>
+                    <span class="rest-name">Brand BBQ</span>
+                    <span class="rest-hood">Logan Square, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-2241" data-menu="2241" data-name="Brand BBQ">
+                    <img alt="Screen%20shot%202012-07-18%20at%209.41.44%20am"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11892/thumb/Screen%20Shot%202012-07-18%20at%209.41.44%20AM.png?1342629759">
+                    <span class="rest-price">$19</span>
+                    <span class="rest-name">Brand BBQ</span>
+                    <span class="rest-hood">Logan Square, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-2183" data-menu="2183" data-name="The 3rd Coast">
+                    <img alt="Screen%20shot%202011-10-03%20at%201.02.00%20pm"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/795/thumb/Screen%20shot%202011-10-03%20at%201.02.00%20PM.png?1317672177">
+                    <span class="rest-price">$24</span>
+                    <span class="rest-name">The 3rd Coast</span>
+                    <span class="rest-hood">Northside, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-1164" data-menu="1164" data-name="Cafe Ba Ba Reeba">
+                    <img alt="Ba%20ba%20reeba"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/34/thumb/Ba%20Ba%20Reeba.jpeg?1295820038">
+                    <span class="rest-price">$27</span>
+                    <span class="rest-name">Cafe Ba Ba Reeba</span>
+                    <span class="rest-hood">Lincoln Park, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-924" data-menu="924" data-name="Pars Cove">
+                    <img alt="Pars%20cove"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/266/thumb/Pars%20Cove.jpg?1296978351">
+                    <span class="rest-price">$19</span>
+                    <span class="rest-name">Pars Cove</span>
+                    <span class="rest-hood">Lincoln Park, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-201" data-menu="201" data-name="Opart Thai House">
+                    <img alt="Opart"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/53/thumb/Opart.png?1303139810">
+                    <span class="rest-price">$19</span>
+                    <span class="rest-name">Opart Thai House</span>
+                    <span class="rest-hood">South Loop, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-2291" data-menu="2291"
+                    data-name="90 Miles Cuban Cafe">
+                    <img alt="Screen%20shot%202011-04-19%20at%2011.31.16%20pm"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/328/thumb/Screen%20shot%202011-04-19%20at%2011.31.16%20PM.png?1303281198">
+                    <span class="rest-price">$19</span>
+                    <span class="rest-name">90 Miles Cuban Cafe</span>
+                    <span class="rest-hood">Logan Square, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-131" data-menu="131" data-name="Simply It">
+                    <img alt="Picture%201"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/46/thumb/Picture%201.png?1298442260">
+                    <span class="rest-price">$15</span>
+                    <span class="rest-name">Simply It</span>
+                    <span class="rest-hood">Lincoln Park, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-208" data-menu="208"
+                    data-name="90 Miles Cuban Cafe">
+                    <img alt="Screen%20shot%202011-04-19%20at%2011.31.16%20pm"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/328/thumb/Screen%20shot%202011-04-19%20at%2011.31.16%20PM.png?1303281198">
+                    <span class="rest-price">$23</span>
+                    <span class="rest-name">90 Miles Cuban Cafe</span>
+                    <span class="rest-hood">Logan Square, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-445" data-menu="445" data-name="Estrella Negra">
+                    <img alt="Estrella%20negra"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/894/thumb/Estrella%20Negra.jpg?1310397746">
+                    <span class="rest-price">$17</span>
+                    <span class="rest-name">Estrella Negra</span>
+                    <span class="rest-hood">Bucktown, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-471" data-menu="471" data-name="Taxim">
+                    <img alt="Screen%20shot%202011-07-16%20at%207.58.14%20am"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/982/thumb/Screen%20shot%202011-07-16%20at%207.58.14%20AM.png?1310828355">
+                    <span class="rest-price">$31</span>
+                    <span class="rest-name">Taxim</span>
+                    <span class="rest-hood">Wicker Park, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-922" data-menu="922" data-name="Gosu">
+                    <img alt="Bibimbap"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11359/thumb/bibimbap.PNG?1325554097">
+                    <span class="rest-price">$24</span>
+                    <span class="rest-name">Gosu</span>
+                    <span class="rest-hood">Logan Square, Chicago</span>
+                </li>
+                <li class="restaurant-selector" id="restaurant-selector-889" data-menu="889" data-name="Simply It">
+                    <img alt="Picture%201"
+                         src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/46/thumb/Picture%201.png?1298442260">
+                    <span class="rest-price">$15</span>
+                    <span class="rest-name">Simply It</span>
+                    <span class="rest-hood">Lincoln Park, Chicago</span>
+                </li>
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-939" data-menu="939" data-name="Los Nopales">#}
+                {#                                        <img alt="Los%20nopales" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/50/thumb/Los%20Nopales.jpeg?1298441859">#}
+                {#                                        <span class="rest-price">$22</span>#}
+                {#                                        <span class="rest-name">Los Nopales</span>#}
+                {#                                        <span class="rest-hood">Lincoln Square, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-1017" data-menu="1017" data-name="Havana">#}
+                {#                                        <img alt="Picture%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/268/thumb/Picture%202.png?1298445657">#}
+                {#                                        <span class="rest-price">$24</span>#}
+                {#                                        <span class="rest-name">Havana</span>#}
+                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-1043" data-menu="1043" data-name="India House Restaurant">#}
+                {#                                        <img alt="India%20house%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/54/thumb/India%20House%202.jpeg?1294730670">#}
+                {#                                        <span class="rest-price">$24</span>#}
+                {#                                        <span class="rest-name">India House Resta...</span>#}
+                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-1181" data-menu="1181" data-name="Ukai Japanese Restaurant">#}
+                {#                                        <img alt="Ukai" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/636/thumb/Ukai.jpg?1309563244">#}
+                {#                                        <span class="rest-price">$28</span>#}
+                {#                                        <span class="rest-name">Ukai Japanese Res...</span>#}
+                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-1165" data-menu="1165" data-name="El Nuevo Mexicano">#}
+                {#                                        <img alt="Enm6-thumb-400x265" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/20/thumb/ENM6-thumb-400x265.jpg?1334687567">#}
+                {#                                        <span class="rest-price">$19</span>#}
+                {#                                        <span class="rest-name">El Nuevo Mexicano</span>#}
+                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-2137" data-menu="2137" data-name="Mayan Palace">#}
+                {#                                        <img alt="Picture%2011" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/35/thumb/Picture%2011.png?1295819028">#}
+                {#                                        <span class="rest-price">$19</span>#}
+                {#                                        <span class="rest-name">Mayan Palace</span>#}
+                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-2104" data-menu="2104" data-name="Sapori Trattoria">#}
+                {#                                        <img alt="Caprese" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/5/thumb/Caprese.jpg?1305492582">#}
+                {#                                        <span class="rest-price">$20</span>#}
+                {#                                        <span class="rest-name">Sapori Trattoria</span>#}
+                {#                                        <span class="rest-hood">Lincoln Park, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-2156" data-menu="2156" data-name="Mayan Palace">#}
+                {#                                        <img alt="Picture%2011" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/35/thumb/Picture%2011.png?1295819028">#}
+                {#                                        <span class="rest-price">$20</span>#}
+                {#                                        <span class="rest-name">Mayan Palace</span>#}
+                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
+                {#                                    </li>#}
+                {#                                    <li class="restaurant-selector" id="restaurant-selector-2159" data-menu="2159" data-name="Havana">#}
+                {#                                        <img alt="Picture%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/268/thumb/Picture%202.png?1298445657">#}
+                {#                                        <span class="rest-price">$20</span>#}
+                {#                                        <span class="rest-name">Havana</span>#}
+                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
+                {#                                    </li>#}
+            </ul>
+        </div>
+        <a class="btn button" href="#" id="let-fanjon-choose-link">让饭聚网帮我选</a>
+    </div>
+    <div id="menu-info" class="fr span8">
+        <div class="cyo-rest-inner-wrapper clearfix">
+            <div class="cyo-rest-upper clearfix">
+                <div class="cyo-rest-upper-content">
+                    <h4>Estrella Negra
+                        <a href="http://maps.google.com/maps?output=embed&amp;q=2346+w+fullerton+ave+chicago+il+60647"
+                           class="cyo-directions cboxElement" original-title="">(Map it)</a>
+                    </h4>
+                    <span class="menu-tooltip" title="A menu with shared dishes">Family-Style Menu</span>
                 </div>
+            </div>
 
-                <div class="control-group  ">
+            <div class="meal-section" id="menu_445">
 
-                    <div class="controls">
-                        <input type="text" name="region" id="id_region" class="input-xlarge" placeholder="地点（选填）">
-                        </input>
-                    </div>
-                </div>
-                <div class="control-group  ">
+                <div class="menu inline-menu clearfix">
+                    <div class="menu-column" id="column_left">
+                        <div class="individual-menu-course" style="">
+                            <div class="ribbon-title">
+                                Starters&nbsp;
+                            </div>
+                            <div class="content italic">
+                                <h3>El Cazo Chips and Verde Salsa</h3>
 
-                    <div class="controls">
+                                <p>Homemade chips and house special salsa.</p>
 
-                        <select name="list_price" id="list_price" class="pretty">
-                            <option value="1">25 元/人</option>
-                            <option value="1">30 元/人</option>
-                            <option value="" selected="selected">35 元/人</option>
-                            <option value="3">40 元/人</option>
-                            <option value="4">45 元/人</option>
-                        </select>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <select name="min_persons" id="min_persons" class="pretty">
-                            <option value="1">3人</option>
-                            <option value="1">4人</option>
-                            <option value="1">5人</option>
-                            <option value="1">6人</option>
-                            <option value="1">7人</option>
-                            <option value="" selected="selected">8人</option>
-                            <option value="3">9人</option>
-                            <option value="4">10人</option>
-                            <option value="3">11人</option>
-                            <option value="4">12人</option>
-                        </select>
-                    </div>
-                </div>
+                                <h3>Las Jaras Sweet Potato Fries</h3>
 
-                <div class="control-group ">
+                                <p>Served with organic Agave nectar.</p>
 
-                    <div class="controls">
-                        <input id="id_topic" type="text" placeholder="主题" name="topic" maxlength="64"
-                               class="input-xlarge">
-                    </div>
-                </div>
+                                <h3>La Sirena Ceviche Tostada</h3>
 
-                <div class="control-group  ">
+                                <p>Citrus-marinated fresh shrimp and tilapia cocktail served on cucumbers.</p>
+                            </div>
+                        </div>
+                        <div class="individual-menu-course" style="">
+                            <div class="ribbon-title">
+                                Desserts&nbsp;
+                            </div>
+                            <div class="content italic">
+                                <h3>Taffy Apple Empanadas</h3>
 
-                    <div class="controls">
-                        <textarea id="id_introduction" rows="5" cols="40" name="introduction" class="input-xlarge"
-                                  placeholder="详情（少于200个字）"></textarea>
-                    </div>
-                </div>
+                                <p>Served with Vanilla Ice Cream</p>
 
+                                <h3>Chocolate Chip Tamales</h3>
 
-                <div class="control-group">
-                    <div class="controls">
-                        <a href="#" id="extra_request_link" class="">更多选项</a>
-                    </div>
-                </div>
-
-                <div id="more-options" class="hide">
-                    <div class="control-group">
-                        <div class="controls">
-                            <select name="id_num_pay_for" id="id_num_pay_for" class="pretty">
-                                <option value="1" selected="selected">1人</option>
-                                <option value="2">2人</option>
-                                <option value="3">3人</option>
-                                <option value="4">4人</option>
-                                <option value="5">5人</option>
-                                <option value="6">6人</option>
-                                <option value="7">7人</option>
-                                <option value="8">8人</option>
-                                <option value="9">9人</option>
-                                <option value="10">10人</option>
-                                <option value="11">11人</option>
-                                <option value="12">12人</option>
-                            </select>
-                            <span class="help-inline">为1人买单</span>
+                                <p>Served with Vanilla Ice Cream</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="control-group" id="extra_request_div">
+                    <div class="menu-column" id="column_right">
+                        <div class="individual-menu-course" style="">
+                            <div class="ribbon-title">
+                                Entrees&nbsp;
+                            </div>
+                            <div class="content italic">
+                                <h3>La Estrella Tamale Sampler</h3>
 
-                        <div class="controls">
-                            <textarea id="id_extra_requests" rows="5" cols="40" name="extra_requests"
-                                      class="input-xlarge"
-                                      placeholder="如果您有其它的要求，如不吃辣，我们会尽量满足您"></textarea>
+                                <p>An assortment of the best tamales in the house! Three Cheese Spinach and Artichoke,
+                                    Traditional Pork, and Elote Man (Corn Tamales).</p>
+
+                                <h3>El Sol Empanada Platter</h3>
+
+                                <p>Goat Cheese Jalapeño, Three Cheese Spinach and Artichoke, Chorizo and Corn
+                                    and Chicken Goat Cheese-- all garnished with salsa verde, cheese, tomatoes and sour
+                                    cream. </p>
+
+                                <h3>Chicken and Goat Cheese Enchiladas</h3>
+
+                                <p></p>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="form-actions pull-right">
-                    <input type="submit" class="btn-order btn-large" value="确定"/>
-                </div>
-            </form>
+
+            </div>
 
         </div>
+    </div>
+    <div id="let-fanjoin-choose" class="fr span8" style="display: none">
+        <div class="control-group">
+            <label class="control-label" for="id_region">就餐地点</label>
+
+            <div class="controls">
+                <select name="region" id="id_region" class="pretty">
+                    <option value="1">滨江</option>
+                    <option value="1">西湖</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+
+            <label class="control-label" for="id_min_persons">平均消费</label>
+
+            <div class="controls">
+
+                <select name="list_price" id="list_price" class="pretty">
+                    <option value="1">25 元/人</option>
+                    <option value="1">30 元/人</option>
+                    <option value="" selected="selected">35 元/人</option>
+                    <option value="3">40 元/人</option>
+                    <option value="4">45 元/人</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr">+</a></legend>
+        <div id="more-options" class="hide">
+
+            <div class="control-group" id="extra_request_div">
+                <label class="control-label" for="id_extra_requests">其它需求</label>
+
+                <div class="controls">
+                    <textarea id="id_extra_requests" rows="5" cols="40" name="extra_requests"
+                              class="input-xlarge"
+                              placeholder="如果您有其它的要求，如不吃辣，我们会尽量满足您"></textarea>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+
+    <div class="form-actions pull-right">
+        <input type="submit" class="btn-order btn-large" value="确定"/>
+    </div>
+    </form>
+
+    </div>
     </div>
 
 {% endblock %}
