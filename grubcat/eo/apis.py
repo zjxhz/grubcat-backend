@@ -201,6 +201,16 @@ class UserResource(ModelResource):
                 self.wrap_view('get_recommendations'), name="api_get_recommendations"),   
         ]
     
+    def obj_update(self, bundle, request=None, **kwargs):
+        """
+        A quick and dirty fix as tastypie seems to have problems with even simple PATCH request.
+        By overwritting this method, PUT request may not work, and any PATCH request that tries to update foreign keys or m2m relations will not work either.
+        Hope this will be a new version of tastypie, or we shall use a complete new rest framework.  
+        """
+        bundle = self.full_hydrate(bundle)
+        self.save_related(bundle)
+        bundle.obj.save()
+        return bundle
     
     def get_favorite(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
@@ -327,9 +337,11 @@ class UserResource(ModelResource):
             raise
             
     class Meta:
+        authorization = Authorization()
         queryset = UserProfile.objects.all()
         resource_name = 'user'
         filtering = {'from_user':ALL,}
+        allowed_methods = ['get', 'post', 'put', 'patch']
 
 
 class RelationshipResource(ModelResource):
@@ -571,7 +583,7 @@ class OrderResource(ModelResource):
     customer = fields.ToOneField(UserResource, 'customer', full=True)
         
     class Meta:
-        queryset = Order.objects.exclude(status=4)
+        queryset = Order.objects.all() # .exclude(status=4)
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
             
