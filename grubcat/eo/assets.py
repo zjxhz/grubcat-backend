@@ -72,6 +72,7 @@ jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='
 
 register('base_css', base_css)
 register('common_css', common_css)
+register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
