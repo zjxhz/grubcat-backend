@@ -2,7 +2,7 @@
 import os
 from django.core.urlresolvers import reverse_lazy
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = False
 
 ADMINS = (
