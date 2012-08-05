@@ -124,15 +124,14 @@
     border: 0 solid #ddd;
 }
 
-
-#create-a-meal input[type="submit"] {
-    font-size: 120%;
-    padding: 6px 24px;
+#create-a-meal{
+    height: 100px;
 }
 
-#create-a-meal input[type="submit"] {
-    margin-top: 5px;
-    font-size: 120%;
-    font-weight: bold;
-    padding: 6px 24px;
+#create-a-meal .btn-create-meal{
+    color: #ffffff;
+    line-height: 20px;
+    font-size: 18px;
+
 }
+

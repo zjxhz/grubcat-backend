@@ -1,17 +1,31 @@
-#resturant-list {
-    width: 200px;
-    height: 250px;
+#restaurant-list {
+    height:450px;
     overflow: auto;
+    background-color: #EEE;
+    margin-bottom: 15px;
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+    border-right: 1px solid #DDD;
 }
 
-.form-actions {
-    width: 100px;
+
+
+.form-wrapper{
+    width:685px;
     float: left;
-    margin-left: 159px;
-    margin-top: 0
 }
 
-.controls fieldset {
+#faq{
+    float: right;
+    width: 250px;
+    margin: 0 0 10px 0;
+}
+
+#faq .sidebar-box-inner p {
+    display: block  ;
+}
+
+#create_meal_form fieldset {
     background: white;
     border: 1px solid #CCC;
     width: 100%;
@@ -21,7 +35,7 @@
     margin-bottom: 30px;
 }
 
-.controls legend {
+#create_meal_form legend {
     padding: 12px;
     font-size: 140%;
     font-weight: bold;
@@ -32,7 +46,11 @@
     left: 0;
 }
 
-.controls label {
+/*#create_meal_form fieldset.full{*/
+    /*width: 955px;*/
+/*}*/
+
+.control-group label {
     font-size: 16px;
 }
 
@@ -51,6 +69,10 @@
 .dk_label {
     color: #666;
     font-size: 16px;
+}
+
+.dk_toggle{
+    padding: 10px 44px 10px 13px;
 }
 
 #dk_container_start_time .dk_toggle {
@@ -81,4 +103,144 @@
     cursor: pointer;
     color: #666;
     box-shadow: none;
+}
+#choose-menu{
+    border-top: 1px solid #DDD;
+    margin-left: 0;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+#choose-restaurant {
+    width: 299px;
+    margin-left: 0px;
+}
+.restaurant-item{
+    width: 270px;
+    display: inline-block;
+    border-bottom: 1px solid #DDD;
+    height: 50px;
+    padding: 8px 2px 8px 8px;
+    position: relative;
+    cursor: pointer;
+}
+
+.restaurant-item.selected{
+    background-color: white;
+}
+
+.restaurant-item img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    float: left;
+    opacity: 0.6;
+}
+
+span.rest-name, span.rest-hood {
+    display: block;
+    float: left;
+    width: 180px;
+    font-size: 88%;
+    margin-top: 5px;
+}
+
+
+.restaurant-item span.rest-price {
+    float: right;
+    line-height: 46px;
+    margin-right: 0px;
+}
+
+.let-fanjoin-choose-link-wrapper{
+    padding-left: 20px;
+    font-size: 14px;
+}
+
+#let-fanjoin-choose{
+    margin-left: -20px;;
+}
+
+#let-fanjoin-choose .info{
+    margin: 20px 2px 30px 42px;
+    color: #444;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+#choose-restaurant-info{
+    line-height: 100px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#extra_request_link{
+    margin-right: 29px;
+    font-size: 30px;
+}
+
+.more-options a:hover{
+    text-decoration: none;
+}
+
+
+#create_meal_form .form-actions {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 0;
+    border: none;
+}
+
+button.btn-create-meal{
+    width: 150px;
+    margin: 0 auto;
+    display: block;
+    padding: 15px;
+    font-size: 23px;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 18px;
+    margin-left: -9px;
+}
+
+.form-horizontal .control-group label {
+    width:130px;
+}
+
+.menu-info{
+    margin-left: 35px;;
+}
+
+.menu-info .title{
+     font-size: 16px;
+     color: #000;
+ }
+
+.menu-info .rest-name{
+     font-size: 20px;
+     font-weight: bold;
+ }
+
+.menu-info .rest-name{
+    margin-top: 10px;
+}
+
+.menu-info .menu-name{
+    margin: 15px 0;
+}
+
+.dish-info{
+    float: right;
+}
+dt{
+    width: 290px;
+    padding: 10px 0px;
+    font-size: 15px;
+}
+
+dd{
+    width: 250px;
+    padding: 0px 0px 5px 15px;
+    font-size: 14px;
 }

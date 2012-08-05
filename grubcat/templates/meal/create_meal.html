@@ -10,9 +10,16 @@
     {% assets "bootstrap_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+
     {% assets "common_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+
 
     {% assets "meal_add_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
@@ -26,23 +33,45 @@
     {#    {% assets "jquery_ajax_bootstrap_js" %}#}
     {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
     {#    {% endassets %}#}
-    {#    {% assets "jquery_ui_js" %}#}
-    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-    {#    {% endassets %}#}
+        {% assets "jquery_ui_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#start_time').dropkick({width: 120});
-            $("select.pretty").dropkick({width: 320});
+            $('#start_time,#id_list_price,#id_region').dropkick({width:120});
+            $("select.pretty").dropkick({width:315});
 
-//            $("#start_date").datepicker({
-//                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
-//                dateFormat: 'M dd, yy',
-//                defaultDate: "Aug 04, 2012",
-//                numberOfMonths: 1,
-//                minDate: '+4D',
-//                maxDate: '+3M'
-//            })
+            $.datepicker.regional['zh-CN'] =
+            {
+                clearText: '清除', clearStatus: '清除已选日期',
+                closeText: '关闭', closeStatus: '不改变当前选择',
+                prevText: '&lt;上月', prevStatus: '显示上月',
+                nextText: '下月&gt;', nextStatus: '显示下月',
+                currentText: '今天', currentStatus: '显示本月',
+                monthNames: ['一月','二月','三月','四月','五月','六月',
+                    '七月','八月','九月','十月','十一月','十二月'],
+                monthNamesShort: ['一','二','三','四','五','六',
+                    '七','八','九','十','十一','十二'],
+                monthStatus: '选择月份', yearStatus: '选择年份',
+                weekHeader: '周', weekStatus: '年内周次',
+                dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+                dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+                dayNamesMin: ['日','一','二','三','四','五','六'],
+                dayStatus: '设置 DD 为一周起始', dateStatus: '选择 m月 d日, DD',
+                dateFormat: 'yy-mm-dd', firstDay: 1,
+                initStatus: '请选择日期', isRTL: false
+            };
+
+            $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+            $("#start_date").datepicker({
+                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
+                defaultDate: "2012-8-17",
+                numberOfMonths: 1,
+                minDate: '+4D',
+                maxDate: '+3M'
+            })
 
             $("#extra_request_link").click(function () {
                 $("#more-options").slideToggle(500);
@@ -50,9 +79,16 @@
             })
 
             $("#let-fanjon-choose-link").click(function () {
-                $("#menu-info").hide();
+                $("#menu-info,#choose-restaurant-info").hide();
                 $("#let-fanjoin-choose").show();
+                $("li.restaurant-item.selected").removeClass("selected");
                 return false;
+            })
+
+            $("li.restaurant-item").click(function () {
+                $(this).addClass('selected').siblings().removeClass("selected");
+                $("#choose-restaurant-info,#let-fanjoin-choose").hide();
+                $("#menu-info").show();
             })
         })
     </script>
@@ -60,9 +96,23 @@
 
 {% block content %}
 
+    <div id="faq" class="faq sidebar-box">
+        <div class="sidebar-box-title">常见问题</div>
+        <div class="sidebar-box-inner">
+            <a>饭聚网是什么？</a>
 
+            <p>饭聚网是刚刚流行起来的基于兴趣的美食社交网站，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。</p>
+
+
+            <a>如何取消一个饭局？</a>
+
+            <p>如果你已经为一个饭局付费了，但又因为其他计划而不能参加了，那么你可以在饭局开始前的72个小时内取消，可以通过拨打热线0000000000联系我们，我们会帮您取消饭局。</p>
+
+            <a>更多>></a>
+        </div>
+    </div>
     <div class="form-wrapper">
-        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+    <form id="create_meal_form" action="{% url create_meal %}" method="post"
           class="form form-horizontal"> {% csrf_token %}
 
     <fieldset>
@@ -71,7 +121,7 @@
 
         <div class="control-group ">
 
-            <label class="control-label" for="id_topic">主题</label>
+            <label class="control-label" for="id_topic">饭局主题</label>
 
             <div class="controls">
                 <input id="id_topic" type="text" name="topic" maxlength="64"
@@ -80,7 +130,7 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label" for="id_introduction">简介</label>
+            <label class="control-label" for="id_introduction">饭局简介</label>
 
             <div class="controls">
                 <textarea id="id_introduction" rows="5" cols="40" name="introduction" class="input-xlarge"
@@ -100,18 +150,18 @@
         </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="full">
 
     <legend>2、餐厅信息</legend>
     <div class="control-group">
         <label class="control-label" for="id_privacy">就餐时间</label>
 
         <div class="controls">
-            <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日"
-                   placeholder="开始日期">
+            <input type="text" name="time_0" id="start_date" readonly="readonly" value="2012-08-17"
+                >
             <select name="id_time_1" id="start_time" class="pretty">
                 <option value="" selected="selected">下午 7:00</option>
-                <option value="sdf" >下午 8:00</option>
+                <option value="sdf">下午 8:00</option>
             </select>
         </div>
     </div>
@@ -136,51 +186,51 @@
     </div>
     <div id="choose-menu" class="row">
     <div id="choose-restaurant" class="fl span4">
-        <div id="resturant-list" >
+        <div id="restaurant-list">
             <ul>
-                <li class="restaurant-selector" id="restaurant-selector-2242" data-menu="2242" data-name="Brand BBQ">
+                <li class="restaurant-item" id="restaurant-item-2242" data-menu="2242" data-name="Brand BBQ">
                     <img alt="Screen%20shot%202012-07-18%20at%209.41.44%20am"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11892/thumb/Screen%20Shot%202012-07-18%20at%209.41.44%20AM.png?1342629759">
                     <span class="rest-price">$23</span>
                     <span class="rest-name">Brand BBQ</span>
                     <span class="rest-hood">Logan Square, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-2241" data-menu="2241" data-name="Brand BBQ">
+                <li class="restaurant-item" id="restaurant-item-2241" data-menu="2241" data-name="Brand BBQ">
                     <img alt="Screen%20shot%202012-07-18%20at%209.41.44%20am"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11892/thumb/Screen%20Shot%202012-07-18%20at%209.41.44%20AM.png?1342629759">
                     <span class="rest-price">$19</span>
                     <span class="rest-name">Brand BBQ</span>
                     <span class="rest-hood">Logan Square, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-2183" data-menu="2183" data-name="The 3rd Coast">
+                <li class="restaurant-item" id="restaurant-item-2183" data-menu="2183" data-name="The 3rd Coast">
                     <img alt="Screen%20shot%202011-10-03%20at%201.02.00%20pm"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/795/thumb/Screen%20shot%202011-10-03%20at%201.02.00%20PM.png?1317672177">
                     <span class="rest-price">$24</span>
                     <span class="rest-name">The 3rd Coast</span>
                     <span class="rest-hood">Northside, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-1164" data-menu="1164" data-name="Cafe Ba Ba Reeba">
+                <li class="restaurant-item" id="restaurant-item-1164" data-menu="1164" data-name="Cafe Ba Ba Reeba">
                     <img alt="Ba%20ba%20reeba"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/34/thumb/Ba%20Ba%20Reeba.jpeg?1295820038">
                     <span class="rest-price">$27</span>
                     <span class="rest-name">Cafe Ba Ba Reeba</span>
                     <span class="rest-hood">Lincoln Park, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-924" data-menu="924" data-name="Pars Cove">
+                <li class="restaurant-item" id="restaurant-item-924" data-menu="924" data-name="Pars Cove">
                     <img alt="Pars%20cove"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/266/thumb/Pars%20Cove.jpg?1296978351">
                     <span class="rest-price">$19</span>
                     <span class="rest-name">Pars Cove</span>
                     <span class="rest-hood">Lincoln Park, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-201" data-menu="201" data-name="Opart Thai House">
+                <li class="restaurant-item" id="restaurant-item-201" data-menu="201" data-name="Opart Thai House">
                     <img alt="Opart"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/53/thumb/Opart.png?1303139810">
                     <span class="rest-price">$19</span>
                     <span class="rest-name">Opart Thai House</span>
                     <span class="rest-hood">South Loop, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-2291" data-menu="2291"
+                <li class="restaurant-item" id="restaurant-item-2291" data-menu="2291"
                     data-name="90 Miles Cuban Cafe">
                     <img alt="Screen%20shot%202011-04-19%20at%2011.31.16%20pm"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/328/thumb/Screen%20shot%202011-04-19%20at%2011.31.16%20PM.png?1303281198">
@@ -188,14 +238,14 @@
                     <span class="rest-name">90 Miles Cuban Cafe</span>
                     <span class="rest-hood">Logan Square, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-131" data-menu="131" data-name="Simply It">
+                <li class="restaurant-item" id="restaurant-item-131" data-menu="131" data-name="Simply It">
                     <img alt="Picture%201"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/46/thumb/Picture%201.png?1298442260">
                     <span class="rest-price">$15</span>
                     <span class="rest-name">Simply It</span>
                     <span class="rest-hood">Lincoln Park, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-208" data-menu="208"
+                <li class="restaurant-item" id="restaurant-item-208" data-menu="208"
                     data-name="90 Miles Cuban Cafe">
                     <img alt="Screen%20shot%202011-04-19%20at%2011.31.16%20pm"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/328/thumb/Screen%20shot%202011-04-19%20at%2011.31.16%20PM.png?1303281198">
@@ -203,174 +253,137 @@
                     <span class="rest-name">90 Miles Cuban Cafe</span>
                     <span class="rest-hood">Logan Square, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-445" data-menu="445" data-name="Estrella Negra">
+                <li class="restaurant-item" id="restaurant-item-445" data-menu="445" data-name="Estrella Negra">
                     <img alt="Estrella%20negra"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/894/thumb/Estrella%20Negra.jpg?1310397746">
                     <span class="rest-price">$17</span>
                     <span class="rest-name">Estrella Negra</span>
                     <span class="rest-hood">Bucktown, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-471" data-menu="471" data-name="Taxim">
+                <li class="restaurant-item" id="restaurant-item-471" data-menu="471" data-name="Taxim">
                     <img alt="Screen%20shot%202011-07-16%20at%207.58.14%20am"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/982/thumb/Screen%20shot%202011-07-16%20at%207.58.14%20AM.png?1310828355">
                     <span class="rest-price">$31</span>
                     <span class="rest-name">Taxim</span>
                     <span class="rest-hood">Wicker Park, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-922" data-menu="922" data-name="Gosu">
+                <li class="restaurant-item" id="restaurant-item-922" data-menu="922" data-name="Gosu">
                     <img alt="Bibimbap"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/11359/thumb/bibimbap.PNG?1325554097">
                     <span class="rest-price">$24</span>
                     <span class="rest-name">Gosu</span>
                     <span class="rest-hood">Logan Square, Chicago</span>
                 </li>
-                <li class="restaurant-selector" id="restaurant-selector-889" data-menu="889" data-name="Simply It">
+                <li class="restaurant-item" id="restaurant-item-889" data-menu="889" data-name="Simply It">
                     <img alt="Picture%201"
                          src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/46/thumb/Picture%201.png?1298442260">
                     <span class="rest-price">$15</span>
                     <span class="rest-name">Simply It</span>
                     <span class="rest-hood">Lincoln Park, Chicago</span>
                 </li>
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-939" data-menu="939" data-name="Los Nopales">#}
-                {#                                        <img alt="Los%20nopales" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/50/thumb/Los%20Nopales.jpeg?1298441859">#}
-                {#                                        <span class="rest-price">$22</span>#}
-                {#                                        <span class="rest-name">Los Nopales</span>#}
-                {#                                        <span class="rest-hood">Lincoln Square, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-1017" data-menu="1017" data-name="Havana">#}
-                {#                                        <img alt="Picture%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/268/thumb/Picture%202.png?1298445657">#}
-                {#                                        <span class="rest-price">$24</span>#}
-                {#                                        <span class="rest-name">Havana</span>#}
-                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-1043" data-menu="1043" data-name="India House Restaurant">#}
-                {#                                        <img alt="India%20house%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/54/thumb/India%20House%202.jpeg?1294730670">#}
-                {#                                        <span class="rest-price">$24</span>#}
-                {#                                        <span class="rest-name">India House Resta...</span>#}
-                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-1181" data-menu="1181" data-name="Ukai Japanese Restaurant">#}
-                {#                                        <img alt="Ukai" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/636/thumb/Ukai.jpg?1309563244">#}
-                {#                                        <span class="rest-price">$28</span>#}
-                {#                                        <span class="rest-name">Ukai Japanese Res...</span>#}
-                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-1165" data-menu="1165" data-name="El Nuevo Mexicano">#}
-                {#                                        <img alt="Enm6-thumb-400x265" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/20/thumb/ENM6-thumb-400x265.jpg?1334687567">#}
-                {#                                        <span class="rest-price">$19</span>#}
-                {#                                        <span class="rest-name">El Nuevo Mexicano</span>#}
-                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-2137" data-menu="2137" data-name="Mayan Palace">#}
-                {#                                        <img alt="Picture%2011" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/35/thumb/Picture%2011.png?1295819028">#}
-                {#                                        <span class="rest-price">$19</span>#}
-                {#                                        <span class="rest-name">Mayan Palace</span>#}
-                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-2104" data-menu="2104" data-name="Sapori Trattoria">#}
-                {#                                        <img alt="Caprese" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/5/thumb/Caprese.jpg?1305492582">#}
-                {#                                        <span class="rest-price">$20</span>#}
-                {#                                        <span class="rest-name">Sapori Trattoria</span>#}
-                {#                                        <span class="rest-hood">Lincoln Park, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-2156" data-menu="2156" data-name="Mayan Palace">#}
-                {#                                        <img alt="Picture%2011" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/35/thumb/Picture%2011.png?1295819028">#}
-                {#                                        <span class="rest-price">$20</span>#}
-                {#                                        <span class="rest-name">Mayan Palace</span>#}
-                {#                                        <span class="rest-hood">Lakeview, Chicago</span>#}
-                {#                                    </li>#}
-                {#                                    <li class="restaurant-selector" id="restaurant-selector-2159" data-menu="2159" data-name="Havana">#}
-                {#                                        <img alt="Picture%202" src="https://s3.amazonaws.com/grubber_bucket/grub_restaurant_pics/268/thumb/Picture%202.png?1298445657">#}
-                {#                                        <span class="rest-price">$20</span>#}
-                {#                                        <span class="rest-name">Havana</span>#}
-                {#                                        <span class="rest-hood">Near Northside, Chicago</span>#}
-                {#                                    </li>#}
             </ul>
         </div>
-        <a class="btn button" href="#" id="let-fanjon-choose-link">让饭聚网帮我选</a>
-    </div>
-    <div id="menu-info" class="fr span8">
-        <div class="cyo-rest-inner-wrapper clearfix">
-            <div class="cyo-rest-upper clearfix">
-                <div class="cyo-rest-upper-content">
-                    <h4>Estrella Negra
-                        <a href="http://maps.google.com/maps?output=embed&amp;q=2346+w+fullerton+ave+chicago+il+60647"
-                           class="cyo-directions cboxElement" original-title="">(Map it)</a>
-                    </h4>
-                    <span class="menu-tooltip" title="A menu with shared dishes">Family-Style Menu</span>
-                </div>
-            </div>
-
-            <div class="meal-section" id="menu_445">
-
-                <div class="menu inline-menu clearfix">
-                    <div class="menu-column" id="column_left">
-                        <div class="individual-menu-course" style="">
-                            <div class="ribbon-title">
-                                Starters&nbsp;
-                            </div>
-                            <div class="content italic">
-                                <h3>El Cazo Chips and Verde Salsa</h3>
-
-                                <p>Homemade chips and house special salsa.</p>
-
-                                <h3>Las Jaras Sweet Potato Fries</h3>
-
-                                <p>Served with organic Agave nectar.</p>
-
-                                <h3>La Sirena Ceviche Tostada</h3>
-
-                                <p>Citrus-marinated fresh shrimp and tilapia cocktail served on cucumbers.</p>
-                            </div>
-                        </div>
-                        <div class="individual-menu-course" style="">
-                            <div class="ribbon-title">
-                                Desserts&nbsp;
-                            </div>
-                            <div class="content italic">
-                                <h3>Taffy Apple Empanadas</h3>
-
-                                <p>Served with Vanilla Ice Cream</p>
-
-                                <h3>Chocolate Chip Tamales</h3>
-
-                                <p>Served with Vanilla Ice Cream</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="menu-column" id="column_right">
-                        <div class="individual-menu-course" style="">
-                            <div class="ribbon-title">
-                                Entrees&nbsp;
-                            </div>
-                            <div class="content italic">
-                                <h3>La Estrella Tamale Sampler</h3>
-
-                                <p>An assortment of the best tamales in the house! Three Cheese Spinach and Artichoke,
-                                    Traditional Pork, and Elote Man (Corn Tamales).</p>
-
-                                <h3>El Sol Empanada Platter</h3>
-
-                                <p>Goat Cheese Jalapeño, Three Cheese Spinach and Artichoke, Chorizo and Corn
-                                    and Chicken Goat Cheese-- all garnished with salsa verde, cheese, tomatoes and sour
-                                    cream. </p>
-
-                                <h3>Chicken and Goat Cheese Enchiladas</h3>
-
-                                <p></p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-            </div>
-
+        <div class="let-fanjoin-choose-link-wrapper">
+            或者 &nbsp;&nbsp;&nbsp;&nbsp; <a class="btn button" href="#" id="let-fanjon-choose-link">让饭聚网帮我选</a>
         </div>
     </div>
-    <div id="let-fanjoin-choose" class="fr span8" style="display: none">
+    <div id="choose-restaurant-info" class="fl span4">
+        在左边选择餐厅
+    </div>
+    <div id="menu-info" class="fl span4 hide menu-info">
+            <div class="title">
+                <div class="rest-name">餐厅名称
+                    <a href="http://maps.google.com/maps?output=embed&amp;q=2346+w+fullerton+ave+chicago+il+60647"
+                       class="cyo-directions cboxElement" original-title="">(地图)</a>
+                </div>
+                <div class="menu-name" >套餐名称(8人套餐 40元/人)</div>
+            </div>
+
+            <dl class="menu-items" id="menu-items">
+
+
+                <dt class="category tag ui-draggable" category-id="3" style="display: block; ">家常菜
+                </dt>
+                <dd class="tag dish" dish-id="248" style=""><span class="dish-name">手捏菜豆腐</span>
+
+
+                    <span class="dish-info"> <span class="price">13.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+                <dd class="tag dish" dish-id="242"><span class="dish-name">桂花年糕</span>
+
+
+                    <span class="dish-info"> <span class="price">6.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+
+
+                <dd class="tag dish ui-draggable" dish-id="227" style="display: block; "><span
+                        class="dish-name">冰桔茶</span>
+
+
+                    <span class="dish-info"> <span class="price">55.00 元</span><span class="unit"> /份 × </span><a
+                            class="num">1</a>&nbsp;&nbsp; </span></dd>
+                <dt class="category tag ui-draggable" category-id="16" style="display: block; ">随碟附送地方
+                </dt>
+                <dd class="tag dish" dish-id="245"><span class="dish-name">年糕</span>
+
+
+                    <span class="dish-info"> <span class="price">23.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+                <dd class="tag dish" dish-id="203"><span class="dish-name">青豆泥</span>
+
+                    <span class="dish-info"> <span class="price">43.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+                <dt class="category tag" category-id="2">冷菜
+
+                </dt>
+
+                <dd class="tag dish" dish-id="229"><span class="dish-name">土豆丝</span>
+
+                    <span class="dish-info"> <span class="price">22.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+
+                <dd class="tag dish" dish-id="240"><span class="dish-name">鱼香茄子</span>
+
+
+                    <span class="dish-info"> <span class="price">55.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+
+                <dd class="tag dish" dish-id="230"><span class="dish-name">外婆炒蛋</span>
+
+                    <span class="dish-info"> <span class="price">48.00 元</span><span class="unit"> /份 × </span><span
+                            class="num">1</span>&nbsp;&nbsp; </span>
+                </dd>
+                <dt class="category tag ui-draggable" category-id="5" style="display: block; ">热菜
+                </dt>
+
+                <dd class="tag dish ui-draggable" dish-id="221" style="display: block; "><span
+                        class="dish-name">宋嫂鱼羹</span>
+
+                    <span class="dish-info"> <span class="price">11.00 元</span><span class="unit"> /份 × </span><a
+                            class="num">1</a>&nbsp;&nbsp; </span></dd>
+                <dd class="tag dish ui-draggable" dish-id="214" style="display: block; "><span
+                        class="dish-name">开心土豆</span>
+
+                    <span class="dish-info"> <span class="price">58.00 元</span><span class="unit"> /份 × </span><a
+                            class="num">1</a>&nbsp;&nbsp; </span></dd>
+                <dd class="tag dish ui-draggable" dish-id="210" style="display: block; "><span
+                        class="dish-name">有机花菜</span>
+
+                    <span class="dish-info"> <span class="price">40.00 元</span><span class="unit"> /份 × </span><a
+                            class="num">1</a>&nbsp;&nbsp; </span></dd>
+            </dl>
+    </div>
+    <div id="let-fanjoin-choose" class="fl span5 hide" style="display: none">
+        <div class="info">
+            还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧，只要说出您的需求，我们会尽快为您选择合适的餐厅，并为您点好菜。
+        </div>
+
         <div class="control-group">
             <label class="control-label" for="id_region">就餐地点</label>
 
@@ -383,11 +396,11 @@
         </div>
         <div class="control-group">
 
-            <label class="control-label" for="id_min_persons">平均消费</label>
+            <label class="control-label" for="id_list_price">平均消费</label>
 
             <div class="controls">
 
-                <select name="list_price" id="list_price" class="pretty">
+                <select name="list_price" id="id_list_price" class="pretty">
                     <option value="1">25 元/人</option>
                     <option value="1">30 元/人</option>
                     <option value="" selected="selected">35 元/人</option>
@@ -400,8 +413,8 @@
     </div>
     </fieldset>
 
-    <fieldset>
-        <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr">+</a></legend>
+    <fieldset class="more-options">
+        <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>
         <div id="more-options" class="hide">
 
             <div class="control-group" id="extra_request_div">
@@ -417,11 +430,11 @@
     </fieldset>
 
 
-    <div class="form-actions pull-right">
-        <button type="submit" class="btn-order btn-large" >确定</button>
+    <div class="form-actions">
+        <button type="submit" class="btn-create-meal">确定</button>
     </div>
     </form>
     </div>
 
-    <div class="faq"></div>
+
 {% endblock %}
