@@ -13,29 +13,10 @@
     {% assets "common_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
-    <style type="text/css">
-        #id_time_0 {
-            width: 160px;
-            margin-right: 5px;
-        }
 
-        #list_price, #min_persons {
-            width: 120px;
-        }
-
-        #resturant-list{
-            width:200px;
-            height: 250px;
-            overflow: auto;
-        }
-
-        .form-actions {
-            width: 100px;
-            float: left;
-            margin-left: 159px;
-            margin-top: 0
-        }
-    </style>
+    {% assets "meal_add_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
 {% endblock %}
 
 {% block page_js %}
@@ -51,9 +32,8 @@
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function () {
-//            $('#start_date').dropkick({width: 120});
-            //   $("select.pretty").dropkick( );
-            //  $('#start_time').dropkick({width: 120});
+            $('#start_time').dropkick({width: 120});
+            $("select.pretty").dropkick({width: 320});
 
 //            $("#start_date").datepicker({
 //                onSelect: function(dateText, inst) { $(inst.input).change().focusout(); },
@@ -80,9 +60,9 @@
 
 {% block content %}
 
-    <div class="row">
-    <div class="span12">
-    <form id="create_meal_form" action="{% url create_meal %}" method="post"
+
+    <div class="form-wrapper">
+        <form id="create_meal_form" action="{% url create_meal %}" method="post"
           class="form form-horizontal"> {% csrf_token %}
 
     <fieldset>
@@ -112,9 +92,9 @@
             <label class="control-label" for="id_privacy">是否公开</label>
 
             <div class="controls">
-                <select name="privacy" id="id_privacy" class="pretty input-xlarge">
-                    <option value="1" selected="selected">公开：所有人可以加餐</option>
-                    <option value="2">私有：仅邀请的人可以参加</option>
+                <select name="privacy" id="id_privacy" class="pretty">
+                    <option value="1" selected="selected">公开：所有人可以参加</option>
+                    <option value="2">私密：仅邀请的人可以参加</option>
                 </select>
             </div>
         </div>
@@ -127,11 +107,11 @@
         <label class="control-label" for="id_privacy">就餐时间</label>
 
         <div class="controls">
-            <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日 星期三"
+            <input type="text" name="time_0" id="start_date" class="" value="2012年7月25日"
                    placeholder="开始日期">
-
             <select name="id_time_1" id="start_time" class="pretty">
                 <option value="" selected="selected">下午 7:00</option>
+                <option value="sdf" >下午 8:00</option>
             </select>
         </div>
     </div>
@@ -438,11 +418,10 @@
 
 
     <div class="form-actions pull-right">
-        <input type="submit" class="btn-order btn-large" value="确定"/>
+        <button type="submit" class="btn-order btn-large" >确定</button>
     </div>
     </form>
-
-    </div>
     </div>
 
+    <div class="faq"></div>
 {% endblock %}

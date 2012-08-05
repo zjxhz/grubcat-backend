@@ -1,0 +1,84 @@
+#resturant-list {
+    width: 200px;
+    height: 250px;
+    overflow: auto;
+}
+
+.form-actions {
+    width: 100px;
+    float: left;
+    margin-left: 159px;
+    margin-top: 0
+}
+
+.controls fieldset {
+    background: white;
+    border: 1px solid #CCC;
+    width: 100%;
+    position: relative;
+    font-size: 16px;
+    padding: 53px 0px 5px 1px;
+    margin-bottom: 30px;
+}
+
+.controls legend {
+    padding: 12px;
+    font-size: 140%;
+    font-weight: bold;
+    color: #222;
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.controls label {
+    font-size: 16px;
+}
+
+.controls input, .controls textarea {
+    width: 360px;
+    height: 25px;
+    padding: 5px;
+    font-size: 18px;
+}
+
+.controls textarea {
+    height: auto;
+    resize: none;
+}
+
+.dk_label {
+    color: #666;
+    font-size: 16px;
+}
+
+#dk_container_start_time .dk_toggle {
+    background-image: url(../img/clock.png);
+    background-position: 12px center;
+    padding: 12px 10px 9px 45px;
+}
+
+#start_date {
+    float: left;
+    font-size: 16px;
+    padding: 5px 5px 5px 43px;
+    width: 139px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+
+    background: url(../img/calendar.png),-webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
+    background: url(../img/calendar.png),-moz-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png),-o-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png),linear-gradient(top, white, whiteSmoke);
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    font-weight: bold;
+    line-height: 14px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: pointer;
+    color: #666;
+    box-shadow: none;
+}
