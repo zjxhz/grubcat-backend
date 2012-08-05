@@ -22,8 +22,9 @@ from urllib import urlencode
 import base64
 import simplejson
 from taggit.models import Tag
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 
 class Base64FileField(FileField):
@@ -651,9 +652,9 @@ def weibo_user_login(request):
             # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
             post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
-            user = auth.authenticate(**post_dict)
-            auth.login(request, user)
-            return createLoggedInResponse(user)
+            user_to_authenticate = auth.authenticate(**post_dict)
+            auth.login(request, user_to_authenticate)
+            return createLoggedInResponse(user_to_authenticate)
     else:
         raise # not used by mobile client   
        
