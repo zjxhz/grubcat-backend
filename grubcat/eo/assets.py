@@ -5,9 +5,11 @@ from django_assets import Bundle, register, env
 env.get_env().config['less_bin'] = 'D:/userdata/qimeng/Application Data/npm/lessc.cmd'
 
 #css below
-base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
-common_css = Bundle('css/common.css','css/form.css',filters='cssmin', output='gen/common.%(version)s.css')
 
+base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
+#form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
+form_css = Bundle('css/form.css',filters='cssmin',output='gen/form.%(version)s.css')
+common_css = Bundle('css/common.css', form_css, filters='cssmin', output='gen/common.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.%(version)s.css')
 
 bootstrap_css = Bundle(
@@ -23,10 +25,14 @@ my_bootstrap_css  = Bundle('less/bootstrap/bootstrap.less',
 #    filters='cssmin', output="gen/my_bootstrap.css")
 
 meal_list_css = Bundle(
-    base_css, common_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+    base_css, common_css,dropkick_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
     base_css, common_css, 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+)
+
+meal_add_css= Bundle(
+    base_css, common_css, dropkick_css, 'css/meal-add.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 account_css = Bundle(
@@ -74,14 +80,16 @@ jquery_ajax_bootstrap_js = Bundle(
     output='gen/jquery.ajax.bootstrap.js.%(version)s.js'
 )
 
-jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/js/jquery-ui-1.8.21.custom%(version)s.js')
+jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/jquery-ui-1.8.21.custom%(version)s.js')
 
 register('base_css', base_css)
 register('common_css', common_css)
+register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('my_bootstrap_css', my_bootstrap_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
+register('meal_add_css', meal_add_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('order_css', order_css)

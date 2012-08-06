@@ -286,7 +286,7 @@ class UserTag(Tag):
         db_table = u'user_tag'
         
 class TaggedUser(GenericTaggedItemBase):
-    tag =  models.ForeignKey(UserTag)
+    tag =  models.ForeignKey(UserTag, related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
     class Meta:
         db_table = u'tagged_user'
     
@@ -337,7 +337,16 @@ class UserProfile(models.Model):
             return self.avatar
         else:
             return "/uploaded_images/anno.png"
-
+    
+    @property
+    def recommendations(self):
+        recommended_list = self.tags.similar_objects()
+        recommended_not_followed = [u for u in recommended_list if u not in self.following.all()]
+        if len(recommended_not_followed) > 5:
+            return recommended_not_followed
+        else:
+            return UserProfile.objects.exclude(id__in=self.following.values('id'))
+        
     def __unicode__(self):
         return self.user.username
 
