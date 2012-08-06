@@ -26,7 +26,23 @@ import simplejson
 import sys
 from django.conf import settings
 
-### Order related views ###
+###Menu related views ###
+class MenuListView(ListView):
+    template_name = "meal/get_menu.html"
+    context_object_name = "menu_list"
+
+    def get_queryset(self):
+
+        #TODO filter by num persons and date and time
+        num_persons = self.request.GET.get("num_persons",8)
+        print(num_persons)
+        qs = Menu.objects.filter(status=MenuStatus.NORMAL,num_persons=num_persons)
+        for menu in qs:
+            menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
+        return qs
+
+
+### Meal related views ###
 class MealCreateView(CreateView):
     form_class = MealForm
     template_name = 'meal/create_meal.html'
@@ -49,7 +65,6 @@ class MealCreateView(CreateView):
 #        order.meal.join(order)
 #        return response
 
-### Meal related views ###
 class MealListView(ListView):
     queryset = Meal.objects.order_by("time")
     template_name = "meal/meal_list.html"
@@ -61,8 +76,6 @@ class MealDetailView(DetailView):
     context_object_name="meal"
     template_name="meal/meal_detail.html"
     queryset = Meal.objects.select_related('restaurant','host__user').prefetch_related('participants__user')
-
-
 
 ### User related views ###
 class RegisterView(CreateView):
@@ -90,7 +103,6 @@ class RegisterView(CreateView):
         elif netloc and netloc != self.request.get_host():
             success_url = reverse_lazy("index")
         return success_url
-
 
 class UserListView(ListView):
     queryset = User.objects.all()
@@ -237,27 +249,6 @@ def get_restaurant_list_by_geo(request):
         print "Unexpected error:", sys.exc_info()[0]
         raise
     return  response
-
-#
-#def get_menu(request):
-#    response = HttpResponse()
-#    restaurant = Restaurant.objects.get(id=request.GET.get('id'))
-#
-#    menu = restaurant.menu
-#    jsonMenu = simplejson.loads(serializers.serialize('json', [menu]))[0]
-#
-#    categories = menu.categories.all()
-#    jsonCategories = simplejson.loads(serializers.serialize('json', categories))
-#    jsonMenu['categories'] = jsonCategories
-#
-#    dishes = restaurant.dish_set.all() #Dish.objects.filter(restaurant_id=restaurant.id)
-#    jsonDishes = simplejson.loads(
-#        serializers.serialize('json', dishes, excludes=('restaurant'), relations=('tags', 'categories',)))
-#    jsonMenu['dishes'] = jsonDishes
-#
-#    response.write(simplejson.dumps(jsonMenu, ensure_ascii=False))
-#    return response
-
 
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}

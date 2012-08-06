@@ -134,7 +134,7 @@ def add_edit_menu(request, pk=None):
         average_price = menu_json['average_price']
         menu_form = MenuForm({'num_persons': num_persons, 'average_price': average_price})
         if not menu_form.is_valid():
-            return createGeneralResponse(ERROR, menu_form.errors, extra_dict={'url': reverse('menu_list'), })
+            return createGeneralResponse(ERROR, menu_form.errors, extra_dict={'url': reverse('restaurant_menu_list'), })
         menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price)
         menu.save()
 
@@ -150,7 +150,7 @@ def add_edit_menu(request, pk=None):
                 dish_category = DishCategory(id=item['id'])
                 category_item = MenuItem(menu=menu, object=dish_category)
                 category_item.save()
-        return createSucessJsonResponse(u'保存套餐成功', extra_dict={'url': reverse('menu_list'), })
+        return createSucessJsonResponse(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
@@ -195,4 +195,4 @@ def del_menu(request, pk):
             menu.save()
         except ObjectDoesNotExist:
             pass
-    return createSucessJsonResponse(extra_dict={'url': reverse('menu_list'), })
+    return createSucessJsonResponse(extra_dict={'url': reverse('restaurant_menu_list'), })
