@@ -114,6 +114,7 @@
 
 #create-a-meal {
     text-align: center;
+    height: 105px;
 }
 
 #create-a-meal .sidebar-box-inner {
@@ -122,10 +123,6 @@
 
 #recently-grubbed img {
     border: 0 solid #ddd;
-}
-
-#create-a-meal{
-    height: 100px;
 }
 
 #create-a-meal .btn-create-meal{
