@@ -9,10 +9,10 @@ class WeiboAuthenticationBackend(object):
     def authenticate(self, **credentials):
         token = credentials.get('access_token')
         weibo_id = credentials.get('weibo_id')
-        user_to_authenticate = None # tell python this is a local variable
+        user_to_authenticate = None # tell Python explicitly this is a local variable
         if token and weibo_id:
             try:
-                user_profile = UserProfile.objects.get(weibo_access_token=token)
+                user_profile = UserProfile.objects.get(weibo_id=weibo_id)
                 user_to_authenticate = user_profile.user
             except ObjectDoesNotExist:
                 try:
@@ -24,6 +24,7 @@ class WeiboAuthenticationBackend(object):
                     user_profile.name = credentials.get('name')
                     user_profile.motto = credentials.get('motto') #description
                     user_profile.gender = int(credentials.get('gender')) 
+                    user_profile.weibo_access_token = token
                     avatar_url = credentials.get('avatar') 
                     user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_profile.save()
