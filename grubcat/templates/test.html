@@ -7,19 +7,70 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    {% assets "my_bootstrap_css" %}
+    {% assets "base_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/smoothness/jquery-ui-1.8.21.custom.css' %}">
+    {% assets "restaurant_admin_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link href="{% static 'css/jquery.dialog2.css' %}" media="screen" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "restaurant_admin_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript" src="{% static_asset 'js/bootstrap/bootstrap-tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui-1.8.21.custom.min.js' %}"></script>
 
 </head>
 <body>
 
 <div class="container">
+    <div class="row">
+        <div class="well span12"></div>
+    </div>
+    <div class="row">
+        <div class="span4"><a id="tooltip">test tooltip</a></div>
+        <div class="ui-widget span4">
+            <div class="ui-widget-header ui-corner-top">I'm tilte</div>
+            <div class="ui-widget-content  ui-corner-bottom">I'm content</div>
+        </div>
+
+        <div class="ui-widget span4">
+            <div class="ui-state-default ui-state-active ui-corner-all">
+                <a href="#">I am clickable and selected</a></div>
+            <div class="ui-state-default ui-corner-all">
+                <a href="#">I am clickable but not selected</a></div>
+        </div>
+
+    </div>
+
 
 </div>
 <script type="text/javascript">
     $(function () {
+        var $tooltip = $("#tooltip").tooltip({
+            placement:'bottom',
+            title:'删除成功',
+            delay:{ show:1500, hide:12200 }
+        })
+        $("a").click(function () {
+            $tooltip.tooltip('toggle')
+            return false;
+        })
+        $(".ui-state-default a").hover(function() {
+            $(this).parent().addClass("ui-state-hover");
+        }, function() {
+            $(this).parent().removeClass("ui-state-hover");
+        });
     })
 </script>
 
