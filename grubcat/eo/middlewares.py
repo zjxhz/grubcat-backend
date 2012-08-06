@@ -9,6 +9,7 @@ class WeiboAuthenticationBackend(object):
     def authenticate(self, **credentials):
         token = credentials.get('access_token')
         weibo_id = credentials.get('weibo_id')
+        user_to_authenticate = None # tell python this is a local variable
         if token and weibo_id:
             try:
                 user_profile = UserProfile.objects.get(weibo_access_token=token)
