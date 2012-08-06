@@ -22,8 +22,9 @@ from urllib import urlencode
 import base64
 import simplejson
 from taggit.models import Tag
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 
 class Base64FileField(FileField):
@@ -96,9 +97,11 @@ def get_my_list(resource, queryset, request):
     to_be_serialized = resource.alter_list_data_to_serialize(request, to_be_serialized)
     return resource.create_response(request, to_be_serialized)
 
+#todo maybe we can use decorator
 def login_required(request):
     response = {"status": "NOK", "info": "You were not logged in"}
     return HttpResponse(simplejson.dumps(response))
+         
 
 # Create a general response with status and message)
 def createGeneralResponse(status, message, extra_dict=None):
@@ -141,7 +144,16 @@ class DjangoUserResource(ModelResource):
 class UserLocationResource(ModelResource):
     class Meta:
         queryset = UserLocation.objects.all()        
+
+class TagResource(ModelResource):
+    class Meta:
+        queryset = Tag.objects.all()
+        filtering = {'name': ALL}
         
+class UserTagResource(ModelResource):
+    class Meta:
+        queryset = UserTag.objects.all()
+                
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
@@ -186,8 +198,20 @@ class UserResource(ModelResource):
                 self.wrap_view('get_feeds'), name="api_get_feeds"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/tags%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_tags'), name="api_get_tags"),    
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/recommendations%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_recommendations'), name="api_get_recommendations"),   
         ]
     
+    def obj_update(self, bundle, request=None, **kwargs):
+        """
+        A quick and dirty fix as tastypie seems to have problems with even simple PATCH request.
+        By overwritting this method, PUT request may not work, and any PATCH request that tries to update foreign keys or m2m relations will not work either.
+        Hope this will be a new version of tastypie, or we shall use a complete new rest framework.  
+        """
+        bundle = self.full_hydrate(bundle)
+        self.save_related(bundle)
+        bundle.obj.save()
+        return bundle
     
     def get_favorite(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
@@ -292,17 +316,33 @@ class UserResource(ModelResource):
         
         user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'POST':
-            tag = request.POST.get('tag')
-            user.tags.add(tag)
-            return createGeneralResponse('OK', 'tag %s added' % tag)
+            if request.POST.get('tags'):
+                tags = [token.strip() for token in request.POST.get('tags').split(',')]
+                user.tags.set(*tags)
+                return createGeneralResponse('OK', 'tags %s set' % tags)
+            elif request.POST.get('tag'):
+                user.tags.add(request.POST.get('tag'))
+                return createGeneralResponse('OK', 'tag %s added' % request.POST.get('tag'))
+            else:
+                raise
         else:
-            return get_my_list(TagResource(), user.tags.all(), request) 
+            return get_my_list(UserTagResource(), user.tags.all(), request) 
+
+    def get_recommendations(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
+        if request.method == 'GET':
+            return get_my_list(UserResource(), user.recommendations, request)
+        else:
             raise
-        
+            
     class Meta:
+        authorization = Authorization()
         queryset = UserProfile.objects.all()
         resource_name = 'user'
         filtering = {'from_user':ALL,}
+        allowed_methods = ['get', 'post', 'put', 'patch']
 
 
 class RelationshipResource(ModelResource):
@@ -544,19 +584,9 @@ class OrderResource(ModelResource):
     customer = fields.ToOneField(UserResource, 'customer', full=True)
         
     class Meta:
-        queryset = Order.objects.exclude(status=4)
+        queryset = Order.objects.all() # .exclude(status=4)
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
-
-class TagResource(ModelResource):
-    class Meta:
-        queryset = Tag.objects.all()
-        filtering = {'name': ALL}
-        
-class UserTagResource(ModelResource):
-    
-    class Meta:
-        queryset = UserTag.objects.all()
             
 #class CreateUserResource(ModelResource):
 #    def obj_create(self, bundle, request=None, **kwargs):
@@ -622,9 +652,9 @@ def weibo_user_login(request):
             # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
             post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
-            user = auth.authenticate(**post_dict)
-            auth.login(request, user)
-            return createLoggedInResponse(user)
+            user_to_authenticate = auth.authenticate(**post_dict)
+            auth.login(request, user_to_authenticate)
+            return createLoggedInResponse(user_to_authenticate)
     else:
         raise # not used by mobile client   
        

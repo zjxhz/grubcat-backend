@@ -30,11 +30,11 @@
 {% block nav %}
     <div id="main-nav" class="logged-out">
         <div class="nav-inner">
-            <div class="logo">
-                <a href="/">
-                    <img class="png-fix" width="198px" height="58px" alt="饭局"
-                         src="{% static 'img/site-logo.png' %}"></a>
-            </div>
+            {#            <div class="logo">#}
+            {#                <a href="/">#}
+            {#                    <img class="png-fix" width="198px" height="58px" alt="饭局"#}
+            {#                         src="{% static 'img/site-logo.bmp' %}"></a>#}
+            {#            </div>#}
             <ul>
                 <li {% ifequal request.path_info "/meal/" %}class="current"{% endifequal %}
                     {% ifequal request.path_info "/" %}class="current"{% endifequal %}><a
@@ -47,9 +47,14 @@
                         <a href="{% url restaurant_admin %}" class="nav-sign png-fix">餐厅后台</a>
                     {% endif %}
                 {% else %}
-                    <a href="{% url login %}?next={{ next|default:request.path_info  }}" class="nav-sign png-fix">登录</a>
-                    <a href="{% url register %}?next={{ next|default:request.path_info }}"
-                       class="nav-sign png-fix">注册</a>
+                        {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}
+                            <a href="{% url login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="nav-sign png-fix">登录</a>
+                            <a href="{% url register %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="nav-sign png-fix">注册</a>
+                        {% else %}
+                            <a href="{% url login %}?next={{ request.path_info  }}" class="nav-sign png-fix">登录</a>
+                            <a href="{% url register %}?next={{ request.path_info }}" class="nav-sign png-fix">注册</a>
+                        {% endif %}
+
                 {% endif %}
             </ul>
         </div>

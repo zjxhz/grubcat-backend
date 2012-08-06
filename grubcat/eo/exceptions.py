@@ -14,5 +14,5 @@ class AlreadyJoinedError(BusinessException):
 
 class ProcessExceptionMiddleware(object):
     def process_exception(self, request, exception):
-        if isinstance(exception, BusinessException) or not settings.SHOW_EXCEPTION_DETAIL:
+        if not settings.DEBUG and (isinstance(exception, BusinessException) or not settings.SHOW_EXCEPTION_DETAIL):
             return TemplateResponse(request, "500.html", {'exception': exception})
