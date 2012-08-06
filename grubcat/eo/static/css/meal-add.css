@@ -111,12 +111,12 @@
 }
 
 #choose-restaurant {
-    width: 300px;
+    width: 320px;
     margin-left: 0px;
 }
 
 .restaurant-item {
-    width: 290px;
+    width: 310px;
     display: inline-block;
     border-bottom: 1px solid #DDD;
     height: 50px;
