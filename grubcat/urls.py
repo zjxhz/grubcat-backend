@@ -5,8 +5,6 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.decorators import restaurant_login_required
@@ -20,9 +18,9 @@ from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     accept_or_reject_meal_invitations, img_test, upload_app
 from grubcat.eo.views import *
 from django.conf import settings
-from ajax_select import urls as ajax_select_urls
 
-# Uncomment the next two lines to enable the admin:
+import views_restaurant as rest
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -75,6 +73,9 @@ urlpatterns = patterns('',
     url(r'^meal/(?P<pk>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
     url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
 
+    #ajax get menus
+#    url(r'^menu/$', login_required(get_menu), name='get_menu'),
+
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='make_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
@@ -89,26 +90,26 @@ urlpatterns = patterns('',
         name="more_user"),
 
     #restaurant admin
-    url(r'^restaurant/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_admin"),
+    url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),
 
-    url(r'^restaurant/chekin/$', restaurant_login_required(OrderCheckInView.as_view()), name="restaurant_checkin"),
-    url(r'^restaurant/order/use/$', restaurant_login_required(use_order), name="restaurant_use_order"),
+    url(r'^restaurant/chekin/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_checkin"),
+    url(r'^restaurant/order/use/$', restaurant_login_required(rest.use_order), name="restaurant_use_order"),
 
-    url(r'^restaurant/dish/$', restaurant_login_required(DishListView.as_view()), name="restaurant_dish_list"),
-    url(r'^restaurant/dish/add/$', restaurant_login_required(DishCreateView.as_view()), name="restaurant_dish_add"),
-    url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(DishUpdateView.as_view()),
+    url(r'^restaurant/dish/$', restaurant_login_required(rest.DishListView.as_view()), name="restaurant_dish_list"),
+    url(r'^restaurant/dish/add/$', restaurant_login_required(rest.DishCreateView.as_view()), name="restaurant_dish_add"),
+    url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
-    url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(DishDeleteView.as_view()),
+    url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(rest.DishDeleteView.as_view()),
         name="restaurant_dish_del"),
-    url(r'^restaurant/dish_category/add/$', restaurant_login_required(add_dish_category), name="add_dish_category"),
+    url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category), name="add_dish_category"),
 
     url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
         name="restaurant_order"),
 
-    url(r'^restaurant/menu/$', restaurant_login_required(MenuListView.as_view()), name="menu_list"),
-    url(r'^restaurant/menu/add/$', restaurant_login_required(add_menu), name="add_menu"),
-    url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(del_menu), name="del_menu"),
-    url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(edit_menu), name="edit_menu"),
+    url(r'^restaurant/menu/$', restaurant_login_required(rest.MenuListView.as_view()), name="menu_list"),
+    url(r'^restaurant/menu/add/$', restaurant_login_required(rest.add_menu), name="add_menu"),
+    url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(rest.del_menu), name="del_menu"),
+    url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.edit_menu), name="edit_menu"),
 
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
 
