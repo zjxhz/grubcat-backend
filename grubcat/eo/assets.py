@@ -2,7 +2,8 @@ from django.conf import settings
 from django_assets import Bundle, register, env
 #env.directory=settings.STATIC_ROOT
 #env.url_expire = True
-env.get_env().config['less_bin'] = 'D:/userdata/qimeng/Application Data/npm/lessc.cmd'
+import django_assets
+from webassets.env import Environment
 
 #css below
 
@@ -15,14 +16,6 @@ dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.
 bootstrap_css = Bundle(
     'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'
 )
-
-my_bootstrap_css  = Bundle('less/bootstrap/bootstrap.less',
-    filters='less', output='gen/my_bootstrap.%(version)s.css',
-   debug=False )
-
-#env.register('my_bootstrap_css',
-#    my_bootstrap_css,
-#    filters='cssmin', output="gen/my_bootstrap.css")
 
 meal_list_css = Bundle(
     base_css, common_css,dropkick_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
@@ -86,7 +79,6 @@ register('base_css', base_css)
 register('common_css', common_css)
 register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
-register('my_bootstrap_css', my_bootstrap_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
 register('meal_add_css', meal_add_css)
