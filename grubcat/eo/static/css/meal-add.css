@@ -1,6 +1,7 @@
 #restaurant-list {
     height: 450px;
-    overflow: auto;
+    overflow-y: auto ;
+    overflow-x: hidden;
     background-color: #EEE;
     margin-bottom: 15px;
     border-top: 1px solid #DDD;
