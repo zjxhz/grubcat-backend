@@ -1,5 +1,5 @@
 #restaurant-list {
-    height:450px;
+    height: 450px;
     overflow: auto;
     background-color: #EEE;
     margin-bottom: 15px;
@@ -8,21 +8,19 @@
     border-right: 1px solid #DDD;
 }
 
-
-
-.form-wrapper{
-    width:685px;
+.form-wrapper {
+    width: 685px;
     float: left;
 }
 
-#faq{
+#faq {
     float: right;
     width: 250px;
     margin: 0 0 10px 0;
 }
 
 #faq .sidebar-box-inner p {
-    display: block  ;
+    display: block;
 }
 
 #create_meal_form fieldset {
@@ -47,7 +45,7 @@
 }
 
 /*#create_meal_form fieldset.full{*/
-    /*width: 955px;*/
+/*width: 955px;*/
 /*}*/
 
 .control-group label {
@@ -71,7 +69,7 @@
     font-size: 16px;
 }
 
-.dk_toggle{
+.dk_toggle {
     padding: 10px 44px 10px 13px;
 }
 
@@ -89,10 +87,10 @@
     margin-right: 10px;
     margin-bottom: 20px;
 
-    background: url(../img/calendar.png),-webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
-    background: url(../img/calendar.png),-moz-linear-gradient(top, white, whiteSmoke);
-    background: url(../img/calendar.png),-o-linear-gradient(top, white, whiteSmoke);
-    background: url(../img/calendar.png),linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png), -webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
+    background: url(../img/calendar.png), -moz-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png), -o-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png), linear-gradient(top, white, whiteSmoke);
     background-repeat: no-repeat;
     background-position: 12px center;
     font-weight: bold;
@@ -104,7 +102,8 @@
     color: #666;
     box-shadow: none;
 }
-#choose-menu{
+
+#choose-menu {
     border-top: 1px solid #DDD;
     margin-left: 0;
     padding-top: 15px;
@@ -115,7 +114,8 @@
     width: 299px;
     margin-left: 0px;
 }
-.restaurant-item{
+
+.restaurant-item {
     width: 270px;
     display: inline-block;
     border-bottom: 1px solid #DDD;
@@ -125,7 +125,7 @@
     cursor: pointer;
 }
 
-.restaurant-item.selected{
+.restaurant-item.selected {
     background-color: white;
 }
 
@@ -145,44 +145,41 @@ span.rest-name, span.rest-hood {
     margin-top: 5px;
 }
 
-
 .restaurant-item span.rest-price {
     float: right;
     line-height: 46px;
     margin-right: 0px;
 }
 
-.let-fanjoin-choose-link-wrapper{
+.let-fanjoin-choose-link-wrapper {
     padding-left: 20px;
     font-size: 14px;
 }
 
-#let-fanjoin-choose{
-    margin-left: -20px;;
+#let-fanjoin-choose {
 }
 
-#let-fanjoin-choose .info{
-    margin: 20px 2px 30px 42px;
+#let-fanjoin-choose .info {
+    margin: 20px 2px 30px 0px;
     color: #444;
     font-size: 16px;
     line-height: 18px;
 }
 
-#choose-restaurant-info{
+#choose-restaurant-info {
     line-height: 100px;
     text-align: center;
     font-weight: bold;
 }
 
-#extra_request_link{
+#extra_request_link {
     margin-right: 29px;
     font-size: 30px;
 }
 
-.more-options a:hover{
+.more-options a:hover {
     text-decoration: none;
 }
-
 
 #create_meal_form .form-actions {
     width: 100%;
@@ -191,7 +188,7 @@ span.rest-name, span.rest-hood {
     border: none;
 }
 
-button.btn-create-meal{
+button.btn-create-meal {
     width: 150px;
     margin: 0 auto;
     display: block;
@@ -201,45 +198,61 @@ button.btn-create-meal{
 
 .form-horizontal .control-group {
     margin-bottom: 18px;
-    margin-left: -9px;
+    margin-left: 13px;
 }
 
 .form-horizontal .control-group label {
-    width:130px;
+    width: 100px;
 }
 
-.menu-info{
+.form-horizontal .controls {
+    margin-left: 120px;
+}
+
+#let-fanjoin-choose .control-group {
+    margin-left: -12px;
+}
+
+#let-fanjoin-choose .control-label{
+    width: 90px;
+}
+#let-fanjoin-choose .controls{
+    margin-left: 105px;
+}
+
+.menu-info {
     margin-left: 35px;;
 }
 
-.menu-info .title{
-     font-size: 16px;
-     color: #000;
- }
+.menu-info .title {
+    font-size: 16px;
+    color: #000;
+}
 
-.menu-info .rest-name{
-     font-size: 20px;
-     font-weight: bold;
- }
+.menu-info .rest-name {
+    font-size: 20px;
+    font-weight: bold;
+}
 
-.menu-info .rest-name{
+.menu-info .rest-name {
     margin-top: 10px;
 }
 
-.menu-info .menu-name{
+.menu-info .menu-name {
     margin: 15px 0;
 }
 
-.dish-info{
+.dish-info {
     float: right;
 }
-dt{
+
+dt {
     width: 290px;
     padding: 10px 0px;
     font-size: 15px;
 }
 
-dd{
+dd {
     width: 250px;
     padding: 0px 0px 5px 15px;
     font-size: 14px;
