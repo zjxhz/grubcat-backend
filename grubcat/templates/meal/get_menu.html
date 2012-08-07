@@ -1,0 +1,86 @@
+{% load static from staticfiles %}
+<div id="choose-menu" class="row">
+    <div id="choose-restaurant" class="fl">
+        <div id="restaurant-list">
+        {% if menu_list %}
+            <ul>
+                {% for menu in menu_list %}
+                    <li class="restaurant-item" menu-id="{{ menu.id }}">
+                        <img alt="8人套餐 25元/人" src="{% static "img/menu-cover.png" %}">
+                        <span class="rest-price">{{ menu.average_price }}元/人</span>
+                        <span class="rest-address">{{ menu.restaurant.name }}</span>
+{#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-menu-info">对不起，目前没有适合的餐厅，您可以改变就餐人数或者就餐时间，查看是否有合适的餐厅。</div>
+        {% endif %}
+        </div>
+        <div class="let-fanjoin-choose-link-wrapper">
+            或者 &nbsp;&nbsp;&nbsp;&nbsp; <a class="btn button" href="#" id="let-fanjon-choose-link">让饭聚网帮我选</a>
+        </div>
+    </div>
+    <div id="choose-restaurant-info" class="fl span4">
+        在左边选择餐厅
+    </div>
+    <div id="menu-info-wrapper" class="fl">
+        {% for menu in menu_list %}
+            <div id="menu-{{ menu.id }}" class="hide menu-info">
+                <div class="title">
+                    <div class="rest-address">{{ menu.restaurant.address }}
+                        <a href="#" class="map" original-title="">地图</a>
+                    </div>
+                    <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>
+                </div>
+
+                <dl class="menu-items">
+                    {% for item in menu.menu_items %}
+                        {% ifequal item.content_type.model  'dishcategory' %}
+                            <dt class="category">{{ item.object.name }}  </dt>
+                        {% endifequal %}
+                        {% ifequal item.content_type.model  'dish' %}
+                            <dd class="dish"><span class="dish-name">{{ item.object.name }}</span>
+                                <span class="dish-info"> <span class="price">{{ item.object.price }} 元</span><span
+                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
+                            </dd>
+                        {% endifequal %}
+                    {% endfor %}
+                </dl>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
+        <div class="info">
+            还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="id_region">就餐地点</label>
+
+            <div class="controls">
+                <select name="region" id="id_region" class="pretty">
+                    <option value="1">滨江</option>
+                    <option value="1">西湖</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+
+            <label class="control-label" for="id_list_price">平均消费</label>
+
+            <div class="controls">
+
+                <select name="list_price" id="id_list_price" class="pretty">
+                    <option value="1">25 元/人</option>
+                    <option value="1">30 元/人</option>
+                    <option value="" selected="selected">35 元/人</option>
+                    <option value="3">40 元/人</option>
+                    <option value="4">45 元/人</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+   
