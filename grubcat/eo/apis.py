@@ -156,6 +156,7 @@ class UserTagResource(ModelResource):
                 
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
+    avatar = Base64FileField('avatar')
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
     from_user = fields.ToManyField('eo.apis.RelationshipResource', 'from_user')
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
