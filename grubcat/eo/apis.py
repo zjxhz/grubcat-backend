@@ -24,7 +24,7 @@ import simplejson
 from taggit.models import Tag
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('api')
 
 
 class Base64FileField(FileField):
@@ -67,9 +67,11 @@ class Base64FileField(FileField):
 #        return None
 
     def hydrate(self, obj):
+        logger.debug('processing Base64FileField')
         value = super(FileField, self).hydrate(obj)
-        if value:
+        if value and type(value) != str: # we might be in a process of updating other fields in this case this field is just a normal string
             value = SimpleUploadedFile(value["name"], base64.b64decode(value["file"]), getattr(value, "content_type", "application/octet-stream"))
+            logger.info('file saved: %s' % value)
         return value
     
 '''TODO add a base class that:
