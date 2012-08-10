@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load bootstrap_tags %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
+
+    {% assets "common_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+
+
+    {% assets "meal_add_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block page_js %}
+    {#    {% assets "jquery_form_js" %}#}
+    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+    {#    {% endassets %}#}
+    {#    {% assets "jquery_ajax_bootstrap_js" %}#}
+    {#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
+    {#    {% endassets %}#}
+    <script type="text/javascript" src="{% static_asset "js/jquery.lionbars.0.3.js" %}"></script>
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_time,#id_list_price,#id_region').dropkick({width:120});
+            $("#id_min_persons").dropkick({
+                        change:false,
+                        width:315,
+                        change:function (value, label) {
+                            $.get("{% url menu_list %}",{num_persons:value}, function (data) {
+                                $("#choose-menu-container").html(data);
+                                $('#id_list_price,#id_region').dropkick({width:120});
+                                $("li.restaurant-item:first").click();
+                            },'html');
+                        }
+                    }
+            )
+            $.get("{% url menu_list %}",{num_persons:$("#id_min_persons>option:selected").val()}, function (data) {
+                $("#choose-menu-container").html(data);
+                $('#id_list_price,#id_region').dropkick({width:120});
+            },'html');
+
+            $("select").dropkick({width:315});
+
+            $("#restaurant-list").lionbars(false);
+            $.datepicker.regional['zh-CN'] =
+            {
+                clearText:'清除', clearStatus:'清除已选日期',
+                closeText:'关闭', closeStatus:'不改变当前选择',
+                prevText:'&lt;上月', prevStatus:'显示上月',
+                nextText:'下月&gt;', nextStatus:'显示下月',
+                currentText:'今天', currentStatus:'显示本月',
+                monthNames:['一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                monthNamesShort:['一', '二', '三', '四', '五', '六',
+                    '七', '八', '九', '十', '十一', '十二'],
+                monthStatus:'选择月份', yearStatus:'选择年份',
+                weekHeader:'周', weekStatus:'年内周次',
+                dayNames:['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+                dayNamesShort:['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+                dayNamesMin:['日', '一', '二', '三', '四', '五', '六'],
+                dayStatus:'设置 DD 为一周起始', dateStatus:'选择 m月 d日, DD',
+                dateFormat:'yy-mm-dd', firstDay:1,
+                initStatus:'请选择日期', isRTL:false
+            };
+
+            $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+            $("#start_date").datepicker({
+                onSelect:function (dateText, inst) {
+                    $(inst.input).change().focusout();
+                },
+                defaultDate:"2012-8-17",
+                numberOfMonths:1,
+                minDate:'+4D',
+                maxDate:'+3M'
+            })
+
+            $("#extra_request_link").click(function () {
+                $("#more-options").slideToggle(500);
+                return false;
+            })
+
+            $("#let-fanjon-choose-link").live("click", function () {
+                $("#choose-restaurant-info").hide();
+                $("#let-fanjoin-choose").show();
+                var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
+                $("#menu-" + oldMenuId).hide();
+                $("li.restaurant-item.selected").removeClass("selected");
+                return false;
+            })
+
+
+
+            $("li.restaurant-item").live("click", function () {
+                $("#menu-info-wrapper").show();
+                $("#choose-restaurant-info,#let-fanjoin-choose").hide();
+                var oldMenuId = $(this).siblings(".selected").attr("menu-id");
+                $("#menu-" + oldMenuId).hide();
+                $(this).addClass('selected').siblings().removeClass("selected");
+                $("#menu-" + $(this).attr("menu-id")).show();
+            })
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="faq" class="faq sidebar-box">
+        <div class="sidebar-box-title">常见问题</div>
+        <div class="sidebar-box-inner">
+            <a>饭聚网是什么？</a>
+
+            <p>饭聚网是刚刚流行起来的基于兴趣的美食社交网站，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。</p>
+
+
+            <a>如何取消一个饭局？</a>
+
+            <p>如果你已经为一个饭局付费了，但又因为其他计划而不能参加了，那么你可以在饭局开始前的72个小时内取消，可以通过拨打热线0000000000联系我们，我们会帮您取消饭局。</p>
+
+            <a>更多>></a>
+        </div>
+    </div>
+    <div class="form-wrapper">
+        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+              class="form form-horizontal"> {% csrf_token %}
+
+            <fieldset>
+
+                <legend>1、饭局信息</legend>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_topic">饭局主题</label>
+
+                    <div class="controls">
+                        {{ form.topic }} {{ form.topic.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_introduction">饭局简介</label>
+
+                    <div class="controls">
+                        {{ form.introduction }} {{ form.introduction.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_privacy">是否公开</label>
+
+                    <div class="controls">
+                        {{ form.privacy }} {{ form.privacy.errors }}
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="full">
+
+                <legend>2、餐厅信息</legend>
+                <div class="control-group">
+                    <label class="control-label" for="id_privacy">就餐时间</label>
+
+                    <div class="controls">
+                        <input type="text" name="time_0" id="start_date" readonly="readonly" value="2012-08-17"
+                                >
+                        <select name="id_time_1" id="start_time" class="pretty">
+                            <option value="" selected="selected">下午 7:00</option>
+                            <option value="sdf">下午 8:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="id_min_persons">就餐人数</label>
+
+                    <div class="controls">
+
+                       {{ form.min_persons }} {{ form.min_persons.errors }}
+                    </div>
+                </div>
+                <div id="choose-menu-container">
+                </div>
+            </fieldset>
+
+            <fieldset class="more-options">
+                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>
+                <div id="more-options" class="hide">
+
+                    <div class="control-group" id="extra_request_div">
+                        <label class="control-label" for="id_extra_requests">其它需求</label>
+
+                        <div class="controls">
+                            <textarea id="id_extra_requests" rows="5" cols="40" name="extra_requests"
+                                      class="input-xlarge"
+                                      placeholder="如果您有其它的要求，如不吃辣，我们会尽量满足您"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+
+            <div class="form-actions">
+                <button type="submit" class="btn-create-meal">确定</button>
+            </div>
+        </form>
+    </div>
+
+
+{% endblock %}
