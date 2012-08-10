@@ -380,6 +380,17 @@ class BestRatingDish(models.Model):
     class Meta:
         db_table = u'best_rating_dish'
 
+class MealPrivacy:
+    PUBLIC = 0
+    PRIVACY = 1
+
+MEAL_PRIVACY_CHOICE = (
+    (MealPrivacy.PUBLIC, u"公开：所有人可以参加"),
+    (MealPrivacy.PRIVACY, u"私密：仅邀请的人可以参加")
+)
+
+MEAL_PERSON_CHOICE =[(x, "%s人" % x) for x in range(3, 13)]
+
 
 class Meal(models.Model):
 
@@ -388,12 +399,9 @@ class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=2)
-    min_persons = models.IntegerField(u'参加人数', )
+    min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE,default=8)
     extra_requests = models.CharField(u'其它要求',max_length=128,null=True,blank=True)
-
     max_persons = models.IntegerField(u'最多参加人数', default=0) # not used for now,
-
-
     photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅') #TODO retrieve from menu
     menu = models.ForeignKey(Menu,verbose_name=u'菜单',null=True)
@@ -402,7 +410,7 @@ class Meal(models.Model):
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True, null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
-    privacy = models.IntegerField(default=0) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
+    privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC, choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
     def join(self, order):
         if self.actual_persons + order.num_persons > self.max_persons:

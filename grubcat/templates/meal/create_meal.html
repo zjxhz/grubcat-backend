@@ -59,8 +59,7 @@
                 $('#id_list_price,#id_region').dropkick({width:120});
             },'html');
 
-            $("select.pretty").dropkick({width:315});
-
+            $("select").dropkick({width:315});
 
             $("#restaurant-list").lionbars(false);
             $.datepicker.regional['zh-CN'] =
@@ -154,8 +153,7 @@
                     <label class="control-label" for="id_topic">饭局主题</label>
 
                     <div class="controls">
-                        <input id="id_topic" type="text" name="topic" maxlength="64"
-                               class="input-xlarge">
+                        {{ form.topic }} {{ form.topic.errors }}
                     </div>
                 </div>
 
@@ -163,8 +161,7 @@
                     <label class="control-label" for="id_introduction">饭局简介</label>
 
                     <div class="controls">
-                        <textarea id="id_introduction" rows="5" cols="40" name="introduction" class="input-xlarge"
-                                  placeholder="少于200个字"></textarea>
+                        {{ form.introduction }} {{ form.introduction.errors }}
                     </div>
                 </div>
 
@@ -172,10 +169,7 @@
                     <label class="control-label" for="id_privacy">是否公开</label>
 
                     <div class="controls">
-                        <select name="privacy" id="id_privacy" class="pretty">
-                            <option value="1" selected="selected">公开：所有人可以参加</option>
-                            <option value="2">私密：仅邀请的人可以参加</option>
-                        </select>
+                        {{ form.privacy }} {{ form.privacy.errors }}
                     </div>
                 </div>
             </fieldset>
@@ -200,18 +194,7 @@
 
                     <div class="controls">
 
-                        <select name="min_persons" id="id_min_persons" class="pretty">
-                            <option value="3">3人</option>
-                            <option value="4">4人</option>
-                            <option value="5">5人</option>
-                            <option value="6">6人</option>
-                            <option value="7">7人</option>
-                            <option value="8" selected="selected">8人</option>
-                            <option value="9">9人</option>
-                            <option value="10">10人</option>
-                            <option value="11">11人</option>
-                            <option value="12">12人</option>
-                        </select>
+                       {{ form.min_persons }} {{ form.min_persons.errors }}
                     </div>
                 </div>
                 <div id="choose-menu-container">

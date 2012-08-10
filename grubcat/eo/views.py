@@ -33,10 +33,9 @@ class MenuListView(ListView):
 
     def get_queryset(self):
 
-        #TODO filter by num persons and date and time
+        #TODO filter by  date and time
         num_persons = self.request.GET.get("num_persons",8)
-        print(num_persons)
-        qs = Menu.objects.filter(status=MenuStatus.NORMAL,num_persons=num_persons)
+        qs = Menu.objects.filter(status=MenuStatus.NORMAL,num_persons=num_persons).select_related('restaurant',)
         for menu in qs:
             menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
         return qs

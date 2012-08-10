@@ -9,9 +9,9 @@ class MealForm(ModelForm):
     time = forms.SplitDateTimeField(input_date_formats='yyyy-MM-dd',input_time_formats='HH:mm')
     class Meta:
         model = Meal
-        fields = ('time','region','topic','introduction','min_persons','list_price','extra_requests')
+        fields = ('topic','introduction','privacy','time','region','min_persons','list_price','extra_requests')
         widgets = {
-            'introduction': Textarea(),
+            'introduction': Textarea({'rows':5}),
             'extra_requests':Textarea(),
         }
 
