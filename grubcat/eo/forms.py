@@ -7,12 +7,13 @@ from grubcat.eo.models import *
 
 class MealForm(ModelForm):
     time = forms.SplitDateTimeField(input_date_formats='yyyy-MM-dd',input_time_formats='HH:mm')
+    menu_id = forms.CharField(widget=HiddenInput)
     class Meta:
         model = Meal
         fields = ('topic','introduction','privacy','time','region','min_persons','list_price','extra_requests')
         widgets = {
             'introduction': Textarea({'rows':5}),
-            'extra_requests':Textarea(),
+            'extra_requests':Textarea({'rows':5}),
         }
 
 

@@ -182,6 +182,10 @@ span.rest-address, span.rest-location {
     text-decoration: none;
 }
 
+#extra_request_div{
+    margin-top: 18px;
+}
+
 #create_meal_form .form-actions {
     width: 100%;
     margin: 0 auto;
