@@ -47,7 +47,7 @@ class MealCreateView(CreateView):
     template_name = 'meal/create_meal.html'
 
 #    def get_initial(self):
-#        return {'meal_id': self.kwargs['meal_id']}
+#        return {'menu_id': self.kwargs['menu_id']}
 
 #    def get_context_data(self, **kwargs):
 #        context = super(OrderCreateView, self).get_context_data(**kwargs)

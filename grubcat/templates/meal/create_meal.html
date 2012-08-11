@@ -40,24 +40,32 @@
     {% endassets %}
     {{ block.super }}
     <script type="text/javascript">
+        function getMenuList(numPersons, menuIdToSelect){
+            $.get("{% url menu_list %}",{num_persons:numPersons}, function (data) {
+                $("#let-fanjoin-choose").hide().appendTo("body");
+                $("#choose-menu-container").html(data);
+                $("#id_menu_id").val( "");
+                if(menuIdToSelect){
+                     $("li[menu-id=" + menuIdToSelect +  "]").click();
+                }
+                $('#id_list_price,#id_region').dropkick({width:120});
+            },'html');
+        }
+
         $(document).ready(function () {
             $('#start_time,#id_list_price,#id_region').dropkick({width:120});
             $("#id_min_persons").dropkick({
                         change:false,
                         width:315,
                         change:function (value, label) {
-                            $.get("{% url menu_list %}",{num_persons:value}, function (data) {
-                                $("#choose-menu-container").html(data);
-                                $('#id_list_price,#id_region').dropkick({width:120});
-                                $("li.restaurant-item:first").click();
-                            },'html');
+                            getMenuList(value);
                         }
                     }
             )
-            $.get("{% url menu_list %}",{num_persons:$("#id_min_persons>option:selected").val()}, function (data) {
-                $("#choose-menu-container").html(data);
-                $('#id_list_price,#id_region').dropkick({width:120});
-            },'html');
+
+            var oldMenuId = $("#id_menu_id").val();
+            getMenuList( $("#id_min_persons>option:selected").val(),oldMenuId);
+
 
             $("select").dropkick({width:315});
 
@@ -102,6 +110,11 @@
 
             $("#let-fanjon-choose-link").live("click", function () {
                 $("#choose-restaurant-info").hide();
+                $("#id_menu_id").val("");
+                if(!$("#choose-menu-container #let-fanjoin-choose")[0])
+                {
+                    $("#choose-menu").append($("#let-fanjoin-choose"));
+                }
                 $("#let-fanjoin-choose").show();
                 var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
                 $("#menu-" + oldMenuId).hide();
@@ -118,6 +131,7 @@
                 $("#menu-" + oldMenuId).hide();
                 $(this).addClass('selected').siblings().removeClass("selected");
                 $("#menu-" + $(this).attr("menu-id")).show();
+                $("#id_menu_id").val( $(this).attr("menu-id"));
             })
         })
     </script>
@@ -209,20 +223,39 @@
                         <label class="control-label" for="id_extra_requests">其它需求</label>
 
                         <div class="controls">
-                            <textarea id="id_extra_requests" rows="5" cols="40" name="extra_requests"
-                                      class="input-xlarge"
-                                      placeholder="如果您有其它的要求，如不吃辣，我们会尽量满足您"></textarea>
+                            {{ form.extra_requests }}{{ form.extra_requests.errors }}
                         </div>
                     </div>
                 </div>
             </fieldset>
 
-
+            {{ form.menu_id }}
             <div class="form-actions">
                 <button type="submit" class="btn-create-meal">确定</button>
             </div>
         </form>
     </div>
+    <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
+        <div class="info">
+            还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
+        </div>
 
+        <div class="control-group">
+            <label class="control-label" for="id_region">就餐地点</label>
+
+            <div class="controls">
+                {{ form.region }}{{ form.region.errors }}
+            </div>
+        </div>
+        <div class="control-group">
+
+            <label class="control-label" for="id_list_price">平均消费</label>
+
+            <div class="controls">
+
+                {{ form.list_price }} {{ form.list_price.errors }}
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
