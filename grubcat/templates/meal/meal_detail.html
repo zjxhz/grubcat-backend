@@ -24,7 +24,7 @@
 
             <h1>{{ meal.topic }}</h1>
                 <span id="restaurant-location">在 <a
-                        class="restaurant-name">{{ meal.restaurant.name }}</a> {{ meal.restaurant.address }} <a
+                        class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }} <a
                         class="map">查看地图</a> </span>
         </div>
         <p id="desc">{{ meal.introduction }}</p>
@@ -45,13 +45,13 @@
                 {% endif %}
 
                 <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>
-                    <span class="date">{{ meal.time|date:"n" }}月{{ meal.time|date:"j" }}日 {{ meal.time|date:"D" }}
-                    <br/>{{ meal.time|date:"G:i " }}</span>
+                    <span class="date">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
+                    <br/>{{ meal.start_time|date:"G:i " }}</span>
                 {#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
             </div>
             <div id="meal-img-wrapper">
                 <img alt="{{ meal.topic }}" id="meal-photo"
-                     src="{{ meal.photo.url }}"
+                     src="{{ meal.get_cover_url }}"
                      width="385px">
             </div>
         </div>

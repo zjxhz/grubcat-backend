@@ -16,7 +16,7 @@
             $('#map').gmap3(
                     {
                         action: 'addMarker',
-                        address: "{{ order.meal.restaurant.address }}",
+                        address: "{{ order.meal.menu.restaurant.address }}",
                         map:{
                             center: true,
                             zoom: 15
@@ -32,7 +32,7 @@
             <h2>{{ order.meal.topic }}</h2>
 
             <p id="restaurant-location"><a
-                    class="restaurant-name">{{ order.meal.restaurant.name }}</a> {{ order.meal.restaurant.address }}
+                    class="restaurant-name">{{ order.meal.menu.restaurant.name }}</a> {{ order.meal.menu.restaurant.address }}
             </p>
         </div>
 

@@ -2,7 +2,7 @@
 {% load static_asset %}
 {% load bootstrap_tags %}
 {% load static from staticfiles %}{% load assets %}
-{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block title %}发起饭局{% endblock %}
 {% block page_css %}
     {% assets "base_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
@@ -40,20 +40,22 @@
     {% endassets %}
     {{ block.super }}
     <script type="text/javascript">
-        function getMenuList(numPersons, menuIdToSelect){
-            $.get("{% url menu_list %}",{num_persons:numPersons}, function (data) {
-                $("#let-fanjoin-choose").hide().appendTo("body");
+        function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
+            $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
+                $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
                 $("#choose-menu-container").html(data);
-                $("#id_menu_id").val( "");
-                if(menuIdToSelect){
-                     $("li[menu-id=" + menuIdToSelect +  "]").click();
+                $("#id_menu_id").val("");
+                if (if_let_fanjoin_choose){
+                    $("#let-fanjon-choose-link").click()
+                }else if (menuIdToSelect) {
+                    $("li[menu-id=" + menuIdToSelect + "]").click();
                 }
                 $('#id_list_price,#id_region').dropkick({width:120});
-            },'html');
+            }, 'html');
         }
 
         $(document).ready(function () {
-            $('#start_time,#id_list_price,#id_region').dropkick({width:120});
+            $('#id_start_time,#id_list_price,#id_region').dropkick({width:120});
             $("#id_min_persons").dropkick({
                         change:false,
                         width:315,
@@ -62,10 +64,9 @@
                         }
                     }
             )
-
+            var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
             var oldMenuId = $("#id_menu_id").val();
-            getMenuList( $("#id_min_persons>option:selected").val(),oldMenuId);
-
+            getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
             $("select").dropkick({width:315});
 
@@ -93,7 +94,7 @@
 
             $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
 
-            $("#start_date").datepicker({
+            $("#id_start_date").datepicker({
                 onSelect:function (dateText, inst) {
                     $(inst.input).change().focusout();
                 },
@@ -111,11 +112,11 @@
             $("#let-fanjon-choose-link").live("click", function () {
                 $("#choose-restaurant-info").hide();
                 $("#id_menu_id").val("");
-                if(!$("#choose-menu-container #let-fanjoin-choose")[0])
-                {
+                if (!$("#choose-menu-container #let-fanjoin-choose")[0]) {
                     $("#choose-menu").append($("#let-fanjoin-choose"));
                 }
                 $("#let-fanjoin-choose").show();
+                $("#id_if_let_fanjoin_choose").val("True")
                 var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
                 $("#menu-" + oldMenuId).hide();
                 $("li.restaurant-item.selected").removeClass("selected");
@@ -123,15 +124,15 @@
             })
 
 
-
             $("li.restaurant-item").live("click", function () {
                 $("#menu-info-wrapper").show();
                 $("#choose-restaurant-info,#let-fanjoin-choose").hide();
+                $("#id_if_let_fanjoin_choose").val("False")
                 var oldMenuId = $(this).siblings(".selected").attr("menu-id");
                 $("#menu-" + oldMenuId).hide();
                 $(this).addClass('selected').siblings().removeClass("selected");
                 $("#menu-" + $(this).attr("menu-id")).show();
-                $("#id_menu_id").val( $(this).attr("menu-id"));
+                $("#id_menu_id").val($(this).attr("menu-id"));
             })
         })
     </script>
@@ -157,7 +158,6 @@
     <div class="form-wrapper">
         <form id="create_meal_form" action="{% url create_meal %}" method="post"
               class="form form-horizontal"> {% csrf_token %}
-
             <fieldset>
 
                 <legend>1、饭局信息</legend>
@@ -195,20 +195,16 @@
                     <label class="control-label" for="id_privacy">就餐时间</label>
 
                     <div class="controls">
-                        <input type="text" name="time_0" id="start_date" readonly="readonly" value="2012-08-17"
-                                >
-                        <select name="id_time_1" id="start_time" class="pretty">
-                            <option value="" selected="selected">下午 7:00</option>
-                            <option value="sdf">下午 8:00</option>
-                        </select>
+                        {{ form.start_date }} {{ form.start_time }}
+                        {{ form.start_date.errors }} {{ form.start_time.errors }}
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group min_persons">
                     <label class="control-label" for="id_min_persons">就餐人数</label>
 
                     <div class="controls">
 
-                       {{ form.min_persons }} {{ form.min_persons.errors }}
+                        {{ form.min_persons }} {{ form.min_persons.errors }} {{ form.menu_id.errors }}
                     </div>
                 </div>
                 <div id="choose-menu-container">
@@ -228,34 +224,34 @@
                     </div>
                 </div>
             </fieldset>
+            <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
+                <div class="info">
+                    还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
+                </div>
 
-            {{ form.menu_id }}
+                <div class="control-group region">
+                    <label class="control-label" for="id_region">就餐地点</label>
+
+                    <div class="controls">
+                        {{ form.region }}{{ form.region.errors }}
+                    </div>
+                </div>
+                <div class="control-group list-price">
+
+                    <label class="control-label" for="id_list_price">平均消费</label>
+
+                    <div class="controls">
+
+                        {{ form.list_price }} {{ form.list_price.errors }}
+                    </div>
+                </div>
+            </div>
+
+            {{ form.menu_id }} {{ form.if_let_fanjoin_choose }}
             <div class="form-actions">
                 <button type="submit" class="btn-create-meal">确定</button>
             </div>
         </form>
-    </div>
-    <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
-        <div class="info">
-            还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
-        </div>
-
-        <div class="control-group">
-            <label class="control-label" for="id_region">就餐地点</label>
-
-            <div class="controls">
-                {{ form.region }}{{ form.region.errors }}
-            </div>
-        </div>
-        <div class="control-group">
-
-            <label class="control-label" for="id_list_price">平均消费</label>
-
-            <div class="controls">
-
-                {{ form.list_price }} {{ form.list_price.errors }}
-            </div>
-        </div>
     </div>
 
 {% endblock %}

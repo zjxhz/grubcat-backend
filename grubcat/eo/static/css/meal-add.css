@@ -1,3 +1,6 @@
+.min_persons .errorlist, .region .errorlist, .list-price .errorlist {
+    float: left;
+}
 #restaurant-list {
     height: 450px;
     overflow-y: auto ;
@@ -80,7 +83,7 @@
     padding: 12px 10px 9px 45px;
 }
 
-#start_date {
+#id_start_date {
     float: left;
     font-size: 16px;
     padding: 5px 5px 5px 43px;
