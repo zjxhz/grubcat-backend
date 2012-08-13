@@ -184,6 +184,9 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+        'api':{
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+        },
         },
     'filters': {
     },
@@ -210,6 +213,14 @@ LOGGING = {
             'backupCount': 7,
             'formatter': 'verbose',
             },
+        'api':{
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'api.log'),
+            'maxBytes': 1024 * 1024 * 1, 
+            'backupCount': 1,
+            'formatter': 'api',
+        },
         'request_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -241,6 +252,11 @@ LOGGING = {
         'scripts': {
             'handlers': ['scprits_handler'],
             'level': 'INFO',
+            'propagate': False
+        },
+        'api': {
+            'handlers': ['api'],
+            'level': 'DEBUG',
             'propagate': False
         },
         }
