@@ -163,7 +163,7 @@ class DishCategory(models.Model):
 
 class Dish(models.Model):
     name = models.CharField(u'菜名', max_length=135)
-    price = models.DecimalField(u'价钱', decimal_places=2, max_digits=6)
+    price = models.DecimalField(u'价钱', decimal_places=1, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
     desc = models.CharField(u'描述', max_length=765, blank=True)
     #    pic = models.CharField(u'图片', max_length=765, blank=True)
