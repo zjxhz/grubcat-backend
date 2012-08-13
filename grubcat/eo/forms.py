@@ -10,7 +10,7 @@ SplitDateTimeWidget
 
 class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput,required=False)
-    if_let_fanjoin_choose = forms.BooleanField(widget=HiddenInput,initial=False)
+    if_let_fanjoin_choose = forms.BooleanField(widget=HiddenInput,initial=False,required=False)
     class Meta:
         model = Meal
         fields = ('topic','introduction','privacy','start_date','start_time','region','min_persons','list_price','extra_requests','if_let_fanjoin_choose')
