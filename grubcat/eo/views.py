@@ -54,18 +54,24 @@ class MealCreateView(CreateView):
 #        context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
 #        return context
 #
-#    def form_valid(self, form):
-#        order = form.save(False)
-#        order.customer = self.request.user.get_profile()
-#        order.meal_id = form.cleaned_data['meal_id']
-#        order.status = OrderStatus.CREATED
-#        order.total_price = order.meal.list_price * order.num_persons
-#        response = super(OrderCreateView, self).form_valid(form)
-#        order.meal.join(order)
-#        return response
+    #TODO clean method
+
+    def form_valid(self, form):
+        meal = form.save(False)
+        meal.host = self.request.user.get_profile()
+        meal.max_persons = meal.min_persons
+        menu_id = form.cleaned_data['menu_id']
+        if menu_id:
+            meal.menu_id = menu_id
+            meal.list_price = meal.menu.average_price
+            meal.region = None
+            #TODO to remove
+            meal.restaurant = meal.menu.restaurant
+        response = super(MealCreateView, self).form_valid(form)
+        return response
 
 class MealListView(ListView):
-    queryset = Meal.objects.order_by("time")
+    queryset = Meal.objects.filter(menu__isnull=False).order_by("start_date","start_time")
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
@@ -74,7 +80,7 @@ class MealDetailView(DetailView):
     model=Meal
     context_object_name="meal"
     template_name="meal/meal_detail.html"
-    queryset = Meal.objects.select_related('restaurant','host__user').prefetch_related('participants__user')
+    queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
 
 ### User related views ###
 class RegisterView(CreateView):
@@ -137,7 +143,7 @@ class OrderDetailView(DetailView):
     model = Order
     context_object_name = "order"
     template_name = "order/order_detail.html"
-    queryset = Order.objects.select_related('meal__restaurant')
+    queryset = Order.objects.select_related('meal__menu__restaurant')
 
     def get_object(self, queryset=None):
         order = super(OrderDetailView, self).get_object()

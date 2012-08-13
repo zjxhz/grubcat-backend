@@ -28,9 +28,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ('topic', 'restaurant','host', 'list_price','time')
-    list_filter = ('restaurant',)
-    ordering = ('restaurant', )
+    list_display = ('topic', 'menu','host', 'list_price',)
+    list_filter = ('menu',)
+    ordering = ('menu', )
 
 class MenuItemInline(admin.StackedInline):
     model = MenuItem

@@ -34,14 +34,14 @@
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
                 <div class="meal-img-wrapper fl">
-                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.photo.url }}"></a>
+                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.get_cover_url }}"></a>
 
                     <div class="date-wrapper">
-                        <span class="month">{{ meal.time|date:"n" }}月</span>
-                        <span class="day-num">{{ meal.time|date:"d" }}</span>
-                        <span class="day-text">{{ meal.time|date:"D" }}</span>
+                        <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                        <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                        <span class="day-text">{{ meal.start_date|date:"D" }}</span>
                     </div>
-                    <div class="time">{{ meal.time|date:"G:i " }}</div>
+                    <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                 </div>
                 <div class="meal-info">
                     <div class="meal-location png-fix"><span>Mission</span></div>

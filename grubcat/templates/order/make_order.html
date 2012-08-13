@@ -56,13 +56,13 @@
                 <a href="/meal/5/"><img width="376px" height="210px" src="/media/uploaded_images/2012/03/21/meal_5.jpg"></a>
 
                 <div class="date-wrapper">
-                    <span class="month">{{ meal.time|date:"n" }}月</span>
-                    <span class="day-num">{{ meal.time|date:"d" }}</span>
-                    <span class="day-text">{{ meal.time|date:"D" }}</span>
+                    <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                    <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                    <span class="day-text">{{ meal.start_date|date:"D" }}</span>
                 </div>
-                <div class="time">{{ meal.time|date:"G:i " }}</div>
+                <div class="time">{{ meal.start_time|date:"G:i " }}</div>
             </div>
-            <p class="meal-location">在 <strong>{{ meal.restaurant.name }}</strong> &nbsp;{{ meal.restaurant.address }}
+            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
             </p>
         </div>
     </div>
