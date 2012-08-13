@@ -104,7 +104,7 @@
                     {#                            </div>#}
 
                     <dl class="menu-items">
-                        {% for item in meal.menu.items.all %}
+                        {% for item in meal.menu_items %}
                             {% ifequal item.content_type.model  'dishcategory' %}
                                 <dt class="category">{{ item.object.name }}  </dt>
                             {% endifequal %}

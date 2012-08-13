@@ -82,6 +82,11 @@ class MealDetailView(DetailView):
     template_name="meal/meal_detail.html"
     queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
 
+    def get_object(self, queryset=None):
+        meal = super(MealDetailView,self).get_object()
+        meal.menu_items = meal.menu.items.select_related('content_type').prefetch_related('object').all()
+        return meal
+
 ### User related views ###
 class RegisterView(CreateView):
     form_class = UserCreationForm
