@@ -370,6 +370,29 @@ img.user-pic {
     float: left;
 }
 
-#menu-popup.ui-dialog-content {
-    padding: 0;
+dt.category{
+    width: 240px;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 18px;
+}
+
+dd.dish{
+    width: 230px;
+    padding: 0 0 5px 7px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.dish-info{
+    float:right;
+}
+.dish-info .num{
+    margin-right: 5px;
+}
+
+#menu .sidebar-box-title {
+    background-color: #57D62D;
+    color: white;
 }

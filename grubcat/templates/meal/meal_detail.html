@@ -32,11 +32,11 @@
         <div id="meal-container" class="clearfix box-seperator">
             <div id="meal-grub">
                 {% if not request.user.get_profile in meal.participants.all %}
-                <a href="{% url make_order meal.id %}"
-                   class="reserve-button">
-                    马上预定
-                    <span class="mt5">{{ meal.list_price }}RMB/人</span>
-                </a>
+                    <a href="{% url make_order meal.id %}"
+                       class="reserve-button">
+                        马上预定
+                        <span class="mt5">{{ meal.list_price }}RMB/人</span>
+                    </a>
                 {% else %}
                     <a href="#"
                        class="reserve-button">
@@ -95,6 +95,31 @@
     </div>
     <div class="sidebar fr">
         {% include "support/faq_sidebar.html" %}
+        <div id="menu" class="menu sidebar-box">
+            <div class="sidebar-box-title">菜单 {{ meal.menu.name|default:"8人套餐 40元/人" }}</div>
+            <div class="sidebar-box-inner">
+                <div id="menu-info" class="">
+                    {#                            <div class="title">#}
+                    {#                                <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>#}
+                    {#                            </div>#}
+
+                    <dl class="menu-items">
+                        {% for item in meal.menu.items.all %}
+                            {% ifequal item.content_type.model  'dishcategory' %}
+                                <dt class="category">{{ item.object.name }}  </dt>
+                            {% endifequal %}
+                            {% ifequal item.content_type.model  'dish' %}
+                                <dd class="dish"><span class="dish-name">{{ item.object.name }}</span>
+                                <span class="dish-info"> <span class="dish-price">{{ item.object.price }} 元</span><span
+                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span> </span>
+                                </dd>
+                            {% endifequal %}
+                        {% endfor %}
+                    </dl>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
