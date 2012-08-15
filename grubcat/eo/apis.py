@@ -23,6 +23,8 @@ import base64
 import simplejson
 from taggit.models import Tag
 import logging
+import random
+from datetime import timedelta
 
 logger = logging.getLogger('api')
 
@@ -173,6 +175,12 @@ class UserResource(ModelResource):
             del bundle.data[field_name]
     
     def dehydrate(self, bundle):
+        if not bundle.data['location']:
+            # simulate a location. TODO remove these lines in production
+            bundle.data['lat'] = bundle.obj.faked_location.lat
+            bundle.data['lng'] = bundle.obj.faked_location.lng
+            bundle.data['updated_at'] = bundle.obj.faked_location.updated_at
+            
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
@@ -203,6 +211,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_tags'), name="api_get_tags"),    
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/recommendations%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_recommendations'), name="api_get_recommendations"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/users_nearby%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_users_nearby'), name="api_get_users_nearby"),   
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -331,15 +341,35 @@ class UserResource(ModelResource):
         else:
             return get_my_list(UserTagResource(), user.tags.all(), request) 
 
+    def filter_list(self, request, users):
+        if request.GET.get('gender'):
+                gender = int(request.GET.get('gender'))
+                users = [u for u in users if u.gender == gender]
+        if request.GET.get('seen_within_minutes'):
+            minutes = int(request.GET.get('seen_within_minutes'))
+            users = [u for u in users if datetime.now() - u.faked_location.updated_at < timedelta(minutes=minutes)]    
+        return users
+        
     def get_recommendations(self, request, **kwargs):
         if not request.user.is_authenticated():
             return login_required(request)
-        user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'GET':
-            return get_my_list(UserResource(), user.recommendations, request)
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+            recommendations = user_to_query.recommendations    
+            return get_my_list(UserResource(), self.filter_list(request, recommendations), request)
         else:
             raise
-            
+    
+    def get_users_nearby(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        if request.method == 'GET':
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+            users = user_to_query.users_nearby
+            return get_my_list(UserResource(), self.filter_list(request, users), request)
+        else:
+            raise
+                
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
