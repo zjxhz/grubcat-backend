@@ -12,6 +12,7 @@ from image_cropping.fields import ImageRatioField, ImageCropField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
 import random
+from datetime import timedelta
 
 # Create your models here.
 
@@ -351,13 +352,62 @@ class UserProfile(models.Model):
 
     @property
     def recommendations(self):
+        """
+        recommendations based on interests, people with more same interests will be listed first, other people
+        who don't have same interests will be listed as well, users that this user has been already following will
+        be excluded
+        """
         recommended_list = self.tags.similar_objects()
-        recommended_not_followed = [u for u in recommended_list if u not in self.following.all()]
-        if len(recommended_not_followed) > 5:
-            return recommended_not_followed
+        recommended_not_following = [u for u in recommended_list if u not in self.following.all()]
+        
+        recommended_list_ids = [user.id for user in recommended_list]
+        other_users=UserProfile.objects.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
+        other_users_not_following = other_users.exclude(pk__in=self.following.values('id'))
+        
+        return recommended_not_following + list(other_users_not_following)
+    
+    # return a list of values with the order how keys are sorted for a given dict
+    def sortedDictValues(self, some_dict):
+        keys = some_dict.keys()
+        keys.sort()
+        return [some_dict[key] for key in keys]
+    
+    @property
+    def users_nearby(self):
+        distance_user_dict = {}
+        for user in UserProfile.objects.exclude(pk=self.id).exclude(pk__in=self.following.values('id')):
+            if user.faked_location.lat and user.faked_location.lng:
+                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng, user.faked_location.lat)
+                distance_user_dict[distance] = user
+        return self.sortedDictValues(distance_user_dict)
+    
+    # get distance in meter, code from google maps
+    def getDistance(self, lng1, lat1, lng2, lat2):
+        EARTH_RADIUS = 6378.137
+        from math import asin, sin, cos, radians, pow, sqrt
+    
+        radLat1 = radians(lat1)
+        radLat2 = radians(lat2)
+        a = radLat1 - radLat2
+        b = radians(lng1) - radians(lng2)
+        s = 2 * asin(sqrt(pow(sin(a / 2), 2) + cos(radLat1) * cos(radLat2) * pow(sin(b / 2), 2)))
+        s = s * EARTH_RADIUS
+        return s * 1000
+    @property
+    def faked_location(self):
+        """
+        Used for testing when user location is not available
+        """
+        if self.location:
+            return self.location
         else:
-            return UserProfile.objects.exclude(id__in=self.following.values('id'))
-
+            location = UserLocation()
+            location.lat = 30.28 + random.randint(0, 99)/1000.0
+            location.lng = 120.13 + random.randint(0, 99)/1000.0
+            location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60*24*30))
+            self.location = location
+            return location
+        
     def __unicode__(self):
         return self.user.username
 
