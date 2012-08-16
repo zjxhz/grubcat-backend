@@ -78,7 +78,7 @@ urlpatterns = patterns('',
 #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
 
     # order
-    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='make_order'),
+    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
 
     #account

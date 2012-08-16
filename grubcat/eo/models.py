@@ -461,6 +461,19 @@ START_TIME_CHOICE = (
     (time(19, 00), "19:00"), (time(19, 30), "19:30"), (time(20, 00), "20:00"), (time(20, 30), "20:30"),
     )
 
+class MealStatus:
+    CREATED_NO_MENU = 0
+    CREATED_WITH_MENU = 1
+    PAID_NO_MENU = 2
+    PUBLISHED = 3 #
+
+MEAL_STATUS_CHOICE=(
+    (MealStatus.CREATED_NO_MENU, u'创建且无菜单' ),
+    (MealStatus.CREATED_WITH_MENU, u'创建且有菜单'),
+    (MealStatus.PAID_NO_MENU, u'支付且无菜单'),
+    (MealStatus.PUBLISHED, u'可以发布')
+)
+
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
@@ -474,6 +487,8 @@ class Meal(models.Model):
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
+
+    status = models.SmallIntegerField(u'饭局状态',choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
 
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
