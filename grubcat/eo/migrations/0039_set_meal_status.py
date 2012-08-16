@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
+from eo.models import MealStatus
 
-
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Adding field 'Meal.status'
-        db.add_column(u'meal', 'status',
-                      self.gf('django.db.models.fields.SmallIntegerField')(default=0),
-                      keep_default=False)
-
+        for meal in orm.Meal.objects.exclude(status__in=(MealStatus.PUBLISHED, MealStatus.PAID_NO_MENU)):
+            if meal.menu:
+                meal.status = MealStatus.PUBLISHED
+            else:
+                meal.status = MealStatus.CREATED_NO_MENU
+            meal.save()
 
     def backwards(self, orm):
-        # Deleting field 'Meal.status'
-        db.delete_column(u'meal', 'status')
-
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {
@@ -282,3 +281,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['eo']
+    symmetrical = True
