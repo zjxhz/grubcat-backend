@@ -21,17 +21,18 @@
                         {{ hidden }}
                     {% endfor %}
                     <div class="control-group">
-                        <label class="control-label">价钱:</label>
-
-                        <div class="controls">
-                            <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
-                        </div>
-                    </div>
-                    <div class="control-group">
                         <label class="control-label" for="id_num_persons">人数:</label>
 
                         <div class="controls">
                             {{ form.num_persons }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">价钱:</label>
+
+                        <div class="controls">
+                            <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
                         </div>
                     </div>
 
@@ -52,8 +53,10 @@
             <p>
 
             <h3>{{ meal.topic }}</h3></p>
+            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
+            </p>
             <div class="meal-img-wrapper">
-                <a href="/meal/5/"><img width="376px" height="210px" src="/media/uploaded_images/2012/03/21/meal_5.jpg"></a>
+                <img width="376px" height="210px" src="{{ meal.get_cover_url }}">
 
                 <div class="date-wrapper">
                     <span class="month">{{ meal.start_date|date:"n" }}月</span>
@@ -62,8 +65,7 @@
                 </div>
                 <div class="time">{{ meal.start_time|date:"G:i " }}</div>
             </div>
-            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
-            </p>
+
         </div>
     </div>
 {% endblock %}

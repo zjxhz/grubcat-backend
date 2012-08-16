@@ -46,15 +46,12 @@ class MealCreateView(CreateView):
     form_class = MealForm
     template_name = 'meal/create_meal.html'
 
-#    def get_initial(self):
-#        return {'menu_id': self.kwargs['menu_id']}
-
-#    def get_context_data(self, **kwargs):
-#        context = super(OrderCreateView, self).get_context_data(**kwargs)
-#        context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
-#        return context
-#
-    #TODO clean method
+    def get_success_url(self):
+        if self.object.status == MealStatus.PUBLISHED:
+            return super(MealCreateView, self).get_success_url()
+        else:
+        #普通用户发起饭聚后需要支付
+            return reverse_lazy('create_order',kwargs={'meal_id': self.object.id})
 
     def form_valid(self, form):
         meal = form.save(False)
@@ -67,11 +64,18 @@ class MealCreateView(CreateView):
             meal.region = None
             #TODO to remove
             meal.restaurant = meal.menu.restaurant
+
+        if hasattr(self.request.user,'restaurant'):
+            meal.status = MealStatus.PUBLISHED
+        elif menu_id:
+            meal.status = MealStatus.CREATED_WITH_MENU
+        else:
+            meal.status = MealStatus.CREATED_NO_MENU
         response = super(MealCreateView, self).form_valid(form)
         return response
 
 class MealListView(ListView):
-    queryset = Meal.objects.filter(menu__isnull=False).order_by("start_date","start_time")
+    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date","start_time")
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
@@ -123,7 +127,7 @@ class UserListView(ListView):
 ### Order related views ###
 class OrderCreateView(CreateView):
     form_class = OrderCreateForm
-    template_name = 'order/make_order.html'
+    template_name = 'order/create_order.html'
 
     def get_initial(self):
         return {'meal_id': self.kwargs['meal_id']}
@@ -140,6 +144,13 @@ class OrderCreateView(CreateView):
         order.status = OrderStatus.CREATED
         order.total_price = order.meal.list_price * order.num_persons
         response = super(OrderCreateView, self).form_valid(form)
+        meal = order.meal
+        if order.customer == meal.host:
+            #创建饭聚后，支付
+            if meal.status is MealStatus.CREATED_NO_MENU:
+                meal.status = MealStatus.PAID_NO_MENU
+            elif meal.status is MealStatus.CREATED_WITH_MENU:
+                meal.status = MealStatus.PUBLISHED
         order.meal.join(order)
         return response
 
@@ -263,52 +274,6 @@ def get_restaurant_list_by_geo(request):
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
     return HttpResponse(simplejson.dumps(response))
-
-
-#@transaction.commit_manually
-#def make_order(request):
-#    if not request.user.is_authenticated():
-#        return login_required_response(request)
-#    response = {}
-#    try:
-#        data = simplejson.loads(request.raw_post_data)
-#        order = Order()
-#        order.restaurant_id = data["restaurant_id"]
-#        order.num_persons = data["num_persons"]
-#        order.table = data["table_name"]
-#        dishes = data["dishes"]
-#        totalPrice = 0
-#        for dish in dishes:
-#            dish_id = dish["dish_id"]
-#            print "got one dish id: %s" % dish_id
-#            print "quantity: %s" % dish["quantity"]
-#            quantity = dish["quantity"]
-#            d = Dish.objects.get(id=dish_id)
-#            totalPrice = totalPrice + d.price * Decimal(str(quantity))
-#        order.total_price = totalPrice
-#        order.created_time = datetime.now()
-#        order.confirmed_time = datetime.now()
-#        order.status = ORDER_STATUS.CREATED # Confirmed
-#        order.customer_id = request.user.get_profile().id
-#        order.save()
-#        #        for dish in dishes:
-#        #            dish_id = dish["dish_id"]
-#        #            quantity = dish["quantity"]
-#        #            od = OrderDishes()
-#        #            od.order_id = order.id
-#        #            od.dish_id = dish_id
-#        #            od.quantity = quantity
-#        #            od.save()
-#        order.save()
-#        transaction.commit()
-#    except:
-#        print "Unexpected error:", sys.exc_info()
-#        transaction.rollback()
-#        raise
-#    response['status'] = 'OK'
-#    response['info'] = "Order confirmed, total price: %s" % totalPrice
-#    return HttpResponse(simplejson.dumps(response))
-
 
 def order_last_modified(request, order_id):
     return Order.objects.get(id=order_id).confirmed_time
