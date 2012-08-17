@@ -171,8 +171,8 @@ class Menu(models.Model):
     @property
     def items(self):
         #items(dish or category) sorted by the order no
-        items = list(self.dishitem_set.all())
-        items.extend(list(self.dishcategoryitem_set.all()))
+        items = list(self.dishitem_set.all().prefetch_related('dish'))
+        items.extend(list(self.dishcategoryitem_set.all().prefetch_related('category')))
         items.sort(key=lambda item: item.order_no)
         return items
 
