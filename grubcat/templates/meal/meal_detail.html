@@ -104,17 +104,16 @@
                     {#                            </div>#}
 
                     <dl class="menu-items">
-                        {% for item in meal.menu_items %}
-                            {% ifequal item.content_type.model  'dishcategory' %}
-                                <dt class="category">{{ item.object.name }}  </dt>
-                            {% endifequal %}
-                            {% ifequal item.content_type.model  'dish' %}
-                                <dd class="dish"><span class="dish-name">{{ item.object.name }}</span>
-                                <span class="dish-info"> <span class="dish-price">{{ item.object.price }} 元</span><span
-                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                        {% for item in meal.menu.items %}
+                            {% if item.num %}
+                                <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
+                                <span class="dish-info"> <span class="dish-price">{{ item.dish.price }} 元</span><span
+                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
                                         class="num">{{ item.num }}</span> </span>
                                 </dd>
-                            {% endifequal %}
+                            {% else %}
+                                <dt class="category">{{ item.category.name }}  </dt>
+                            {% endif %}
                         {% endfor %}
                     </dl>
                 </div>

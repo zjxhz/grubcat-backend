@@ -33,7 +33,7 @@
     <div class="well">
         <a class="fl" href="#" id="add-menu-help-link">操作帮助</a>
 
-       <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
+        <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
     </div>
     <div class="row">
         <div id="dish-container" class="span6">
@@ -66,42 +66,43 @@
         <form class="form-horizontal span4" action="{% url add_menu %}" id="save-menu-form">
 
 
-
             <div class="control-group">
                 <label class="control-label" for="id_num_persons">就餐人数</label>
+
                 <div class="controls">
-                    <input type="text" name="num_persons"  class="input-small" id="id_num_persons" value="{{ menu.num_persons }}">
+                    <input type="text" name="num_persons" class="input-small" id="id_num_persons"
+                           value="{{ menu.num_persons }}">
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="id_average_price">均价 (元/人)</label>
+
                 <div class="controls">
-             {{ menu_form.average_price }}
+                    {{ menu_form.average_price }}
                 </div>
             </div>
 
-            <button class="btn btn-primary " id="save-menu-btn" >保存套餐</button>
+            <button class="btn btn-primary " id="save-menu-btn">保存套餐</button>
         </form>
         <div id="menu-container" class="span4">
 
             <dl class="menu-items" id="menu-items">
-                {% for item in menu.items.all %}
-                    {% ifequal item.content_type.model  'dishcategory' %}
-                        <dt class="category tag" category-id="{{ item.object.id }}">{{ item.object.name }}
-                            <a href="#" class="close cb">&times;</a>
-                        </dt>
-                    {% endifequal %}
-                    {% ifequal item.content_type.model  'dish' %}
-                        <dd class="tag dish" dish-id="{{ item.object.id }}"><span
-                                class="dish-name">{{ item.object.name }}</span>
+                {% for item in menu.items %}
+                    {% if item.num %}
+                        <dd class="tag dish" dish-id="{{ item.dish.id }}"><span
+                                class="dish-name">{{ item.dish.name }}</span>
                             <a href="#" class="close">&times;</a>
 
-                                <span class="dish-info"> <span class="price">{{ item.object.price }} 元</span><span
-                                        class="unit"> /{{ item.object.unit }} &times; </span><span
+                                <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
+                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
                                         class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
                         </dd>
-                    {% endifequal %}
+                    {% else %}
+                        <dt class="category tag" category-id="{{ item.category.id }}">{{ item.category.name }}
+                            <a href="#" class="close cb">&times;</a>
+                        </dt>
+                    {% endif %}
                 {% endfor %}
             </dl>
         </div>

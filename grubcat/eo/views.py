@@ -37,9 +37,8 @@ class MenuListView(ListView):
         num_persons = self.request.GET.get("num_persons",8)
         qs = Menu.objects.filter(status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
         if hasattr(self.request.user, 'restaurant'):
+            #餐厅用户只显示本餐厅的菜单
             qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
-        for menu in qs:
-            menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
         return qs
 
 
@@ -90,7 +89,6 @@ class MealDetailView(DetailView):
 
     def get_object(self, queryset=None):
         meal = super(MealDetailView,self).get_object()
-        meal.menu_items = meal.menu.items.select_related('content_type').prefetch_related('object').all()
         return meal
 
 ### User related views ###
