@@ -448,7 +448,7 @@ class MealPrivacy:
 
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人可以参加"),
-    (MealPrivacy.PRIVACY, u"私密：仅邀请的人可以参加")
+    (MealPrivacy.PRIVACY, u"私密：仅被邀请的人可以参加")
     )
 
 MEAL_PERSON_CHOICE = [(x, "%s人" % x) for x in range(3, 13)]
