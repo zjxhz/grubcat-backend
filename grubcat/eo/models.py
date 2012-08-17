@@ -168,13 +168,13 @@ class Menu(models.Model):
     dish_items = models.ManyToManyField(Dish, through='DishItem')
     dish_category_items = models.ManyToManyField(DishCategory, through='DishCategoryItem')
 
-#    @property
-#    def items(self):
-#        #items(dish or category) sorted by the order no
-#        items = list(self.dishitem_set.all())
-#        items.extend(list(self.dishcategoryitem_set.all()))
-#        items.sort(key=lambda item: item.order_no)
-#        return items
+    @property
+    def items(self):
+        #items(dish or category) sorted by the order no
+        items = list(self.dishitem_set.all())
+        items.extend(list(self.dishcategoryitem_set.all()))
+        items.sort(key=lambda item: item.order_no)
+        return items
 
     def __unicode__(self):
         return u'套餐%s' % self.id
@@ -190,18 +190,6 @@ class DishItem(models.Model):
     dish = models.ForeignKey(Dish)
     num = models.SmallIntegerField()
     order_no = models.SmallIntegerField() #菜在一个Menu中的顺序
-
-
-class MenuItem(models.Model):
-    '''
-    菜单的项，可能是菜有可能是分类
-    '''
-    menu = models.ForeignKey(Menu, related_name='items')
-    #use generic relation to respresent dish or category foreign keys
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object = generic.GenericForeignKey()
-    num = models.SmallIntegerField(u'份数', default=0)
 
 class DishCategoryItem(models.Model):
     menu = models.ForeignKey(Menu)
