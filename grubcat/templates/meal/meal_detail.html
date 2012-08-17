@@ -94,7 +94,7 @@
         </div>
     </div>
     <div class="sidebar fr">
-        {% include "support/faq_sidebar.html" %}
+
         <div id="menu" class="menu sidebar-box">
             <div class="sidebar-box-title">菜单 {{ meal.menu.name|default:"8人套餐 40元/人" }}</div>
             <div class="sidebar-box-inner">
@@ -120,6 +120,7 @@
                 </div>
             </div>
         </div>
+        {% include "support/faq_sidebar.html" %}
     </div>
 {% endblock %}
 
