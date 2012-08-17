@@ -107,45 +107,6 @@ class RatingPic(models.Model):
         db_table = u'rating_pic'
 
 
-class MenuStatus:
-    PUBLISHED = 0
-    DELETED = 1
-
-MENU_STATUS = (
-    (MenuStatus.PUBLISHED, '已发布'),
-    (MenuStatus.DELETED, '已删除')
-    )
-
-LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
-class Menu(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
-    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
-    num_persons = models.SmallIntegerField(u'就餐人数')
-    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1,choices=LIST_PRICE_CHOICE)
-    created_time = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
-
-    def __unicode__(self):
-        return u'套餐%s' % self.id
-
-    class Meta:
-        db_table = u'menu'
-        verbose_name = u'套餐'
-        verbose_name_plural = u'套餐'
-
-
-class MenuItem(models.Model):
-    '''
-    菜单的项，可能是菜有可能是分类
-    '''
-    menu = models.ForeignKey(Menu, related_name='items')
-    #use generic relation to respresent dish or category foreign keys
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object = generic.GenericForeignKey()
-    num = models.SmallIntegerField(u'份数', default=0)
-
-
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(u'菜名', max_length=45, unique=True)
@@ -184,6 +145,68 @@ class Dish(models.Model):
         db_table = u'dish'
         verbose_name = u'菜'
         verbose_name_plural = u'菜'
+
+
+class MenuStatus:
+    PUBLISHED = 0
+    DELETED = 1
+
+MENU_STATUS = (
+    (MenuStatus.PUBLISHED, '已发布'),
+    (MenuStatus.DELETED, '已删除')
+    )
+
+LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
+
+class Menu(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
+    num_persons = models.SmallIntegerField(u'就餐人数')
+    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE)
+    created_time = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
+    dish_items = models.ManyToManyField(Dish, through='DishItem')
+    dish_category_items = models.ManyToManyField(DishCategory, through='DishCategoryItem')
+
+#    @property
+#    def items(self):
+#        #items(dish or category) sorted by the order no
+#        items = list(self.dishitem_set.all())
+#        items.extend(list(self.dishcategoryitem_set.all()))
+#        items.sort(key=lambda item: item.order_no)
+#        return items
+
+    def __unicode__(self):
+        return u'套餐%s' % self.id
+
+    class Meta:
+        db_table = u'menu'
+        verbose_name = u'套餐'
+        verbose_name_plural = u'套餐'
+
+
+class DishItem(models.Model):
+    menu = models.ForeignKey(Menu)
+    dish = models.ForeignKey(Dish)
+    num = models.SmallIntegerField()
+    order_no = models.SmallIntegerField() #菜在一个Menu中的顺序
+
+
+class MenuItem(models.Model):
+    '''
+    菜单的项，可能是菜有可能是分类
+    '''
+    menu = models.ForeignKey(Menu, related_name='items')
+    #use generic relation to respresent dish or category foreign keys
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    object = generic.GenericForeignKey()
+    num = models.SmallIntegerField(u'份数', default=0)
+
+class DishCategoryItem(models.Model):
+    menu = models.ForeignKey(Menu)
+    category = models.ForeignKey(DishCategory)
+    order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
 
 
 class Rating(models.Model):
@@ -359,33 +382,34 @@ class UserProfile(models.Model):
         """
         recommended_list = self.tags.similar_objects()
         recommended_not_following = [u for u in recommended_list if u not in self.following.all()]
-        
+
         recommended_list_ids = [user.id for user in recommended_list]
-        other_users=UserProfile.objects.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
+        other_users = UserProfile.objects.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
         other_users_not_following = other_users.exclude(pk__in=self.following.values('id'))
-        
+
         return recommended_not_following + list(other_users_not_following)
-    
+
     # return a list of values with the order how keys are sorted for a given dict
     def sortedDictValues(self, some_dict):
         keys = some_dict.keys()
         keys.sort()
         return [some_dict[key] for key in keys]
-    
+
     @property
     def users_nearby(self):
         distance_user_dict = {}
         for user in UserProfile.objects.exclude(pk=self.id).exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
-                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng, user.faked_location.lat)
+                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng,
+                    user.faked_location.lat)
                 distance_user_dict[distance] = user
         return self.sortedDictValues(distance_user_dict)
-    
+
     # get distance in meter, code from google maps
     def getDistance(self, lng1, lat1, lng2, lat2):
         EARTH_RADIUS = 6378.137
         from math import asin, sin, cos, radians, pow, sqrt
-    
+
         radLat1 = radians(lat1)
         radLat2 = radians(lat2)
         a = radLat1 - radLat2
@@ -393,6 +417,7 @@ class UserProfile(models.Model):
         s = 2 * asin(sqrt(pow(sin(a / 2), 2) + cos(radLat1) * cos(radLat2) * pow(sin(b / 2), 2)))
         s = s * EARTH_RADIUS
         return s * 1000
+
     @property
     def faked_location(self):
         """
@@ -402,12 +427,12 @@ class UserProfile(models.Model):
             return self.location
         else:
             location = UserLocation()
-            location.lat = 30.28 + random.randint(0, 99)/1000.0
-            location.lng = 120.13 + random.randint(0, 99)/1000.0
-            location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60*24*30))
+            location.lat = 30.28 + random.randint(0, 99) / 1000.0
+            location.lng = 120.13 + random.randint(0, 99) / 1000.0
+            location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60 * 24 * 30))
             self.location = location
             return location
-        
+
     def __unicode__(self):
         return self.user.username
 
@@ -467,12 +492,12 @@ class MealStatus:
     PAID_NO_MENU = 2
     PUBLISHED = 3 #
 
-MEAL_STATUS_CHOICE=(
+MEAL_STATUS_CHOICE = (
     (MealStatus.CREATED_NO_MENU, u'创建且无菜单' ),
     (MealStatus.CREATED_WITH_MENU, u'创建且有菜单'),
     (MealStatus.PAID_NO_MENU, u'支付且无菜单'),
     (MealStatus.PUBLISHED, u'可以发布')
-)
+    )
 
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
@@ -480,22 +505,23 @@ class Meal(models.Model):
     privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
         choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
 
-#    time = models.DateTimeField(u'开始时间', )
+    #    time = models.DateTimeField(u'开始时间', )
     start_date = models.DateField(u'开始日期', default=datetime.today())
     start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=time(19, 00))
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
-    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,blank=True, null=True)
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
+        blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
 
-    status = models.SmallIntegerField(u'饭局状态',choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
+    status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
 
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
         upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅',blank=True,null=True) #TODO retrieve from menu
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
-    host = models.ForeignKey(UserProfile, null=True,blank=True, related_name="host_user", verbose_name=u'发起者', )
+    host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
     participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
         null=True)
@@ -560,7 +586,6 @@ class MealComment(models.Model):
 
     class  Meta:
         db_table = u'meal_comment'
-
 
 
 class MealInvitation(models.Model):
