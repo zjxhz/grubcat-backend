@@ -35,7 +35,9 @@ class MenuListView(ListView):
 
         #TODO filter by  date and time
         num_persons = self.request.GET.get("num_persons",8)
-        qs = Menu.objects.filter(status=MenuStatus.NORMAL,num_persons=num_persons).select_related('restaurant',)
+        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
+        if hasattr(self.request.user, 'restaurant'):
+            qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
         for menu in qs:
             menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
         return qs
