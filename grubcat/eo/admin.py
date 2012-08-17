@@ -2,7 +2,7 @@
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
-from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, MenuItem, UserTag
+from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem
 
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
@@ -32,13 +32,16 @@ class MealAdmin(admin.ModelAdmin):
     list_filter = ('menu',)
     ordering = ('menu', )
 
-class MenuItemInline(admin.StackedInline):
-    model = MenuItem
+class DishItemInline(admin.StackedInline):
+    model = DishItem
+
+class DishCategoryItemInline(admin.StackedInline):
+    model = DishCategoryItem
 
 class MenuAdmin(admin.ModelAdmin):
     list_display = ('restaurant','status','id','num_persons','average_price',)
     list_filter = ('restaurant','status')
-    inlines = [MenuItemInline,]
+    inlines = [DishItemInline,DishCategoryItemInline]
     ordering = ('status',)
 
 admin.site.register(Meal, MealAdmin)

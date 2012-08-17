@@ -120,10 +120,7 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-        qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED)
-        for menu in qs:
-            menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
-        return qs
+        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED)
 
 
 def add_edit_menu(request, pk=None):
@@ -139,16 +136,16 @@ def add_edit_menu(request, pk=None):
         menu.save()
 
         items = menu_json['items']
-        for item in items:
+        for order_no, item in enumerate(items):
             if 'num' in item:
                 #dish
                 dish = Dish(id=item['id'])
-                dish_item = MenuItem(menu=menu, object=dish, num=item['num'])
+                dish_item = DishItem(menu=menu, dish=dish, num=item['num'],order_no=order_no+1 ) #start from 1
                 dish_item.save()
             else:
                 #category
                 dish_category = DishCategory(id=item['id'])
-                category_item = MenuItem(menu=menu, object=dish_category)
+                category_item = DishCategoryItem(menu=menu, category=dish_category, order_no=order_no+1 )
                 category_item.save()
         return createSucessJsonResponse(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
