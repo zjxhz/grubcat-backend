@@ -1,20 +1,47 @@
 .controls label {
-    padding-top: 5px
+    padding-top: 5px;
+}
+
+.create-order{
+    width: 755px;
+    margin: auto;
+    padding: 10px 10px;
+}
+
+.create-order, .control-group label{
+    font-size: 16px;
 }
 .order-info {
-    float: left;
+    float: right;
     padding-right: 45px;
     padding-left: 45px;
     padding-top: 10px;
-    border-right: 1px solid #bbb;
 }
 .meal-info {
     float: left;
-    padding-right: 45px;
-    padding-left: 45px;
-    width: 395px;
-    margin-left:-1px;
-    border-left: 1px solid #bbb;
+    padding:10px  5px;
+    width: 420px;
+}
+caption{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+}
+
+.control-group.num_persons{
+    margin-bottom: 0px;
+}
+
+.table th{
+    width:50px;
+    text-align: center;
+}
+
+.table td, .table th{
+    vertical-align: middle;
+    line-height: 21px;
+
 }
 
 #order_info_form .form-actions {
@@ -24,11 +51,11 @@
 }
 
 #order_info_form .control-label {
-    width: 90px;
+    width: 105px;
 }
 
 #order_info_form .controls {
-    margin-left: 115px;
+    margin-left: 125px;
 }
 
 #order_info_form {
@@ -112,3 +139,9 @@ form legend {
     height: 330px;
     border: 1px solid #333;
 }
+
+.rest-name{
+    display: block;
+    margin-bottom: 5px;
+}
+

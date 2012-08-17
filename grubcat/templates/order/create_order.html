@@ -4,13 +4,55 @@
 {% load assets %}
 {% block title %}预定{% endblock %}
 {% block page_css %}
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     {% assets "order_css" %}
-    <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 {% block content %}
-    <div class="make-order clearfix">
+    <div class="create-order clearfix">
+        <div class="meal-info ">
+
+            <table class="table table-bordered ">
+                <caption>饭局信息</caption>
+                <tbody>
+                    <tr>
+                        <th>主题</th>
+                        <td>{{ meal.topic }}</td>
+                    </tr>
+                    <tr>
+                        <th>时间</th>
+                        <td>{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"d" }}日  {{ meal.start_time|date:"G:i "  }}</td>
+                    </tr>
+                    <tr>
+                        <th>地点</th>
+                        <td> <span class="rest-name">{{ meal.restaurant.name }}</span>  <span class="rest-address">{{ meal.restaurant.address }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>人数</th>
+                        <td>{{ meal.min_persons }}</td>
+                    </tr>
+                    <tr>
+                        <th>类型</th>
+                        <td>{% if meal.privacy %} 私密饭局，仅被邀请的人可以参加 {% else %} 公开饭局（所有人都可以参加） {% endif %} </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {% comment %} <h3>{{ meal.topic }}</h3>
+            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
+            </p>
+            <div class="meal-img-wrapper">
+                <img width="376px" height="210px" src="{{ meal.get_cover_url }}">
+
+                <div class="date-wrapper">
+                    <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                    <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                    <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                </div>
+                <div class="time">{{ meal.start_time|date:"G:i " }}</div>
+            </div>{% endcomment %}
+
+        </div>
 
         <div class="order-info ">
 
@@ -20,8 +62,8 @@
                     {% for hidden in form.hidden_fields %}
                         {{ hidden }}
                     {% endfor %}
-                    <div class="control-group">
-                        <label class="control-label" for="id_num_persons">人数:</label>
+                    <div class="control-group num_persons">
+                        <label class="control-label" for="id_num_persons">为几人付款:</label>
 
                         <div class="controls">
                             {{ form.num_persons }}
@@ -49,31 +91,15 @@
                 </div>
             </form>
         </div>
-        <div class="meal-info ">
-            <p>
-
-            <h3>{{ meal.topic }}</h3></p>
-            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
-            </p>
-            <div class="meal-img-wrapper">
-                <img width="376px" height="210px" src="{{ meal.get_cover_url }}">
-
-                <div class="date-wrapper">
-                    <span class="month">{{ meal.start_date|date:"n" }}月</span>
-                    <span class="day-num">{{ meal.start_date|date:"d" }}</span>
-                    <span class="day-text">{{ meal.start_date|date:"D" }}</span>
-                </div>
-                <div class="time">{{ meal.start_time|date:"G:i " }}</div>
-            </div>
-
-        </div>
     </div>
 {% endblock %}
 
 {% block page_js %}
     <script type="text/javascript">
-        $("#id_num_persons").change(function () {
+    $(document).ready(function(){
+        $('#id_num_persons').dropkick({width:20, startSpeed:100,change:function(){
             $("#total_price").html($("#meal_price").html() * $(this).val());
-        })
+        }});
+    })
     </script>
 {% endblock %}

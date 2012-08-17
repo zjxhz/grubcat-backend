@@ -37,7 +37,7 @@ user_list_css = Bundle(
 )
 
 order_css = Bundle(
-    base_css, bootstrap_css, common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+    bootstrap_css, base_css, common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
 restaurant_admin_css = Bundle(
