@@ -171,9 +171,11 @@ span.rest-address, span.rest-location {
 }
 
 #choose-restaurant-info {
-    line-height: 100px;
-    text-align: center;
+    line-height: 30px;
+    text-align: left;
     font-weight: bold;
+    padding-top: 30px;
+    padding-left: 20px;
 }
 
 #extra_request_link {
@@ -314,4 +316,8 @@ a.map {
 
 #choose-menu-container{
     height: 523px;
+}
+
+#let-fanjon-choose-link{
+   background-color: #60819c
 }
