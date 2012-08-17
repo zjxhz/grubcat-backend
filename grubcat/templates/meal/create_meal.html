@@ -49,15 +49,16 @@
                 }else if (menuIdToSelect) {
                     $("li[menu-id=" + menuIdToSelect + "]").click();
                 }
-                $('#id_list_price,#id_region').dropkick({width:120});
+                $('#id_list_price,#id_region').dropkick({width:120,startSpeed:100});
             }, 'html');
         }
 
         $(document).ready(function () {
-            $('#id_start_time,#id_list_price,#id_region').dropkick({width:120});
+            $('#id_start_time,#id_list_price,#id_region').dropkick({width:115,startSpeed:100});
             $("#id_min_persons").dropkick({
                         change:false,
                         width:315,
+                        startSpeed:100,
                         change:function (value, label) {
                             getMenuList(value);
                         }
@@ -67,7 +68,7 @@
             var oldMenuId = $("#id_menu_id").val();
             getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
-            $("select").dropkick({width:315});
+            $("select").dropkick({width:315,startSpeed:100});
 
             $("#restaurant-list").lionbars(false);
             $.datepicker.regional['zh-CN'] =
@@ -159,7 +160,7 @@
               class="form form-horizontal"> {% csrf_token %}
             <fieldset>
 
-                <legend>1、饭局信息</legend>
+                <legend>发起一个饭局</legend>
 
                 <div class="control-group ">
 
@@ -185,11 +186,11 @@
                         {{ form.privacy }} {{ form.privacy.errors }}
                     </div>
                 </div>
-            </fieldset>
+{#            </fieldset>#}
 
-            <fieldset class="full">
+{#            <fieldset class="full">#}
 
-                <legend>2、餐厅信息</legend>
+{#                <legend>2、餐厅信息</legend>#}
                 <div class="control-group">
                     <label class="control-label" for="id_privacy">就餐时间</label>
 
@@ -210,19 +211,19 @@
                 </div>
             </fieldset>
 
-            <fieldset class="more-options">
-                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>
-                <div id="more-options" class="hide">
-
-                    <div class="control-group" id="extra_request_div">
-                        <label class="control-label" for="id_extra_requests">其它需求</label>
-
-                        <div class="controls">
-                            {{ form.extra_requests }}{{ form.extra_requests.errors }}
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
+{#            <fieldset class="more-options">#}
+{#                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>#}
+{#                <div id="more-options" class="hide">#}
+{##}
+{#                    <div class="control-group" id="extra_request_div">#}
+{#                        <label class="control-label" for="id_extra_requests">其它需求</label>#}
+{##}
+{#                        <div class="controls">#}
+{#                            {{ form.extra_requests }}{{ form.extra_requests.errors }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </fieldset>#}
             <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
                 <div class="info">
                     还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
