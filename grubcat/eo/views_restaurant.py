@@ -120,7 +120,7 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-        qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.NORMAL)
+        qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED)
         for menu in qs:
             menu.menu_items = menu.items.select_related('content_type').prefetch_related('object').all()
         return qs

@@ -108,11 +108,11 @@ class RatingPic(models.Model):
 
 
 class MenuStatus:
-    NORMAL = 0
+    PUBLISHED = 0
     DELETED = 1
 
 MENU_STATUS = (
-    (MenuStatus.NORMAL, '正常'),
+    (MenuStatus.PUBLISHED, '已发布'),
     (MenuStatus.DELETED, '已删除')
     )
 
