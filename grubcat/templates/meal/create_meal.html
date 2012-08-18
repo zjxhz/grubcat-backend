@@ -66,20 +66,7 @@
         }
 
         $(document).ready(function () {
-            $('#id_start_time,#id_list_price,#id_region').dropkick({width:115,startSpeed:100});
-            $("#id_min_persons").dropkick({
-                        change:false,
-                        width:315,
-                        startSpeed:100,
-                        change:function (value, label) {
-                            getMenuList(value);
-                        }
-                    }
-            )
-            $("select").dropkick({width:315,startSpeed:100});
-            var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
-            var oldMenuId = $("#id_menu_id").val();
-            getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
+            $("#id_privacy").dropkick({width:315,startSpeed:100})
 
             $.datepicker.regional['zh-CN'] =
             {
@@ -113,6 +100,22 @@
                 minDate:'+4D',
                 maxDate:'+1M'
             })
+
+
+            $('#id_start_time').dropkick({width:115,startSpeed:100});
+            $("#id_min_persons").dropkick({
+                        change:false,
+                        width:315,
+                        startSpeed:100,
+                        change:function (value, label) {
+                            getMenuList(value);
+                        }
+                    }
+            )
+            var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
+            var oldMenuId = $("#id_menu_id").val();
+            getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
+
 
 /*            $("#extra_request_link").click(function () {
                 $("#more-options").slideToggle(500);
