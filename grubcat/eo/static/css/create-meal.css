@@ -325,7 +325,6 @@ a.map {
 
 #choose-menu-container{
     border-top: 1px solid #DDD;
-    min-height: 411px;;
 }
 
 #let-fanjon-choose-link{
@@ -334,7 +333,9 @@ a.map {
 
 #loading-menus{
     width: 100px;
-    margin: 20px auto;
+    margin: 40px 300px;;
+    z-index: 2;
+    position: absolute;
 }
 
 #dk_container_id_start_time a{

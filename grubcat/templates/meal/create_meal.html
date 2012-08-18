@@ -40,13 +40,13 @@
     {{ block.super }}
     <script type="text/javascript">
         function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
-            $("#choose-menu-wrapper").html("");
+            $("#choose-menu-wrapper").css('visibility','hidden');
             $ajax_loader = $('#loading-menus');
             $ajax_loader.show(1, function(){
                 $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
                     $ajax_loader.hide();
                     $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
-                    $("#choose-menu-wrapper").html(data);
+                    $("#choose-menu-wrapper").html(data).css('visibility','visible');;
                     $("#id_menu_id").val("");
                     if (if_let_fanjoin_choose){
                         $("#let-fanjon-choose-link").click()
