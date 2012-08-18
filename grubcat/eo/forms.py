@@ -31,7 +31,7 @@ class MealForm(ModelForm):
             if not region:
                 self._errors["region"] = self.error_class([u'请选择区域'])
         elif not menu_id:
-            self._errors["menu_id"] = self.error_class([u'请您在下面选择一个套餐或者点击"让饭聚网帮我选"按钮'])
+            self._errors["menu_id"] = self.error_class([u'请您在左边选择一个套餐',u'或者点击"让饭聚网帮我选"按钮'])
         return cleaned_data
 
 

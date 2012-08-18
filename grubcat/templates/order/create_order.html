@@ -23,10 +23,12 @@
                         <th>时间</th>
                         <td>{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"d" }}日  {{ meal.start_time|date:"G:i "  }}</td>
                     </tr>
+                    {% if meal.restaurant %}
                     <tr>
                         <th>地点</th>
                         <td> <span class="rest-name">{{ meal.restaurant.name }}</span>  <span class="rest-address">{{ meal.restaurant.address }}</span></td>
                     </tr>
+                    {% endif %}
                     <tr>
                         <th>人数</th>
                         <td>{{ meal.min_persons }}</td>

@@ -354,3 +354,7 @@ dl.menu-items{
 .privacy select, .start_time select, .min_persons select{
     visibility: hidden;
 }
+
+#choose-restaurant-msg ul li{
+    margin-bottom: 6px;
+}
