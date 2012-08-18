@@ -325,6 +325,7 @@ a.map {
 
 #choose-menu-container{
     border-top: 1px solid #DDD;
+    min-height: 411px;;
 }
 
 #let-fanjon-choose-link{
@@ -342,8 +343,4 @@ a.map {
 
 dl.menu-items{
     margin-bottom: 20px;
-}
-
-#choose-menu-wrapper{
-    min-height: 472px;
 }
