@@ -92,7 +92,7 @@
     width: 139px;
     margin-right: 10px;
     margin-bottom: 20px;
-
+    visibility: hidden;
     background: url(../img/calendar.png), -webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
     background: url(../img/calendar.png), -moz-linear-gradient(top, white, whiteSmoke);
     background: url(../img/calendar.png), -o-linear-gradient(top, white, whiteSmoke);

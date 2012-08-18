@@ -91,7 +91,7 @@
 
             $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
 
-            $("#id_start_date").datepicker({
+            $("#id_start_date").css('visibility','visible').datepicker({
                 onSelect:function (dateText, inst) {
                     $(inst.input).change().focusout();
                 },
