@@ -370,13 +370,13 @@
 			
 			// check for vertical scrollbars
 			if (el.get(0).scrollHeight > el.get(0).clientHeight) {
-				addVScroll = true;
+                addVScroll = true;
 				// setVScrollbarWidth(el);
 			}
 			
 			// check for horizontal scrollbars
 			if (el.get(0).scrollWidth > el.get(0).clientWidth) {
-				addHScroll = true;
+              addHScroll = true;
 				// setHScrollbarWidth(el);
 			}
 			

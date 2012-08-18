@@ -25,7 +25,7 @@ meal_detail_css = Bundle(
 )
 
 meal_add_css= Bundle(
-    base_css, common_css, dropkick_css, 'css/meal-add.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
+    base_css, common_css, dropkick_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 account_css = Bundle(

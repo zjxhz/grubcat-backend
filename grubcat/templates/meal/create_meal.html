@@ -40,17 +40,29 @@
     {{ block.super }}
     <script type="text/javascript">
         function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
-            $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
-                $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
-                $("#choose-menu-container").html(data);
-                $("#id_menu_id").val("");
-                if (if_let_fanjoin_choose){
-                    $("#let-fanjon-choose-link").click()
-                }else if (menuIdToSelect) {
-                    $("li[menu-id=" + menuIdToSelect + "]").click();
-                }
-                $('#id_list_price,#id_region').dropkick({width:120,startSpeed:100});
-            }, 'html');
+            $("#choose-menu-wrapper").html("");
+            $ajax_loader = $('#loading-menus');
+            $ajax_loader.show(1, function(){
+                $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
+                    $ajax_loader.hide();
+                    $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
+                    $("#choose-menu-wrapper").html(data);
+                    $("#id_menu_id").val("");
+                    if (if_let_fanjoin_choose){
+                        $("#let-fanjon-choose-link").click()
+                    }else if (menuIdToSelect) {
+                        $("li[menu-id=" + menuIdToSelect + "]").click();
+                    }
+
+                    if($("#restaurant-list ul li").length >= 7){
+                        $("#restaurant-list ul li:last").css('border-bottom-width','0');
+                        $("#restaurant-list").lionbars( );
+                        $("#lb-wrap-0-restaurant-list").css('height',440)
+                    }
+
+                    $('#id_list_price,#id_region').dropkick({width:120,startSpeed:100});
+                }, 'html');
+            })
         }
 
         $(document).ready(function () {
@@ -64,13 +76,11 @@
                         }
                     }
             )
+            $("select").dropkick({width:315,startSpeed:100});
             var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
             var oldMenuId = $("#id_menu_id").val();
             getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
-            $("select").dropkick({width:315,startSpeed:100});
-
-            $("#restaurant-list").lionbars(false);
             $.datepicker.regional['zh-CN'] =
             {
                 clearText:'清除', clearStatus:'清除已选日期',
@@ -122,7 +132,6 @@
                 $("li.restaurant-item.selected").removeClass("selected");
                 return false;
             })
-
 
             $("li.restaurant-item").live("click", function () {
                 $("#menu-info-wrapper").show();
@@ -208,6 +217,8 @@
                     </div>
                 </div>
                 <div id="choose-menu-container">
+                    <div id="loading-menus" class="hide"><img alt="载入菜单" src="{% static_asset "img/loading-menus.gif" %}" /></div>
+                        <div id="choose-menu-wrapper"></div>
                 </div>
             </fieldset>
 
