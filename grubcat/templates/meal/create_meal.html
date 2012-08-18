@@ -40,33 +40,34 @@
     {{ block.super }}
     <script type="text/javascript">
         function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
-            $("#choose-menu-wrapper").css('visibility','hidden');
+            $("#choose-menu-wrapper").css('visibility', 'hidden');
             $ajax_loader = $('#loading-menus');
-            $ajax_loader.show(1, function(){
+            $ajax_loader.show(1, function () {
                 $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
                     $ajax_loader.hide();
                     $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
-                    $("#choose-menu-wrapper").html(data).css('visibility','visible');;
+                    $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
+                    $("#choose-restaurant-msg").appendTo("#choose-restaurant-info").show();
                     $("#id_menu_id").val("");
-                    if (if_let_fanjoin_choose){
+                    if (if_let_fanjoin_choose) {
                         $("#let-fanjon-choose-link").click()
-                    }else if (menuIdToSelect) {
+                    } else if (menuIdToSelect) {
                         $("li[menu-id=" + menuIdToSelect + "]").click();
                     }
 
-                    if($("#restaurant-list ul li").length >= 5){
-                        $("#restaurant-list ul li:last").css('border-bottom-width','0');
-                        $("#restaurant-list").lionbars( );
-                        $("#lb-wrap-0-restaurant-list").css('height',377)
+                    if ($("#restaurant-list ul li").length >= 5) {
+                        $("#restaurant-list ul li:last").css('border-bottom-width', '0');
+                        $("#restaurant-list").lionbars();
+                        $("#lb-wrap-0-restaurant-list").css('height', 377)
                     }
 
-                    $('#id_list_price,#id_region').dropkick({width:120,startSpeed:100});
+
                 }, 'html');
             })
         }
 
         $(document).ready(function () {
-            $("#id_privacy").dropkick({width:313,startSpeed:0})
+            $("#id_privacy").dropkick({width:313, startSpeed:0})
 
             $.datepicker.regional['zh-CN'] =
             {
@@ -91,7 +92,7 @@
 
             $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
 
-            $("#id_start_date").css('visibility','visible').datepicker({
+            $("#id_start_date").css('visibility', 'visible').datepicker({
                 onSelect:function (dateText, inst) {
                     $(inst.input).change().focusout();
                 },
@@ -102,7 +103,7 @@
             })
 
 
-            $('#id_start_time').dropkick({width:116,startSpeed:0});
+            $('#id_start_time').dropkick({width:116, startSpeed:0});
             $("#id_min_persons").dropkick({
                         change:false,
                         width:313,
@@ -112,15 +113,16 @@
                         }
                     }
             )
+            $('#id_list_price,#id_region').dropkick({width:120, startSpeed:100});
             var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
             var oldMenuId = $("#id_menu_id").val();
             getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
 
-/*            $("#extra_request_link").click(function () {
-                $("#more-options").slideToggle(500);
-                return false;
-            })*/
+            /*            $("#extra_request_link").click(function () {
+             $("#more-options").slideToggle(500);
+             return false;
+             })*/
 
             $("#let-fanjon-choose-link").live("click", function () {
                 $("#choose-restaurant-info").hide();
@@ -198,11 +200,11 @@
                         {{ form.privacy }} {{ form.privacy.errors }}
                     </div>
                 </div>
-{#            </fieldset>#}
+                {#            </fieldset>#}
 
-{#            <fieldset class="full">#}
+                {#            <fieldset class="full">#}
 
-{#                <legend>2、餐厅信息</legend>#}
+                {#                <legend>2、餐厅信息</legend>#}
                 <div class="control-group start_time">
                     <label class="control-label" for="id_privacy">就餐时间</label>
 
@@ -216,28 +218,29 @@
 
                     <div class="controls">
 
-                        {{ form.min_persons }} {{ form.min_persons.errors }} {{ form.menu_id.errors }}
+                        {{ form.min_persons }} {{ form.min_persons.errors }}
                     </div>
                 </div>
                 <div id="choose-menu-container">
-                    <div id="loading-menus" class="hide"><img alt="载入菜单" src="{% static_asset "img/loading-menus.gif" %}" /></div>
-                        <div id="choose-menu-wrapper" ></div>
+                    <div id="loading-menus" class="hide"><img alt="载入菜单"
+                                                              src="{% static_asset "img/loading-menus.gif" %}"/></div>
+                    <div id="choose-menu-wrapper"></div>
                 </div>
             </fieldset>
 
-{#            <fieldset class="more-options">#}
-{#                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>#}
-{#                <div id="more-options" class="hide">#}
-{##}
-{#                    <div class="control-group" id="extra_request_div">#}
-{#                        <label class="control-label" for="id_extra_requests">其它需求</label>#}
-{##}
-{#                        <div class="controls">#}
-{#                            {{ form.extra_requests }}{{ form.extra_requests.errors }}#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </fieldset>#}
+            {#            <fieldset class="more-options">#}
+            {#                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>#}
+            {#                <div id="more-options" class="hide">#}
+            {##}
+            {#                    <div class="control-group" id="extra_request_div">#}
+            {#                        <label class="control-label" for="id_extra_requests">其它需求</label>#}
+            {##}
+            {#                        <div class="controls">#}
+            {#                            {{ form.extra_requests }}{{ form.extra_requests.errors }}#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </fieldset>#}
             <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
                 <div class="info">
                     还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
@@ -266,6 +269,15 @@
                 <button type="submit" class="btn-create-meal">确定</button>
             </div>
         </form>
+    </div>
+
+    <div id="choose-restaurant-msg" style="display: none">
+
+        {% if form.menu_id.errors %}
+            {{ form.menu_id.errors }}
+        {% else %}
+            左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
+        {% endif %}
     </div>
 
 {% endblock %}
