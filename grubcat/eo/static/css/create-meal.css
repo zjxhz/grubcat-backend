@@ -347,6 +347,10 @@ dl.menu-items{
     margin-bottom: 20px;
 }
 
-select{
+.privacy, .start_time, .min_persons{
+    height: 54px;
+}
+
+.privacy select, .start_time select, .min_persons select{
     visibility: hidden;
 }
