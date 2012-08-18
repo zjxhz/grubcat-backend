@@ -2,7 +2,7 @@
     float: left;
 }
 #restaurant-list {
-    height: 440px;
+    height: 377px;
     overflow-y: auto ;
     overflow-x: hidden;
     background-color: #EEE;
@@ -144,12 +144,17 @@
     opacity: 0.6;
 }
 
+.restaurant-item.selected img{
+    opacity: 1.0
+}
+
 span.rest-address, span.rest-location {
     display: block;
     float: left;
     width: 140px;
     font-size: 88%;
     margin-top: 15px;
+    color: black;
 }
 
 .restaurant-item span.rest-price {

@@ -54,10 +54,10 @@
                         $("li[menu-id=" + menuIdToSelect + "]").click();
                     }
 
-                    if($("#restaurant-list ul li").length >= 7){
+                    if($("#restaurant-list ul li").length >= 5){
                         $("#restaurant-list ul li:last").css('border-bottom-width','0');
                         $("#restaurant-list").lionbars( );
-                        $("#lb-wrap-0-restaurant-list").css('height',440)
+                        $("#lb-wrap-0-restaurant-list").css('height',377)
                     }
 
                     $('#id_list_price,#id_region').dropkick({width:120,startSpeed:100});
@@ -114,10 +114,10 @@
                 maxDate:'+1M'
             })
 
-            $("#extra_request_link").click(function () {
+/*            $("#extra_request_link").click(function () {
                 $("#more-options").slideToggle(500);
                 return false;
-            })
+            })*/
 
             $("#let-fanjon-choose-link").live("click", function () {
                 $("#choose-restaurant-info").hide();
