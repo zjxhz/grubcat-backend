@@ -346,3 +346,7 @@ a.map {
 dl.menu-items{
     margin-bottom: 20px;
 }
+
+select{
+    visibility: hidden;
+}
