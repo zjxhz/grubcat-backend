@@ -2,7 +2,7 @@
     float: left;
 }
 #restaurant-list {
-    height: 450px;
+    height: 440px;
     overflow-y: auto ;
     overflow-x: hidden;
     background-color: #EEE;
@@ -10,6 +10,8 @@
     border-top: 1px solid #DDD;
     border-bottom: 1px solid #DDD;
     border-right: 1px solid #DDD;
+    padding-right: 1px;
+    width:329px;
 }
 
 .form-wrapper {
@@ -96,7 +98,7 @@
     background: url(../img/calendar.png), -o-linear-gradient(top, white, whiteSmoke);
     background: url(../img/calendar.png), linear-gradient(top, white, whiteSmoke);
     background-repeat: no-repeat;
-    background-position: 12px center;
+    background-position: 6% center;
     font-weight: bold;
     line-height: 14px;
     border-radius: 5px;
@@ -108,23 +110,24 @@
 }
 
 #choose-menu {
-    border-top: 1px solid #DDD;
+
     margin-left: 0;
     padding-top: 15px;
-    padding-bottom: 10px;
+    /*padding-bottom: 10px;*/
 }
 
 #choose-restaurant {
-    width: 320px;
+    width: 330px;
     margin-left: 0px;
+    position: relative;
 }
 
 .restaurant-item {
-    width: 310px;
+    width: 312px;
     display: inline-block;
     border-bottom: 1px solid #DDD;
     height: 50px;
-    padding: 8px 2px 8px 8px;
+    padding: 6px 2px 6px 8px;
     position: relative;
     cursor: pointer;
 }
@@ -158,6 +161,7 @@ span.rest-address, span.rest-location {
 .let-fanjoin-choose-link-wrapper {
     padding-left: 20px;
     font-size: 14px;
+    margin-bottom: 10px;
 }
 
 #let-fanjoin-choose {
@@ -173,9 +177,9 @@ span.rest-address, span.rest-location {
 #choose-restaurant-info {
     line-height: 30px;
     text-align: left;
-    font-weight: bold;
     padding-top: 30px;
-    padding-left: 20px;
+    text-shadow: 0 1px 2px #DDD;
+    padding-left: 30px;
 }
 
 #extra_request_link {
@@ -278,7 +282,7 @@ dd {
 }
 
 #menu-info-wrapper{
-    width:350px;
+    width:340px;
     margin-left: 15px;
 }
 
@@ -315,9 +319,22 @@ a.map {
 }
 
 #choose-menu-container{
-    height: 523px;
+    border-top: 1px solid #DDD;
 }
 
 #let-fanjon-choose-link{
    background-color: #60819c
+}
+
+#loading-menus{
+    width: 100px;
+    margin: 20px auto;
+}
+
+#dk_container_id_start_time a{
+    background-position: 89% center;
+}
+
+dl.menu-items{
+    margin-bottom: 20px;
 }
