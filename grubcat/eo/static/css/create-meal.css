@@ -338,3 +338,7 @@ a.map {
 dl.menu-items{
     margin-bottom: 20px;
 }
+
+#choose-menu-wrapper{
+    min-height: 472px;
+}
