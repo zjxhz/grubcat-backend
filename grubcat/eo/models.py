@@ -107,45 +107,6 @@ class RatingPic(models.Model):
         db_table = u'rating_pic'
 
 
-class MenuStatus:
-    NORMAL = 0
-    DELETED = 1
-
-MENU_STATUS = (
-    (MenuStatus.NORMAL, '正常'),
-    (MenuStatus.DELETED, '已删除')
-    )
-
-LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
-class Menu(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
-    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
-    num_persons = models.SmallIntegerField(u'就餐人数')
-    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1,choices=LIST_PRICE_CHOICE)
-    created_time = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
-
-    def __unicode__(self):
-        return u'套餐%s' % self.id
-
-    class Meta:
-        db_table = u'menu'
-        verbose_name = u'套餐'
-        verbose_name_plural = u'套餐'
-
-
-class MenuItem(models.Model):
-    '''
-    菜单的项，可能是菜有可能是分类
-    '''
-    menu = models.ForeignKey(Menu, related_name='items')
-    #use generic relation to respresent dish or category foreign keys
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object = generic.GenericForeignKey()
-    num = models.SmallIntegerField(u'份数', default=0)
-
-
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
     name = models.CharField(u'菜名', max_length=45, unique=True)
@@ -184,6 +145,56 @@ class Dish(models.Model):
         db_table = u'dish'
         verbose_name = u'菜'
         verbose_name_plural = u'菜'
+
+
+class MenuStatus:
+    PUBLISHED = 0
+    DELETED = 1
+
+MENU_STATUS = (
+    (MenuStatus.PUBLISHED, '已发布'),
+    (MenuStatus.DELETED, '已删除')
+    )
+
+LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
+
+class Menu(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
+    num_persons = models.SmallIntegerField(u'就餐人数')
+    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE)
+    created_time = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
+    dish_items = models.ManyToManyField(Dish, through='DishItem')
+    dish_category_items = models.ManyToManyField(DishCategory, through='DishCategoryItem')
+
+    @property
+    def items(self):
+        #items(dish or category) sorted by the order no
+        items = list(self.dishitem_set.all().prefetch_related('dish'))
+        items.extend(list(self.dishcategoryitem_set.all().prefetch_related('category')))
+        items.sort(key=lambda item: item.order_no)
+        return items
+
+    def __unicode__(self):
+        return u'套餐%s' % self.id
+
+    class Meta:
+        db_table = u'menu'
+        verbose_name = u'套餐'
+        verbose_name_plural = u'套餐'
+
+
+class DishItem(models.Model):
+    menu = models.ForeignKey(Menu)
+    dish = models.ForeignKey(Dish)
+    num = models.SmallIntegerField()
+    order_no = models.SmallIntegerField() #菜在一个Menu中的顺序
+
+class DishCategoryItem(models.Model):
+    menu = models.ForeignKey(Menu)
+    category = models.ForeignKey(DishCategory)
+    order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
 
 
 class Rating(models.Model):
@@ -448,7 +459,7 @@ class MealPrivacy:
 
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人可以参加"),
-    (MealPrivacy.PRIVACY, u"私密：仅邀请的人可以参加")
+    (MealPrivacy.PRIVACY, u"私密：仅被邀请的人可以参加")
     )
 
 MEAL_PERSON_CHOICE = [(x, "%s人" % x) for x in range(3, 13)]
@@ -459,6 +470,19 @@ START_TIME_CHOICE = (
     (time(15, 00), "15:00"), (time(15, 30), "15:30"), (time(16, 00), "16:00"), (time(16, 30), "16:30"),
     (time(17, 00), "17:00"), (time(17, 30), "17:30"), (time(18, 00), "18:00"), (time(18, 30), "18:30"),
     (time(19, 00), "19:00"), (time(19, 30), "19:30"), (time(20, 00), "20:00"), (time(20, 30), "20:30"),
+    )
+
+class MealStatus:
+    CREATED_NO_MENU = 0
+    CREATED_WITH_MENU = 1
+    PAID_NO_MENU = 2
+    PUBLISHED = 3 #
+
+MEAL_STATUS_CHOICE = (
+    (MealStatus.CREATED_NO_MENU, u'创建且无菜单' ),
+    (MealStatus.CREATED_WITH_MENU, u'创建且有菜单'),
+    (MealStatus.PAID_NO_MENU, u'支付且无菜单'),
+    (MealStatus.PUBLISHED, u'可以发布')
     )
 
 class Meal(models.Model):
