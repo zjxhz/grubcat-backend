@@ -183,6 +183,8 @@ class UserResource(ModelResource):
             
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
+        if len(bundle.data['updated_at']) == 26:
+            bundle.data['updated_at'] = bundle.data['updated_at'][:-7]
         return bundle
     
     def override_urls(self):
