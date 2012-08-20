@@ -498,7 +498,7 @@ class Meal(models.Model):
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
-
+    status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
         upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
