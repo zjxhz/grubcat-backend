@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
@@ -9,22 +8,24 @@ from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
-    UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag
+    UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag, DishItem, \
+    Menu, DishCategoryItem
+from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
 from tastypie.authorization import Authorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.fields import FileField
+from tastypie.http import HttpUnauthorized
 from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
-import simplejson
-from taggit.models import Tag
 import logging
 import random
-from datetime import timedelta
+import simplejson
+
 
 logger = logging.getLogger('api')
 
@@ -104,7 +105,7 @@ def get_my_list(resource, queryset, request):
 #todo maybe we can use decorator
 def login_required(request):
     response = {"status": "NOK", "info": "You were not logged in"}
-    return HttpResponse(simplejson.dumps(response))
+    return HttpUnauthorized(simplejson.dumps(response))
          
 
 # Create a general response with status and message)
@@ -387,16 +388,6 @@ class RelationshipResource(ModelResource):
         filtering = {'from_person': ALL_WITH_RELATIONS,
                      'to_person': ALL_WITH_RELATIONS,}
 
-class DishCategoryResource(ModelResource):
-    class Meta:
-        queryset = DishCategory.objects.all()       
-        
-class DishResource(ModelResource):
-    categories = fields.ToManyField(DishCategoryResource, 'categories', full=True, null=True)
-    class Meta:
-        queryset = Dish.objects.all()
-        paginator_class = PageNumberPaginator
-
 #TODO what if pagination is needed for comments?
 class RestaurantResource(ModelResource):
     tags = fields.ToManyField('eo.apis.RestaurantTagResource', 'tags')
@@ -492,7 +483,7 @@ class RatingResource(ModelResource):
         filtering = {'restaurant': ALL, }
 
 class BestRatingDishResource(ModelResource):
-    dish = fields.ForeignKey(DishResource, 'dish', full=True)
+    dish = fields.ForeignKey("eo.apis.DishResource", 'dish', full=True)
     
     class Meta:
         queryset = BestRatingDish.objects.all()
@@ -521,13 +512,7 @@ class RegionResource(ModelResource):
     class Meta:
         queryset = Region.objects.all()
 
-#class MenuResource(ModelResource):
-#    categories = fields.ToManyField('eo.apis.DishCategoryResource', 'categories', full=True)
-#    dishes = fields.ToManyField('eo.apis.DishResource', 'dishes', full=True)
-#    class Meta:
-#        queryset = Menu.objects.all()
-
-       
+     
 class UserMessageResource(ModelResource): 
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
     to_person = fields.ForeignKey(UserResource, 'to_person', full=True )
@@ -538,6 +523,32 @@ class UserMessageResource(ModelResource):
                      'to_person': ALL_WITH_RELATIONS,
                      'type':ALL,}
 
+class DishCategoryResource(ModelResource):
+    class Meta:
+        queryset = DishCategory.objects.all()       
+        
+class DishResource(ModelResource):
+    categories = fields.ToManyField(DishCategoryResource, 'categories', full=True, null=True)
+    class Meta:
+        queryset = Dish.objects.all()
+        paginator_class = PageNumberPaginator
+        
+class DishItemResource(ModelResource):
+    dish = fields.ToOneField(DishResource, 'dish', full=True)
+    class Meta:
+        queryset = DishItem.objects.all()
+
+class DishCategoryItemResource(ModelResource):
+    category = fields.ToOneField(DishCategoryResource, 'category', full=True)
+    class Meta:
+        queryset = DishCategoryItem.objects.all()
+        
+class MenuResource(ModelResource):
+    dishitem_set = fields.ToManyField(DishItemResource, "dishitem_set", full=True)
+    dishcategoryitem_set = fields.ToManyField(DishCategoryItemResource, 'dishcategoryitem_set', full=True)
+    class Meta:
+        queryset = Menu.objects.all()
+    
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
     host = fields.ForeignKey(UserResource, 'host', full=True)
@@ -555,10 +566,17 @@ class MealResource(ModelResource):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_comments'), name="api_get_comments"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/menu%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_menu'), name="api_get_menu"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/likes%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('like'), name="api_like"),
         ]
     
+    def get_menu(self, request, **kwargs):
+        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        menu_resource = MenuResource()
+        return get_my_list(menu_resource, [obj.menu], request)
+                           
     def get_comments(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         meal_comment_resource = MealCommentResource()
@@ -739,3 +757,4 @@ v1_api.register(UserLocationResource())
 v1_api.register(MealCommentResource())
 v1_api.register(TagResource())
 v1_api.register(UserTagResource())
+v1_api.register(DishItemResource())
