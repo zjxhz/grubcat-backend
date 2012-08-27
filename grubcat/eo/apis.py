@@ -330,7 +330,7 @@ class UserResource(ModelResource):
         user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'POST':
             if request.POST.get('tags'):
-                tags = [token.strip() for token in request.POST.get('tags').split(',')]
+                tags = [token.strip() for token in request.POST.get('tags').split(' ')]
                 user.tags.set(*tags)
                 return createGeneralResponse('OK', 'tags %s set' % tags)
             elif request.POST.get('tag'):
@@ -665,7 +665,7 @@ def mobile_user_register(request):
             avatar_dic = dic['avatar']
             user_profile.avatar = SimpleUploadedFile(avatar_dic["name"], base64.b64decode(avatar_dic["file"]), getattr(avatar_dic, "content_type", "application/octet-stream"))
             if dic.get('tags'):
-                tags = [token.strip() for token in dic.get('tags').split(',')]
+                tags = [token.strip() for token in dic.get('tags').split(' ')]
                 user_profile.tags.set(*tags)
             user.save()
             user_profile.save()
