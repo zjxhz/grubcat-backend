@@ -23,9 +23,8 @@ from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
 import logging
-import random
 import simplejson
-
+import re
 
 logger = logging.getLogger('api')
 
@@ -331,7 +330,7 @@ class UserResource(ModelResource):
         user = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'POST':
             if request.POST.get('tags'):
-                tags = [token.strip() for token in request.POST.get('tags').split(',')]
+                tags = [token.strip() for token in request.POST.get('tags').split(' ')]
                 user.tags.set(*tags)
                 return createGeneralResponse('OK', 'tags %s set' % tags)
             elif request.POST.get('tag'):
@@ -639,32 +638,6 @@ class OrderResource(ModelResource):
         filtering = {'customer':ALL,}
         ordering = ['created_time','meal']
             
-#class CreateUserResource(ModelResource):
-#    def obj_create(self, bundle, request=None, **kwargs):
-#        weibo_id = bundle.data['weibo_id']
-#        username, password=bundle.data.get('username'), bundle.data.get('password')
-#        if weibo_id:
-#            username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
-#        try:
-#            user = User.objects.create_user(username, '', password)
-#            bundle.obj = user
-#            user_profile = user.get_profile()
-#            if weibo_id:
-#                user_profile.weibo_id = weibo_id
-#            auth.login(request, user)
-#                 
-#        except IntegrityError:
-#            raise BadRequest('NOK', "That username already exists")
-#        return bundle;
-#    
-#    class Meta:
-##        allowed_methods = ['post']
-#        object_class = User
-##        authentication = Authentication()
-##        authorization = Authorization()
-#        fields = ['username']
-
-
 def createLoggedInResponse(loggedInuser):
     user_resource = UserResource()
     ur_bundle = user_resource.build_bundle(obj=loggedInuser.get_profile())
@@ -676,13 +649,32 @@ def createLoggedInResponse(loggedInuser):
             
 def mobile_user_register(request):
     if request.method == 'POST':
-        username, password=request.POST.get('username'), request.POST.get('password')
+        dic = simplejson.loads(request.raw_post_data)
+        username = dic.get('username')
+        password = dic.get('password')
+        user = None
         try:
             user = User.objects.create_user(username, '', password)
+            user_profile = user.get_profile()
+            p = re.compile(".+@.+\..+")
+            if p.match(username):
+                user.email = username
+            for key in dic.keys():
+                if key not in ["username", "password", "tags", "avatar"]: # maybe should check also if key is valid field name 
+                    setattr(user_profile, key, dic.get(key))
+            avatar_dic = dic['avatar']
+            user_profile.avatar = SimpleUploadedFile(avatar_dic["name"], base64.b64decode(avatar_dic["file"]), getattr(avatar_dic, "content_type", "application/octet-stream"))
+            if dic.get('tags'):
+                tags = [token.strip() for token in dic.get('tags').split(' ')]
+                user_profile.tags.set(*tags)
+            user.save()
+            user_profile.save()
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
             return createLoggedInResponse(user)
         except IntegrityError:
+            if user:
+                user.delete()
             return createGeneralResponse('NOK', "That username already exists")
     else:
         raise # not used by mobile client     
