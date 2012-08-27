@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $("#restaurant-nav li").removeClass("active");
-    $("#" + $("#nav-active-id").html()).addClass("active")
+    $("#" + $("#nav-active-id").html()).addClass("active");
     // bind form using 'ajaxForm'
     $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
         var code = $("#id_code").val();

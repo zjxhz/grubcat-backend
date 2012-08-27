@@ -77,6 +77,11 @@ urlpatterns = patterns('',
     #ajax get menus
 #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
 
+    #group
+    url(r'^group/$', TemplateView.as_view(template_name='group/group_list.html'), name="group_list"),
+    url(r'^group/(?P<pk>\d+)/$', TemplateView.as_view(template_name='group/group_detail.html'), name='group_detail'),
+    url(r'^group/add/$', login_required(TemplateView.as_view(template_name='group/create_group.html')), name='create_group'),
+
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
