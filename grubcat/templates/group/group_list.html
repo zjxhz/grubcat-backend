@@ -2,7 +2,7 @@
 {% load static from staticfiles %}
 {% load static_asset %}
 {% load assets %}
-{% block title %}在{{ city|default:"杭州" }}的圈子{% endblock %}
+{% block title %}{{ city|default:"杭州" }}的圈子{% endblock %}
 {% block page_js %}
     <script type="text/javascript">
         $(document).ready(function () {

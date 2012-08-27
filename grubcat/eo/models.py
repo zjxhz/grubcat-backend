@@ -197,6 +197,23 @@ class DishCategoryItem(models.Model):
     order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
 
 
+class GroupPrivacy:
+    PUBLIC = 0
+    PRIVATE = 1
+
+GROUP_PRIVACY_CHOICE = (
+    (GroupPrivacy.PUBLIC, u'公开'),
+    (GroupPrivacy.PRIVATE, u'私密')
+    )
+
+class Group(models.Model):
+    name = models.CharField(u'圈子名称', max_length=60, unique=True)
+    privacy = models.SmallIntegerField(u'是否公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
+    desc = models.CharField(u'圈子描述', max_length=300)
+#    category =
+#    logo =
+
+
 class Rating(models.Model):
     user = models.ForeignKey(User, related_name='user_ratings')
     restaurant = models.ForeignKey(Restaurant, related_name="ratings")
