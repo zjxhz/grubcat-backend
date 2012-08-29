@@ -91,6 +91,22 @@ class MealDetailView(DetailView):
         meal = super(MealDetailView,self).get_object()
         return meal
 
+### group related views ###
+class GroupCreateView(CreateView):
+    form_class = GroupForm
+    template_name = 'group/create_group.html'
+
+    def form_valid(self, form):
+        group = form.save(False)
+        response = super(GroupCreateView, self).form_valid(form)
+        return response
+
+class GroupDetailView(DetailView):
+    model=Group
+    context_object_name="group"
+    template_name="group/group_detail.html"
+#    queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
+
 ### User related views ###
 class RegisterView(CreateView):
     form_class = UserCreationForm

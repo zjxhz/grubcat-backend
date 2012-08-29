@@ -3,17 +3,53 @@
 {% load static_asset %}
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的圈子{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "dropkick_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+{% block base_js %}
+    {{ block.super }}
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
 {% block page_js %}
     <script type="text/javascript">
         $(document).ready(function () {
             $("select.pretty").dropkick( );
+            $("#id_create_group_link").click(function () {
+                $("#id_create_group_dialog").load($("#id_create_group_link").attr('href') + " .content", function(){
+
+                    $("#id_create_group_dialog").dialog({
+                        autoOpen:true,
+                        title:"创建圈子",
+                        modal:true,
+                        width:550,
+                        position:['center', 100]
+                    });
+                    $("select").dropkick( );
+                })
+//                $("#add-menu-help-dialog").dialog({
+//                    autoOpen:true,
+//                    title:"操作帮助",
+//                    modal:true,
+//                    width:550,
+//                    position:['center', 100]
+//                });
+                return false;
+            })
         })
     </script>
 {% endblock %}
 {% block content %}
     <h1>圈子列表页面</h1> <br/>
-    <a class="button" href="{% url create_group %}">创建圈子</a>
+    <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
 
+    <div id="id_create_group_dialog" class="hide">
+
+    </div>
 {% endblock %}
 
 {% block active-nav-id %}nav-group{% endblock %}
