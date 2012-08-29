@@ -98,8 +98,9 @@ class GroupCreateView(CreateView):
 
     def form_valid(self, form):
         group = form.save(False)
-        response = super(GroupCreateView, self).form_valid(form)
-        return response
+        super(GroupCreateView, self).form_valid(form)
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail',kwargs={'pk':group.id})
+        return HttpResponse(content=content)
 
 class GroupDetailView(DetailView):
     model=Group
