@@ -135,7 +135,7 @@ class Dish(models.Model):
     #    is_mandatory = models.BooleanField(default=False)
     #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
-    available = models.BooleanField(u'目前是否可以提供', default=True)
+    available = models.BooleanField(u'目前可以提供', default=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类')
 
     def __unicode__(self):
@@ -196,6 +196,15 @@ class DishCategoryItem(models.Model):
     category = models.ForeignKey(DishCategory)
     order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
 
+class GroupCategory(models.Model):
+    name = models.CharField(u'圈子分类名', max_length=30, unique=True)
+
+    def __unicode__(self):
+        return  self.name
+
+    class Meta:
+        verbose_name = u'圈子分类'
+        verbose_name_plural = u'圈子分类'
 
 class GroupPrivacy:
     PUBLIC = 0
@@ -208,10 +217,22 @@ GROUP_PRIVACY_CHOICE = (
 
 class Group(models.Model):
     name = models.CharField(u'圈子名称', max_length=60, unique=True)
-    privacy = models.SmallIntegerField(u'是否公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     desc = models.CharField(u'圈子描述', max_length=300)
+    category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
+    privacy = models.SmallIntegerField(u'是否公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
 #    category =
 #    logo =
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'group_detail', (self.id, )
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'圈子'
+        verbose_name_plural = u'圈子'
 
 
 class Rating(models.Model):

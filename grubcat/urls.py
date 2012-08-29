@@ -79,8 +79,8 @@ urlpatterns = patterns('',
 
     #group
     url(r'^group/$', TemplateView.as_view(template_name='group/group_list.html'), name="group_list"),
-    url(r'^group/(?P<pk>\d+)/$', TemplateView.as_view(template_name='group/group_detail.html'), name='group_detail'),
-    url(r'^group/add/$', login_required(TemplateView.as_view(template_name='group/create_group.html')), name='create_group'),
+    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
+    url(r'^group/add/$', login_required(GroupCreateView.as_view(template_name='group/create_group.html')), name='create_group'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
@@ -108,7 +108,7 @@ urlpatterns = patterns('',
         name="restaurant_dish_del"),
     url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category), name="add_dish_category"),
 
-    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
+    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order_history.html")),
         name="restaurant_order"),
 
     url(r'^restaurant/menu/$', restaurant_login_required(rest.MenuListView.as_view()), name="restaurant_menu_list"),

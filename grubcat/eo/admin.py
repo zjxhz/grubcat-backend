@@ -1,8 +1,8 @@
 #coding=utf-8
-from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem
+from models import Group, GroupCategory
 
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
@@ -44,6 +44,9 @@ class MenuAdmin(admin.ModelAdmin):
     inlines = [DishItemInline,DishCategoryItemInline]
     ordering = ('status',)
 
+class GroupAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Restaurant)
@@ -51,3 +54,6 @@ admin.site.register(Dish, DishAdmin)
 admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu,MenuAdmin)
 admin.site.register(UserTag)
+admin.site.register(GroupCategory)
+admin.site.register(Group, GroupAdmin)
+
