@@ -8,36 +8,56 @@
     {% assets "dropkick_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+    <style type="text/css">
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
+    </style>
+
 {% endblock %}
 {% block base_js %}
     {{ block.super }}
     {% assets "jquery_ui_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
 {% endblock %}
 {% block page_js %}
     <script type="text/javascript">
+        function loadCreateGroupPage() {
+            $("#id_create_group_form").ajaxForm({
+                success:function (html) {
+                    var $html = $(html);
+                    if ($html.is("a.auto-close") && $html.attr('href')) {
+                        window.location.href = $html.attr('href');
+                    } else {
+                        $("#id_create_group_dialog").html($html.find(".content"));
+                        loadCreateGroupPage();
+                    }
+                }
+            })
+            $("#id_create_group_dialog").dialog({
+                autoOpen:true,
+                title:"创建圈子",
+                modal:true,
+                width:550,
+                position:['center', 100],
+                resizable:false
+            });
+            $("select").dropkick({width:163, startSpeed:0});
+        }
         $(document).ready(function () {
-            $("select.pretty").dropkick( );
+            $("select.pretty").dropkick();
             $("#id_create_group_link").click(function () {
-                $("#id_create_group_dialog").load($("#id_create_group_link").attr('href') + " .content", function(){
-
-                    $("#id_create_group_dialog").dialog({
-                        autoOpen:true,
-                        title:"创建圈子",
-                        modal:true,
-                        width:550,
-                        position:['center', 100]
-                    });
-                    $("select").dropkick( );
-                })
-//                $("#add-menu-help-dialog").dialog({
-//                    autoOpen:true,
-//                    title:"操作帮助",
-//                    modal:true,
-//                    width:550,
-//                    position:['center', 100]
-//                });
+                $("#id_create_group_dialog").load($("#id_create_group_link").attr('href') + " .content", loadCreateGroupPage);
                 return false;
             })
         })

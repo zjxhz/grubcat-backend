@@ -109,7 +109,8 @@ class RatingPic(models.Model):
 
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
-    name = models.CharField(u'菜名', max_length=45, unique=True)
+#    TODO unique for restaurant and name
+    name = models.CharField(u'菜名', max_length=45,)
     #    if restaurant is null,it means the category is public, all restaurant can see the category
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True)
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
@@ -216,10 +217,10 @@ GROUP_PRIVACY_CHOICE = (
     )
 
 class Group(models.Model):
-    name = models.CharField(u'圈子名称', max_length=60, unique=True)
-    desc = models.CharField(u'圈子描述', max_length=300)
+    name = models.CharField(u'名称', max_length=60, unique=True)
+    desc = models.CharField(u'描述', max_length=300)
     category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
-    privacy = models.SmallIntegerField(u'是否公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
+    privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
 #    category =
 #    logo =
 
