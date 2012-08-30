@@ -94,13 +94,18 @@ class MealDetailView(DetailView):
 ### group related views ###
 class GroupCreateView(CreateView):
     form_class = GroupForm
-    template_name = 'group/create_group.html'
+    template_name = 'group/add_edit_group.html'
 
     def form_valid(self, form):
         group = form.save(False)
         super(GroupCreateView, self).form_valid(form)
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail',kwargs={'pk':group.id})
         return HttpResponse(content=content)
+
+class GroupUpdateView(UpdateView):
+    form_class = GroupForm
+    model = Group
+    template_name = "group/add_edit_group.html"
 
 class GroupDetailView(DetailView):
     model=Group
