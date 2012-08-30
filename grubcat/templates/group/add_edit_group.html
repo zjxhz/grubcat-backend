@@ -8,6 +8,22 @@
     {% assets "bootstrap_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+    <style type="text/css">
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
+
+        #edit_group_title {
+            text-align: center;
+            width: 600px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 21px;
+            color: #222;
+        }
+    </style>
 {% endblock %}
 
 {% block page_js %}
@@ -18,7 +34,9 @@
 {% block active-nav-id %}nav-group{% endblock %}
 
 {% block content %}
-    <form id="id_create_group_form" action="{{ request.path }}" method="post" class="ajax form-horizontal"> {% csrf_token %}
+    <div id="edit_group_title">修改信息</div>
+    <form id="id_create_group_form" action="{{ request.path }}" method="post"
+          class="ajax form-horizontal"> {% csrf_token %}
         {{ form|as_bootstrap }}
         <div class="form-actions">
             <input type="submit" class="button" value="确定"/>

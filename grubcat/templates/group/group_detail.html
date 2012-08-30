@@ -3,12 +3,38 @@
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block active-nav-id %}nav-group{% endblock %}
+
+
+{% block page_css %}
+    {{ block.super }}
+    {% assets "dropkick_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+    {% comment %}<style type="text/css">
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
+        #edit_group_title {
+            display: none;
+        }
+    </style>{% endcomment %}
+
+{% endblock %}
 {% block content %}
     圈子详情<br/>
-    {{ group.name }}<br/>
-    {{ group.desc }}<br/>
-    {{ group.category.name }}<br/>
-    {{ group.privacy }}
+    名称:{{ group.name }}<br/>
+    描述{{ group.desc }}<br/>
+    分类：{{ group.category.name }}<br/>
+    公开：{{ group.privacy }}<br/>
+    创建者：{{ group.owner }}
+
+    {% ifequal request.user group.owner %}<a href="{% url edit_group group.id %}">修改信息</a>{% endifequal %}
 {% endblock %}
 
 {% block page_js %}
