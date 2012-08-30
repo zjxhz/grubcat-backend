@@ -73,7 +73,7 @@ class GroupForm(ModelForm):
         widgets={
             'desc':Textarea({'rows':5})
         }
-#        exclude=("restaurant","menu")
+        exclude=('owner',)
 
 class MenuForm(ModelForm):
     class Meta:
