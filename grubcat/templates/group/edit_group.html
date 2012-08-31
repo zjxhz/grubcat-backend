@@ -5,6 +5,9 @@
 {% block title %}修改 {{ group.name }}{% endblock %}
 {% block page_css %}
     {{ block.super }}
+    {% assets "dropkick_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
     {% assets "bootstrap_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
@@ -37,12 +40,14 @@
 {% endblock %}
 
 {% block page_js %}
+
     {% assets "jquery_ajax_bootstrap_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
         $(document).ready(function(){
-            $("<br/>").insertBefore($("#logo-clear_id"))
+            $("<br/>").insertBefore($("#logo-clear_id"));
+            $("select").dropkick({width:163, startSpeed:0});
         })
     </script>
 {% endblock %}
