@@ -94,7 +94,7 @@ class MealDetailView(DetailView):
 ### group related views ###
 class GroupCreateView(CreateView):
     form_class = GroupForm
-    template_name = 'group/add_edit_group.html'
+    template_name = 'group/add_group.html'
 
     def form_valid(self, form):
         group = form.save(False)
@@ -106,7 +106,7 @@ class GroupCreateView(CreateView):
 class GroupUpdateView(UpdateView):
     form_class = GroupForm
     model = Group
-    template_name = "group/add_edit_group.html"
+    template_name = "group/edit_group.html"
 
 class GroupDetailView(DetailView):
     model=Group
