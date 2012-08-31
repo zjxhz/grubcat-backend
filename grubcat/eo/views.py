@@ -108,6 +108,17 @@ class GroupUpdateView(UpdateView):
     model = Group
     template_name = "group/edit_group.html"
 
+class GroupLogoUpdateView(UpdateView):
+    form_class = GroupLogoForm
+    model = Group
+    template_name = "group/edit_group_logo.html"
+
+    def form_valid(self, form):
+        group = form.save(False)
+        super(GroupLogoUpdateView, self).form_valid(form)
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail',kwargs={'pk':group.id})
+        return HttpResponse(content=content)
+
 class GroupDetailView(DetailView):
     model=Group
     context_object_name="group"

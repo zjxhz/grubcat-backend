@@ -2,7 +2,7 @@
 {% load bootstrap_tags %}
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
-{% block title %}修改 {{ group.name }}{% endblock %}
+{% block title %}修改圈子Logo{% endblock %}
 {% block page_css %}
     {{ block.super }}
     {% assets "bootstrap_css" %}
@@ -49,7 +49,6 @@
 {% block active-nav-id %}nav-group{% endblock %}
 
 {% block content %}
-    <div id="edit_group_title">修改信息</div>
     <form id="id_create_group_form" enctype="multipart/form-data" action="{{ request.path }}" method="post"
           class="form-horizontal"> {% csrf_token %}
         {{ form|as_bootstrap }}
