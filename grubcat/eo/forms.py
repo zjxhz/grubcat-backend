@@ -75,6 +75,11 @@ class GroupForm(ModelForm):
         }
         exclude=('owner',)
 
+class GroupLogoForm(ModelForm):
+
+    class Meta:
+        model = Group
+        fields=('logo',)
 class MenuForm(ModelForm):
     class Meta:
         model = Menu
