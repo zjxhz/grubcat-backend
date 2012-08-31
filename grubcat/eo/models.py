@@ -222,6 +222,7 @@ class Group(models.Model):
     category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     owner = models.ForeignKey(User,verbose_name=u'创建者')
+    logo = models.ImageField(upload_to='group_logos',blank=True, null=True)
 #    category =
 #    logo =
 
