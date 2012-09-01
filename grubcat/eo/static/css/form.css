@@ -89,4 +89,5 @@ input[type="text"].cart_day {
 .btn-create-meal:hover {
   background: -webkit-gradient(linear, left top, left bottom, from(#2c496b), to(#28415e));
   color: white;
+  text-decoration: none;
 }

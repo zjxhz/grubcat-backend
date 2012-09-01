@@ -212,8 +212,8 @@ class GroupPrivacy:
     PRIVATE = 1
 
 GROUP_PRIVACY_CHOICE = (
-    (GroupPrivacy.PUBLIC, u'公开'),
-    (GroupPrivacy.PRIVATE, u'私密')
+    (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
+    (GroupPrivacy.PRIVATE, u'私密：仅被邀请的人可以加入')
     )
 
 class Group(models.Model):
@@ -499,7 +499,7 @@ class MealPrivacy:
     PRIVACY = 1
 
 MEAL_PRIVACY_CHOICE = (
-    (MealPrivacy.PUBLIC, u"公开：所有人可以参加"),
+    (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
     (MealPrivacy.PRIVACY, u"私密：仅被邀请的人可以参加")
     )
 
