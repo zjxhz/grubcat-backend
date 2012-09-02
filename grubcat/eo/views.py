@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
+from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.response import TemplateResponse
@@ -97,7 +98,7 @@ class MealDetailView(DetailView):
 ### group related views ###
 class GroupListView(ListView):
 #    TODO order by member num
-    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC)
+    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(num_members=Count('members')).order_by('-num_members')
     template_name = "group/group_list.html"
     context_object_name = "group_list"
 

@@ -217,16 +217,17 @@ GROUP_PRIVACY_CHOICE = (
     )
 
 class Group(models.Model):
+    """圈子"""
     name = models.CharField(u'名称', max_length=60, unique=True)
     desc = models.CharField(u'描述', max_length=300)
     category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     owner = models.ForeignKey(User,verbose_name=u'创建者')
     logo = models.ImageField(upload_to='group_logos',blank=True, null=True)
+    members = models.ManyToManyField(User, verbose_name=u'成员',related_name='interest_groups')
 
-
-    def recent_meal(self):
-        return Meal.objects.filter()
+#    def recent_meal(self):
+#        return Meal.objects.filter()
 
     @models.permalink
     def get_absolute_url(self):
