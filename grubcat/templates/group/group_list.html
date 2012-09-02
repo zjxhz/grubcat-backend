@@ -70,25 +70,8 @@
         <ul id="group-category-list">
             <li class="group-category current">所有圈子</li>
             <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span class="category-name">公益</span></li>
+                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span
+                    class="category-name">公益</span></li>
 
         </ul>
     </div>
@@ -137,178 +120,47 @@
         <div id="groups-list">
 
             <h4>Groups to Join</h4>
-            <div class="group-cell clearfix" id="group_cell_20sgrubgroup" data-category="social"
-                 style="display: block; ">
-                <div class="cell">
-                    <div class="upper">
-                        <a href="/groups/20sgrubgroup" class="group-name">圈子名称圈子名称圈子名称圈子名称</a>
+            {% for group in group_list %}
+                <div class="group-cell clearfix" category-id="{{ group.category.id }}">
+                    <div class="cell">
+                        <div class="upper clearfix">
+                            <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
 
-                        <div class="members" data-url="20sgrubgroup">
-                            <span>3409 会员</span>
-                            <a data-followable-id="318" data-followable-path="/follow/create"
-                               data-followable-type="Group"
-                               data-followed-text="Joined" href="https://www.grubwithus.com/groups/20sgrubgroup"
-                               class="button join-button">+ 加入</a>
+                            <div class="members">
+                                <span>3409 成员</span>
+                                <a href="https://www.grubwithus.com/groups/20sgrubgroup"
+                                   class="button join-button">+ 加入</a>
+                            </div>
+
                         </div>
+                        <div class="lower clearfix">
+                            <div class="group-logo">
+                                <a href="{% url group_detail group.id %}">
+                                    <img alt="Test-scera" width="76" height="76"
+                                                                               src="{% if group.logo %}{{ MEDIA_URL }}{{ group.logo }}{% else %}{% static 'img/default/group-logo.jpg' %}{% endif %}"  >
+                                </a>
+                            </div>
+                            <div class="group-desc">
+                                {{ group.desc }}
+                            </div>
 
+                            <div class="group-recent-meal">
+                                <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
+                                        alt="Vietnamese Grubs in Lincoln Park" height="38"
+                                        src="{% static 'img/tmp/meal-cover.jpg' %}"
+                                        width="50"></a>
+
+                                <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
+                                </p>
+                                <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
+                                    Out!</a>
+                            </div>
+
+                        </div>
                     </div>
-                    <div class="lower">
-                        <div class="group-logo">
-                            <a href="/groups/20sgrubgroup"><img alt="Test-scera" width="76" height="76"
-                                                                src="{% static 'img/tmp/group-logo.jpg' %}"></a>
-                        </div>
-                        <div class="group-desc">
-                            A group for 20 and 30 somethings who love to wine and dine. New to town, or been here
-                            all
-                            your
-                            life, this group is about meeting fun and energetic young people!
-                        </div>
-
-                        <div class="group-recent-meal">
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                    alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                    src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                    width="50"></a>
-
-                            <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
-                            </p>
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
-                                Out!</a>
-                        </div>
-
-                    </div>
+                    <div class="cell-shadow"></div>
                 </div>
-                <div class="cell-shadow"></div>
-            </div>
-            <div class="group-cell clearfix" id="group_cell_20sgrubgroup" data-category="social"
-                 style="display: block; ">
-                <div class="cell">
-                    <div class="upper">
-                        <a href="/groups/20sgrubgroup" class="group-name">圈子名称圈子名称圈子名称圈子名称</a>
-
-                        <div class="members" data-url="20sgrubgroup">
-                            <span>3409 会员</span>
-                            <a data-followable-id="318" data-followable-path="/follow/create"
-                               data-followable-type="Group"
-                               data-followed-text="Joined" href="https://www.grubwithus.com/groups/20sgrubgroup"
-                               class="button join-button">+ 加入</a>
-                        </div>
-
-                    </div>
-                    <div class="lower">
-                        <div class="group-logo">
-                            <a href="/groups/20sgrubgroup"><img alt="Test-scera" width="76" height="76"
-                                                                src="{% static 'img/tmp/group-logo.jpg' %}"></a>
-                        </div>
-                        <div class="group-desc">
-                            A group for 20 and 30 somethings who love to wine and dine. New to town, or been here
-                            all
-                            your
-                            life, this group is about meeting fun and energetic young people!
-                        </div>
-
-                        <div class="group-recent-meal">
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                    alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                    src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                    width="50"></a>
-
-                            <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
-                            </p>
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
-                                Out!</a>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="cell-shadow"></div>
-            </div>
-            <div class="group-cell clearfix" id="group_cell_20sgrubgroup" data-category="social"
-                 style="display: block; ">
-                <div class="cell">
-                    <div class="upper">
-                        <a href="/groups/20sgrubgroup" class="group-name">圈子名称圈子名称圈子名称圈子名称</a>
-
-                        <div class="members" data-url="20sgrubgroup">
-                            <span>3409 会员</span>
-                            <a data-followable-id="318" data-followable-path="/follow/create"
-                               data-followable-type="Group"
-                               data-followed-text="Joined" href="https://www.grubwithus.com/groups/20sgrubgroup"
-                               class="button join-button">+ 加入</a>
-                        </div>
-
-                    </div>
-                    <div class="lower">
-                        <div class="group-logo">
-                            <a href="/groups/20sgrubgroup"><img alt="Test-scera" width="76" height="76"
-                                                                src="{% static 'img/tmp/group-logo.jpg' %}"></a>
-                        </div>
-                        <div class="group-desc">
-                            A group for 20 and 30 somethings who love to wine and dine. New to town, or been here
-                            all
-                            your
-                            life, this group is about meeting fun and energetic young people!
-                        </div>
-
-                        <div class="group-recent-meal">
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                    alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                    src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                    width="50"></a>
-
-                            <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
-                            </p>
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
-                                Out!</a>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="cell-shadow"></div>
-            </div>
-            <div class="group-cell clearfix" id="group_cell_20sgrubgroup" data-category="social"
-                 style="display: block; ">
-                <div class="cell">
-                    <div class="upper">
-                        <a href="/groups/20sgrubgroup" class="group-name">圈子名称圈子名称圈子名称圈子名称</a>
-
-                        <div class="members" data-url="20sgrubgroup">
-                            <span>3409 会员</span>
-                            <a data-followable-id="318" data-followable-path="/follow/create"
-                               data-followable-type="Group"
-                               data-followed-text="Joined" href="https://www.grubwithus.com/groups/20sgrubgroup"
-                               class="button join-button">+ 加入</a>
-                        </div>
-
-                    </div>
-                    <div class="lower">
-                        <div class="group-logo">
-                            <a href="/groups/20sgrubgroup"><img alt="Test-scera" width="76" height="76"
-                                                                src="{% static 'img/tmp/group-logo.jpg' %}"></a>
-                        </div>
-                        <div class="group-desc">
-                            A group for 20 and 30 somethings who love to wine and dine. New to town, or been here
-                            all
-                            your
-                            life, this group is about meeting fun and energetic young people!
-                        </div>
-
-                        <div class="group-recent-meal">
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                    alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                    src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                    width="50"></a>
-
-                            <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
-                            </p>
-                            <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
-                                Out!</a>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="cell-shadow"></div>
-            </div>
+            {% endfor %}
 
         </div>
     </div>
