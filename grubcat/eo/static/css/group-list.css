@@ -117,16 +117,21 @@ h4{
 
 .group-cell .members{
     float: right;
-    padding: 5px 5px 5px 8px;
+    padding: 5px 5px 5px 0px;
     background: #EEE;
     border: 1px solid #DDD;
     color: #444;
-    width: 135px;
+    /*width: 135px;*/
     font-size: 110%;
     line-height: 160%;
 }
 
 
+
+.members span, .members button{
+    float: left;
+    margin-left: 8px;
+}
 
 .group-cell .upper{
     padding: 12px 12px 12px 20px;

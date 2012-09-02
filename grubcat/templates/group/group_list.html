@@ -61,12 +61,12 @@
                 return false;
             })
 
-            $("li.group-category").click(function(){
+            $("li.group-category").click(function () {
                 $("li.group-category.current").removeClass('current');
                 $(this).addClass('current');
 
                 var categoryId = $(this).attr('category-id');
-                if(categoryId){
+                if (categoryId) {
                     $("div.group-cell[category-id!=" + categoryId + "]").hide()
                     $("div.group-cell[category-id=" + categoryId + "]").show()
                 } else {
@@ -92,94 +92,75 @@
 
         </ul>
     </div>
-    <div id="group-list-wrapper">
-        <div id="my-groups-wrapper" class="clearfix">
-            <h4>我的圈子</h4>
 
-            <div class="my-groups">
-                <a href="/groups/test-scerable" class="my-group-cell">
-                    <img alt="Test-scera" width="76" height="76"
-                         src="{% static 'img/tmp/group-logo.jpg' %}">
-                    Test-scera
-                </a>
-                <a href="/groups/test-scerable" class="my-group-cell">
-                    <img alt="Test-scera" width="76" height="76"
-                         src="{% static 'img/tmp/group-logo.jpg' %}">
-                    Test-scera
-                </a><a href="/groups/test-scerable" class="my-group-cell">
-                <img alt="Test-scera" width="76" height="76"
-                     src="{% static 'img/tmp/group-logo.jpg' %}">
-                Test-sceraTest-sceraTest-sceraTest-scera
-            </a>
-                <a href="/groups/test-scerable" class="my-group-cell">
-                    <img alt="Test-scera" width="76" height="76"
-                         src="{% static 'img/tmp/group-logo.jpg' %}">
-                    Test-scera
-                </a><a href="/groups/test-scerable" class="my-group-cell">
-                <img alt="Test-scera" width="76" height="76"
-                     src="{% static 'img/tmp/group-logo.jpg' %}">
-                Test-scera
-            </a>
-                <a href="/groups/test-scerable" class="my-group-cell">
-                    <img alt="Test-scera" width="76" height="76"
-                         src="{% static 'img/tmp/group-logo.jpg' %}">
-                    Test-scera
-                </a>
-                <a href="/groups/test-scerable" class="my-group-cell">
-                    <img alt="Test-scera" width="76" height="76"
-                         src="{% static 'img/tmp/group-logo.jpg' %}">
-                    Test-scera
-                </a>
+    <div id="group-list-wrapper">
+        {% with request.user.interest_groups.all as my_groups %}
+            {% if my_groups %}
+                <div id="my-groups-wrapper" class="clearfix">
+                    <h4>我的圈子</h4>
+
+                    <div class="my-groups">
+                        {% for group in my_groups %}
+                            <a href="{% url group_detail group.id %}" class="my-group-cell">
+                                <img alt="{{ group.name }}" width="76" height="76"
+                                     src="{{ group.logo_url_default_if_none }}">
+                                {{ group.name }}
+                            </a>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+            {% endif %}
+
+            <div id="groups-list">
+
+                {% for group in group_list %}
+                    <div class="group-cell clearfix" category-id="{{ group.category.id }}">
+                        <div class="cell">
+                            <div class="upper clearfix">
+                                <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
+
+                                <div class="members">
+                                    <span>{{ group.num_members }} 位成员</span>
+                                    {% if not group in my_groups %}
+                                        <button class="button join-button">+ 加入</button> {% endif %}
+                                </div>
+
+                            </div>
+                            <div class="lower clearfix">
+                                <div class="group-logo">
+                                    <a href="{% url group_detail group.id %}">
+                                        <img alt="{{ group.name }}" width="76" height="76"
+                                             src="{{ group.logo_url_default_if_none }}">
+                                    </a>
+                                </div>
+                                <div class="group-desc">
+                                    {{ group.desc }}
+                                </div>
+
+                                <div class="group-recent-meal">
+                                    <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
+                                            alt="Vietnamese Grubs in Lincoln Park" height="38"
+                                            src="{% static 'img/tmp/meal-cover.jpg' %}"
+                                            width="50"></a>
+
+                                    <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at
+                                        7:30PM
+                                    </p>
+                                    <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check
+                                        it
+                                        Out!</a>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="cell-shadow"></div>
+                    </div>
+                {% endfor %}
 
             </div>
-
-        </div>
-        <div id="groups-list">
-
-            <h4>Groups to Join</h4>
-            {% for group in group_list %}
-                <div class="group-cell clearfix" category-id="{{ group.category.id }}">
-                    <div class="cell">
-                        <div class="upper clearfix">
-                            <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
-
-                            <div class="members">
-                                <span>{{ group.num_members }} 成员</span>
-                                <a href="https://www.grubwithus.com/groups/20sgrubgroup"
-                                   class="button join-button">+ 加入</a>
-                            </div>
-
-                        </div>
-                        <div class="lower clearfix">
-                            <div class="group-logo">
-                                <a href="{% url group_detail group.id %}">
-                                    <img alt="Test-scera" width="76" height="76"
-                                         src="{% if group.logo %}{{ MEDIA_URL }}{{ group.logo }}{% else %}{% static 'img/default/group-logo.jpg' %}{% endif %}">
-                                </a>
-                            </div>
-                            <div class="group-desc">
-                                {{ group.desc }}
-                            </div>
-
-                            <div class="group-recent-meal">
-                                <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                        alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                        src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                        width="50"></a>
-
-                                <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at 7:30PM
-                                </p>
-                                <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check it
-                                    Out!</a>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="cell-shadow"></div>
-                </div>
-            {% endfor %}
-
-        </div>
+        {% endwith %}
     </div>
     <div id="id_create_group_dialog" class="hide"></div>
 {% endblock %}

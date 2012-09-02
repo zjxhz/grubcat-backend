@@ -229,6 +229,13 @@ class Group(models.Model):
 #    def recent_meal(self):
 #        return Meal.objects.filter()
 
+    @property
+    def logo_url_default_if_none(self):
+        if self.logo:
+            return self.logo.url
+        else:
+            return settings.STATIC_URL + 'img/default/group-logo.jpg'
+
     @models.permalink
     def get_absolute_url(self):
         return 'group_detail', (self.id, )
