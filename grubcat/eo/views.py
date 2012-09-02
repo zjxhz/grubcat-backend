@@ -148,13 +148,29 @@ def join_group(request, pk):
         if group.privacy == GroupPrivacy.PUBLIC:
             if request.user not in group.members.all():
                 group.members.add(request.user)
-                return createSucessJsonResponse(u'已经成功加入该圈子！')
+                return createSucessJsonResponse(u'已经成功加入该圈子！',{'redirect_url':reverse('group_list')})
             else:
                 return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
         else :
 #            need to handle invitation
             return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
 
+def leave_group(request, pk):
+    if request.method == 'POST':
+        group = Group.objects.get(pk=pk)
+        if group.privacy == GroupPrivacy.PUBLIC:
+            if request.user not in group.members.all():
+                group.members.add(request.user)
+                return createSucessJsonResponse(u'已经成功加入该圈子！')
+            else:
+                return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
+        else :
+        #            need to handle invitation
+            return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
 
 ### User related views ###
 class RegisterView(CreateView):

@@ -84,9 +84,11 @@
                 var $join_button = $(this);
                 $.post($join_button.attr('href'),function(data){
                     if(data.status=="OK"){
-                        var $num_members = $join_button.parents('div.group-cell').find('span.num-members');
+                        alert(data.redirect_url)
+                        window.location= data.redirect_url;
+                        /*var $num_members = $join_button.parents('div.group-cell').find('span.num-members');
                         $num_members.html($num_members.val() + 1);
-                        $join_button.remove();
+                        $join_button.remove();*/
                     }
                 },'json')
                 return false;
