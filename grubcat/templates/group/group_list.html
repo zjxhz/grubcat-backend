@@ -19,9 +19,9 @@
             display: none;
         }
 
-    #id_create_group_form{
-        margin-top: 15px;
-    }
+        #id_create_group_form {
+            margin-top: 15px;
+        }
     </style>
 
 {% endblock %}
@@ -80,17 +80,16 @@
                 }
             })
 
-            $("div.group-cell a.join-button").click(function(){
+            $("div.group-cell a.join-button").click(function () {
                 var $join_button = $(this);
-                $.post($join_button.attr('href'),function(data){
-                    if(data.status=="OK"){
-                        alert(data.redirect_url)
-                        window.location= data.redirect_url;
+                $.post($join_button.attr('href'), function (data) {
+                    if (data.status == "OK") {
+                        window.location = data.redirect_url;
                         /*var $num_members = $join_button.parents('div.group-cell').find('span.num-members');
-                        $num_members.html($num_members.val() + 1);
-                        $join_button.remove();*/
+                         $num_members.html($num_members.val() + 1);
+                         $join_button.remove();*/
                     }
-                },'json')
+                }, 'json')
                 return false;
             })
         })
@@ -135,47 +134,53 @@
             <div id="groups-list">
 
                 {% for group in group_list %}
-                    <div class="group-cell clearfix" category-id="{{ group.category.id }}">
-                        <div class="cell">
-                            <div class="upper clearfix">
-                                <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
+                    {% if group not in my_groups %}
+                        <div class="group-cell clearfix" category-id="{{ group.category.id }}">
+                            <div class="cell">
+                                <div class="upper clearfix">
+                                    <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
 
-                                <div class="members">
-                                    <span class="span-members"><span class="num-members">{{ group.num_members }}</span> 位成员</span>
-                                    {% if not group in my_groups %}
-                                        <a href="{% url join_group group.id %}" class="button join-button">+ 加入</a> {% endif %}
+                                    <div class="members">
+                                        <span class="span-members"><span
+                                                class="num-members">{{ group.num_members }}</span> 位成员</span>
+                                        {% if not group in my_groups %}
+                                            <a href="{% url join_group group.id %}" class="button join-button">+
+                                                加入</a> {% endif %}
+                                    </div>
+
                                 </div>
+                                <div class="lower clearfix">
+                                    <div class="group-logo">
+                                        <a href="{% url group_detail group.id %}">
+                                            <img alt="{{ group.name }}" width="76" height="76"
+                                                 src="{{ group.logo_url_default_if_none }}">
+                                        </a>
+                                    </div>
+                                    <div class="group-desc">
+                                        {{ group.desc }}
+                                    </div>
 
+                                    <div class="group-recent-meal">
+                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe"
+                                           class="logo-wrapper"><img
+                                                alt="Vietnamese Grubs in Lincoln Park" height="38"
+                                                src="{% static 'img/tmp/meal-cover.jpg' %}"
+                                                width="50"></a>
+
+                                        <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012
+                                            at
+                                            7:30PM
+                                        </p>
+                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check
+                                            it
+                                            Out!</a>
+                                    </div>
+
+                                </div>
                             </div>
-                            <div class="lower clearfix">
-                                <div class="group-logo">
-                                    <a href="{% url group_detail group.id %}">
-                                        <img alt="{{ group.name }}" width="76" height="76"
-                                             src="{{ group.logo_url_default_if_none }}">
-                                    </a>
-                                </div>
-                                <div class="group-desc">
-                                    {{ group.desc }}
-                                </div>
-
-                                <div class="group-recent-meal">
-                                    <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="logo-wrapper"><img
-                                            alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                            src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                            width="50"></a>
-
-                                    <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012 at
-                                        7:30PM
-                                    </p>
-                                    <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check
-                                        it
-                                        Out!</a>
-                                </div>
-
-                            </div>
+                            <div class="cell-shadow"></div>
                         </div>
-                        <div class="cell-shadow"></div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
 
             </div>
