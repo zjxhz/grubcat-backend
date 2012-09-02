@@ -73,13 +73,14 @@ class GroupForm(ModelForm):
         widgets={
             'desc':Textarea({'rows':5})
         }
-        exclude=('owner',)
+        exclude=('owner','members')
 
 class GroupLogoForm(ModelForm):
 
     class Meta:
         model = Group
         fields=('logo',)
+
 class MenuForm(ModelForm):
     class Meta:
         model = Menu

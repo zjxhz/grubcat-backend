@@ -18,6 +18,10 @@
         #div_id_logo {
             display: none;
         }
+
+    #id_create_group_form{
+        margin-top: 15px;
+    }
     </style>
 
 {% endblock %}
@@ -49,6 +53,7 @@
                 title:"创建圈子",
                 modal:true,
                 width:550,
+                height:470,
                 position:['center', 100],
                 resizable:false
             });
@@ -73,6 +78,18 @@
                     // show all groups
                     $("div.group-cell").show()
                 }
+            })
+
+            $("div.group-cell a.join-button").click(function(){
+                var $join_button = $(this);
+                $.post($join_button.attr('href'),function(data){
+                    if(data.status=="OK"){
+                        var $num_members = $join_button.parents('div.group-cell').find('span.num-members');
+                        $num_members.html($num_members.val() + 1);
+                        $join_button.remove();
+                    }
+                },'json')
+                return false;
             })
         })
     </script>
@@ -122,9 +139,9 @@
                                 <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
 
                                 <div class="members">
-                                    <span>{{ group.num_members }} 位成员</span>
+                                    <span class="span-members"><span class="num-members">{{ group.num_members }}</span> 位成员</span>
                                     {% if not group in my_groups %}
-                                        <button class="button join-button">+ 加入</button> {% endif %}
+                                        <a href="{% url join_group group.id %}" class="button join-button">+ 加入</a> {% endif %}
                                 </div>
 
                             </div>

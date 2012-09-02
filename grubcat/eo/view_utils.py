@@ -35,4 +35,11 @@ def creatJsonResponse(status, message, extra_dict=None):
 
 # Create a general response with status and message)
 def createSucessJsonResponse(message=u"成功", extra_dict=None):
-    return creatJsonResponse('OK', message, extra_dict)
+    return creatJsonResponse(SUCESS, message, extra_dict)
+
+# Create a general response with status and message)
+def createFailureJsonResponse(message=u"操作失败", extra_dict=None):
+    return creatJsonResponse(ERROR, message, extra_dict)
+
+def create_no_right_response():
+    return creatJsonResponse(ERROR, u'对不起，您没有权限执行此操作')
