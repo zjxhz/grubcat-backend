@@ -60,6 +60,20 @@
                 $("#id_create_group_dialog").load($("#id_create_group_link").attr('href') + " .content", loadCreateGroupPage);
                 return false;
             })
+
+            $("li.group-category").click(function(){
+                $("li.group-category.current").removeClass('current');
+                $(this).addClass('current');
+
+                var categoryId = $(this).attr('category-id');
+                if(categoryId){
+                    $("div.group-cell[category-id!=" + categoryId + "]").hide()
+                    $("div.group-cell[category-id=" + categoryId + "]").show()
+                } else {
+                    // show all groups
+                    $("div.group-cell").show()
+                }
+            })
         })
     </script>
 {% endblock %}
@@ -68,10 +82,13 @@
         <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
 
         <ul id="group-category-list">
-            <li class="group-category current">所有圈子</li>
-            <li class="group-category"><img alt="Test-scera" width="30" height="30"
-                                            src="{% static 'img/tmp/group-logo.jpg' %}"><span
-                    class="category-name">公益</span></li>
+            <li class="group-category current" id="id_all_group">所有圈子</li>
+            {% for category in categories %}
+                <li class="group-category" category-id="{{ category.id }}">
+                    <img alt="Test-scera" width="30" height="30" src="{% static 'img/tmp/category-cover.png' %}">
+                    <span class="category-name">{{ category.name }}</span>
+                </li>
+            {% endfor %}
 
         </ul>
     </div>
@@ -137,7 +154,7 @@
                             <div class="group-logo">
                                 <a href="{% url group_detail group.id %}">
                                     <img alt="Test-scera" width="76" height="76"
-                                                                               src="{% if group.logo %}{{ MEDIA_URL }}{{ group.logo }}{% else %}{% static 'img/default/group-logo.jpg' %}{% endif %}"  >
+                                         src="{% if group.logo %}{{ MEDIA_URL }}{{ group.logo }}{% else %}{% static 'img/default/group-logo.jpg' %}{% endif %}">
                                 </a>
                             </div>
                             <div class="group-desc">

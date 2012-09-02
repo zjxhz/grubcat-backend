@@ -45,7 +45,9 @@ class MenuAdmin(admin.ModelAdmin):
     ordering = ('status',)
 
 class GroupAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id','name','category')
+    list_filter = ('category',)
+    list_editable = ('category',)
 
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
