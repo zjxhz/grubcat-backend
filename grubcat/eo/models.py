@@ -223,8 +223,10 @@ class Group(models.Model):
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     owner = models.ForeignKey(User,verbose_name=u'创建者')
     logo = models.ImageField(upload_to='group_logos',blank=True, null=True)
-#    category =
-#    logo =
+
+
+    def recent_meal(self):
+        return Meal.objects.filter()
 
     @models.permalink
     def get_absolute_url(self):
@@ -561,6 +563,9 @@ class Meal(models.Model):
         self.actual_persons += order.num_persons
         self.save()
         order.save()
+
+    def is_reservable(self):
+        return True
 
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist

@@ -96,11 +96,15 @@ class MealDetailView(DetailView):
 
 ### group related views ###
 class GroupListView(ListView):
+#    TODO order by member num
     queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC)
     template_name = "group/group_list.html"
     context_object_name = "group_list"
-    #TODO add filter to queyset
 
+    def get_context_data(self, **kwargs):
+        context = super(GroupListView, self).get_context_data(**kwargs)
+        context['categories'] = GroupCategory.objects.all()
+        return context
 
 class GroupCreateView(CreateView):
     form_class = GroupForm
