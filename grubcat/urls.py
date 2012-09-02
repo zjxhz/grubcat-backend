@@ -78,7 +78,7 @@ urlpatterns = patterns('',
 #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
 
     #group
-    url(r'^group/$', TemplateView.as_view(template_name='group/group_list.html'), name="group_list"),
+    url(r'^group/$', GroupListView.as_view(), name="group_list"),
     url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
     url(r'^group/add/$', login_required(GroupCreateView.as_view()), name='create_group'),
     url(r'^group/edit/(?P<pk>\d+)/$', login_required(GroupUpdateView.as_view()), name='edit_group'),

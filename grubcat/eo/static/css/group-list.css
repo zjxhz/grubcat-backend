@@ -121,12 +121,20 @@ h4{
     line-height: 160%;
 }
 
-.group-cell .upper, .group-cell .lower{
+
+
+.group-cell .upper{
     padding: 12px 12px 12px 20px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
+}
+
+.group-cell .lower{
+    padding: 0px 12px 12px 20px;
 }
 
 .group-cell a.group-name{
+    float: left;
+    padding-top: 8px;
     font-size: 180%;
     font-weight: bold;
     color: #222;
@@ -156,15 +164,21 @@ h4{
 
 }
 .group-desc{
-    width: 555px;
-    padding: 5px 22px 20px 0;
+    width: 550px;
+    padding: 5px 22px 15px 7px;
+    font-size: 13px;
+    line-height: 150%;
 }
 
 .group-recent-meal{
-    width:560px;
-    padding: 5px;
-    margin-bottom: 20px;
+    width: 565px;
+    padding: 3px;
+    margin-bottom: 10px;
     background: #D3EBF2;
+}
+
+.group-recent-meal img{
+    margin-top: 4px;
 }
 .group-recent-meal .logo-wrapper{
     float: left;
@@ -174,6 +188,9 @@ h4{
     float: left;
     width: 340px;
     margin-left: 10px;
+    margin-bottom: 0;
+    line-height: 150%;
+    font-size: 120%;
 }
 
 .group-recent-meal a.button{

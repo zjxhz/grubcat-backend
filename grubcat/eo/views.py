@@ -32,13 +32,13 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-
         #TODO filter by  date and time
-        num_persons = self.request.GET.get("num_persons",8)
-        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
+        num_persons = self.request.GET.get("num_persons", 8)
+        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons).select_related('restaurant', )
         if hasattr(self.request.user, 'restaurant'):
             #餐厅用户只显示本餐厅的菜单
-            qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,num_persons=num_persons).select_related('restaurant',)
+            qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,
+                num_persons=num_persons).select_related('restaurant', )
         return qs
 
 
@@ -52,7 +52,7 @@ class MealCreateView(CreateView):
             return super(MealCreateView, self).get_success_url()
         else:
         #普通用户发起饭聚后需要支付
-            return reverse_lazy('create_order',kwargs={'meal_id': self.object.id})
+            return reverse_lazy('create_order', kwargs={'meal_id': self.object.id})
 
     def form_valid(self, form):
         meal = form.save(False)
@@ -66,7 +66,7 @@ class MealCreateView(CreateView):
             #TODO to remove
             meal.restaurant = meal.menu.restaurant
 
-        if hasattr(self.request.user,'restaurant'):
+        if hasattr(self.request.user, 'restaurant'):
             meal.status = MealStatus.PUBLISHED
         elif menu_id:
             meal.status = MealStatus.CREATED_WITH_MENU
@@ -75,23 +75,33 @@ class MealCreateView(CreateView):
         response = super(MealCreateView, self).form_valid(form)
         return response
 
+
 class MealListView(ListView):
-    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date","start_time")
+    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date",
+        "start_time")
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
+
 class MealDetailView(DetailView):
-    model=Meal
-    context_object_name="meal"
-    template_name="meal/meal_detail.html"
-    queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
+    model = Meal
+    context_object_name = "meal"
+    template_name = "meal/meal_detail.html"
+    queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user')
 
     def get_object(self, queryset=None):
-        meal = super(MealDetailView,self).get_object()
+        meal = super(MealDetailView, self).get_object()
         return meal
 
 ### group related views ###
+class GroupListView(ListView):
+    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC)
+    template_name = "group/group_list.html"
+    context_object_name = "group_list"
+    #TODO add filter to queyset
+
+
 class GroupCreateView(CreateView):
     form_class = GroupForm
     template_name = 'group/add_group.html'
@@ -100,13 +110,15 @@ class GroupCreateView(CreateView):
         group = form.save(False)
         group.owner = self.request.user
         super(GroupCreateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail',kwargs={'pk':group.id})
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
+
 
 class GroupUpdateView(UpdateView):
     form_class = GroupForm
     model = Group
     template_name = "group/edit_group.html"
+
 
 class GroupLogoUpdateView(UpdateView):
     form_class = GroupLogoForm
@@ -116,13 +128,15 @@ class GroupLogoUpdateView(UpdateView):
     def form_valid(self, form):
         group = form.save(False)
         super(GroupLogoUpdateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail',kwargs={'pk':group.id})
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
+
 class GroupDetailView(DetailView):
-    model=Group
-    context_object_name="group"
-    template_name="group/group_detail.html"
+    model = Group
+    context_object_name = "group"
+    template_name = "group/group_detail.html"
+
 #    queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
 
 ### User related views ###
@@ -151,6 +165,7 @@ class RegisterView(CreateView):
         elif netloc and netloc != self.request.get_host():
             success_url = reverse_lazy("index")
         return success_url
+
 
 class UserListView(ListView):
     queryset = User.objects.all()
@@ -305,9 +320,11 @@ def get_restaurant_list_by_geo(request):
         raise
     return  response
 
+
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
     return HttpResponse(simplejson.dumps(response))
+
 
 def order_last_modified(request, order_id):
     return Order.objects.get(id=order_id).confirmed_time
