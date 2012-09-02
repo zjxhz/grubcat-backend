@@ -81,12 +81,12 @@ h4{
 }
 
 #my-groups-wrapper{
-    padding-bottom: 5px;
+    padding-bottom: 20px;
     /*border-bottom: 1px solid #ccc;*/
 
 }
 #groups-list{
-    padding-top: 15px;
+    /*padding-top: 15px;*/
 }
 
 .my-group-cell{
@@ -128,7 +128,7 @@ h4{
 
 
 
-.members span, .members button{
+.members .span-members, .members .button{
     float: left;
     margin-left: 8px;
 }

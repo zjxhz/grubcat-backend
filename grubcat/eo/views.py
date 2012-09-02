@@ -142,7 +142,19 @@ class GroupDetailView(DetailView):
     context_object_name = "group"
     template_name = "group/group_detail.html"
 
-#    queryset = Meal.objects.select_related('menu__restaurant','host__user').prefetch_related('participants__user')
+def join_group(request, pk):
+    if request.method == 'POST':
+        group = Group.objects.get(pk=pk)
+        if group.privacy == GroupPrivacy.PUBLIC:
+            if request.user not in group.members.all():
+                group.members.add(request.user)
+                return createSucessJsonResponse(u'已经成功加入该圈子！')
+            else:
+                return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
+        else :
+#            need to handle invitation
+            return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
+
 
 ### User related views ###
 class RegisterView(CreateView):

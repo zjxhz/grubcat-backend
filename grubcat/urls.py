@@ -83,6 +83,8 @@ urlpatterns = patterns('',
     url(r'^group/add/$', login_required(GroupCreateView.as_view()), name='create_group'),
     url(r'^group/edit/(?P<pk>\d+)/$', login_required(GroupUpdateView.as_view()), name='edit_group'),
     url(r'^group/logo/edit/(?P<pk>\d+)/$', login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
+    url(r'^group/(?P<pk>\d+)/join/$', login_required(join_group), name='join_group'),
+    url(r'^group/(?P<pk>\d+)/leave/$', login_required(GroupLogoUpdateView.as_view()), name='leave_group'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
