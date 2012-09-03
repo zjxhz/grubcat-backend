@@ -197,8 +197,17 @@ class DishCategoryItem(models.Model):
     category = models.ForeignKey(DishCategory)
     order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
 
+###    group related  ###
 class GroupCategory(models.Model):
     name = models.CharField(u'圈子分类名', max_length=30, unique=True)
+    cover = models.ImageField(u'分类图片',upload_to='category_cover',blank=True, null=True)
+
+    @property
+    def cover_url_default_if_none(self):
+        if self.cover:
+            return self.cover.url
+        else:
+            return settings.STATIC_URL + 'img/default/category-cover.png'
 
     def __unicode__(self):
         return  self.name
