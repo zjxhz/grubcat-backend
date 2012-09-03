@@ -61,6 +61,11 @@
         <a href="{% url edit_group group.id %}">修改圈子信息</a>
         <a href="{% url edit_group_logo group.id %}" id="id_edit_logo_link">修改Logo</a>
     {% endifequal %}
+    {% if request.user in group.members.all %}
+        <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开圈子</a>
+    {% else%}
+        <a href="{% url join_group group.id %}" id="id_join_group_link">加入圈子</a>
+    {% endif %}
     <div id="id_edit_logo_dialog" class="hide">
 
     </div>
@@ -103,6 +108,14 @@
         $(document).ready(function () {
             $("#id_edit_logo_link").click(function () {
                 $("#id_edit_logo_dialog").load($("#id_edit_logo_link").attr('href') + " .content", loadEditLogoPage);
+                return false;
+            });
+            $("#id_join_group_link,#id_leave_group_link").click(function () {
+                $.post( $(this).attr('href'), function (data) {
+                    if (data.status == "OK") {
+                        window.location = '{{  request.path }}';
+                    }
+                });
                 return false;
             })
         })
