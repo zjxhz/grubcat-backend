@@ -103,7 +103,7 @@
             <li class="group-category current" id="id_all_group">所有圈子</li>
             {% for category in categories %}
                 <li class="group-category" category-id="{{ category.id }}">
-                    <img alt="Test-scera" width="30" height="30" src="{% static 'img/tmp/category-cover.png' %}">
+                    <img alt="{{ category.name }}" width="30" height="30" src="{{ category.cover_url_default_if_none }}">
                     <span class="category-name">{{ category.name }}</span>
                 </li>
             {% endfor %}
