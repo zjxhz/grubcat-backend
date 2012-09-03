@@ -115,6 +115,8 @@ class GroupCreateView(CreateView):
         group = form.save(False)
         group.owner = self.request.user
         super(GroupCreateView, self).form_valid(form)
+        group.members.add(self.request.user)
+#        TODO need save many to many?
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
