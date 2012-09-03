@@ -134,7 +134,7 @@
             <div id="groups-list">
 
                 {% for group in group_list %}
-                    {% if group not in my_groups %}
+                    {% if not my_groups or group not in my_groups %}
                         <div class="group-cell clearfix" category-id="{{ group.category.id }}">
                             <div class="cell">
                                 <div class="upper clearfix">
