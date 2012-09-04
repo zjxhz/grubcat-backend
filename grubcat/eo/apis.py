@@ -165,6 +165,7 @@ class UserResource(ModelResource):
     from_user = fields.ToManyField('eo.apis.RelationshipResource', 'from_user')
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     following = fields.ToManyField('self', 'following', null=True)
+    tags = fields.ToManyField(UserTagResource, 'tags', full=True, null=True)
     
     def mergeOneToOneField(self, bundle, field_name, exclude_fields=None):
         if bundle.data[field_name]:
