@@ -1,0 +1,213 @@
+a{
+    color: black;
+}
+a:hover{
+    text-decoration: none;
+    color: #005580;
+}
+
+h4{
+    text-align: left;
+    font-size: 115%;
+    font-weight: bold;
+    font-family: helvetica, arial, sans-serif;
+    margin-bottom: 10px;
+}
+
+#group-category-wrapper{
+    float: left;
+    width: 212px;
+    margin-left: 5px;
+    min-height: 800px;
+}
+
+
+#group-list-wrapper{
+    float: right;
+    width: 710px;
+    margin-right: 5px;
+}
+
+#id_create_group_link{
+    margin-bottom: 12px;
+    padding: 9px 6px;
+    font-size: 130%;
+    width: 198px;
+    box-shadow: 0 0px 6px #888;
+    -moz-box-shadow: 0 0px 6px #888;
+    -webkit-box-shadow: 0 0px 6px #888;
+    border: 1px solid #888;
+    text-shadow: none;
+    color: #333;
+    background: #F1CE00;
+    background: -moz-linear-gradient(top, #FFF577 0%, #F1CE00 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFF577), color-stop(100%, #F1CE00));
+    background: -webkit-linear-gradient(top, #FFF577 0%, #F1CE00 100%);
+    background: -o-linear-gradient(top, #FFF577 0%, #F1CE00 100%);
+    background: -ms-linear-gradient(top, #FFF577 0%, #F1CE00 100%);
+    background: linear-gradient(top, #FFF577 0%, #F1CE00 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF577', endColorstr='#F1CE00',GradientType=0 );
+}
+
+#id_create_group_link:hover{text-shadow:none;color:#222;background:#F1CE00}
+
+#group-category-list {
+    background: #EEE;
+    border: 1px solid #ddd;
+    border-bottom: 0;
+    font-size: 125%;
+    list-style: none;
+    margin-left: 0;
+}
+#id_all_group{
+    padding: 13px 0 13px 51px;
+}
+
+.group-category{
+    cursor: pointer;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid #CCC;
+    display: block;
+    padding: 7px 12px 7px 10px;
+    font-weight: bold;
+}
+.group-category img{
+    margin-right: 10px;
+}
+
+.group-category.current{
+    background-color: white;
+}
+
+#my-groups-wrapper{
+    padding-bottom: 20px;
+    /*border-bottom: 1px solid #ccc;*/
+
+}
+#groups-list{
+    /*padding-top: 15px;*/
+}
+
+.my-group-cell{
+    float: left;
+    width: 82px;
+    height: 120px;
+
+    background: white;
+    border: 1px solid #DDD;
+    padding: 5px 5px 0px 5px;
+    margin-right: 5px;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.my-group-cell img{
+    margin: 3px 0;
+}
+
+
+.group-cell{
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #DDD;
+}
+
+.group-cell .members{
+    float: right;
+    padding: 5px 5px 5px 0px;
+    background: #EEE;
+    border: 1px solid #DDD;
+    color: #444;
+    /*width: 135px;*/
+    font-size: 110%;
+    line-height: 160%;
+}
+
+
+
+.members .span-members, .members .button{
+    float: left;
+    margin-left: 8px;
+}
+
+.group-cell .upper{
+    padding: 12px 12px 12px 20px;
+    /*margin-bottom: 10px;*/
+}
+
+.group-cell .lower{
+    padding: 0px 12px 12px 20px;
+}
+
+.group-cell a.group-name{
+    float: left;
+    padding-top: 8px;
+    font-size: 180%;
+    font-weight: bold;
+    color: #222;
+}
+
+.group-cell a.group-name:hover{
+    color: #005580;
+}
+
+.button.join-button{
+    float: right;
+    padding: 3px 7px;
+    font-size: 13px;
+}
+
+.group-logo{
+    float: left;
+}
+
+/*.group-logo img{*/
+    /*padding: 2px;*/
+    /*border: 1px solid #ddd;*/
+/*}*/
+
+.group-desc, .group-recent-meal{
+    float: right;
+
+}
+.group-desc{
+    width: 550px;
+    padding: 5px 22px 15px 7px;
+    font-size: 13px;
+    line-height: 150%;
+}
+
+.group-recent-meal{
+    width: 565px;
+    padding: 3px;
+    margin-bottom: 10px;
+    background: #D3EBF2;
+}
+
+.group-recent-meal img{
+    margin-top: 4px;
+}
+.group-recent-meal .logo-wrapper{
+    float: left;
+}
+
+.group-recent-meal p{
+    float: left;
+    width: 340px;
+    margin-left: 10px;
+    margin-bottom: 0;
+    line-height: 150%;
+    font-size: 120%;
+}
+
+.group-recent-meal a.button{
+    float: right;
+    margin: 5px 5px 5px 5px;
+}
+
+
+
+

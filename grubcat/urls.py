@@ -77,6 +77,15 @@ urlpatterns = patterns('',
     #ajax get menus
 #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
 
+    #group
+    url(r'^group/$', GroupListView.as_view(), name="group_list"),
+    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
+    url(r'^group/add/$', login_required(GroupCreateView.as_view()), name='create_group'),
+    url(r'^group/edit/(?P<pk>\d+)/$', login_required(GroupUpdateView.as_view()), name='edit_group'),
+    url(r'^group/logo/edit/(?P<pk>\d+)/$', login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
+    url(r'^group/(?P<pk>\d+)/join/$', login_required(join_group), name='join_group'),
+    url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
+
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
@@ -103,7 +112,7 @@ urlpatterns = patterns('',
         name="restaurant_dish_del"),
     url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category), name="add_dish_category"),
 
-    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order.html")),
+    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order_history.html")),
         name="restaurant_order"),
 
     url(r'^restaurant/menu/$', restaurant_login_required(rest.MenuListView.as_view()), name="restaurant_menu_list"),

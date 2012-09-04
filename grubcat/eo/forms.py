@@ -5,8 +5,6 @@ from django.forms.util import to_current_timezone
 from django.forms.widgets import *
 from grubcat.eo.models import *
 
-SplitDateTimeWidget
-
 
 class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput,required=False)
@@ -67,6 +65,21 @@ class DishForm(ModelForm):
 class DishCategoryForm(ModelForm):
     class Meta:
         model = DishCategory
+
+class GroupForm(ModelForm):
+
+    class Meta:
+        model = Group
+        widgets={
+            'desc':Textarea({'rows':5})
+        }
+        exclude=('owner','members')
+
+class GroupLogoForm(ModelForm):
+
+    class Meta:
+        model = Group
+        fields=('logo',)
 
 class MenuForm(ModelForm):
     class Meta:

@@ -109,7 +109,8 @@ class RatingPic(models.Model):
 
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
-    name = models.CharField(u'菜名', max_length=45, unique=True)
+#    TODO unique for restaurant and name
+    name = models.CharField(u'菜名', max_length=45,)
     #    if restaurant is null,it means the category is public, all restaurant can see the category
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True)
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
@@ -135,7 +136,7 @@ class Dish(models.Model):
     #    is_mandatory = models.BooleanField(default=False)
     #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
-    available = models.BooleanField(u'目前是否可以提供', default=True)
+    available = models.BooleanField(u'目前可以提供', default=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类')
 
     def __unicode__(self):
@@ -195,6 +196,65 @@ class DishCategoryItem(models.Model):
     menu = models.ForeignKey(Menu)
     category = models.ForeignKey(DishCategory)
     order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
+
+###    group related  ###
+class GroupCategory(models.Model):
+    name = models.CharField(u'圈子分类名', max_length=30, unique=True)
+    cover = models.ImageField(u'分类图片',upload_to='category_cover',blank=True, null=True)
+
+    @property
+    def cover_url_default_if_none(self):
+        if self.cover:
+            return self.cover.url
+        else:
+            return settings.STATIC_URL + 'img/default/category-cover.png'
+
+    def __unicode__(self):
+        return  self.name
+
+    class Meta:
+        verbose_name = u'圈子分类'
+        verbose_name_plural = u'圈子分类'
+
+class GroupPrivacy:
+    PUBLIC = 0
+    PRIVATE = 1
+
+GROUP_PRIVACY_CHOICE = (
+    (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
+    (GroupPrivacy.PRIVATE, u'私密：仅被邀请的人可以加入')
+    )
+
+class Group(models.Model):
+    """圈子"""
+    name = models.CharField(u'名称', max_length=60, unique=True)
+    desc = models.CharField(u'描述', max_length=300)
+    category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
+    privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
+    owner = models.ForeignKey(User,verbose_name=u'创建者')
+    logo = models.ImageField(upload_to='group_logos',blank=True, null=True)
+    members = models.ManyToManyField(User, verbose_name=u'成员',related_name='interest_groups')
+
+#    def recent_meal(self):
+#        return Meal.objects.filter()
+
+    @property
+    def logo_url_default_if_none(self):
+        if self.logo:
+            return self.logo.url
+        else:
+            return settings.STATIC_URL + 'img/default/group-logo.jpg'
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'group_detail', (self.id, )
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'圈子'
+        verbose_name_plural = u'圈子'
 
 
 class Rating(models.Model):
@@ -458,7 +518,7 @@ class MealPrivacy:
     PRIVACY = 1
 
 MEAL_PRIVACY_CHOICE = (
-    (MealPrivacy.PUBLIC, u"公开：所有人可以参加"),
+    (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
     (MealPrivacy.PRIVACY, u"私密：仅被邀请的人可以参加")
     )
 
@@ -520,6 +580,9 @@ class Meal(models.Model):
         self.actual_persons += order.num_persons
         self.save()
         order.save()
+
+    def is_reservable(self):
+        return True
 
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist

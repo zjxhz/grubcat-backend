@@ -65,7 +65,7 @@ class DishListView(ListView):
 
 class DishCreateView(CreateView):
     form_class = DishForm
-    template_name = "restaurant/dish_add_edit.html"
+    template_name = "restaurant/add_edit_dish.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
     def get_form_kwargs(self):
@@ -84,7 +84,7 @@ class DishCreateView(CreateView):
 class DishUpdateView(UpdateView):
     form_class = DishForm
     model = Dish
-    template_name = "restaurant/dish_add_edit.html"
+    template_name = "restaurant/add_edit_dish.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
     def form_valid(self, form):

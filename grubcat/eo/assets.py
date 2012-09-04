@@ -28,6 +28,11 @@ meal_add_css= Bundle(
     base_css, common_css, dropkick_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
+#group related
+group_list_css = Bundle(
+    base_css, common_css, dropkick_css, bootstrap_css,  'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
+)
+
 account_css = Bundle(
     base_css, common_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
@@ -79,9 +84,12 @@ register('base_css', base_css)
 register('common_css', common_css)
 register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
+register('dropkick_css', dropkick_css)
 register('meal_list_css', meal_list_css)
 register('meal_detail_css', meal_detail_css)
 register('meal_add_css', meal_add_css)
+register('group_list_css', group_list_css)
+
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('order_css', order_css)
