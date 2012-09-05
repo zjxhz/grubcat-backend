@@ -46,11 +46,437 @@
         #div_id_logo {
             margin-top: 10px;;
         }
+
+        #banner-wrapper {
+            width: 944px;
+            height: 128px;
+            background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/group_upper-688882d7aacb78431ceba8d699d2cdc2.png");
+            margin-left: -11px;
+            margin-top: -25px;
+            border-bottom: 1px solid #888;
+            padding: 18px;
+        }
+
+        h1.group-name{
+            margin-left: 12px;
+            padding: 10px;
+        }
+
+        #id_join_group_link, #id_leave_group_link{
+            margin: 28px 10px;
+        }
+
+        #banner {
+            float: left;
+            width: 750px;
+            height: 95px;
+            margin-left: 70px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: solid 1px #999;
+            background: white;
+        }
+
+        .group-name {
+            float: left;
+            width: 400px;
+        }
+
+        .left-column {
+            float: left;
+            width: 248px;
+            padding: 10px;
+            border-right: 1px solid #BBB;
+            margin-left: -12px;
+        }
+
+        .right-column{
+            float: right;
+            width: 684px;
+            padding: 15px 5px;
+        }
+
+        .meal-cell {
+            position: relative;
+            cursor: pointer;
+            width: 250px;
+            height: 266px;
+            background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266-17b3bf7fb14c9f094953657663b21efa.png")
+        }
+
+        .meal-cell a {
+            position: absolute;
+            display: block;
+            height: 266px;
+            width: 249px;
+            top: 0;
+            z-index: 100;
+        }
+
+        .meal-cell img.meal-cover{
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .meal-cell a:hover{
+            background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266_overlay-7b84d06c965b714255b9bbe1c854a75f.png") no-repeat;
+        }
+
+        .meal-cell .price-seat {
+            position: absolute;
+            left: 17px;
+            top: 11px;
+            padding: 5px;
+            color: white;
+            background: black;
+            opacity: 0.7;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px #000;
+
+            /*            font-family: helvetica, arial, sans-serif;
+           font-size: 12px;
+           color: white;
+           padding: 3px 6px;
+           display: inline-block;
+           background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/dark_bg-95560574ef4ae065c0a8874057b81e5c.png");
+           -webkit-border-bottom-left-radius: 5px;
+           -webkit-border-bottom-right-radius: 5px;
+           -moz-border-bottom-left-radius: 5px;
+           -moz-border-bottom-right-radius: 5px;
+           border-bottom-left-radius: 5px;
+           border-bottom-right-radius: 5px;*/
+        }
+
+
+    .meal-cell .users{
+        position: absolute;
+        width: 218px;
+        height: 32px;
+        left: 10px;
+        top: 163px;
+        padding: 8px 5px 7px 5px;
+        background: black;
+        opacity: 0.7;
+        box-shadow: 0 0 10px #000;
+    }
+
+        .meal-cell .users img {
+            position: static;
+            border: 1px solid white;
+            -webkit-box-shadow: 0 0px 4px #666;
+            margin-right: 1px;
+            opacity: 1;
+        }
+
+    .meal-cell .info{
+        position: absolute;
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        bottom: 5px;
+        left: 0;
+    }
+
+        hr {
+            margin: 5px 0 10px 0;
+            background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/double_border-2a7959aa28af4a90944bb62e977bb1df.png");
+            height: 2px;
+            border-left: 0px;
+            border-right: 0px;
+            width: 97%;
+            border-top: 1px solid white;
+        }
+        .about,  .members {
+            float: left;
+            border: 1px solid #DDD;
+            background: white;
+            width: 305px;
+            padding: 15px;
+            min-height: 147px;
+        }
+    
+    .about{
+        margin-right: 10px;
+    }
+.user-icons{
+    position: relative;;
+}
+
+    .owner span{
+        position: absolute;
+        top: 26px;
+        color: white;
+        left: 5px;
+        background: black;
+        opacity: 0.9;
+        box-shadow: 0 0 10px #000;
+        font-size: 70%;
+        font-weight: bold;
+        line-height: 13px;
+    }
+
     </style>
 
 {% endblock %}
 {% block content %}
-    圈子详情<br/>
+
+    <div id="banner-wrapper">
+        <div id="banner" class="shadow">
+            <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="" width="96" height="96">
+
+            <h1 class="group-name">{{ group.name }}</h1>
+
+            {% if request.user.is_authencated or request.user in group.members.all %}
+                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>
+            {% else %}
+                <a href="{% url join_group group.id %}" id="id_join_group_link" class="button">加入圈子</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="left-column">
+        <div class="meal-cell">
+            <a href=""></a>
+
+            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
+                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
+                 width="228">
+
+            <div class="price-seat">
+                $15 - Chicago, IL- 13 seats left
+            </div>
+
+{#            TODO只显示5个#}
+            <div class="users">
+                <img alt="Karthik Balasubramanian"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
+                <img alt="Glen Kato"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
+                <img alt="Julie Corvo"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
+                <img alt="Nikkie H"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
+                <img alt="Mark Tudela"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
+                <img alt="Brittany R"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
+            </div>
+
+            <div class="info">
+                <h3>Vietnamese Grubs in  Park</h3>
+		        <span class="date"> Thursday, September 06,  7:30PM </span>
+            </div>
+        </div>
+        <hr>
+        <h4>Past Meals</h4>
+        <div class="meal-cell">
+            <a href=""></a>
+
+            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
+                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
+                 width="228">
+
+            <div class="price-seat">
+                $15 - Chicago, IL- 13 seats left
+            </div>
+
+            {#            TODO只显示5个#}
+            <div class="users">
+                <img alt="Karthik Balasubramanian"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
+                <img alt="Glen Kato"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
+                <img alt="Julie Corvo"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
+                <img alt="Nikkie H"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
+                <img alt="Mark Tudela"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
+                <img alt="Brittany R"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
+            </div>
+
+            <div class="info">
+                <h3>Vietnamese Grubs in  Park</h3>
+                <span class="date"> Thursday, September 06,  7:30PM </span>
+            </div>
+        </div>
+
+        <div class="meal-cell">
+            <a href=""></a>
+
+            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
+                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
+                 width="228">
+
+            <div class="price-seat">
+                $15 - Chicago, IL- 13 seats left
+            </div>
+
+            {#            TODO只显示5个#}
+            <div class="users">
+                <img alt="Karthik Balasubramanian"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
+                <img alt="Glen Kato"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
+                <img alt="Julie Corvo"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
+                <img alt="Nikkie H"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
+                <img alt="Mark Tudela"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
+                <img alt="Brittany R"
+                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
+            </div>
+
+            <div class="info">
+                <h3>Vietnamese Grubs in  Park</h3>
+                <span class="date"> Thursday, September 06,  7:30PM </span>
+            </div>
+        </div>
+
+    </div>
+    <div class="right-column">
+        <div class="about">
+            <h3>About Chicago 20s and 30s Grub Group (Chicago)
+            </h3>
+
+
+            <div class="desc full-description ">
+                A group for 20 and 30 somethings who love to wine and dine. New to town, or been here all your life, this group is about meeting fun and energetic young people!
+            </div>
+
+            <div class="taglist clearfix">
+                <a href="#" class="tag">Social</a>
+            </div>
+        </div>
+        <div class="members">
+            <h3>404 Members
+                <small>
+                    <a href="/groups/20sgrubgroup/members">(See all)</a>
+                </small>
+                <div class="leave-group">
+
+
+                </div>
+            </h3>
+
+            <div class="user-icons">
+                <a href="" class="user-avatar owner" title="Justin R" >
+                    <img alt="" src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_40x40/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012">
+                    <span>创建者</span>
+                </a>						<a href="" class="user-avatar" title="John B"><img  width="40" height="40" alt="Bear_size_40x40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <a href="" class="user-avatar" ><img alt="Bear_size_40x40"  width="40" height="40" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+            </div>
+            <br clear="all">
+
+        </div>
+        <div class="comments">
+            <h3>Join the Conversation!</h3>
+
+
+
+            <div class="wrapper-for-group-comments">
+
+                <div class="join-to-comment">You must be logged in to comment</div>
+
+                <div id="comments-wrapper">
+                    <div class="parent-comment clearfix" id="comment_9366">
+                        <a href="/users/justinreynolds"><img alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n" src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
+                        <div class="comment-content">
+                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
+                            <div class="comment-widget">
+		<span>about 11 hours ago
+		</span>
+                            </div>
+                            <p>We've got a grub this week and there's plenty of spots left!</p>
+                            <div id="comment_9366_replies">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="parent-comment clearfix" id="comment_9219">
+                        <a href="/users/justinreynolds"><img alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n" src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
+                        <div class="comment-content">
+                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
+                            <div class="comment-widget">
+		<span>11 days ago
+		</span>
+                            </div>
+                            <p>Check out the newest grub! Let's head to Lincoln Park and grab some pho!</p>
+                            <div id="comment_9219_replies">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="parent-comment clearfix" id="comment_7616">
+                        <a href="/users/justinreynolds"><img alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n" src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
+                        <div class="comment-content">
+                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
+                            <div class="comment-widget">
+		<span>3 months ago
+		</span>
+                            </div>
+                            <p>Hey everyone, I just wanted to say hello to all the new members. Also as an update, did you know you can start a grub? Yep! Anyone in the group can plan a grub, so definitely give that a go.
+                                <br>After July 1st, I'll be planning more of these, the rest of June is just super busy for me. but in the mean time feel free to plan away! We've got almost 250 members, so people are bound to attend! </p>
+                            <div id="comment_7616_replies">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="parent-comment clearfix" id="comment_7088">
+                        <a href="/users/justinreynolds"><img alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n" src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
+                        <div class="comment-content">
+                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
+                            <div class="comment-widget">
+		<span>4 months ago
+		</span>
+                            </div>
+                            <p>Hey everyone! Join our first grub, there's 8 spots left! It's on May 17th at India House.</p>
+                            <div id="comment_7088_replies">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="meals_pagination" id="comments-pagination">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {% comment %}    圈子详情<br/>
     名称:{{ group.name }}<br/>
     描述{{ group.desc }}<br/>
     分类：{{ group.category.name }}<br/>
@@ -65,7 +491,10 @@
         <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开圈子</a>
     {% else%}
         <a href="{% url join_group group.id %}" id="id_join_group_link">加入圈子</a>
-    {% endif %}
+    {% endif %}{% endcomment %}
+
+
+
     <div id="id_edit_logo_dialog" class="hide">
 
     </div>
@@ -111,7 +540,7 @@
                 return false;
             });
             $("#id_join_group_link,#id_leave_group_link").click(function () {
-                $.post( $(this).attr('href'), function (data) {
+                $.post($(this).attr('href'), function (data) {
                     if (data.status == "OK") {
                         window.location = '{{  request.path }}';
                     }
