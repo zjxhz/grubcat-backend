@@ -605,10 +605,10 @@ class MealResource(ModelResource):
     
     class Meta:
         queryset = Meal.objects.all()
-        filtering = {'type': ALL,'time':ALL}
+        filtering = {'type': ALL,'start_date':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
-        ordering = ['time']
+        ordering = ['start_date']
 
 class MealCommentResource(ModelResource):
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
