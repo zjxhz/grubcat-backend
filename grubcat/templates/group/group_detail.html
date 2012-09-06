@@ -6,8 +6,7 @@
 
 
 {% block page_css %}
-    {{ block.super }}
-    {% assets "bootstrap_css" %}
+    {% assets "group_detail_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
@@ -47,276 +46,7 @@
         margin-top: 10px;;
     }
 
-    a{
-        color: #000;
-    }
 
-    #banner-wrapper {
-        width: 944px;
-        height: 128px;
-        background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/group_upper-688882d7aacb78431ceba8d699d2cdc2.png");
-        margin-left: -11px;
-        margin-top: -25px;
-        border-bottom: 1px solid #888;
-        padding: 18px;
-    }
-
-    h1.group-name {
-        margin-left: 12px;
-        padding: 10px;
-    }
-
-    #id_join_group_link, #id_leave_group_link {
-        margin: 28px 10px;
-        float: right;
-    }
-
-    #banner {
-        float: left;
-        width: 750px;
-        height: 95px;
-        margin-left: 70px;
-        margin-bottom: 20px;
-        padding: 15px;
-        border: solid 1px #999;
-        background: white;
-    }
-
-    .group-name {
-        float: left;
-        width: 470px;
-    }
-
-    .left-column {
-        float: left;
-        width: 248px;
-        padding: 10px;
-        border-right: 1px solid #BBB;
-        margin-left: -12px;
-    }
-
-    .right-column {
-        float: right;
-        width: 684px;
-        padding: 15px 5px;
-    }
-
-    .meal-cell {
-        position: relative;
-        cursor: pointer;
-        width: 250px;
-        height: 266px;
-        background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266-17b3bf7fb14c9f094953657663b21efa.png")
-    }
-
-    .meal-cell a {
-        position: absolute;
-        display: block;
-        height: 266px;
-        width: 249px;
-        top: 0;
-        z-index: 100;
-    }
-
-    .meal-cell img.meal-cover {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-    }
-
-    .meal-cell a:hover {
-        background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266_overlay-7b84d06c965b714255b9bbe1c854a75f.png") no-repeat;
-    }
-
-    .meal-cell .price-seat {
-        position: absolute;
-        left: 17px;
-        top: 11px;
-        padding: 5px;
-        color: white;
-        background: black;
-        opacity: 0.7;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        box-shadow: 0 0 10px #000;
-
-        /*            font-family: helvetica, arial, sans-serif;
-       font-size: 12px;
-       color: white;
-       padding: 3px 6px;
-       display: inline-block;
-       background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/dark_bg-95560574ef4ae065c0a8874057b81e5c.png");
-       -webkit-border-bottom-left-radius: 5px;
-       -webkit-border-bottom-right-radius: 5px;
-       -moz-border-bottom-left-radius: 5px;
-       -moz-border-bottom-right-radius: 5px;
-       border-bottom-left-radius: 5px;
-       border-bottom-right-radius: 5px;*/
-    }
-
-    .meal-cell .users {
-        position: absolute;
-        width: 218px;
-        height: 32px;
-        left: 10px;
-        top: 163px;
-        padding: 8px 5px 7px 5px;
-        background: black;
-        opacity: 0.7;
-        box-shadow: 0 0 10px #000;
-    }
-
-    .meal-cell .users img {
-        position: static;
-        border: 1px solid white;
-        -webkit-box-shadow: 0 0px 4px #666;
-        margin-right: 1px;
-        opacity: 1;
-    }
-
-    .meal-cell .info {
-        position: absolute;
-        width: 100%;
-        height: 50px;
-        text-align: center;
-        bottom: 5px;
-        left: 0;
-    }
-
-    hr {
-        margin: 5px 0 10px 0;
-        background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/double_border-2a7959aa28af4a90944bb62e977bb1df.png");
-        height: 2px;
-        border-left: 0px;
-        border-right: 0px;
-        width: 97%;
-        border-top: 1px solid white;
-    }
-
-    .about, .members-wrapper {
-        float: left;
-        border: 1px solid #DDD;
-        background: white;
-        width: 305px;
-        padding: 15px;
-        min-height: 153px;
-    }
-
-    .about {
-        margin-right: 10px;
-    }
-
-    .members {
-        position: relative;;
-    }
-
-    .owner span {
-        position: absolute;
-        top: 26px;
-        color: white;
-        left: 5px;
-        background: black;
-        opacity: 0.9;
-        box-shadow: 0 0 10px #000;
-        font-size: 70%;
-        font-weight: bold;
-        line-height: 13px;
-    }
-
-    a.owner:hover {
-        text-decoration: none;
-    }
-
-    a.user-avatar {
-        float: left;
-        margin: 0 3px 2px 0;
-    }
-
-    .desc {
-        margin-top: 5px;
-        font-size: 12px;
-    }
-
-    .taglist {
-        margin-top: 7px;
-        border-top: 1px solid #DDD;
-        padding-top: 8px;
-        margin-bottom: -7px;
-    }
-
-    .tag {
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        background: #B8D87C;
-        padding: 4px 8px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        font-size: 115%;
-        float: left;
-        list-style-type: none;
-    }
-
-    .comments {
-        float: left;
-        padding: 10px 5px;
-    }
-
-    .join-to-comment {
-        font-size: 120%;
-        margin-bottom: 15px;
-    }
-
-    .parent-comment {
-        border-top: 1px solid #999;
-        padding: 10px 0;
-    }
-
-    .new-comment img, .parent-comment img {
-        float: left;
-        border: 2px solid white;
-        -webkit-box-shadow: 0 0px 4px #444;
-        -moz-box-shadow: 0 0px 4px #444;
-        box-shadow: 0 0px 4px #444;
-        margin-right: 10px;
-    }
-
-    .comment-content {
-        float: left;
-        width: 585px;
-        position: relative;
-    }
-
-    .comments h3 {
-        text-align: left;
-        margin-bottom: 7px;
-    }
-
-    .comments .new-comment h3, .parent-comment h3 {
-        text-align: left;
-        float: left;
-        margin-bottom: 7px;
-        width: 380px;
-    }
-
-    .comment-widget {
-        padding: 3px 7px;
-        background: #EEE;
-        border: 1px solid #DDD;
-        color: #555;
-        width: 185px;
-        margin-top: -5px;
-        position: absolute;
-        right: 0;
-    }
-
-    .parent-comment p {
-        float: left;
-        width: 588px;
-        margin-bottom: 10px;
-        font-size: 115%;
-    }
     </style>
 
 {% endblock %}
@@ -328,10 +58,11 @@
 
             <h1 class="group-name">{{ group.name }}</h1>
 
-            {% if request.user.is_authencated or request.user in group.members.all %}
-                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>
-            {% else %}
+            {% if not request.user.is_authenticated or group not in request.user.interest_groups.all %}
                 <a href="{% url join_group group.id %}" id="id_join_group_link" class="button">加入圈子</a>
+            {% elif request.user != group.owner %}
+                <a href="" id="id_invite_friend_link" class="button">邀请好友</a>
+{#                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>#}
             {% endif %}
         </div>
     </div>
@@ -440,50 +171,42 @@
     </div>
     <div class="right-column">
         <div class="about">
-            <h3>About Chicago 20s and 30s Grub Group (Chicago)
-            </h3>
+               {% comment %} <h3>About Chicago 20s and 30s Grub Group (Chicago)
+                </h3>{% endcomment %}
 
 
-            <div class="desc full-description ">
-                A group for 20 and 30 somethings who love to wine and dine. New to town, or been here all your life,
-                this group is about meeting fun and energetic young people!
+            <div class="desc">
+               {{ group.desc }}
             </div>
-
+            <a href="{% url edit_group group.id%}" class="edit-link">
+                <img alt="Pencil" class="settings-link" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/icons/pencil-2126bed33ec149ece9d09efbb38622d4.png">
+            </a>
+            {% if group.category %}
             <div class="taglist clearfix">
-                <a href="#" class="tag">Social</a>
+                <a href="#" class="tag">{{ group.category.name }}</a>
             </div>
+            {% endif %}
         </div>
         <div class="members-wrapper">
-            <h3>404 Members
-                <a href="/groups/20sgrubgroup/members">(See all)</a>
+            {% with members_count=group.members.count %}
+            <h3>{{ members_count }} 位成员
 
-                <div class="leave-group">
-
-                </div>
+                {% if members_count > 21 %}
+                <a class="see-all" href="/groups/20sgrubgroup/members">(查看所有)</a>
+                {% endif %}
             </h3>
 
             <div class="members clearfix">
-                <a href="" class="user-avatar owner" title="Justin R">
-                    <img alt=""
-                         src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_40x40/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012">
-                    <span>创建者</span>
-                </a> <a href="" class="user-avatar" title="John B"><img width="40" height="40" alt="Bear_size_40x40"
-                                                                        src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
-                <a href="" class="user-avatar"><img alt="Bear_size_40x40" width="40" height="40"
-                                                    src="https://d1gwxpes5z0r7f.cloudfront.net/assets/missing/users/bear_size_40x40-9e0c74899d469c20a3dca89aa619473f.png"></a>
+                <span class="owner">创建者</span>
+                {% for member in group.members.all|slice:":21"  %}
+                <a href="" class="user-avatar" title="{{ member.username }}">
+                    <img alt="{{ member.username }}" width="40" height="40"
+                         src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none  }}">
+                </a>
+                {% endfor %}
             </div>
             <br clear="all">
-
+{% endwith %}
         </div>
         <div class="comments">
             <h3>Join the Conversation!</h3>
