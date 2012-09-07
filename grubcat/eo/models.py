@@ -419,7 +419,7 @@ class UserProfile(models.Model):
         if self.avatar:
             return self.avatar
         else:
-            return "/uploaded_images/anno.png"
+            return "uploaded_images/anno.png"
 
     @property
     def recommendations(self):
@@ -626,19 +626,27 @@ class Meal(models.Model):
 class Comment(models.Model):
     from_person = models.ForeignKey(UserProfile, verbose_name='作者')
     comment = models.CharField(u'评论', max_length=300)
-    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    timestamp = models.DateTimeField()
+
+    @property
+    def time_gap(self):
+        time_gap = datetime.now() - self.timestamp
+        if
+        return time_gap;
 
     class Meta:
         abstract=True
 
 class GroupComment(Comment):
     group = models.ForeignKey(Group,verbose_name=u'圈子', related_name='comments')
-    parent = models.ForeignKey('self', verbose_name=u'父评论',null=True, blank=True)
+    parent = models.ForeignKey('self',related_name='replies', verbose_name=u'父评论',null=True, blank=True)
 
     class Meta:
         verbose_name = u'圈子评论'
         verbose_name_plural = u'圈子评论'
 
+    def __unicode__(self):
+        return  u'评论%s' % self.id
 
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
