@@ -231,36 +231,38 @@
                 <div id="comments-wrapper">
                     {% for comment in group.comments.all %}
                         {% if not comment.parent %}
-                        <div class="parent-comment clearfix">
-                            <a href="{% url user_detail comment.from_person.id %}"><img
-                                    alt="{{ comment.from_person.user.username }}" width="75" height="75"
-                                    src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none  }}"></a>
+                            <div class="parent-comment clearfix">
+                                <a href="{% url user_detail comment.from_person.id %}"><img
+                                        alt="{{ comment.from_person.user.username }}" width="75" height="75"
+                                        src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none  }}"></a>
 
-                            <div class="comment-content">
-                                <h3><a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a> </h3>
+                                <div class="comment-content">
+                                    <h3>
+                                        <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
+                                    </h3>
 
-                                <div class="comment-widget">
-                                    <span>{{ comment.time_gap }} </span>
-                                </div>
-                                <p>{{ comment.comment }}</p>
+                                    <div class="comment-widget">
+                                        <span>{{ comment.time_gap }} </span>
+                                    </div>
+                                    <p>{{ comment.comment }}</p>
 
-                                <div class="replies">
-                                    {% for reply in comment.replies.all %}
-                                        <div class="child-comment " id="comment_8650">
-                                            <div class="comment-title"><a href="{% url user_detail reply.from_person.id %}">
-                                                <img  alt="{{ reply.from_person.user.username }}" width="40" height="40"
-                                                        src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none  }}"></a>
-                                                <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
-		<span>
-			(about 1 month ago)
-		</span>
+                                    <div class="replies">
+                                        {% for reply in comment.replies.all %}
+                                            <div class="child-comment " id="comment_8650">
+                                                <div class="comment-title"><a
+                                                        href="{% url user_detail reply.from_person.id %}">
+                                                    <img alt="{{ reply.from_person.user.username }}" width="40"
+                                                         height="40"
+                                                         src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none  }}"></a>
+                                                    <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
+                                                    <span>({{ reply.time_gap }}) </span>
+                                                </div>
+                                                <p>{{ reply.comment }}</p>
                                             </div>
-                                            <p>{{ reply.comment }}</p>
-                                        </div>
                                         {% endfor %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         {% endif %}
                     {% endfor %}
                     <div class="meals_pagination" id="comments-pagination">
