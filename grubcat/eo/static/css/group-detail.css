@@ -13,16 +13,19 @@ a{
 }
 
 h1.group-name {
-    margin-left: 12px;
+    margin-left: 20px;
     padding: 10px;
+    line-height: 78px;
+    text-align: center
 }
 
-#id_join_group_link, #id_leave_group_link,#id_invite_friend_link {
+#id_join_group_link, #id_invite_friend_link {
     margin: 28px 10px;
     float: right;
 }
 
 #banner {
+    position: relative;
     float: left;
     width: 750px;
     height: 95px;
@@ -261,6 +264,15 @@ a.user-avatar {
 
 .edit-link{
     position: absolute;
+}
+
+
+.about a.edit-link{
     top: 23px;
     right: 8px;
+}
+
+#banner a.edit-link{
+    top: 15px;
+    left: 113px;
 }

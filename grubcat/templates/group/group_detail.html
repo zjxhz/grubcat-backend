@@ -11,40 +11,44 @@
     {% endassets %}
     <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
     <style type="text/css">
-    .error {
-        margin: auto auto;
-        width: auto;
-        padding: 0px;
-    }
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
 
-    #div_id_logo .controls label {
-        margin-left: 15px;;
-        margin-top: 5px;;
-    }
+        #div_id_logo .controls label {
+            margin-left: 15px;;
+            margin-top: 5px;;
+        }
 
-    #logo-clear_id {
-        display: block;
-        float: left;
-        margin-top: 8px;;
-    }
+        #logo-clear_id {
+            display: block;
+            float: left;
+            margin-top: 8px;;
+        }
 
-    #id_logo {
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-    }
+        #id_logo {
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+        }
 
-    .form-horizontal .control-label {
-        width: 60px;
-    }
+        form, .form-actions {
+            margin-bottom: 0;
+        }
 
-    .form-horizontal .controls {
-        margin-left: 80px;
-    }
+        .form-horizontal .control-label {
+            width: 60px;
+        }
 
-    #div_id_logo {
-        margin-top: 10px;;
-    }
+        .form-horizontal .controls {
+            margin-left: 80px;
+        }
+
+        #div_id_logo {
+            margin-top: 10px;;
+        }
 
 
     </style>
@@ -54,15 +58,19 @@
 
     <div id="banner-wrapper">
         <div id="banner" class="shadow">
-            <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="" width="96" height="96">
-
+            <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="{{ group.name }}" width="96" height="96">
+            {% if request.user == group.owner %}
+                <a href="{% url edit_group_logo group.id %}" id="id_edit_logo_link" class="edit-link">
+                    <img alt="修改" src="{% static "img/edit-pencil.png" %}">
+                </a>
+            {% endif %}
             <h1 class="group-name">{{ group.name }}</h1>
 
             {% if not request.user.is_authenticated or group not in request.user.interest_groups.all %}
                 <a href="{% url join_group group.id %}" id="id_join_group_link" class="button">加入圈子</a>
-            {% elif request.user != group.owner %}
+            {% else %}
                 <a href="" id="id_invite_friend_link" class="button">邀请好友</a>
-{#                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>#}
+                {#                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>#}
             {% endif %}
         </div>
     </div>
@@ -171,42 +179,46 @@
     </div>
     <div class="right-column">
         <div class="about">
-               {% comment %} <h3>About Chicago 20s and 30s Grub Group (Chicago)
+            {% comment %} <h3>About Chicago 20s and 30s Grub Group (Chicago)
                 </h3>{% endcomment %}
 
 
             <div class="desc">
-               {{ group.desc }}
+                {{ group.desc }}
             </div>
-            <a href="{% url edit_group group.id%}" class="edit-link">
-                <img alt="Pencil" class="settings-link" src="https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/icons/pencil-2126bed33ec149ece9d09efbb38622d4.png">
-            </a>
+            {% if request.user == group.owner %}
+                <a href="{% url edit_group group.id%}" class="edit-link">
+                    <img alt="修改" src="{% static "img/edit-pencil.png" %}">
+                </a>
+            {% endif %}
             {% if group.category %}
-            <div class="taglist clearfix">
-                <a href="#" class="tag">{{ group.category.name }}</a>
-            </div>
+                <div class="taglist clearfix">
+                    <a href="#" class="tag">{{ group.category.name }}</a>
+                </div>
             {% endif %}
         </div>
         <div class="members-wrapper">
             {% with members_count=group.members.count %}
-            <h3>{{ members_count }} 位成员
+                <h3>{{ members_count }} 位成员
+                    {% if members_count > 21 %}
+                        <a class="see-all" href="/groups/20sgrubgroup/members">(查看所有)</a>
+                    {% endif %}
+                    {% if group in request.user.interest_groups.all and request.user != group.owner %}
+                        | <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开</a>
+                    {% endif %}
+                </h3>
 
-                {% if members_count > 21 %}
-                <a class="see-all" href="/groups/20sgrubgroup/members">(查看所有)</a>
-                {% endif %}
-            </h3>
-
-            <div class="members clearfix">
-                <span class="owner">创建者</span>
-                {% for member in group.members.all|slice:":21"  %}
-                <a href="" class="user-avatar" title="{{ member.username }}">
-                    <img alt="{{ member.username }}" width="40" height="40"
-                         src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none  }}">
-                </a>
-                {% endfor %}
-            </div>
-            <br clear="all">
-{% endwith %}
+                <div class="members clearfix">
+                    <span class="owner">创建者</span>
+                    {% for member in group.members.all|slice:":21" %}
+                        <a href="" class="user-avatar" title="{{ member.username }}">
+                            <img alt="{{ member.username }}" width="40" height="40"
+                                 src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none  }}">
+                        </a>
+                    {% endfor %}
+                </div>
+                <br clear="all">
+            {% endwith %}
         </div>
         <div class="comments">
             <h3>Join the Conversation!</h3>
@@ -214,92 +226,30 @@
 
             <div class="wrapper-for-group-comments">
 
-                <div class="join-to-comment">You must be logged in to comment</div>
+                <div class="join-to-comment">您需要登录才能加入会话！</div>
 
                 <div id="comments-wrapper">
-                    <div class="parent-comment clearfix" id="comment_9366">
-                        <a href="/users/justinreynolds"><img
-                                alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n"
-                                src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
+                    {% for comment in group.comments.all %}
+                        <div class="parent-comment clearfix" id="comment_9366">
+                            <a href="{% url user_detail comment.from_person.id %}"><img
+                                    alt="{{ comment.from_person.user.username }}" width="75" height="75"
+                                    src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none  }}"></a>
 
-                        <div class="comment-content">
-                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
+                            <div class="comment-content">
+                                <h3><a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a> </h3>
 
-                            <div class="comment-widget">
+                                <div class="comment-widget">
 		<span>about 11 hours ago
 		</span>
-                            </div>
-                            <p>We've got a grub this week and there's plenty of spots left!</p>
+                                </div>
+                                <p>{{ comment.comment }}</p>
 
-                            <div id="comment_9366_replies">
+                                <div id="comment_9366_replies">
 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="parent-comment clearfix" id="comment_9219">
-                        <a href="/users/justinreynolds"><img
-                                alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n"
-                                src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
-
-                        <div class="comment-content">
-                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
-
-                            <div class="comment-widget">
-		<span>11 days ago
-		</span>
-                            </div>
-                            <p>Check out the newest grub! Let's head to Lincoln Park and grab some pho!</p>
-
-                            <div id="comment_9219_replies">
-
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="parent-comment clearfix" id="comment_7616">
-                        <a href="/users/justinreynolds"><img
-                                alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n"
-                                src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
-
-                        <div class="comment-content">
-                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
-
-                            <div class="comment-widget">
-		<span>3 months ago
-		</span>
-                            </div>
-                            <p>Hey everyone, I just wanted to say hello to all the new members. Also as an update, did
-                                you know you can start a grub? Yep! Anyone in the group can plan a grub, so definitely
-                                give that a go.
-                                <br>After July 1st, I'll be planning more of these, the rest of June is just super busy
-                                for me. but in the mean time feel free to plan away! We've got almost 250 members, so
-                                people are bound to attend! </p>
-
-                            <div id="comment_7616_replies">
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="parent-comment clearfix" id="comment_7088">
-                        <a href="/users/justinreynolds"><img
-                                alt="0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n"
-                                src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/30987/size_75x75/0431551155e91309a6dab38707bd7d34-296967_10150299131627215_518802214_7915127_606011672_n.jpg?2012"></a>
-
-                        <div class="comment-content">
-                            <h3><a href="/users/justinreynolds">Justin R</a> said...</h3>
-
-                            <div class="comment-widget">
-		<span>4 months ago
-		</span>
-                            </div>
-                            <p>Hey everyone! Join our first grub, there's 8 spots left! It's on May 17th at India
-                                House.</p>
-
-                            <div id="comment_7088_replies">
-
-                            </div>
-                        </div>
-                    </div>
-
+                    {% endfor %}
                     <div class="meals_pagination" id="comments-pagination">
 
                     </div>
@@ -382,6 +332,7 @@
                 title:"修改Logo",
                 modal:true,
                 width:440,
+                height:260,
                 position:['center', 100],
                 resizable:false
             });
