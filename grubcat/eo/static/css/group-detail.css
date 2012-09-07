@@ -276,3 +276,19 @@ a.user-avatar {
     top: 15px;
     left: 113px;
 }
+
+.child-comment {
+    float: left;
+    padding: 10px;
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid white;
+    background: #FAFAFA;
+    width: 568px;
+}
+
+.comment-title {
+    margin-bottom: 5px;
+}
+.child-comment p {
+    width: 510px;
+}

@@ -230,7 +230,8 @@
 
                 <div id="comments-wrapper">
                     {% for comment in group.comments.all %}
-                        <div class="parent-comment clearfix" id="comment_9366">
+                        {% if not comment.parent %}
+                        <div class="parent-comment clearfix">
                             <a href="{% url user_detail comment.from_person.id %}"><img
                                     alt="{{ comment.from_person.user.username }}" width="75" height="75"
                                     src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none  }}"></a>
@@ -239,16 +240,28 @@
                                 <h3><a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a> </h3>
 
                                 <div class="comment-widget">
-		<span>about 11 hours ago
-		</span>
+                                    <span>{{ comment.time_gap }} </span>
                                 </div>
                                 <p>{{ comment.comment }}</p>
 
-                                <div id="comment_9366_replies">
-
+                                <div class="replies">
+                                    {% for reply in comment.replies.all %}
+                                        <div class="child-comment " id="comment_8650">
+                                            <div class="comment-title"><a href="{% url user_detail reply.from_person.id %}">
+                                                <img  alt="{{ reply.from_person.user.username }}" width="40" height="40"
+                                                        src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none  }}"></a>
+                                                <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
+		<span>
+			(about 1 month ago)
+		</span>
+                                            </div>
+                                            <p>{{ reply.comment }}</p>
+                                        </div>
+                                        {% endfor %}
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     {% endfor %}
                     <div class="meals_pagination" id="comments-pagination">
 
@@ -260,44 +273,6 @@
 
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    {% comment %}    圈子详情<br/>
-    名称:{{ group.name }}<br/>
-    描述{{ group.desc }}<br/>
-    分类：{{ group.category.name }}<br/>
-    公开：{{ group.privacy }}<br/>
-    创建者：{{ group.owner }}
-
-    {% ifequal request.user group.owner %}
-        <a href="{% url edit_group group.id %}">修改圈子信息</a>
-        <a href="{% url edit_group_logo group.id %}" id="id_edit_logo_link">修改Logo</a>
-    {% endifequal %}
-    {% if request.user in group.members.all %}
-        <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开圈子</a>
-    {% else%}
-        <a href="{% url join_group group.id %}" id="id_join_group_link">加入圈子</a>
-    {% endif %}{% endcomment %}
-
-
 
     <div id="id_edit_logo_dialog" class="hide">
 

@@ -2,7 +2,10 @@
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
-from models import Group, GroupCategory
+from models import Group, GroupCategory, UserProfile
+
+class UserProfileAdmin(admin.ModelAdmin):
+    pass
 
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
@@ -53,6 +56,7 @@ class GroupCommentAdmin(admin.ModelAdmin):
     list_display = ('id','group','comment')
     list_filter = ('group',)
 
+#admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Restaurant)
