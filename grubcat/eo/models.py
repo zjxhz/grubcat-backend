@@ -623,16 +623,28 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
+class Comment(models.Model):
+    from_person = models.ForeignKey(UserProfile, verbose_name='作者')
+    comment = models.CharField(u'评论', max_length=300)
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
 
-class MealComment(models.Model):
+    class Meta:
+        abstract=True
+
+class GroupComment(Comment):
+    group = models.ForeignKey(Group,verbose_name=u'圈子', related_name='comments')
+    parent = models.ForeignKey('self', verbose_name=u'父评论',null=True, blank=True)
+
+    class Meta:
+        verbose_name = u'圈子评论'
+        verbose_name_plural = u'圈子评论'
+
+
+class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
-    from_person = models.ForeignKey(UserProfile)
-    comment = models.CharField(max_length=42)
-    timestamp = models.DateTimeField(default=datetime.now())
 
     class  Meta:
         db_table = u'meal_comment'
-
 
 
 class MealInvitation(models.Model):

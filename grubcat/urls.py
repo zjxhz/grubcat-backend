@@ -95,6 +95,7 @@ urlpatterns = patterns('',
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
+    url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
 
