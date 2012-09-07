@@ -630,9 +630,20 @@ class Comment(models.Model):
 
     @property
     def time_gap(self):
-        time_gap = datetime.now() - self.timestamp
-        if
-        return time_gap;
+        gap = datetime.now() - self.timestamp
+        if gap.days >= 365:
+            result  = u"%d年前" % (gap.days/365)
+        elif gap.days >= 31:
+            result  = u"%d个月前" % (gap.days/31)
+        elif gap.days > 0:
+            result  = u"%d天前" % gap.days
+        elif gap.seconds >= 3600:
+            result  = u"%d小时前" % (gap.seconds/3600)
+        elif gap.seconds >= 60:
+            result  = u"%d分钟前" % (gap.seconds/60)
+        else:
+            result  = u"1分钟前"
+        return result
 
     class Meta:
         abstract=True
