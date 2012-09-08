@@ -624,9 +624,9 @@ class Meal(models.Model):
         verbose_name_plural = u'饭局'
 
 class Comment(models.Model):
-    from_person = models.ForeignKey(UserProfile, verbose_name='作者')
+    from_person = models.ForeignKey(UserProfile, verbose_name='作者',blank=True)
     comment = models.CharField(u'评论', max_length=300)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(blank=True,auto_now_add=True)
 
     @property
     def time_gap(self):
@@ -642,7 +642,7 @@ class Comment(models.Model):
         elif gap.seconds >= 60:
             result  = u"%d分钟前" % (gap.seconds/60)
         else:
-            result  = u"1分钟前"
+            result  = u"1分钟内"
         return result
 
     class Meta:
@@ -657,7 +657,7 @@ class GroupComment(Comment):
         verbose_name_plural = u'圈子评论'
 
     def __unicode__(self):
-        return  u'评论%s' % self.id
+        return  u'圈子评论%s' % self.id
 
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")

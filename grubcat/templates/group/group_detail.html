@@ -59,18 +59,17 @@
     <div id="banner-wrapper">
         <div id="banner" class="shadow">
             <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="{{ group.name }}" width="96" height="96">
-            {% if request.user == group.owner %}
+            {% if user == group.owner %}
                 <a href="{% url edit_group_logo group.id %}" id="id_edit_logo_link" class="edit-link">
                     <img alt="修改" src="{% static "img/edit-pencil.png" %}">
                 </a>
             {% endif %}
             <h1 class="group-name">{{ group.name }}</h1>
 
-            {% if not request.user.is_authenticated or group not in request.user.interest_groups.all %}
+            {% if not user.is_authenticated or group not in user.interest_groups.all %}
                 <a href="{% url join_group group.id %}" id="id_join_group_link" class="button">加入圈子</a>
             {% else %}
                 <a href="" id="id_invite_friend_link" class="button">邀请好友</a>
-                {#                <a href="{% url leave_group group.id %}" id="id_leave_group_link" class="button">离开圈子</a>#}
             {% endif %}
         </div>
     </div>
@@ -186,8 +185,8 @@
             <div class="desc">
                 {{ group.desc }}
             </div>
-            {% if request.user == group.owner %}
-                <a href="{% url edit_group group.id%}" class="edit-link">
+            {% if user == group.owner %}
+                <a href="{% url edit_group group.id %}" class="edit-link">
                     <img alt="修改" src="{% static "img/edit-pencil.png" %}">
                 </a>
             {% endif %}
@@ -203,7 +202,7 @@
                     {% if members_count > 21 %}
                         <a class="see-all" href="/groups/20sgrubgroup/members">(查看所有)</a>
                     {% endif %}
-                    {% if group in request.user.interest_groups.all and request.user != group.owner %}
+                    {% if group in user.interest_groups.all and user != group.owner %}
                         | <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开</a>
                     {% endif %}
                 </h3>
@@ -213,7 +212,7 @@
                     {% for member in group.members.all|slice:":21" %}
                         <a href="" class="user-avatar" title="{{ member.username }}">
                             <img alt="{{ member.username }}" width="40" height="40"
-                                 src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none  }}">
+                                 src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none }}">
                         </a>
                     {% endfor %}
                 </div>
@@ -221,20 +220,43 @@
             {% endwith %}
         </div>
         <div class="comments">
-            <h3>Join the Conversation!</h3>
+            <h3>说点什么吧！</h3>
 
 
             <div class="wrapper-for-group-comments">
 
-                <div class="join-to-comment">您需要登录才能加入会话！</div>
+                {% if not user.is_authenticated %}
+                    <div class="join-to-comment">您需要登录才能加入会话！</div>
+                {% elif group in user.interest_groups.all %}
+                    <div class="new-comment clearfix">
+                        <img alt="{{ requestr.user.username }}" width="75" height="75"
+                             src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">
 
+                        <h3>{{ user.username }}</h3>
+
+                        <form accept-charset="UTF-8" action="{% url create_group_comment %}"
+                              class="add_comment_form new_comment_form"
+                              id="id_add_comment_form" method="post">
+                            <textarea class="tag-comment toggleval new_comment_field comment-reply-field" cols="40"
+                                      name="comment" rows="20" id="id_comment_content"
+                                      title="Share something with the Chicago Tech group..."
+                                      style="resize: none; overflow-y: hidden; height: 40px; "></textarea>
+                            <input type="hidden" name="group" value="{{ group.id }}">
+                            <input type="hidden" name="from_person" value="{{ user.get_profile.id }}">
+                            <input class="showloading add_comment_submit button" id="id_add_comment_submit"
+                                   type="submit" value="发表">
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="join-to-comment">您需要加入圈子后才能加入会话！</div>
+                {% endif %}
                 <div id="comments-wrapper">
-                    {% for comment in group.comments.all %}
+                    {% for comment in group.comments.all reversed %}
                         {% if not comment.parent %}
                             <div class="parent-comment clearfix">
                                 <a href="{% url user_detail comment.from_person.id %}"><img
                                         alt="{{ comment.from_person.user.username }}" width="75" height="75"
-                                        src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none  }}"></a>
+                                        src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
 
                                 <div class="comment-content">
                                     <h3>
@@ -247,13 +269,21 @@
                                     <p>{{ comment.comment }}</p>
 
                                     <div class="replies">
-                                        {% for reply in comment.replies.all %}
+                                        {% for reply in comment.replies.all reversed %}
                                             <div class="child-comment " id="comment_8650">
                                                 <div class="comment-title"><a
                                                         href="{% url user_detail reply.from_person.id %}">
                                                     <img alt="{{ reply.from_person.user.username }}" width="40"
                                                          height="40"
-                                                         src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none  }}"></a>
+                                                         src="
+
+
+
+
+
+
+
+                                                                 {{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
                                                     <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
                                                     <span>({{ reply.time_gap }}) </span>
                                                 </div>
@@ -317,6 +347,17 @@
             $("input[type=submit]").focus()
         }
         $(document).ready(function () {
+            //dix should be 'div', a hack for djdebugtool
+            var newCommentTemplate = '' +
+                    '<dix class="parent-comment clearfix">' +
+                    '   <a href="{% url user_detail user.get_profile.id %}">' +
+                    '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">' +
+                    '    </a>' +
+                    '   <dix class="comment-content">' +
+                    '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
+                    '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
+                    '       <p>$comment_content</p> </dix> </dix> ';
+            newCommentTemplate = newCommentTemplate.replace('dix','div')
             $("#id_edit_logo_link").click(function () {
                 $("#id_edit_logo_dialog").load($("#id_edit_logo_link").attr('href') + " .content", loadEditLogoPage);
                 return false;
@@ -328,6 +369,20 @@
                     }
                 });
                 return false;
+            })
+            $("#id_add_comment_form").ajaxForm({
+                dataType:'json',
+                beforeSubmit:function () {
+                    if (!$("#id_comment_content").val()) {
+                        $("#id_comment_content").focus();
+                    }
+                },
+                success:function (data) {
+                    if (data.status == "OK") {
+                        var newCommentDiv = newCommentTemplate.replace('$id',data.id).replace('$time_gap',  data.time_gap).replace('$comment_content',$("#id_comment_content").val())
+                        $("#comments-wrapper").prepend(newCommentDiv);
+                    }
+                }
             })
         })
     </script>

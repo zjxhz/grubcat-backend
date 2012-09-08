@@ -98,7 +98,8 @@ class MealDetailView(DetailView):
 ### group related views ###
 class GroupListView(ListView):
 #    TODO order by member num
-    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(num_members=Count('members')).order_by('-num_members')
+    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
+        num_members=Count('members')).order_by('-num_members')
     template_name = "group/group_list.html"
     context_object_name = "group_list"
 
@@ -106,6 +107,7 @@ class GroupListView(ListView):
         context = super(GroupListView, self).get_context_data(**kwargs)
         context['categories'] = GroupCategory.objects.all()
         return context
+
 
 class GroupCreateView(CreateView):
     form_class = GroupForm
@@ -116,7 +118,7 @@ class GroupCreateView(CreateView):
         group.owner = self.request.user
         super(GroupCreateView, self).form_valid(form)
         group.members.add(self.request.user)
-#        TODO need save many to many?
+        #        TODO need save many to many?
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
@@ -144,20 +146,22 @@ class GroupDetailView(DetailView):
     context_object_name = "group"
     template_name = "group/group_detail.html"
 
+
 def join_group(request, pk):
     if request.method == 'POST':
         group = Group.objects.get(pk=pk)
         if group.privacy == GroupPrivacy.PUBLIC:
             if request.user not in group.members.all():
                 group.members.add(request.user)
-                return createSucessJsonResponse(u'已经成功加入该圈子！',{'redirect_url':reverse('group_list')})
+                return createSucessJsonResponse(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
             else:
                 return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
-        else :
-#            need to handle invitation
+        else:
+        #            need to handle invitation
             return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
+
 
 def leave_group(request, pk):
     if request.method == 'POST':
@@ -169,6 +173,35 @@ def leave_group(request, pk):
             return createFailureJsonResponse(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
+
+
+def create_group_comment(request):
+    if request.method == 'POST':
+        form = GroupCommentForm(request.POST)
+        #TODO some checks
+        if form.is_valid():
+            comment = form.save()
+            return createSucessJsonResponse(u'已经成功创建评论！', {'id': comment.id, 'time_gap': comment.time_gap})
+        else:
+            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+#comment  related
+
+def del_comment(request):
+    if request.method == 'POST':
+        form = GroupCommentForm(request.POST)
+        #TODO some checks
+        form.from_person = request.user.get_profile()
+        if form.is_valid():
+            comment = form.save()
+            return createSucessJsonResponse(u'已经成功创建评论！', {'id': comment.id, 'time_gap': comment.time_gap})
+        else:
+            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
 
 ### User related views ###
 class RegisterView(CreateView):
@@ -285,9 +318,9 @@ def get_restaurant(request, restaurant_id):
         jsonR['fields']['average_cost'] = ri.average_cost
         jsonR['fields']['good_rating_percentage'] = ri.good_rating_percentage
         jsonR['fields']['comments'] = modelToDict(Rating.objects.filter(restaurant__id=restaurant_id),
-                {'user': {'fields': ('username',)}})
+            {'user': {'fields': ('username',)}})
         jsonR['fields']['recommended_dishes'] = modelToDict(r.get_recommended_dishes(),
-                {'user': {'fields': ('username',)}, 'dish': {'fields': ('name',)}})
+            {'user': {'fields': ('username',)}, 'dish': {'fields': ('name',)}})
     except ObjectDoesNotExist:
         jsonR['fields']['rating'] = -1
         jsonR['fields']['average_cost'] = -1
@@ -588,7 +621,7 @@ def followers(request, user_id):
 def get_recommended_following(request, user_id):
     user = User.objects.get(id=user_id)
     return getJsonResponse(user.get_profile().recommended_following.all(), {'user':
-                                                                                    {'fields': ('username',)}
+                                                                                {'fields': ('username',)}
     })
 
 
@@ -615,8 +648,8 @@ def messages(request, user_id):
 
 def get_user_profile(request, user_id):
     return getJsonResponse([User.objects.get(id=user_id).get_profile()],
-            {'user': {'fields': ('username',)},
-             'location': {'fields': ('lat', 'lng', 'updated_at')}})
+        {'user': {'fields': ('username',)},
+         'location': {'fields': ('lat', 'lng', 'updated_at')}})
 
 
 def get_meals(request):
