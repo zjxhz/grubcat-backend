@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 from django.template.response import TemplateResponse
 from django.utils.timezone import now
 from django.views.generic.detail import DetailView
@@ -181,19 +182,20 @@ def create_group_comment(request):
         #TODO some checks
         if form.is_valid():
             comment = form.save()
-            return createSucessJsonResponse(u'已经成功创建评论！', {'id': comment.id, 'time_gap': comment.time_gap})
+            t = render_to_response('group/new_parent_comment.html',{'comment':comment},context_instance=RequestContext(request))
+            return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html':t.content})
         else:
             return createFailureJsonResponse(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
-#comment  related
-
-def del_comment(request):
+def del_group_comment(request):
     if request.method == 'POST':
-        form = GroupCommentForm(request.POST)
+        user_id = request.user.get_profile().id
+        comment_id = request.POST.get('comment_id')
+        comment = GroupComment.objects.filter(pk=comment_id)
+
         #TODO some checks
-        form.from_person = request.user.get_profile()
         if form.is_valid():
             comment = form.save()
             return createSucessJsonResponse(u'已经成功创建评论！', {'id': comment.id, 'time_gap': comment.time_gap})
@@ -201,8 +203,6 @@ def del_comment(request):
             return createFailureJsonResponse(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
-
-
 ### User related views ###
 class RegisterView(CreateView):
     form_class = UserCreationForm

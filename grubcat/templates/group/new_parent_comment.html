@@ -1,0 +1,15 @@
+<div class="parent-comment clearfix">
+    <a href="{% url user_detail comment.from_person.id %}"><img
+            alt="{{ comment.from_person.user.username }}" width="75" height="75"
+            src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
+    <div class="comment-content">
+        <h3>
+            <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
+        </h3>
+
+        <div class="comment-widget">
+            <span>{{ comment.time_gap }} </span>
+        </div>
+        <p>{{ comment.comment }}</p>
+    </div>
+</div>

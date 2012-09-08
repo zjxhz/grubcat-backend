@@ -257,7 +257,6 @@
                                 <a href="{% url user_detail comment.from_person.id %}"><img
                                         alt="{{ comment.from_person.user.username }}" width="75" height="75"
                                         src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
-
                                 <div class="comment-content">
                                     <h3>
                                         <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
@@ -275,17 +274,7 @@
                                                         href="{% url user_detail reply.from_person.id %}">
                                                     <img alt="{{ reply.from_person.user.username }}" width="40"
                                                          height="40"
-                                                         src="
-
-
-
-
-
-
-
-
-
-                                                                 {{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
+                                                         src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
                                                     <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
                                                     <span>({{ reply.time_gap }}) </span>
                                                 </div>
@@ -348,21 +337,22 @@
             $("<br/>").insertBefore($("#logo-clear_id"));
             $("input[type=submit]").focus()
         }
+        //dix should be 'div', a hack for djdebugtool
+        var newCommentTemplate = ''
+                {% if user.is_authenticated %}
+                    + '<dix class="parent-comment clearfix">' +
+                    '   <a href="{% url user_detail user.get_profile.id %}">' +
+                    '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">'
+                    +
+                    '    </a>' +
+                    '   <dix class="comment-content">' +
+                    '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
+                    '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
+                    '       <p>$comment_content</p> </dix> </dix> ';
+                    newCommentTemplate = newCommentTemplate.replace(/dix/g, 'div')
+                {% endif %}
         $(document).ready(function () {
-            //dix should be 'div', a hack for djdebugtool
-            var newCommentTemplate = ''
-                    {% if user.is_authenticated %}
-                        + '<dix class="parent-comment clearfix">' +
-                        '   <a href="{% url user_detail user.get_profile.id %}">' +
-                        '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">'
-                        +
-                        '    </a>' +
-                        '   <dix class="comment-content">' +
-                        '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
-                        '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
-                        '       <p>$comment_content</p> </dix> </dix> ';
-                        newCommentTemplate = newCommentTemplate.replace('dix', 'div')
-                    {% endif %}
+
             $("#id_edit_logo_link").click(function () {
                 $("#id_edit_logo_dialog").load($("#id_edit_logo_link").attr('href') + " .content", loadEditLogoPage);
                 return false;
@@ -393,8 +383,8 @@
                 },
                 success:function (data) {
                     if (data.status == "OK") {
-                        var newCommentDiv = newCommentTemplate.replace('$id', data.id).replace('$time_gap', data.time_gap).replace('$comment_content', $("#id_comment_content").val())
-                        $("#comments-wrapper").prepend(newCommentDiv);
+                        var newCommentDiv = newCommentTemplate.replace('$id', data.id).replace('$time_gap', data.time_gap).replace('$comment_content', data.content)
+                        $("#comments-wrapper").prepend(data.comment_html);
                     }
                     $("#id_comment_content").val("")
                     $("#id_comment_content").focusout();
