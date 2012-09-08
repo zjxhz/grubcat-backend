@@ -237,14 +237,14 @@
                         <form accept-charset="UTF-8" action="{% url create_group_comment %}"
                               class="add_comment_form new_comment_form"
                               id="id_add_comment_form" method="post">
-                            <textarea class="tag-comment toggleval new_comment_field comment-reply-field" cols="40"
+                            <textarea class="tag-comment toggleval new_comment_field comment-reply-field" cols="60"
                                       name="comment" rows="20" id="id_comment_content"
                                       title="Share something with the Chicago Tech group..."
                                       style="resize: none; overflow-y: hidden; height: 40px; "></textarea>
                             <input type="hidden" name="group" value="{{ group.id }}">
                             <input type="hidden" name="from_person" value="{{ user.get_profile.id }}">
                             <input class="showloading add_comment_submit button" id="id_add_comment_submit"
-                                   type="submit" value="发表">
+                                   type="submit" value="发表" style="display: none;">
                         </form>
                     </div>
                 {% else %}
@@ -276,6 +276,8 @@
                                                     <img alt="{{ reply.from_person.user.username }}" width="40"
                                                          height="40"
                                                          src="
+
+
 
 
 
@@ -348,16 +350,19 @@
         }
         $(document).ready(function () {
             //dix should be 'div', a hack for djdebugtool
-            var newCommentTemplate = '' +
-                    '<dix class="parent-comment clearfix">' +
-                    '   <a href="{% url user_detail user.get_profile.id %}">' +
-                    '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">' +
-                    '    </a>' +
-                    '   <dix class="comment-content">' +
-                    '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
-                    '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
-                    '       <p>$comment_content</p> </dix> </dix> ';
-            newCommentTemplate = newCommentTemplate.replace('dix','div')
+            var newCommentTemplate = ''
+                    {% if user.is_authenticated %}
+                        + '<dix class="parent-comment clearfix">' +
+                        '   <a href="{% url user_detail user.get_profile.id %}">' +
+                        '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">'
+                        +
+                        '    </a>' +
+                        '   <dix class="comment-content">' +
+                        '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
+                        '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
+                        '       <p>$comment_content</p> </dix> </dix> ';
+                        newCommentTemplate = newCommentTemplate.replace('dix', 'div')
+                    {% endif %}
             $("#id_edit_logo_link").click(function () {
                 $("#id_edit_logo_dialog").load($("#id_edit_logo_link").attr('href') + " .content", loadEditLogoPage);
                 return false;
@@ -370,6 +375,15 @@
                 });
                 return false;
             })
+
+            $("#id_comment_content").focus(function () {
+                $("#id_add_comment_submit").show();
+            }).focusout(function () {
+                        if (!$(this).val()) {
+                            $("#id_add_comment_submit").hide();
+                        }
+                    })
+
             $("#id_add_comment_form").ajaxForm({
                 dataType:'json',
                 beforeSubmit:function () {
@@ -379,9 +393,11 @@
                 },
                 success:function (data) {
                     if (data.status == "OK") {
-                        var newCommentDiv = newCommentTemplate.replace('$id',data.id).replace('$time_gap',  data.time_gap).replace('$comment_content',$("#id_comment_content").val())
+                        var newCommentDiv = newCommentTemplate.replace('$id', data.id).replace('$time_gap', data.time_gap).replace('$comment_content', $("#id_comment_content").val())
                         $("#comments-wrapper").prepend(newCommentDiv);
                     }
+                    $("#id_comment_content").val("")
+                    $("#id_comment_content").focusout();
                 }
             })
         })

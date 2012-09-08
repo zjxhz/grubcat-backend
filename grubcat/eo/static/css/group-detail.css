@@ -300,3 +300,6 @@ a.user-avatar {
     margin: 18px 5px;
     padding: 7px 9px;
 }
+#id_add_comment_submit{
+    margin-bottom: 10px;
+}

@@ -227,8 +227,8 @@ GROUP_PRIVACY_CHOICE = (
 
 class Group(models.Model):
     """圈子"""
-    name = models.CharField(u'名称', max_length=60, unique=True)
-    desc = models.CharField(u'描述', max_length=300)
+    name = models.CharField(u'名称', max_length=15, unique=True)
+    desc = models.CharField(u'描述', max_length=100)
     category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     owner = models.ForeignKey(User,verbose_name=u'创建者')
