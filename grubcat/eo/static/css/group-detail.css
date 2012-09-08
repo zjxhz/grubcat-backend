@@ -243,6 +243,9 @@ a.user-avatar {
     margin-bottom: 7px;
     width: 380px;
 }
+.comments .new-comment h3{
+    margin-bottom: 3px;
+}
 
 .comment-widget {
     padding: 3px 7px;
@@ -291,4 +294,9 @@ a.user-avatar {
 }
 .child-comment p {
     width: 510px;
+}
+
+.add_comment_submit {
+    margin: 18px 5px;
+    padding: 7px 9px;
 }

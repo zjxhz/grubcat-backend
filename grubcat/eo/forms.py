@@ -81,6 +81,12 @@ class GroupLogoForm(ModelForm):
         model = Group
         fields=('logo',)
 
+class GroupCommentForm(ModelForm):
+
+    class Meta:
+        model = GroupComment
+
+
 class MenuForm(ModelForm):
     class Meta:
         model = Menu
