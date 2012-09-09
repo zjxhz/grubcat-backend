@@ -147,6 +147,8 @@ class GroupDetailView(DetailView):
     context_object_name = "group"
     template_name = "group/group_detail.html"
 
+    def get_queryset(self):
+        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
 
 def join_group(request, pk):
     if request.method == 'POST':
@@ -192,8 +194,7 @@ def create_group_comment(request):
 def del_group_comment(request,pk):
     if request.method == 'POST':
         user_id = request.user.get_profile().id
-        comment_id = request.POST.get('comment_id')
-        comment = GroupComment.objects.filter(pk=comment_id)
+        comment = GroupComment.objects.filter(pk=pk)
         #TODO some checks
         if len(comment) == 1:
             comment[0].delete()
