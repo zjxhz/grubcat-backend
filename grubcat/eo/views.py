@@ -189,18 +189,15 @@ def create_group_comment(request):
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
-def del_group_comment(request):
+def del_group_comment(request,pk):
     if request.method == 'POST':
         user_id = request.user.get_profile().id
         comment_id = request.POST.get('comment_id')
         comment = GroupComment.objects.filter(pk=comment_id)
-
         #TODO some checks
-        if form.is_valid():
-            comment = form.save()
-            return createSucessJsonResponse(u'已经成功创建评论！', {'id': comment.id, 'time_gap': comment.time_gap})
-        else:
-            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+        if len(comment) == 1:
+            comment[0].delete()
+        return createSucessJsonResponse(u'已经成功删除评论！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 ### User related views ###

@@ -253,30 +253,36 @@
                 <div id="comments-wrapper">
                     {% for comment in group.comments.all reversed %}
                         {% if not comment.parent %}
-                            <div class="parent-comment clearfix">
+                            <div class="comment parent-comment clearfix">
                                 <a href="{% url user_detail comment.from_person.id %}"><img
                                         alt="{{ comment.from_person.user.username }}" width="75" height="75"
                                         src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
+
                                 <div class="comment-content">
                                     <h3>
                                         <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
                                     </h3>
 
                                     <div class="comment-widget">
-                                        <span>{{ comment.time_gap }} </span>
+                                        <span class="time-gap">{{ comment.time_gap }}</span>
+                                            {% if comment.from_person == user.get_profile %}
+                                            |&nbsp;<a href="{% url del_group_comment comment.id %}" class="del-group-comment">删除
+                                            </a>{% endif %}
                                     </div>
                                     <p>{{ comment.comment }}</p>
 
                                     <div class="replies">
                                         {% for reply in comment.replies.all reversed %}
-                                            <div class="child-comment " id="comment_8650">
+                                            <div class="comment child-comment">
                                                 <div class="comment-title"><a
                                                         href="{% url user_detail reply.from_person.id %}">
                                                     <img alt="{{ reply.from_person.user.username }}" width="40"
                                                          height="40"
                                                          src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
                                                     <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
-                                                    <span>({{ reply.time_gap }}) </span>
+                                                    <span class="time-gap">({{ reply.time_gap }}) </span>{% if reply.from_person == user.get_profile %}
+                                                        |&nbsp;<a href="{% url del_group_comment reply.id %}" class="del-group-comment">删除
+                                                        </a>{% endif %}
                                                 </div>
                                                 <p>{{ reply.comment }}</p>
                                             </div>
@@ -338,19 +344,6 @@
             $("input[type=submit]").focus()
         }
         //dix should be 'div', a hack for djdebugtool
-        var newCommentTemplate = ''
-                {% if user.is_authenticated %}
-                    + '<dix class="parent-comment clearfix">' +
-                    '   <a href="{% url user_detail user.get_profile.id %}">' +
-                    '       <img alt="{{ user.username }}" width="75" height="75" src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">'
-                    +
-                    '    </a>' +
-                    '   <dix class="comment-content">' +
-                    '       <h3><a href="{% url user_detail user.get_profile.id %}">{{ user.username }}</a></h3>' +
-                    '       <dix class="comment-widget"><span>$time_gap</span></dix>' +
-                    '       <p>$comment_content</p> </dix> </dix> ';
-                    newCommentTemplate = newCommentTemplate.replace(/dix/g, 'div')
-                {% endif %}
         $(document).ready(function () {
 
             $("#id_edit_logo_link").click(function () {
@@ -383,12 +376,24 @@
                 },
                 success:function (data) {
                     if (data.status == "OK") {
-                        var newCommentDiv = newCommentTemplate.replace('$id', data.id).replace('$time_gap', data.time_gap).replace('$comment_content', data.content)
                         $("#comments-wrapper").prepend(data.comment_html);
                     }
                     $("#id_comment_content").val("")
                     $("#id_comment_content").focusout();
                 }
+            })
+            $(".del-group-comment").click(function(){
+                $delLink = $(this);
+                $.post($delLink.attr("href"),function(data){
+                    if(data.status == "OK")
+                    {
+                        $delLink.parents(".comment").slideUp(function(){
+                            $(this).remove();
+                        });
+                    }
+
+                },'json')
+                return false;
             })
         })
     </script>

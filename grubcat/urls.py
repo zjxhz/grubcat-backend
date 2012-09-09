@@ -88,7 +88,7 @@ urlpatterns = patterns('',
     url(r'^group/(?P<pk>\d+)/join/$', login_required(join_group), name='join_group'),
     url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
     url(r'^group/comment/add/$', login_required(create_group_comment), name='create_group_comment'),
-    url(r'^comment/del/$', login_required(del_group_comment), name='del_group_comment'),
+    url(r'^group/comment/(?P<pk>\d+)/del/$', login_required(del_group_comment), name='del_group_comment'),
 
 
 
