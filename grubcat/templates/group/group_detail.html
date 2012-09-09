@@ -251,53 +251,16 @@
                     <div class="join-to-comment">您需要加入圈子后才能加入会话！</div>
                 {% endif %}
                 <div id="comments-wrapper">
-                    {% for comment in group.comments.all reversed %}
-                        {% if not comment.parent %}
-                            <div class="comment parent-comment clearfix">
-                                <a href="{% url user_detail comment.from_person.id %}"><img
-                                        alt="{{ comment.from_person.user.username }}" width="75" height="75"
-                                        src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
-
-                                <div class="comment-content">
-                                    <h3>
-                                        <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
-                                    </h3>
-
-                                    <div class="comment-widget">
-                                        <span class="time-gap">{{ comment.time_gap }}</span>
-                                            {% if comment.from_person == user.get_profile %}
-                                            |&nbsp;<a href="{% url del_group_comment comment.id %}" class="del-group-comment">删除
-                                            </a>{% endif %}
-                                    </div>
-                                    <p>{{ comment.comment }}</p>
-
-                                    <div class="replies">
-                                        {% for reply in comment.replies.all reversed %}
-                                            <div class="comment child-comment">
-                                                <div class="comment-title"><a
-                                                        href="{% url user_detail reply.from_person.id %}">
-                                                    <img alt="{{ reply.from_person.user.username }}" width="40"
-                                                         height="40"
-                                                         src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
-                                                    <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
-                                                    <span class="time-gap">({{ reply.time_gap }}) </span>{% if reply.from_person == user.get_profile %}
-                                                        |&nbsp;<a href="{% url del_group_comment reply.id %}" class="del-group-comment">删除
-                                                        </a>{% endif %}
-                                                </div>
-                                                <p>{{ reply.comment }}</p>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
+                    {% for comment in parent_comments %}
+                        {% include "group/single_comment.html" %}
                     {% endfor %}
-                    <div class="meals_pagination" id="comments-pagination">
-
-                    </div>
-
                 </div>
 
+                {% if has_next %}
+                    <div id="comments-pagination">
+                        <a id="id_more_comments_link" href="{% url group_comment_list group.id 2 %}">查看更多</a>
+                    </div>
+                {% endif %}
             </div>
 
         </div>
@@ -369,11 +332,12 @@
 
             $("#id_add_comment_form").ajaxForm({
                 dataType:'json',
-                beforeSubmit:function () {
+               {% comment %} beforeSubmit:function () {
                     if (!$("#id_comment_content").val()) {
                         $("#id_comment_content").focus();
+                        return false;
                     }
-                },
+                },{% endcomment %}
                 success:function (data) {
                     if (data.status == "OK") {
                         $("#comments-wrapper").prepend(data.comment_html);
@@ -382,17 +346,32 @@
                     $("#id_comment_content").focusout();
                 }
             })
-            $(".del-group-comment").click(function(){
+            $(".del-group-comment").live('click', function(){
                 $delLink = $(this);
                 $.post($delLink.attr("href"),function(data){
                     if(data.status == "OK")
                     {
-                        $delLink.parents(".comment").slideUp(function(){
+                        var $commentToDel;
+                        if($delLink.parents(".child-comment").length)
+                        {
+                            $commentToDel = $delLink.parents(".child-comment");
+                        } else {
+                            $commentToDel = $delLink.parents(".parent-comment");
+                        }
+
+                        $commentToDel.fadeOut(function(){
                             $(this).remove();
                         });
                     }
 
                 },'json')
+                return false;
+            });
+
+            $("#id_more_comments_link").live('click', function(){
+                $.get($(this).attr('href'),function(data){
+                    $("#comments-pagination").after(data).remove();
+                });
                 return false;
             })
         })

@@ -89,7 +89,7 @@ urlpatterns = patterns('',
     url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
     url(r'^group/comment/add/$', login_required(create_group_comment), name='create_group_comment'),
     url(r'^group/comment/(?P<pk>\d+)/del/$', login_required(del_group_comment), name='del_group_comment'),
-
+    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(), name='group_comment_list'),
 
 
     # order

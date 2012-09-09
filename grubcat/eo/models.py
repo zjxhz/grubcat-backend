@@ -657,7 +657,7 @@ class GroupComment(Comment):
         verbose_name_plural = u'圈子评论'
 
     def __unicode__(self):
-        return  u'圈子评论%s' % self.id
+        return  u'圈子(%s) 评论%s' % (self.group, self.id)
 
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
