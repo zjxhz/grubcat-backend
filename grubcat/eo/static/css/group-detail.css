@@ -1,4 +1,4 @@
-a{
+a {
     color: #000;
 }
 
@@ -166,7 +166,7 @@ hr {
     line-height: 13px;
 }
 
-a.owner:hover, a.see-all:hover{
+a.owner:hover, a.see-all:hover {
     text-decoration: none;
 }
 
@@ -243,20 +243,22 @@ a.user-avatar {
     margin-bottom: 7px;
     width: 380px;
 }
-.comments .new-comment h3{
+
+.comments .new-comment h3 {
     margin-bottom: 3px;
 }
 
 .comment-widget {
-    padding: 3px 7px;
+    padding: 3px 13px;
     background: #EEE;
     border: 1px solid #DDD;
-    color: #555;
-    width: 75px;
+    color: #AAA;
+    width: 90px;
     margin-top: -5px;
     position: absolute;
     right: 0;
 }
+
 
 .parent-comment p {
     float: left;
@@ -265,17 +267,16 @@ a.user-avatar {
     font-size: 115%;
 }
 
-.edit-link{
+.edit-link {
     position: absolute;
 }
 
-
-.about a.edit-link{
+.about a.edit-link {
     top: 23px;
     right: 8px;
 }
 
-#banner a.edit-link{
+#banner a.edit-link {
     top: 15px;
     left: 113px;
 }
@@ -292,6 +293,7 @@ a.user-avatar {
 .comment-title {
     margin-bottom: 5px;
 }
+
 .child-comment p {
     width: 510px;
 }
@@ -300,6 +302,11 @@ a.user-avatar {
     margin: 18px 5px;
     padding: 7px 9px;
 }
-#id_add_comment_submit{
+
+#id_add_comment_submit {
     margin-bottom: 10px;
+}
+
+.time-gap{
+    color: #555;
 }
