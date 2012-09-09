@@ -259,7 +259,6 @@ a.user-avatar {
     right: 0;
 }
 
-
 .parent-comment p {
     float: left;
     width: 588px;
@@ -307,6 +306,18 @@ a.user-avatar {
     margin-bottom: 10px;
 }
 
-.time-gap{
+.time-gap {
     color: #555;
+}
+
+#comments-pagination {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: blue;
+    background: #888;
+    line-height: 26px;
+    width: 95px;
+    margin: auto;
+    border: 1px solid #444;
 }

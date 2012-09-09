@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -141,6 +142,7 @@ class GroupLogoUpdateView(UpdateView):
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
+GROUP_COMMENT_PAGINATE_BY = 5
 
 class GroupDetailView(DetailView):
     model = Group
@@ -149,6 +151,34 @@ class GroupDetailView(DetailView):
 
     def get_queryset(self):
         return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
+
+    def get_context_data(self, **kwargs):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        context = super(GroupDetailView, self).get_context_data(**kwargs)
+        context.update({
+            "parent_comments":parent_comments[:GROUP_COMMENT_PAGINATE_BY],
+            'has_next':parent_comments > GROUP_COMMENT_PAGINATE_BY
+        })
+        return context
+
+class GroupCommentListView(ListView):
+    template_name = "group/comment_list.html"
+    context_object_name = "parent_comments"
+    model = GroupComment
+    paginate_by = GROUP_COMMENT_PAGINATE_BY
+
+    def get_queryset(self):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.kwargs['group_id']).select_related(
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        return parent_comments
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCommentListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id":self.kwargs['group_id']
+        })
+        return context
 
 def join_group(request, pk):
     if request.method == 'POST':
@@ -184,14 +214,16 @@ def create_group_comment(request):
         #TODO some checks
         if form.is_valid():
             comment = form.save()
-            t = render_to_response('group/new_parent_comment.html',{'comment':comment},context_instance=RequestContext(request))
-            return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html':t.content})
+            t = render_to_response('group/new_parent_comment.html', {'comment': comment},
+                context_instance=RequestContext(request))
+            return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html': t.content})
         else:
             return createFailureJsonResponse(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
-def del_group_comment(request,pk):
+
+def del_group_comment(request, pk):
     if request.method == 'POST':
         user_id = request.user.get_profile().id
         comment = GroupComment.objects.filter(pk=pk)
@@ -201,6 +233,7 @@ def del_group_comment(request,pk):
         return createSucessJsonResponse(u'已经成功删除评论！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
+
 ### User related views ###
 class RegisterView(CreateView):
     form_class = UserCreationForm
