@@ -2,7 +2,7 @@
     <div class="comment parent-comment clearfix">
         <a href="{% url user_detail comment.from_person.id %}"><img
                 alt="{{ comment.from_person.user.username }}" width="75" height="75"
-                src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
+                src="{{ comment.from_person.avatar_default_if_none }}"></a>
 
         <div class="comment-content">
             <h3>
@@ -24,7 +24,7 @@
                                 href="{% url user_detail reply.from_person.id %}">
                             <img alt="{{ reply.from_person.user.username }}" width="40"
                                  height="40"
-                                 src="{{ MEDIA_URL }}{{ reply.from_person.avatar_default_if_none }}"></a>
+                                 src="{{ reply.from_person.avatar_default_if_none }}"></a>
                             <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
                             <span class="time-gap">({{ reply.time_gap }}) </span>
                             {% if reply.from_person == user.get_profile %}
@@ -55,7 +55,7 @@
                 href="{% url user_detail comment.from_person.id %}">
             <img alt="{{ comment.from_person.user.username }}" width="40"
                  height="40"
-                 src="{{ MEDIA_URL }}{{ comment.from_person.avatar_default_if_none }}"></a>
+                 src="{{ comment.from_person.avatar_default_if_none }}"></a>
             <b><a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a></b>
             <span class="time-gap">({{ comment.time_gap }}) </span>
             {% if comment.from_person == user.get_profile %}

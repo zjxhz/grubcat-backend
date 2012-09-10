@@ -419,7 +419,7 @@ class UserProfile(models.Model):
         if self.avatar:
             return self.avatar
         else:
-            return "uploaded_images/anno.png"
+            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     @property
     def recommendations(self):

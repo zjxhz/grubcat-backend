@@ -212,7 +212,7 @@
                     {% for member in group.members.all|slice:":21" %}
                         <a href="" class="user-avatar" title="{{ member.username }}">
                             <img alt="{{ member.username }}" width="40" height="40"
-                                 src="{{ MEDIA_URL }}{{ member.get_profile.avatar_default_if_none }}">
+                                 src="{{ member.get_profile.avatar_default_if_none }}">
                         </a>
                     {% endfor %}
                 </div>
@@ -228,7 +228,7 @@
                 {% elif group in user.interest_groups.all %}
                     <div class="new-comment clearfix">
                         <img alt="{{ requestr.user.username }}" width="75" height="75"
-                             src="{{ MEDIA_URL }}{{ user.get_profile.avatar_default_if_none }}">
+                             src="{{ user.get_profile.avatar_default_if_none }}">
 
                         <h3>{{ user.username }}</h3>
 
