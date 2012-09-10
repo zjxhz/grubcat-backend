@@ -40,7 +40,7 @@
                       method="post">
                     <input name="parent" type="hidden" value="{{ comment.id }}">
                     <input name="from_person" type="hidden" value="{{ user.get_profile.id }}">
-                    <input name="group" type="hidden" value="{{ group.id }}">
+                    <input name="group" type="hidden" value="{{ comment.group.id }}">
                     <textarea class="tag-comment comment-reply-field toggleval" cols="40" name="comment" rows="20"
                               title="回复{{ comment.from_person.user.username }}"></textarea>
                     <input type="submit" value="回复" class="showloading button reply_comment_submit"

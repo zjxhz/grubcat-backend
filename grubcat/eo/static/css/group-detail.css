@@ -217,6 +217,9 @@ a.user-avatar {
     padding: 10px 0;
 }
 
+.new-comment{
+    margin-bottom: 15px;
+}
 .new-comment img, .parent-comment img {
     float: left;
     border: 2px solid white;
