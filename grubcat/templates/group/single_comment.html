@@ -17,7 +17,7 @@
             </div>
             <p>{{ comment.comment }}</p>
 
-            <div class="replies">
+            <div class="replies clearfix">
                 {% for reply in comment.replies.all reversed %}
                     <div class="comment child-comment">
                         <div class="comment-title"><a
