@@ -214,7 +214,7 @@ def create_group_comment(request):
         #TODO some checks
         if form.is_valid():
             comment = form.save()
-            t = render_to_response('group/new_parent_comment.html', {'comment': comment},
+            t = render_to_response('group/single_comment.html', {'comment': comment},
                 context_instance=RequestContext(request))
             return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html': t.content})
         else:
