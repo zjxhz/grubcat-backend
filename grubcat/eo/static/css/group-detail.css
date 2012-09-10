@@ -218,7 +218,7 @@ a.user-avatar {
 }
 
 .new-comment{
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 .new-comment img, .parent-comment img {
     float: left;
@@ -305,8 +305,12 @@ a.user-avatar {
 }
 
 
-.id_add_comment_submit,.reply_comment_submit {
-    margin: 0px 5px;
+.reply_comment_submit {
+    margin: 2px 5px 0 5px;
+    padding: 7px 9px;
+}
+#id_add_comment_submit{
+    margin: 18px 5px 0 5px;
     padding: 7px 9px;
 }
 
@@ -325,6 +329,7 @@ a.user-avatar {
 
 #id_comment_content{
     width:300px;
+    height: 40px;
 }
 
 textarea{
@@ -336,4 +341,10 @@ textarea.comment-reply-field{
     resize: none;
     overflow-y: hidden;
     width: 350px;
+    margin-left: 10px;
+    padding: 6px 2px;
+}
+
+.replies{
+    margin-bottom: 10px;
 }
