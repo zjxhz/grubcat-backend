@@ -297,6 +297,10 @@ a.user-avatar {
     width: 510px;
 }
 
+#id_add_comment_form{
+    width:500px
+}
+
 
 .id_add_comment_submit,.reply_comment_submit {
     margin: 0px 5px;
