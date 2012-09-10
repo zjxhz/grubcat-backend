@@ -297,13 +297,10 @@ a.user-avatar {
     width: 510px;
 }
 
-.add_comment_submit {
-    margin: 18px 5px;
-    padding: 7px 9px;
-}
 
-#id_add_comment_submit {
-    margin-bottom: 10px;
+.id_add_comment_submit,.reply_comment_submit {
+    margin: 0px 5px;
+    padding: 7px 9px;
 }
 
 .time-gap {
@@ -314,10 +311,22 @@ a.user-avatar {
     text-align: center;
     font-size: 14px;
     font-weight: bold;
-    color: blue;
-    background: #888;
     line-height: 26px;
     width: 95px;
     margin: auto;
-    border: 1px solid #444;
+}
+
+#id_comment_content{
+    width:300px;
+}
+
+textarea{
+    resize: none;
+}
+
+textarea.comment-reply-field{
+    height: 20px;
+    resize: none;
+    overflow-y: hidden;
+    width: 350px;
 }

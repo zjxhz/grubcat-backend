@@ -216,12 +216,10 @@
                         </a>
                     {% endfor %}
                 </div>
-                <br clear="all">
             {% endwith %}
         </div>
         <div class="comments">
             <h3>说点什么吧！</h3>
-
 
             <div class="wrapper-for-group-comments">
 
@@ -237,10 +235,9 @@
                         <form accept-charset="UTF-8" action="{% url create_group_comment %}"
                               class="add_comment_form new_comment_form"
                               id="id_add_comment_form" method="post">
-                            <textarea class="tag-comment toggleval new_comment_field comment-reply-field" cols="60"
-                                      name="comment" rows="20" id="id_comment_content"
-                                      title="Share something with the Chicago Tech group..."
-                                      style="resize: none; overflow-y: hidden; height: 40px; "></textarea>
+                            <textarea class="tag-comment toggleval new_comment_field comment-reply-field"
+                                      name="comment" rows="3" cols="10" id="id_comment_content"
+                                      style="resize: none;"></textarea>
                             <input type="hidden" name="group" value="{{ group.id }}">
                             <input type="hidden" name="from_person" value="{{ user.get_profile.id }}">
                             <input class="showloading add_comment_submit button" id="id_add_comment_submit"
@@ -332,12 +329,12 @@
 
             $("#id_add_comment_form").ajaxForm({
                 dataType:'json',
-               {% comment %} beforeSubmit:function () {
-                    if (!$("#id_comment_content").val()) {
-                        $("#id_comment_content").focus();
-                        return false;
-                    }
-                },{% endcomment %}
+                {% comment %} beforeSubmit:function () {
+                  if (!$("#id_comment_content").val()) {
+                      $("#id_comment_content").focus();
+                      return false;
+                  }
+              },{% endcomment %}
                 success:function (data) {
                     if (data.status == "OK") {
                         $("#comments-wrapper").prepend(data.comment_html);
@@ -346,34 +343,56 @@
                     $("#id_comment_content").focusout();
                 }
             })
-            $(".del-group-comment").live('click', function(){
+            $(".del-group-comment").live('click', function () {
                 $delLink = $(this);
-                $.post($delLink.attr("href"),function(data){
-                    if(data.status == "OK")
-                    {
+                $.post($delLink.attr("href"), function (data) {
+                    if (data.status == "OK") {
                         var $commentToDel;
-                        if($delLink.parents(".child-comment").length)
-                        {
+                        if ($delLink.parents(".child-comment").length) {
                             $commentToDel = $delLink.parents(".child-comment");
                         } else {
                             $commentToDel = $delLink.parents(".parent-comment");
                         }
 
-                        $commentToDel.fadeOut(function(){
+                        $commentToDel.fadeOut(function () {
                             $(this).remove();
                         });
                     }
 
-                },'json')
+                }, 'json')
                 return false;
             });
 
-            $("#id_more_comments_link").live('click', function(){
-                $.get($(this).attr('href'),function(data){
+            $("#id_more_comments_link").live('click', function () {
+                $.get($(this).attr('href'), function (data) {
                     $("#comments-pagination").after(data).remove();
                 });
                 return false;
             })
+            $comment_reply=$(".comment-reply-field");
+            $.each($comment_reply, function(index, value){
+                $(value).val($(value).attr("title"))
+            })
+            $comment_reply.live("focus",function () {
+                $(this).val("").siblings(".reply_comment_submit").show();
+            }).live("focusout", function () {
+                        if (!$(this).val()) {
+                            $(this).val($(this).attr("title")).siblings(".reply_comment_submit").hide()
+                        }
+                    })
+
+
+            $(".reply_comment_form").live("submit",function(){
+                var $reply_comment_form = $(this);
+                $(this).ajaxSubmit(function(data){
+                    if(data.status=="OK"){
+                        $reply_comment_form.parents(".parent-comment").find(".replies").append(data.comment_html)
+                    }
+
+                });
+                return false
+            })
+
         })
     </script>
 {% endblock %}
