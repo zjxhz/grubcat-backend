@@ -158,7 +158,7 @@ class GroupDetailView(DetailView):
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context.update({
             "parent_comments":parent_comments[:GROUP_COMMENT_PAGINATE_BY],
-            'has_next':parent_comments > GROUP_COMMENT_PAGINATE_BY
+            'has_next':parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
         })
         return context
 
