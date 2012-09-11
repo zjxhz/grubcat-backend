@@ -227,8 +227,8 @@ GROUP_PRIVACY_CHOICE = (
 
 class Group(models.Model):
     """圈子"""
-    name = models.CharField(u'名称', max_length=60, unique=True)
-    desc = models.CharField(u'描述', max_length=300)
+    name = models.CharField(u'名称', max_length=15, unique=True)
+    desc = models.CharField(u'描述', max_length=100)
     category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
     owner = models.ForeignKey(User,verbose_name=u'创建者')
@@ -417,9 +417,9 @@ class UserProfile(models.Model):
     @property
     def avatar_default_if_none(self):
         if self.avatar:
-            return self.avatar
+            return self.avatar.url
         else:
-            return "/uploaded_images/anno.png"
+            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     @property
     def recommendations(self):
@@ -623,16 +623,47 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
+class Comment(models.Model):
+    from_person = models.ForeignKey(UserProfile, verbose_name='作者',blank=True)
+    comment = models.CharField(u'评论', max_length=300)
+    timestamp = models.DateTimeField(blank=True,auto_now_add=True)
 
-class MealComment(models.Model):
+    @property
+    def time_gap(self):
+        gap = datetime.now() - self.timestamp
+        if gap.days >= 365:
+            result  = u"%d年前" % (gap.days/365)
+        elif gap.days >= 31:
+            result  = u"%d个月前" % (gap.days/31)
+        elif gap.days > 0:
+            result  = u"%d天前" % gap.days
+        elif gap.seconds >= 3600:
+            result  = u"%d小时前" % (gap.seconds/3600)
+        elif gap.seconds >= 60:
+            result  = u"%d分钟前" % (gap.seconds/60)
+        else:
+            result  = u"1分钟内"
+        return result
+
+    class Meta:
+        abstract=True
+
+class GroupComment(Comment):
+    group = models.ForeignKey(Group,verbose_name=u'圈子', related_name='comments')
+    parent = models.ForeignKey('self',related_name='replies', verbose_name=u'父评论',null=True, blank=True)
+
+    class Meta:
+        verbose_name = u'圈子评论'
+        verbose_name_plural = u'圈子评论'
+
+    def __unicode__(self):
+        return  u'圈子(%s) 评论%s' % (self.group, self.id)
+
+class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
-    from_person = models.ForeignKey(UserProfile)
-    comment = models.CharField(max_length=42)
-    timestamp = models.DateTimeField(default=datetime.now())
 
     class  Meta:
         db_table = u'meal_comment'
-
 
 
 class MealInvitation(models.Model):

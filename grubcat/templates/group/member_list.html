@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {% assets "user_list_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    {% include "group/member_container.html"%}
+{% endblock %}
+
+{% block page_js %}
+    {% assets "water_fall_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "user_list_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+
+{% block active-nav-id %}nav-group{% endblock %}
