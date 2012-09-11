@@ -199,9 +199,9 @@
         <div class="members-wrapper">
             {% with members_count=group.members.count %}
                 <h3>{{ members_count }} 位成员
-                    {% if members_count > 21 %}
-                        <a class="see-all" href="{% url group_member_list group.id %}">(查看所有)</a>
-                    {% endif %}
+{#                    {% if members_count > 21 %}#}
+                        <a class="see-all" href="{% url group_member_list group.id %}">(查看详情)</a>
+{#                    {% endif %}#}
                     {% if group in user.interest_groups.all and user != group.owner %}
                         | <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开</a>
                     {% endif %}
