@@ -157,10 +157,11 @@ class GroupDetailView(DetailView):
             'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context.update({
-            "parent_comments":parent_comments[:GROUP_COMMENT_PAGINATE_BY],
-            'has_next':parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
+            "parent_comments": parent_comments[:GROUP_COMMENT_PAGINATE_BY],
+            'has_next': parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
         })
         return context
+
 
 class GroupCommentListView(ListView):
     template_name = "group/comment_list.html"
@@ -169,16 +170,34 @@ class GroupCommentListView(ListView):
     paginate_by = GROUP_COMMENT_PAGINATE_BY
 
     def get_queryset(self):
-        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.kwargs['group_id']).select_related(
+        parent_comments = GroupComment.objects.filter(parent__isnull=True,
+            group=self.kwargs['group_id']).select_related(
             'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
         return parent_comments
 
     def get_context_data(self, **kwargs):
         context = super(GroupCommentListView, self).get_context_data(**kwargs)
         context.update({
-            "group_id":self.kwargs['group_id']
+            "group_id": self.kwargs['group_id']
         })
         return context
+
+
+class GroupMemberListView(ListView):
+    template_name = "group/member_list.html"
+    context_object_name = "user_list"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return  Group.objects.get(pk=self.kwargs['group_id']).members.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupMemberListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id": self.kwargs['group_id']
+        })
+        return context
+
 
 def join_group(request, pk):
     if request.method == 'POST':
