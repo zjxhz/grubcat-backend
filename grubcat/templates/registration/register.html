@@ -1,0 +1,29 @@
+{% extends "base-small.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {% assets "account_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    <div class="register-panel fl">
+        <form action="" method="post">{% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <p class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </p>
+            {% endfor %}
+            <input type="hidden" name="next" value="{{ next }}" />
+            <p class="sign-up-button">
+                <input class="btn-login" name="commit" type="submit" value="注册">
+            </p>
+
+        </form>
+    </div>
+    {% include "registration/social-login.html" %}
+{% endblock %}
+
+{% block footer %}{% endblock %}
