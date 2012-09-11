@@ -650,26 +650,14 @@ def createLoggedInResponse(loggedInuser):
             
 def mobile_user_register(request):
     if request.method == 'POST':
-        dic = simplejson.loads(request.raw_post_data)
-        username = dic.get('username')
-        password = dic.get('password')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = None
         try:
             user = User.objects.create_user(username, '', password)
-            user_profile = user.get_profile()
             p = re.compile(".+@.+\..+")
             if p.match(username):
                 user.email = username
-            for key in dic.keys():
-                if key not in ["username", "password", "tags", "avatar"]: # maybe should check also if key is valid field name 
-                    setattr(user_profile, key, dic.get(key))
-            avatar_dic = dic['avatar']
-            user_profile.avatar = SimpleUploadedFile(avatar_dic["name"], base64.b64decode(avatar_dic["file"]), getattr(avatar_dic, "content_type", "application/octet-stream"))
-            if dic.get('tags'):
-                tags = [token.strip() for token in dic.get('tags').split(' ')]
-                user_profile.tags.set(*tags)
-            user.save()
-            user_profile.save()
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
             return createLoggedInResponse(user)
