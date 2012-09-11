@@ -47,7 +47,7 @@ urlpatterns = patterns('',
     ('^search/restaurant/$', query_restaurant_from_google),
 
     #social
-    ('^user/(\d+)/$', get_user_profile),
+    #    ('^user/(\d+)/$', get_user_profile),
     ('^user/(\d+)/following/$', get_following),
     ('^user/(\d+)/following/remove/$', remove_following),
     ('^user/(\d+)/followers/$', followers),
@@ -75,7 +75,9 @@ urlpatterns = patterns('',
     url(r'^menu/$', login_required(MenuListView.as_view()), name="menu_list"),
 
     #ajax get menus
-#    url(r'^menu/$', login_required(get_menu), name='get_menu'),
+    #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
+
+    #comment
 
     #group
     url(r'^group/$', GroupListView.as_view(), name="group_list"),
@@ -85,6 +87,12 @@ urlpatterns = patterns('',
     url(r'^group/logo/edit/(?P<pk>\d+)/$', login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
     url(r'^group/(?P<pk>\d+)/join/$', login_required(join_group), name='join_group'),
     url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
+    url(r'^group/comment/add/$', login_required(create_group_comment), name='create_group_comment'),
+    url(r'^group/comment/(?P<pk>\d+)/del/$', login_required(del_group_comment), name='del_group_comment'),
+    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(),
+        name='group_comment_list'),
+    url(r'^group/(?P<group_id>\d+)/member/$', GroupMemberListView.as_view(), name='group_member_list'),
+    url(r'^group/(?P<group_id>\d+)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
@@ -95,6 +103,7 @@ urlpatterns = patterns('',
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
+    url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
 
@@ -105,14 +114,17 @@ urlpatterns = patterns('',
     url(r'^restaurant/order/use/$', restaurant_login_required(rest.use_order), name="restaurant_use_order"),
 
     url(r'^restaurant/dish/$', restaurant_login_required(rest.DishListView.as_view()), name="restaurant_dish_list"),
-    url(r'^restaurant/dish/add/$', restaurant_login_required(rest.DishCreateView.as_view()), name="restaurant_dish_add"),
+    url(r'^restaurant/dish/add/$', restaurant_login_required(rest.DishCreateView.as_view()),
+        name="restaurant_dish_add"),
     url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
     url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(rest.DishDeleteView.as_view()),
         name="restaurant_dish_del"),
-    url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category), name="add_dish_category"),
+    url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category),
+        name="add_dish_category"),
 
-    url(r'^restaurant/order/$', restaurant_login_required(TemplateView.as_view(template_name="restaurant/order_history.html")),
+    url(r'^restaurant/order/$',
+        restaurant_login_required(TemplateView.as_view(template_name="restaurant/order_history.html")),
         name="restaurant_order"),
 
     url(r'^restaurant/menu/$', restaurant_login_required(rest.MenuListView.as_view()), name="restaurant_menu_list"),

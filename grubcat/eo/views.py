@@ -7,10 +7,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 from django.template.response import TemplateResponse
 from django.utils.timezone import now
 from django.views.generic.detail import DetailView
@@ -98,7 +100,8 @@ class MealDetailView(DetailView):
 ### group related views ###
 class GroupListView(ListView):
 #    TODO order by member num
-    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(num_members=Count('members')).order_by('-num_members')
+    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
+        num_members=Count('members')).order_by('-num_members')
     template_name = "group/group_list.html"
     context_object_name = "group_list"
 
@@ -106,6 +109,7 @@ class GroupListView(ListView):
         context = super(GroupListView, self).get_context_data(**kwargs)
         context['categories'] = GroupCategory.objects.all()
         return context
+
 
 class GroupCreateView(CreateView):
     form_class = GroupForm
@@ -116,7 +120,7 @@ class GroupCreateView(CreateView):
         group.owner = self.request.user
         super(GroupCreateView, self).form_valid(form)
         group.members.add(self.request.user)
-#        TODO need save many to many?
+        #        TODO need save many to many?
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
@@ -138,11 +142,62 @@ class GroupLogoUpdateView(UpdateView):
         content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
         return HttpResponse(content=content)
 
+GROUP_COMMENT_PAGINATE_BY = 5
 
 class GroupDetailView(DetailView):
     model = Group
     context_object_name = "group"
     template_name = "group/group_detail.html"
+
+    def get_queryset(self):
+        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
+
+    def get_context_data(self, **kwargs):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        context = super(GroupDetailView, self).get_context_data(**kwargs)
+        context.update({
+            "parent_comments": parent_comments[:GROUP_COMMENT_PAGINATE_BY],
+            'has_next': parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
+        })
+        return context
+
+
+class GroupCommentListView(ListView):
+    template_name = "group/comment_list.html"
+    context_object_name = "parent_comments"
+    model = GroupComment
+    paginate_by = GROUP_COMMENT_PAGINATE_BY
+
+    def get_queryset(self):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True,
+            group=self.kwargs['group_id']).select_related(
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        return parent_comments
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCommentListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id": self.kwargs['group_id']
+        })
+        return context
+
+
+class GroupMemberListView(ListView):
+    template_name = "group/member_list.html"
+    context_object_name = "user_list"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return  Group.objects.get(pk=self.kwargs['group_id']).members.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupMemberListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id": self.kwargs['group_id']
+        })
+        return context
+
 
 def join_group(request, pk):
     if request.method == 'POST':
@@ -150,14 +205,15 @@ def join_group(request, pk):
         if group.privacy == GroupPrivacy.PUBLIC:
             if request.user not in group.members.all():
                 group.members.add(request.user)
-                return createSucessJsonResponse(u'已经成功加入该圈子！',{'redirect_url':reverse('group_list')})
+                return createSucessJsonResponse(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
             else:
                 return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
-        else :
-#            need to handle invitation
+        else:
+        #            need to handle invitation
             return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
+
 
 def leave_group(request, pk):
     if request.method == 'POST':
@@ -167,6 +223,33 @@ def leave_group(request, pk):
             return createSucessJsonResponse(u'已经成功离开该圈子！')
         else:
             return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+
+def create_group_comment(request):
+    if request.method == 'POST':
+        form = GroupCommentForm(request.POST)
+        #TODO some checks
+        if form.is_valid():
+            comment = form.save()
+            t = render_to_response('group/single_comment.html', {'comment': comment},
+                context_instance=RequestContext(request))
+            return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html': t.content})
+        else:
+            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+
+def del_group_comment(request, pk):
+    if request.method == 'POST':
+        user_id = request.user.get_profile().id
+        comment = GroupComment.objects.filter(pk=pk)
+        #TODO some checks
+        if len(comment) == 1:
+            comment[0].delete()
+        return createSucessJsonResponse(u'已经成功删除评论！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
@@ -285,9 +368,9 @@ def get_restaurant(request, restaurant_id):
         jsonR['fields']['average_cost'] = ri.average_cost
         jsonR['fields']['good_rating_percentage'] = ri.good_rating_percentage
         jsonR['fields']['comments'] = modelToDict(Rating.objects.filter(restaurant__id=restaurant_id),
-                {'user': {'fields': ('username',)}})
+            {'user': {'fields': ('username',)}})
         jsonR['fields']['recommended_dishes'] = modelToDict(r.get_recommended_dishes(),
-                {'user': {'fields': ('username',)}, 'dish': {'fields': ('name',)}})
+            {'user': {'fields': ('username',)}, 'dish': {'fields': ('name',)}})
     except ObjectDoesNotExist:
         jsonR['fields']['rating'] = -1
         jsonR['fields']['average_cost'] = -1
@@ -588,7 +671,7 @@ def followers(request, user_id):
 def get_recommended_following(request, user_id):
     user = User.objects.get(id=user_id)
     return getJsonResponse(user.get_profile().recommended_following.all(), {'user':
-                                                                                    {'fields': ('username',)}
+                                                                                {'fields': ('username',)}
     })
 
 
@@ -615,8 +698,8 @@ def messages(request, user_id):
 
 def get_user_profile(request, user_id):
     return getJsonResponse([User.objects.get(id=user_id).get_profile()],
-            {'user': {'fields': ('username',)},
-             'location': {'fields': ('lat', 'lng', 'updated_at')}})
+        {'user': {'fields': ('username',)},
+         'location': {'fields': ('lat', 'lng', 'updated_at')}})
 
 
 def get_meals(request):

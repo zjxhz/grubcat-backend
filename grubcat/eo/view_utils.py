@@ -34,10 +34,10 @@ def creatJsonResponse(status, message, extra_dict=None):
     return HttpResponse(simplejson.dumps(response), content_type='application/json', )
 
 # Create a general response with status and message)
+# Create a general response with status and message)
+
 def createSucessJsonResponse(message=u"成功", extra_dict=None):
     return creatJsonResponse(SUCESS, message, extra_dict)
-
-# Create a general response with status and message)
 def createFailureJsonResponse(message=u"操作失败", extra_dict=None):
     return creatJsonResponse(ERROR, message, extra_dict)
 
