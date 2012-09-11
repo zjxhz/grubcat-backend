@@ -417,7 +417,7 @@ class UserProfile(models.Model):
     @property
     def avatar_default_if_none(self):
         if self.avatar:
-            return self.avatar
+            return self.avatar.url
         else:
             return settings.MEDIA_URL + "uploaded_images/anno.png"
 
