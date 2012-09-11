@@ -89,8 +89,10 @@ urlpatterns = patterns('',
     url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
     url(r'^group/comment/add/$', login_required(create_group_comment), name='create_group_comment'),
     url(r'^group/comment/(?P<pk>\d+)/del/$', login_required(del_group_comment), name='del_group_comment'),
-    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(), name='group_comment_list'),
-
+    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(),
+        name='group_comment_list'),
+    url(r'^group/(?P<group_id>\d+)/member/$', GroupMemberListView.as_view(), name='group_member_list'),
+    url(r'^group/(?P<group_id>\d+)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
 
     # order
     url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
