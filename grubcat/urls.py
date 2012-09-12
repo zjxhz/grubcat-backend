@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
-from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login
+from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
 from eo.db import query_restaurant_from_google, updateLatLng
 from eo.decorators import restaurant_login_required
 from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     ('^api/v1/login/$', mobile_user_login),
     ('^api/v1/logout/$', mobile_user_logout),
     ('^api/v1/weibo_user_login/$', weibo_user_login),
+    ('^api/v1/checkemail/$', checkemail),
     ('^api/v1/register/$', mobile_user_register),
     ('^order/$', get_orders),
     ('^order/(\d+)/$', get_order_by_id),
