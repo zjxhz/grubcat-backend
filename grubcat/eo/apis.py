@@ -141,7 +141,7 @@ class DjangoUserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'django_user'
-        excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
+        excludes = ['password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get']
         include_resource_uri = False
 
@@ -668,6 +668,19 @@ def mobile_user_register(request):
     else:
         raise # not used by mobile client     
 
+def checkemail(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        usersWithEmail = User.objects.filter(email=email)
+        if len(usersWithEmail) > 0:
+            return createGeneralResponse("NOK", "That email already exists")
+        else:
+            request.user.email = email
+            request.user.save()
+            return createGeneralResponse("OK", "email is OK to use")
+    else:
+        raise
+    
 def weibo_user_login(request):
     if request.method == 'POST':
         access_token = request.POST.get('access_token')
