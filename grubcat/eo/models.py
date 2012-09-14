@@ -485,6 +485,12 @@ class UserProfile(models.Model):
     class Meta:
         db_table = u'user_profile'
 
+class UserPhoto(models.Model):
+    user = models.ForeignKey(UserProfile, related_name="photos")
+    photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
+    
+    class Meta:
+        db_table = u'user_photo'
 
 class UserMessage(models.Model):
     from_person = models.ForeignKey(UserProfile, related_name="sent_from_user")
