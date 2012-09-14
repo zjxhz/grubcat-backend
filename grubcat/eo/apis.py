@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
     RestaurantInfo, Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
     UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag, DishItem, \
-    Menu, DishCategoryItem
+    Menu, DishCategoryItem, UserPhoto
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -23,8 +23,8 @@ from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
 import logging
-import simplejson
 import re
+import simplejson
 
 logger = logging.getLogger('api')
 
@@ -157,7 +157,12 @@ class TagResource(ModelResource):
 class UserTagResource(ModelResource):
     class Meta:
         queryset = UserTag.objects.all()
-                
+
+class UserPhotoResource(ModelResource):
+    photo = Base64FileField('photo')
+    class Meta:
+        queryset = UserPhoto.objects.all()
+                    
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     avatar = Base64FileField('avatar')
@@ -166,6 +171,7 @@ class UserResource(ModelResource):
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     following = fields.ToManyField('self', 'following', null=True)
     tags = fields.ToManyField(UserTagResource, 'tags', full=True, null=True)
+    photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
     
     def mergeOneToOneField(self, bundle, field_name, exclude_fields=None):
         if bundle.data[field_name]:
@@ -214,6 +220,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_recommendations'), name="api_get_recommendations"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/users_nearby%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_users_nearby'), name="api_get_users_nearby"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/photos%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('photos'), name="api_photos"),   
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -370,7 +378,18 @@ class UserResource(ModelResource):
             return get_my_list(UserResource(), self.filter_list(request, users), request)
         else:
             raise
-                
+    
+    def photos(self, request, **kwargs):
+        user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == 'GET':
+            photos = user_to_query.photos
+            return get_my_list(UserPhotoResource(), photos, request)
+        elif request.method == "POST":
+            #TODO handle file uploading
+            raise NotImplementedError
+        elif request.method == 'DELETE':
+            pass
+            
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
