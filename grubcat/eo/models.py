@@ -554,12 +554,12 @@ MEAL_STATUS_CHOICE = (
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
-    privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
-        choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
-
 #    time = models.DateTimeField(u'开始时间', )
     start_date = models.DateField(u'开始日期', default=datetime.today())
     start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=time(19, 00))
+    group = models.ForeignKey(Group, verbose_name=u'通知圈子',null=True,blank=True)
+    privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
+        choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,blank=True, null=True)

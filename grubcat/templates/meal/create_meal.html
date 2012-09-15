@@ -39,7 +39,7 @@
                     $ajax_loader.hide();
                     $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
                     $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
-                    $("#choose-restaurant-msg").appendTo("#choose-restaurant-info").show();
+                    $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
                     $("#id_menu_id").val("");
                     if (if_let_fanjoin_choose) {
                         $("#let-fanjon-choose-link").click()
@@ -59,7 +59,7 @@
         }
 
         $(document).ready(function () {
-            $("#id_privacy").dropkick({width:313, startSpeed:0})
+            $("#id_group,#id_privacy").dropkick({width:313, startSpeed:0})
 
             $.datepicker.regional['zh-CN'] =
             {
@@ -185,13 +185,7 @@
                     </div>
                 </div>
 
-                <div class="control-group privacy">
-                    <label class="control-label" for="id_privacy">是否公开</label>
 
-                    <div class="controls">
-                        {{ form.privacy }} {{ form.privacy.errors }}
-                    </div>
-                </div>
                 {#            </fieldset>#}
 
                 {#            <fieldset class="full">#}
@@ -211,6 +205,22 @@
                     <div class="controls">
 
                         {{ form.min_persons }} {{ form.min_persons.errors }}
+                    </div>
+                </div>
+                {% if form.group %}
+                <div class="control-group group">
+                    <label class="control-label" for="id_group">通知圈子</label>
+
+                    <div class="controls">
+                        {{ form.group }} {{ form.group.errors }}
+                    </div>
+                </div>
+                {% endif %}
+                <div class="control-group privacy">
+                    <label class="control-label" for="id_privacy">是否公开</label>
+
+                    <div class="controls">
+                        {{ form.privacy }} {{ form.privacy.errors }}
                     </div>
                 </div>
                 <div id="choose-menu-container">

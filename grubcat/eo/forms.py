@@ -9,9 +9,19 @@ from grubcat.eo.models import *
 class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput,required=False)
     if_let_fanjoin_choose = forms.BooleanField(widget=HiddenInput,initial=False,required=False)
+
+    def __init__(self, *args, **kwargs  ):
+        super(MealForm, self).__init__(*args, **kwargs)
+        interest_groups = kwargs.get('initial').get('request').user.interest_groups.all()
+        if interest_groups:
+            self.fields['group'].queryset = interest_groups
+        else:
+            del self.fields['group']
+
+
     class Meta:
         model = Meal
-        fields = ('topic','introduction','privacy','start_date','start_time','region','min_persons','list_price','extra_requests','if_let_fanjoin_choose')
+        fields = ('topic','introduction','start_date','start_time','region','min_persons','group','privacy','list_price','extra_requests','if_let_fanjoin_choose')
         widgets = {
             'introduction': Textarea({'rows':5}),
             'extra_requests':Textarea({'rows':5}),
