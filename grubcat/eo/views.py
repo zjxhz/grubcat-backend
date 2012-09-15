@@ -53,6 +53,13 @@ class MealCreateView(CreateView):
     def get_initial(self):
         return {'request': self.request}
 
+    def get_context_data(self, **kwargs):
+        context = super(MealCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "my_groups":self.request.user.interest_groups.all()
+        })
+        return context
+
     def get_success_url(self):
         if self.object.status == MealStatus.PUBLISHED:
             return super(MealCreateView, self).get_success_url()

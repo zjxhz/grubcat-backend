@@ -59,87 +59,128 @@
         }
 
         $(document).ready(function () {
-            $("#id_group,#id_privacy").dropkick({width:313, startSpeed:0})
+            $("#id_privacy").dropkick({width:313, startSpeed:0})
 
-            $.datepicker.regional['zh-CN'] =
-            {
-                clearText:'清除', clearStatus:'清除已选日期',
-                closeText:'关闭', closeStatus:'不改变当前选择',
-                prevText:'&lt;上月', prevStatus:'显示上月',
-                nextText:'下月&gt;', nextStatus:'显示下月',
-                currentText:'今天', currentStatus:'显示本月',
-                monthNames:['一月', '二月', '三月', '四月', '五月', '六月',
-                    '七月', '八月', '九月', '十月', '十一月', '十二月'],
-                monthNamesShort:['一', '二', '三', '四', '五', '六',
-                    '七', '八', '九', '十', '十一', '十二'],
-                monthStatus:'选择月份', yearStatus:'选择年份',
-                weekHeader:'周', weekStatus:'年内周次',
-                dayNames:['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-                dayNamesShort:['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
-                dayNamesMin:['日', '一', '二', '三', '四', '五', '六'],
-                dayStatus:'设置 DD 为一周起始', dateStatus:'选择 m月 d日, DD',
-                dateFormat:'yy-mm-dd', firstDay:1,
-                initStatus:'请选择日期', isRTL:false
-            };
+            {% if my_groups %}
+                var group_privacy_josn = { {% for group in my_groups %}{{ group.id}}:{{ group.privacy }},{% endfor %} };
+                $("#id_group").dropkick({
+                            change:false,
+                            width:313,
+                            startSpeed:0,
+                            change:function (group_id, label) {
+                                if (!group_id) { //no grouop selected, show privacy select
+                                    $("#dk_container_id_privacy").dropkick('reset');
+                                    $("#dk_container_id_privacy").show();
+                                    $("#privacy-text").hide();
+                                    $("#id_privacy").val(0);
+                                } else{
+                                    var privacy = group_privacy_josn[group_id];
+                                    $("#dk_container_id_privacy").hide();
+                                    $("#id_privacy").val(privacy);
 
-            $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+                                    var privacy_text=$("#id_privacy option[value=" + privacy + "]").text();
+                                    if( privacy == 0 ) { //public
+                                        privacy_text += " （圈子是公开类型）"
+                                    } else if(privacy == 1) {// private
+                                        privacy_text += " （圈子是私密类型）"
+                                    }
 
-            $("#id_start_date").css('visibility', 'visible').datepicker({
-                onSelect:function (dateText, inst) {
-                    $(inst.input).change().focusout();
-                },
-                defaultDate:"2012-8-17",
-                numberOfMonths:1,
-                minDate:'+4D',
-                maxDate:'+1M'
-            })
-
-
-            $('#id_start_time').dropkick({width:116, startSpeed:0});
-            $("#id_min_persons").dropkick({
-                        change:false,
-                        width:313,
-                        startSpeed:0,
-                        change:function (value, label) {
-                            getMenuList(value);
+                                    if($("#privacy-text")[0])
+                                    {
+                                        $("#privacy-text").text(privacy_text).show();
+                                    } else {
+                                        $("#id_privacy").before("<span id='privacy-text'>" +  privacy_text + "</span>");
+                                    }
+                                }
+                            }
                         }
-                    }
-            )
-            $('#id_list_price,#id_region').dropkick({width:120, startSpeed:100});
-            var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
-            var oldMenuId = $("#id_menu_id").val();
-            getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
-
-
-            /*            $("#extra_request_link").click(function () {
-             $("#more-options").slideToggle(500);
-             return false;
-             })*/
-
-            $("#let-fanjon-choose-link").live("click", function () {
-                $("#choose-restaurant-info").hide();
-                $("#id_menu_id").val("");
-                if (!$("#choose-menu-container #let-fanjoin-choose")[0]) {
-                    $("#choose-menu").append($("#let-fanjoin-choose"));
+                )
+                var $current_group = $("#dk_container_id_group li.dk_option_current a");
+                if($current_group.attr("data-dk-dropdown-value"))
+                {
+                    $current_group.click();
                 }
-                $("#let-fanjoin-choose").show();
-                $("#id_if_let_fanjoin_choose").val("True")
-                var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
-                $("#menu-" + oldMenuId).hide();
-                $("li.restaurant-item.selected").removeClass("selected");
-                return false;
-            })
+            {% endif %}
 
-            $("li.restaurant-item").live("click", function () {
-                $("#menu-info-wrapper").show();
-                $("#choose-restaurant-info,#let-fanjoin-choose").hide();
-                $("#id_if_let_fanjoin_choose").val("False")
-                var oldMenuId = $(this).siblings(".selected").attr("menu-id");
-                $("#menu-" + oldMenuId).hide();
-                $(this).addClass('selected').siblings().removeClass("selected");
-                $("#menu-" + $(this).attr("menu-id")).show();
-                $("#id_menu_id").val($(this).attr("menu-id"));
-            })
+        $.datepicker.regional['zh-CN'] =
+        {
+            clearText:'清除', clearStatus:'清除已选日期',
+            closeText:'关闭', closeStatus:'不改变当前选择',
+            prevText:'&lt;上月', prevStatus:'显示上月',
+            nextText:'下月&gt;', nextStatus:'显示下月',
+            currentText:'今天', currentStatus:'显示本月',
+            monthNames:['一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            monthNamesShort:['一', '二', '三', '四', '五', '六',
+                '七', '八', '九', '十', '十一', '十二'],
+            monthStatus:'选择月份', yearStatus:'选择年份',
+            weekHeader:'周', weekStatus:'年内周次',
+            dayNames:['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+            dayNamesShort:['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+            dayNamesMin:['日', '一', '二', '三', '四', '五', '六'],
+            dayStatus:'设置 DD 为一周起始', dateStatus:'选择 m月 d日, DD',
+            dateFormat:'yy-mm-dd', firstDay:1,
+            initStatus:'请选择日期', isRTL:false
+        };
+
+        $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+        $("#id_start_date").css('visibility', 'visible').datepicker({
+            onSelect:function (dateText, inst) {
+                $(inst.input).change().focusout();
+            },
+            defaultDate:"2012-8-17",
+            numberOfMonths:1,
+            minDate:'+4D',
+            maxDate:'+1M'
+        })
+
+
+        $('#id_start_time').dropkick({width:116, startSpeed:0});
+        $("#id_min_persons").dropkick({
+                    change:false,
+                    width:313,
+                    startSpeed:0,
+                    change:function (value, label) {
+                        getMenuList(value);
+                    }
+                }
+        )
+        $('#id_list_price,#id_region').dropkick({width:120, startSpeed:100});
+        var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
+        var oldMenuId = $("#id_menu_id").val();
+        getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
+
+
+        /*            $("#extra_request_link").click(function () {
+         $("#more-options").slideToggle(500);
+         return false;
+         })*/
+
+        $("#let-fanjon-choose-link").live("click", function () {
+            $("#choose-restaurant-info").hide();
+            $("#id_menu_id").val("");
+            if (!$("#choose-menu-container #let-fanjoin-choose")[0]) {
+                $("#choose-menu").append($("#let-fanjoin-choose"));
+            }
+            $("#let-fanjoin-choose").show();
+            $("#id_if_let_fanjoin_choose").val("True")
+            var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
+            $("#menu-" + oldMenuId).hide();
+            $("li.restaurant-item.selected").removeClass("selected");
+            return false;
+        })
+
+        $("li.restaurant-item").live("click", function () {
+            $("#menu-info-wrapper").show();
+            $("#choose-restaurant-info,#let-fanjoin-choose").hide();
+            $("#id_if_let_fanjoin_choose").val("False")
+            var oldMenuId = $(this).siblings(".selected").attr("menu-id");
+            $("#menu-" + oldMenuId).hide();
+            $(this).addClass('selected').siblings().removeClass("selected");
+            $("#menu-" + $(this).attr("menu-id")).show();
+            $("#id_menu_id").val($(this).attr("menu-id"));
+        })
         })
     </script>
 {% endblock %}
@@ -199,7 +240,7 @@
                         {{ form.start_date.errors }} {{ form.start_time.errors }}
                     </div>
                 </div>
-                <div class="control-group min_persons min_persons">
+                <div class="control-group min_persons">
                     <label class="control-label" for="id_min_persons">就餐人数</label>
 
                     <div class="controls">
@@ -208,13 +249,13 @@
                     </div>
                 </div>
                 {% if form.group %}
-                <div class="control-group group">
-                    <label class="control-label" for="id_group">通知圈子</label>
+                    <div class="control-group group">
+                        <label class="control-label" for="id_group">通知圈子</label>
 
-                    <div class="controls">
-                        {{ form.group }} {{ form.group.errors }}
+                        <div class="controls">
+                            {{ form.group }} {{ form.group.errors }}
+                        </div>
                     </div>
-                </div>
                 {% endif %}
                 <div class="control-group privacy">
                     <label class="control-label" for="id_privacy">是否公开</label>
