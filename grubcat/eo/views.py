@@ -50,6 +50,9 @@ class MealCreateView(CreateView):
     form_class = MealForm
     template_name = 'meal/create_meal.html'
 
+    def get_initial(self):
+        return {'request': self.request}
+
     def get_success_url(self):
         if self.object.status == MealStatus.PUBLISHED:
             return super(MealCreateView, self).get_success_url()
