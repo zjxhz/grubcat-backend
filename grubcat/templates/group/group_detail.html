@@ -74,106 +74,75 @@
         </div>
     </div>
     <div class="left-column">
-        <div class="meal-cell">
-            <a href=""></a>
+        {% for meal in group.recent_meals %}
 
-            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
-                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
-                 width="228">
+            <div class="meal-cell">
+                <a href="{% url meal_detail meal.id %} "></a>
 
-            <div class="price-seat">
-                $15 - Chicago, IL- 13 seats left
+                <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
+                     src="{{ meal.get_cover_url }}">
+
+                <div class="price-seat">
+                    {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位
+                </div>
+
+                {#            TODO只显示5个#}
+                {% with participants=meal.participants.all|slice:":5" %}
+                    {% if participants %}
+                        <div class="users">
+                            {% for user in meal.participants.all|slice:":5" %}
+                                <img alt="{{ user.user.username }}" width="32" height="32"
+                                     src="{{ user.avatar_default_if_none }}">
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="info">
+                    <h3>{{ meal.topic }}</h3>
+                    <span class="date">  {{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
+                        {{ meal.start_time|date:"G:i " }}</span>
+                </div>
             </div>
+        {% empty %}
+            发起饭局
+        {% endfor %}
 
-            {#            TODO只显示5个#}
-            <div class="users">
-                <img alt="Karthik Balasubramanian"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
-                <img alt="Glen Kato"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
-                <img alt="Julie Corvo"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
-                <img alt="Nikkie H"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
-                <img alt="Mark Tudela"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
-                <img alt="Brittany R"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
-            </div>
-
-            <div class="info">
-                <h3>Vietnamese Grubs in Park</h3>
-                <span class="date"> Thursday, September 06,  7:30PM </span>
-            </div>
-        </div>
+    {% if group.passed_meals %}
         <hr>
-        <h4>Past Meals</h4>
 
-        <div class="meal-cell">
-            <a href=""></a>
+        <h4>已结束的饭局</h4>
+        {% for meal in group.passed_meals %}
 
-            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
-                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
-                 width="228">
+            <div class="meal-cell">
+                <a href="{% url meal_detail meal.id %} "></a>
 
-            <div class="price-seat">
-                $15 - Chicago, IL- 13 seats left
+                <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
+                     src="{{ meal.get_cover_url }}">
+
+                {% comment %}<div class="price-seat">
+                    {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位
+                </div>{% endcomment %}
+
+                {#            TODO只显示5个#}
+                {% with participants=meal.participants.all|slice:":5" %}
+                    {% if participants %}
+                        <div class="users">
+                            {% for user in meal.participants.all|slice:":5" %}
+                                <img alt="{{ user.user.username }}" width="32" height="32"
+                                     src="{{ user.avatar_default_if_none }}">
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="info">
+                    <h3>{{ meal.topic }}</h3>
+                    <span class="date">  {{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
+                        {{ meal.start_time|date:"G:i " }}</span>
+                </div>
             </div>
+        {% endfor %}
 
-            {#            TODO只显示5个#}
-            <div class="users">
-                <img alt="Karthik Balasubramanian"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
-                <img alt="Glen Kato"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
-                <img alt="Julie Corvo"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
-                <img alt="Nikkie H"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
-                <img alt="Mark Tudela"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
-                <img alt="Brittany R"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
-            </div>
-
-            <div class="info">
-                <h3>Vietnamese Grubs in Park</h3>
-                <span class="date"> Thursday, September 06,  7:30PM </span>
-            </div>
-        </div>
-
-        <div class="meal-cell">
-            <a href=""></a>
-
-            <img class="meal-cover" alt="Vietnamese Grubs in Lincoln Park" height="200"
-                 src="https://d1gwxpes5z0r7f.cloudfront.net/grub_meal_pics/4955/matte/30748_724397484471_1390067_n.jpg?2012"
-                 width="228">
-
-            <div class="price-seat">
-                $15 - Chicago, IL- 13 seats left
-            </div>
-
-            {#            TODO只显示5个#}
-            <div class="users">
-                <img alt="Karthik Balasubramanian"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3672/size_30x30/prof%20pic.jpg?2012">
-                <img alt="Glen Kato"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/3827/size_30x30/me-and-mryellow_mini.jpg?2012">
-                <img alt="Julie Corvo"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/40900/size_30x30/40900/540397_947202850792_857084844_n.jpg">
-                <img alt="Nikkie H"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/17014/size_30x30/LinkedIn%20Photo.JPG?2012">
-                <img alt="Mark Tudela"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/1456/size_30x30/1456_pic20110521-1-89sb73-0.?2012">
-                <img alt="Brittany R"
-                     src="https://d1gwxpes5z0r7f.cloudfront.net/grub_user_pics/48377/size_30x30/48377_pic20120622-16-retfhn.?2012">
-            </div>
-
-            <div class="info">
-                <h3>Vietnamese Grubs in Park</h3>
-                <span class="date"> Thursday, September 06,  7:30PM </span>
-            </div>
-        </div>
+    {% endif %}
 
     </div>
     <div class="right-column">
@@ -199,9 +168,9 @@
         <div class="members-wrapper">
             {% with members_count=group.members.count %}
                 <h3>{{ members_count }} 位成员
-{#                    {% if members_count > 21 %}#}
-                        <a class="see-all" href="{% url group_member_list group.id %}">(查看详情)</a>
-{#                    {% endif %}#}
+                    {#                    {% if members_count > 21 %}#}
+                    <a class="see-all" href="{% url group_member_list group.id %}">(查看详情)</a>
+                    {#                    {% endif %}#}
                     {% if group in user.interest_groups.all and user != group.owner %}
                         | <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开</a>
                     {% endif %}
@@ -373,14 +342,13 @@
                 return false;
             })
 
-            $comment_reply=$(".comment-reply-field");
-            $.each($comment_reply, function(index, value){
+            $comment_reply = $(".comment-reply-field");
+            $.each($comment_reply, function (index, value) {
                 $(value).val($(value).attr("title"))
             })
             $comment_reply.live("focus",function () {
                 $(this).siblings(".reply_comment_submit").show();
-                if($(this).val() == $(this).attr('title'))
-                {
+                if ($(this).val() == $(this).attr('title')) {
                     $(this).val("");
                 }
             }).live("focusout", function () {
@@ -390,10 +358,10 @@
                     })
 
 
-            $(".reply_comment_form").live("submit",function(){
+            $(".reply_comment_form").live("submit", function () {
                 var $reply_comment_form = $(this);
-                $(this).ajaxSubmit(function(data){
-                    if(data.status=="OK"){
+                $(this).ajaxSubmit(function (data) {
+                    if (data.status == "OK") {
                         $reply_comment_form.parents(".parent-comment").find(".replies").append(data.comment_html)
                         var $textArea = $reply_comment_form.find(".comment-reply-field");
                         $textArea.val($textArea.attr("title"))
