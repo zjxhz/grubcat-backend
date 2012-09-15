@@ -95,10 +95,16 @@
                             }
                         }
                 )
+
+
                 var $current_group = $("#dk_container_id_group li.dk_option_current a");
                 if($current_group.attr("data-dk-dropdown-value"))
                 {
                     $current_group.click();
+                } else {
+                {% if request.GET.group %}
+                    $("#dk_container_id_group li a[data-dk-dropdown-value=" + {{ request.GET.group }} + "]").click();
+                    {% endif %}
                 }
             {% endif %}
 

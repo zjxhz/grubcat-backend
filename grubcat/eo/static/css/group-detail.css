@@ -45,14 +45,14 @@ h1.group-name {
     float: left;
     width: 248px;
     padding: 10px;
-    border-right: 1px solid #BBB;
     margin-left: -12px;
 }
 
 .right-column {
     float: right;
-    width: 684px;
-    padding: 15px 5px;
+    width: 685px;
+    padding: 15px 5px 15px 10px;
+    border-left: 1px solid #BBB;
 }
 
 .meal-cell {
@@ -347,4 +347,15 @@ textarea.comment-reply-field{
 
 .replies{
     margin-bottom: 10px;
+}
+a.btn-create-meal{
+    width: 222px;
+    margin-top: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.left-column h4{
+    font-size: 14px;
+    padding: 0px 3px 3px 3px;
 }

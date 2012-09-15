@@ -85,12 +85,10 @@
                 <div class="price-seat">
                     {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位
                 </div>
-
-                {#            TODO只显示5个#}
                 {% with participants=meal.participants.all|slice:":5" %}
                     {% if participants %}
                         <div class="users">
-                            {% for user in meal.participants.all|slice:":5" %}
+                            {% for user in participants %}
                                 <img alt="{{ user.user.username }}" width="32" height="32"
                                      src="{{ user.avatar_default_if_none }}">
                             {% endfor %}
@@ -103,46 +101,51 @@
                         {{ meal.start_time|date:"G:i " }}</span>
                 </div>
             </div>
+            <hr>
         {% empty %}
-            发起饭局
+            {% if group in user.interest_groups.all %}
+                {% url create_meal as create_meal_url %}
+                <a class="btn-create-meal" href="{{ create_meal_url }}?group={{ group.id }}">发起饭局</a>
+                <hr>
+            {% endif %}
         {% endfor %}
 
-    {% if group.passed_meals %}
-        <hr>
+        {% if group.passed_meals %}
 
-        <h4>已结束的饭局</h4>
-        {% for meal in group.passed_meals %}
 
-            <div class="meal-cell">
-                <a href="{% url meal_detail meal.id %} "></a>
+            <h4>已结束的饭局</h4>
+            {% for meal in group.passed_meals %}
 
-                <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
-                     src="{{ meal.get_cover_url }}">
+                <div class="meal-cell">
+                    <a href="{% url meal_detail meal.id %} "></a>
 
-                {% comment %}<div class="price-seat">
+                    <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
+                         src="{{ meal.get_cover_url }}">
+
+                    {% comment %}<div class="price-seat">
                     {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位
                 </div>{% endcomment %}
 
-                {#            TODO只显示5个#}
-                {% with participants=meal.participants.all|slice:":5" %}
-                    {% if participants %}
-                        <div class="users">
-                            {% for user in meal.participants.all|slice:":5" %}
-                                <img alt="{{ user.user.username }}" width="32" height="32"
-                                     src="{{ user.avatar_default_if_none }}">
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                <div class="info">
-                    <h3>{{ meal.topic }}</h3>
+                    {#            TODO只显示5个#}
+                    {% with participants=meal.participants.all|slice:":5" %}
+                        {% if participants %}
+                            <div class="users">
+                                {% for user in participants %}
+                                    <img alt="{{ user.user.username }}" width="32" height="32"
+                                         src="{{ user.avatar_default_if_none }}">
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="info">
+                        <h3>{{ meal.topic }}</h3>
                     <span class="date">  {{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
                         {{ meal.start_time|date:"G:i " }}</span>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
 
-    {% endif %}
+        {% endif %}
 
     </div>
     <div class="right-column">
