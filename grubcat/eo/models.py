@@ -16,6 +16,11 @@ from datetime import timedelta
 
 # Create your models here.
 
+
+class Privacy:
+    PUBLIC = 0
+    PRIVATE = 1
+
 class Company(models.Model):
     name = models.CharField(max_length=135)
 
@@ -216,9 +221,8 @@ class GroupCategory(models.Model):
         verbose_name = u'圈子分类'
         verbose_name_plural = u'圈子分类'
 
-class GroupPrivacy:
-    PUBLIC = 0
-    PRIVATE = 1
+class GroupPrivacy(Privacy):
+    pass
 
 GROUP_PRIVACY_CHOICE = (
     (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
@@ -519,13 +523,12 @@ class BestRatingDish(models.Model):
         db_table = u'best_rating_dish'
 
 #meal related choice
-class MealPrivacy:
-    PUBLIC = 0
-    PRIVACY = 1
+class MealPrivacy(Privacy):
+    pass
 
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
-    (MealPrivacy.PRIVACY, u"私密：仅被邀请的人可以参加")
+    (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
     )
 
 MEAL_PERSON_CHOICE = [(x, "%s人" % x) for x in range(3, 13)]

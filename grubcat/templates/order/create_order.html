@@ -33,6 +33,12 @@
                         <th>人数</th>
                         <td>{{ meal.min_persons }}</td>
                     </tr>
+                    {% if meal.group %}
+                    <tr>
+                        <th>圈子</th>
+                        <td>{{ meal.group.name }}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <th>类型</th>
                         <td>{% if meal.privacy %} 私密饭局，仅被邀请的人可以参加 {% else %} 公开饭局（所有人都可以参加） {% endif %} </td>
