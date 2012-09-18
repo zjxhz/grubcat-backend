@@ -74,6 +74,11 @@
         </div>
     </div>
     <div class="left-column">
+        {% if group in user.interest_groups.all %}
+            {% url create_meal as create_meal_url %}
+            <a class="btn-create-meal" href="{{ create_meal_url }}?group={{ group.id }}">发起饭局</a>
+        {% endif %}
+
         {% for meal in group.recent_meals %}
 
             <div class="meal-cell">
@@ -102,16 +107,9 @@
                 </div>
             </div>
             <hr>
-        {% empty %}
-            {% if group in user.interest_groups.all %}
-                {% url create_meal as create_meal_url %}
-                <a class="btn-create-meal" href="{{ create_meal_url }}?group={{ group.id }}">发起饭局</a>
-                <hr>
-            {% endif %}
         {% endfor %}
 
         {% if group.passed_meals %}
-
 
             <h4>已结束的饭局</h4>
             {% for meal in group.passed_meals %}
