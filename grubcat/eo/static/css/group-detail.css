@@ -349,10 +349,9 @@ textarea.comment-reply-field{
     margin-bottom: 10px;
 }
 a.btn-create-meal{
-    width: 222px;
-    margin-top: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
+    width: 219px;
+    padding: 9px;
+    margin: 10px 0 10px 5px;
 }
 
 .left-column h4{

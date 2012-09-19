@@ -96,8 +96,14 @@
     </script>
 {% endblock %}
 {% block content %}
+    {% url login as login_url %} {% url group_list as group_list_url %}
     <div id="group-category-wrapper">
-        <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
+        {% if user.is_authenticated %}
+            <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
+        {% else %}
+            <a class="button" id="id_create_group_link_need_login"
+               href="{{ login_url }}?next={{ group_list_url }}">创建圈子</a>
+        {% endif %}
 
         <ul id="group-category-list">
             <li class="group-category current" id="id_all_group">所有圈子</li>
@@ -142,9 +148,14 @@
                                     <div class="members">
                                         <span class="span-members"><span
                                                 class="num-members">{{ group.num_members }}</span> 位成员</span>
-                                        {% if not group in my_groups %}
+                                        {% if not user.is_authenticated %}
+                                            <a href="{{ login_url }}?next={{ group_list_url }}"
+                                               class="button join-button-need-login">+
+                                                加入</a>
+                                        {% elif not group in my_groups %}
                                             <a href="{% url join_group group.id %}" class="button join-button">+
-                                                加入</a> {% endif %}
+                                                加入</a>
+                                        {% endif %}
                                     </div>
 
                                 </div>
