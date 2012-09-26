@@ -232,6 +232,9 @@ class UserResource(ModelResource):
         """
         bundle = self.full_hydrate(bundle)
         self.save_related(bundle)
+        if bundle.data['email']:
+            bundle.obj.user.email = bundle.data['email']
+            bundle.obj.user.save()
         bundle.obj.save()
         return bundle
     
