@@ -45,14 +45,14 @@ h1.group-name {
     float: left;
     width: 248px;
     padding: 10px;
-    border-right: 1px solid #BBB;
     margin-left: -12px;
 }
 
 .right-column {
     float: right;
-    width: 684px;
-    padding: 15px 5px;
+    width: 685px;
+    padding: 15px 5px 15px 10px;
+    border-left: 1px solid #BBB;
 }
 
 .meal-cell {
@@ -60,7 +60,7 @@ h1.group-name {
     cursor: pointer;
     width: 250px;
     height: 266px;
-    background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266-17b3bf7fb14c9f094953657663b21efa.png")
+    background: url(../img/group/meal_border.png)
 }
 
 .meal-cell a {
@@ -79,12 +79,12 @@ h1.group-name {
 }
 
 .meal-cell a:hover {
-    background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/polaroid_250_266_overlay-7b84d06c965b714255b9bbe1c854a75f.png") no-repeat;
+    background: url(../img/group/meal_border_hover.png) no-repeat;
 }
 
 .meal-cell .price-seat {
     position: absolute;
-    left: 17px;
+    left: 49px;
     top: 11px;
     padding: 5px;
     color: white;
@@ -347,4 +347,14 @@ textarea.comment-reply-field{
 
 .replies{
     margin-bottom: 10px;
+}
+a.btn-create-meal{
+    width: 219px;
+    padding: 9px;
+    margin: 10px 0 10px 5px;
+}
+
+.left-column h4{
+    font-size: 14px;
+    padding: 0px 3px 3px 3px;
 }

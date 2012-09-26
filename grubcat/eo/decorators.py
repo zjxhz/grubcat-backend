@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+from django.utils import simplejson
 
 try:
     from functools import wraps
@@ -7,6 +9,15 @@ except ImportError:
     from django.utils.functional import wraps  # Python 2.4 fallback.
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
+
+def ajax_login_required(view_func):
+    @wraps(view_func)
+    def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return view_func(request, *args, **kwargs)
+        json = simplejson.dumps({ 'not_authenticated': True })
+        return HttpResponse(json, mimetype='application/json')
+    return wrap
 
 def restaurant_login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
     """

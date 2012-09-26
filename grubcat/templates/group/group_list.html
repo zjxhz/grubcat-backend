@@ -96,14 +96,21 @@
     </script>
 {% endblock %}
 {% block content %}
+    {% url login as login_url %} {% url group_list as group_list_url %}
     <div id="group-category-wrapper">
-        <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
+        {% if user.is_authenticated %}
+            <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
+        {% else %}
+            <a class="button" id="id_create_group_link_need_login"
+               href="{{ login_url }}?next={{ group_list_url }}">创建圈子</a>
+        {% endif %}
 
         <ul id="group-category-list">
             <li class="group-category current" id="id_all_group">所有圈子</li>
             {% for category in categories %}
                 <li class="group-category" category-id="{{ category.id }}">
-                    <img alt="{{ category.name }}" width="30" height="30" src="{{ category.cover_url_default_if_none }}">
+                    <img alt="{{ category.name }}" width="30" height="30"
+                         src="{{ category.cover_url_default_if_none }}">
                     <span class="category-name">{{ category.name }}</span>
                 </li>
             {% endfor %}
@@ -141,9 +148,14 @@
                                     <div class="members">
                                         <span class="span-members"><span
                                                 class="num-members">{{ group.num_members }}</span> 位成员</span>
-                                        {% if not group in my_groups %}
+                                        {% if not user.is_authenticated %}
+                                            <a href="{{ login_url }}?next={{ group_list_url }}"
+                                               class="button join-button-need-login">+
+                                                加入</a>
+                                        {% elif not group in my_groups %}
                                             <a href="{% url join_group group.id %}" class="button join-button">+
-                                                加入</a> {% endif %}
+                                                加入</a>
+                                        {% endif %}
                                     </div>
 
                                 </div>
@@ -158,21 +170,24 @@
                                         {{ group.desc }}
                                     </div>
 
-                                    <div class="group-recent-meal">
-                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe"
-                                           class="logo-wrapper"><img
-                                                alt="Vietnamese Grubs in Lincoln Park" height="38"
-                                                src="{% static 'img/tmp/meal-cover.jpg' %}"
-                                                width="50"></a>
+                                    {% if group.recent_meals|slice:":1" %}
+                                        {% for meal in  group.recent_meals|slice:":1" %}
+                                            <div class="group-recent-meal">
+                                                <a href="{% url meal_detail meal.id %}"
+                                                   class="logo-wrapper"><img
+                                                        alt="{{ meal.topic }}" height="38"
+                                                        src="{{ meal.get_cover_url }}"
+                                                        width="50"></a>
 
-                                        <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012
-                                            at
-                                            7:30PM
-                                        </p>
-                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check
-                                            it
-                                            Out!</a>
-                                    </div>
+                                                <p>{{ meal.topic }}<br>
+                                                    {{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
+                                                    {{ meal.start_time|date:"G:i " }}
+                                                </p>
+                                                <a href="{% url meal_detail meal.id %}"
+                                                   class="button">预定</a>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
 
                                 </div>
                             </div>

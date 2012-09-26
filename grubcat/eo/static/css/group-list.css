@@ -28,7 +28,7 @@ h4{
     margin-right: 5px;
 }
 
-#id_create_group_link{
+#id_create_group_link,#id_create_group_link_need_login{
     margin-bottom: 12px;
     padding: 9px 6px;
     font-size: 130%;
@@ -49,7 +49,7 @@ h4{
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF577', endColorstr='#F1CE00',GradientType=0 );
 }
 
-#id_create_group_link:hover{text-shadow:none;color:#222;background:#F1CE00}
+#id_create_group_link:hover,#id_create_group_link_need_login:hover{text-shadow:none;color:#222;background:#F1CE00}
 
 #group-category-list {
     background: #EEE;
@@ -154,7 +154,7 @@ h4{
     color: #005580;
 }
 
-.button.join-button{
+.button.join-button, .button.join-button-need-login{
     float: right;
     padding: 3px 7px;
     font-size: 13px;
