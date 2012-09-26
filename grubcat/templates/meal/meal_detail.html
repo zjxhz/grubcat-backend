@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    {% assets "meal_detail_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <style type="text/css">
+        #cboxOverlay {
+            background-color: #222;
+        }
+    </style>
+{% endblock %}
+{% block active-nav-id %}nav-meal{% endblock %}
+{% block content %}
+    <div id="meal-main">
+        <div id="title" class="box-seperator">
+            <a id="creator" href="/host">
+                <span class="host-name">由 {{ meal.host.user.username }} 发起</span>
+                <img class="png-fix" alt="Los Angeles Entrepreneurs" height="30"
+                     src="https://s3.amazonaws.com/grub_group_pics/344/small/entrepreneur_logo.png?1336411246"
+                     width="30">
+            </a>
+
+            <h1>{{ meal.topic }}</h1>
+                <span id="restaurant-location">在 <a
+                        class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }} <a
+                        class="map">查看地图</a> </span>
+        </div>
+        <p id="desc">{{ meal.introduction }}</p>
+
+        <div id="meal-container" class="clearfix box-seperator">
+            <div id="meal-grub">
+                {% if not request.user.get_profile in meal.participants.all %}
+                    <a href="{% url create_order meal.id %}"
+                       class="reserve-button">
+                        马上预定
+                        <span class="mt5">{{ meal.list_price }}RMB/人</span>
+                    </a>
+                {% else %}
+                    <a href="#"
+                       class="reserve-button">
+                        已预定
+                    </a>
+                {% endif %}
+
+                <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>
+                    <span class="date">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
+                    <br/>{{ meal.start_time|date:"G:i " }}</span>
+                {#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
+            </div>
+            <div id="meal-img-wrapper">
+                <img alt="{{ meal.topic }}" id="meal-photo"
+                     src="{{ meal.get_cover_url }}"
+                     width="385px">
+            </div>
+        </div>
+        <div id="users" class="clearfix">
+            {% if meal.actual_persons %}
+                <h1>参加饭局的的朋友（还有{{ meal.left_persons }}个空位）：</h1>
+            {% else %}
+                <h1>现在还没有人参加饭局，赶快预定吧！</h1>
+            {% endif %}
+            {% for user in meal.participants.all %}
+                <div class="user-wrapper">
+                    <h3 class="name">{{ user.user.username }}</h3>
+
+                    <p class="work">{{ user.occupation|default:"" }}</p>
+                    <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
+                                    src="{{ user.avatar_default_if_none }}"></a>
+
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div style="display: none">
+        <div id="menu-popup">
+            <div id="menu-container">
+                <div class="ribbon ribbon-menu ribbon-notail">
+                    <div class="ribbon-right"></div>
+                    <div class="ribbon-title">
+                        Entrees&nbsp;
+                    </div>
+                </div>
+
+                <div class="content italic clearfix">
+                    {% for dish in meal.order.dishes.all %}
+                        <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
+                        <div class="dish-content"><h3>{{ dish.name }}</h3></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar fr">
+
+        <div id="menu" class="menu sidebar-box">
+            <div class="sidebar-box-title">菜单 {{ meal.menu.name|default:"8人套餐 40元/人" }}</div>
+            <div class="sidebar-box-inner">
+                <div id="menu-info" class="">
+                    {#                            <div class="title">#}
+                    {#                                <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>#}
+                    {#                            </div>#}
+
+                    <dl class="menu-items">
+                        {% for item in meal.menu.items %}
+                            {% if item.num %}
+                                <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
+                                <span class="dish-info"> <span class="dish-price">{{ item.dish.price }} 元</span><span
+                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span> </span>
+                                </dd>
+                            {% else %}
+                                <dt class="category">{{ item.category.name }}  </dt>
+                            {% endif %}
+                        {% endfor %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+        {% include "support/faq_sidebar.html" %}
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#faq .sidebar-box-inner a").click(function () {
+                var $next = $(this).next("p");
+                var speed = 100;
+                if ($next.is(":visible")) {
+                    $(this).next("p").slideUp(speed);
+                } else {
+                    $(this).siblings("p:visible").slideUp(speed);
+                    $(this).next("p").slideDown(speed);
+                }
+            })
+        })
+    </script>
+{% endblock %}

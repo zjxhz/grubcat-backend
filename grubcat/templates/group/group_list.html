@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的圈子{% endblock %}
+{% block page_css %}
+    {% assets "group_list_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+    <style type="text/css">
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
+
+        #div_id_logo {
+            display: none;
+        }
+
+        #id_create_group_form {
+            margin-top: 15px;
+        }
+    </style>
+
+{% endblock %}
+{% block base_js %}
+    {{ block.super }}
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+{% block page_js %}
+    <script type="text/javascript">
+        function loadCreateGroupPage() {
+            $("#id_create_group_form").ajaxForm({
+                success:function (html) {
+                    var $html = $(html);
+                    if ($html.is("a.auto-close") && $html.attr('href')) {
+                        window.location.href = $html.attr('href');
+                    } else {
+                        $("#id_create_group_dialog").html($html.find(".content"));
+                        loadCreateGroupPage();
+                    }
+                }
+            })
+            $("#id_create_group_dialog").dialog({
+                autoOpen:true,
+                title:"创建圈子",
+                modal:true,
+                width:550,
+                height:470,
+                position:['center', 100],
+                resizable:false
+            });
+            $("select").dropkick({width:163, startSpeed:0});
+        }
+        $(document).ready(function () {
+            $("select.pretty").dropkick();
+            $("#id_create_group_link").click(function () {
+                $("#id_create_group_dialog").load($("#id_create_group_link").attr('href') + " .content", loadCreateGroupPage);
+                return false;
+            })
+
+            $("li.group-category").click(function () {
+                $("li.group-category.current").removeClass('current');
+                $(this).addClass('current');
+
+                var categoryId = $(this).attr('category-id');
+                if (categoryId) {
+                    $("div.group-cell[category-id!=" + categoryId + "]").hide()
+                    $("div.group-cell[category-id=" + categoryId + "]").show()
+                } else {
+                    // show all groups
+                    $("div.group-cell").show()
+                }
+            })
+
+            $("div.group-cell a.join-button").click(function () {
+                var $join_button = $(this);
+                $.post($join_button.attr('href'), function (data) {
+                    if (data.status == "OK") {
+                        window.location = data.redirect_url;
+                        /*var $num_members = $join_button.parents('div.group-cell').find('span.num-members');
+                         $num_members.html($num_members.val() + 1);
+                         $join_button.remove();*/
+                    }
+                }, 'json')
+                return false;
+            })
+        })
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="group-category-wrapper">
+        <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
+
+        <ul id="group-category-list">
+            <li class="group-category current" id="id_all_group">所有圈子</li>
+            {% for category in categories %}
+                <li class="group-category" category-id="{{ category.id }}">
+                    <img alt="{{ category.name }}" width="30" height="30" src="{{ category.cover_url_default_if_none }}">
+                    <span class="category-name">{{ category.name }}</span>
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
+    <div id="group-list-wrapper">
+        {% with request.user.interest_groups.all as my_groups %}
+            {% if my_groups %}
+                <div id="my-groups-wrapper" class="clearfix">
+                    <h4>我的圈子</h4>
+
+                    <div class="my-groups">
+                        {% for group in my_groups %}
+                            <a href="{% url group_detail group.id %}" class="my-group-cell">
+                                <img alt="{{ group.name }}" width="76" height="76"
+                                     src="{{ group.logo_url_default_if_none }}">
+                                {{ group.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div id="groups-list">
+
+                {% for group in group_list %}
+                    {% if not my_groups or group not in my_groups %}
+                        <div class="group-cell clearfix" category-id="{{ group.category.id }}">
+                            <div class="cell">
+                                <div class="upper clearfix">
+                                    <a href="{% url group_detail group.id %}" class="group-name">{{ group.name }}</a>
+
+                                    <div class="members">
+                                        <span class="span-members"><span
+                                                class="num-members">{{ group.num_members }}</span> 位成员</span>
+                                        {% if not group in my_groups %}
+                                            <a href="{% url join_group group.id %}" class="button join-button">+
+                                                加入</a> {% endif %}
+                                    </div>
+
+                                </div>
+                                <div class="lower clearfix">
+                                    <div class="group-logo">
+                                        <a href="{% url group_detail group.id %}">
+                                            <img alt="{{ group.name }}" width="76" height="76"
+                                                 src="{{ group.logo_url_default_if_none }}">
+                                        </a>
+                                    </div>
+                                    <div class="group-desc">
+                                        {{ group.desc }}
+                                    </div>
+
+                                    <div class="group-recent-meal">
+                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe"
+                                           class="logo-wrapper"><img
+                                                alt="Vietnamese Grubs in Lincoln Park" height="38"
+                                                src="{% static 'img/tmp/meal-cover.jpg' %}"
+                                                width="50"></a>
+
+                                        <p>Vietnamese Grubs in Lincoln Park in Chicago<br>Thursday, September 06, 2012
+                                            at
+                                            7:30PM
+                                        </p>
+                                        <a href="/meals/vietnamese-grubs-in-lincoln-park-f4be8545d8fe" class="button">Check
+                                            it
+                                            Out!</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="cell-shadow"></div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        {% endwith %}
+    </div>
+    <div id="id_create_group_dialog" class="hide"></div>
+{% endblock %}
+
+{% block active-nav-id %}nav-group{% endblock %}
