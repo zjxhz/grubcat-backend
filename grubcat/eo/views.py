@@ -50,6 +50,16 @@ class MealCreateView(CreateView):
     form_class = MealForm
     template_name = 'meal/create_meal.html'
 
+    def get_initial(self):
+        return {'request': self.request}
+
+    def get_context_data(self, **kwargs):
+        context = super(MealCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "my_groups":self.request.user.interest_groups.all()
+        })
+        return context
+
     def get_success_url(self):
         if self.object.status == MealStatus.PUBLISHED:
             return super(MealCreateView, self).get_success_url()
@@ -150,10 +160,10 @@ class GroupDetailView(DetailView):
     template_name = "group/group_detail.html"
 
     def get_queryset(self):
-        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
+        return Group.objects.prefetch_related( 'comments__from_person', 'comments__replies__from_person')
 
     def get_context_data(self, **kwargs):
-        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related('group',
             'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context.update({

@@ -9,7 +9,7 @@
 {% block content %}
 
     <div class="login-panel fl">
-        <form class="login-form " action="{% url login %}" method="post">{% csrf_token %}
+        <form id="login_form" class="login-form" action="{% url login %}" method="post">{% csrf_token %}
             <fieldset>
                 {{ form.non_field_errors }}
                 {% for field in form %}
@@ -18,7 +18,7 @@
                         {{ field.label_tag }} {{ field }}
                     </p>
                 {% endfor %}
-                <input type="hidden" name="next" value="{{ next }}" />
+                <input type="hidden" name="next" value="{{ next }}"/>
             </fieldset>
 
             <p class="remember-wrapper">
