@@ -44,6 +44,8 @@
                     {% if request.user.restaurant %}
                         <a href="{% url restaurant_admin %}" class="nav-sign png-fix">餐厅后台</a>
                     {% endif %}
+                    <a href="{% url edit_profile %}" class="nav-sign png-fix">修改资料</a>
+
                 {% else %}
                     {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}
                         <a href="{% url login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login_link"
