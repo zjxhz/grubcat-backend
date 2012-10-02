@@ -3,7 +3,7 @@
         {% for user in user_list %}
             <div class="box">
                 <div class="user-img">
-                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                    <a href="{% url user_detail user.id %}" title="{{ user.username }}"><img class="shadow-small"
                                                                 src="{{ user.get_profile.avatar_default_if_none  }}"
                                                                 alt="{{ user.username }}"
                                                                 width="219" height="219"></a>
@@ -51,7 +51,7 @@
             </div>
             <div class="box">
                 <div class="user-img">
-                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                    <a href="{% url user_detail user.id %}" title="{{ user.username }}"><img class="shadow-small"
                                                                 src="https://s3.amazonaws.com/grub_user_pics/551/medium/profile.jpg?2010"
                                                                 alt="{{ user.username }}"
                                                                 width="219" height="219"></a>
@@ -113,7 +113,7 @@
             </div>
             <div class="box">
                 <div class="user-img">
-                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                    <a href="{% url user_detail user.id %}" title="{{ user.username }}"><img class="shadow-small"
                                                                 src="https://s3.amazonaws.com/grub_user_pics/557/medium/GB%20Headshot.jpg?2010"
                                                                 alt="{{ user.username }}"
                                                                 width="219" height="219"></a>
@@ -130,7 +130,7 @@
             </div>
             <div class="box">
                 <div class="user-img">
-                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                    <a href="{% url user_detail user.id %}" title="{{ user.username }}"><img class="shadow-small"
                                                                 src="https://s3.amazonaws.com/grub_user_pics/41860/medium/deanna-chang-aea73264283299fe2008-4646096.jpg?2012"
                                                                 alt="{{ user.username }}"
                                                                 width="219" height="219"></a>
