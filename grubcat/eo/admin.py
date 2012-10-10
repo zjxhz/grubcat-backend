@@ -1,8 +1,9 @@
 #coding=utf-8
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from image_cropping.admin import ImageCroppingMixin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
-from models import Group, GroupCategory, UserProfile
+from models import Group, GroupCategory, UserProfile, ImageTest
 
 class UserProfileAdmin(admin.ModelAdmin):
     pass
@@ -56,6 +57,10 @@ class GroupCommentAdmin(admin.ModelAdmin):
     list_display = ('id','group','comment')
     list_filter = ('group',)
 
+class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
+    pass
+
+
 #admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
@@ -67,4 +72,5 @@ admin.site.register(UserTag)
 admin.site.register(GroupCategory)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(GroupComment, GroupCommentAdmin)
+admin.site.register(ImageTest,ImageTestAdmin)
 
