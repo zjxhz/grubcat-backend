@@ -619,18 +619,18 @@ def img_test(request):
     if request.method == 'POST':
         form = ImgTestForm(request.POST, request.FILES)
         #if form.is_valid():
-        handle_uploaded_image(request.FILES['image'])
+#        handle_uploaded_image(request.FILES['image'])
         return createGeneralResponse('OK', 'File uploaded')
     else:
         form = ImgTestForm()
-        img_test = ImageTest.objects.get(id=2)
-    return render_to_response('test/img_test.html', {'img_test': img_test, })
+        img_test = ImageTest.objects.all()[0]
+    return render_to_response('test/img_test1.html', {'form':form, 'img_test': img_test, })
 
 
-def handle_uploaded_image(file):
-    it = ImageTest()
-    it.image = file
-    it.save()
+#def handle_uploaded_image(file):
+#    it = ImageTest()
+#    it.image = file
+#    it.save()
 
 #    temp use
 def handle_uploaded_app(file):

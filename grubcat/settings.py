@@ -112,7 +112,7 @@ MIDDLEWARE_CLASSES = (
     #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend','eo.middlewares.WeiboAuthenticationBackend')
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'eo.middlewares.WeiboAuthenticationBackend')
 ROOT_URLCONF = 'grubcat.urls'
 
 TEMPLATE_DIRS = (
@@ -159,11 +159,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages"
     )
 
-#from easy_thumbnails import defaults
+from easy_thumbnails.conf import settings as thumbnail_settings
 
-#THUMBNAIL_PROCESSORS = (
-#                           'image_cropping.thumbnail_processors.crop_corners',
-#                          ) + defaults.PROCESSORS
+THUMBNAIL_PROCESSORS = (
+                           'image_cropping.thumbnail_processors.crop_corners',
+                           ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
@@ -184,7 +184,7 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
-        'api':{
+        'api': {
             'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
         },
         },
@@ -213,14 +213,14 @@ LOGGING = {
             'backupCount': 7,
             'formatter': 'verbose',
             },
-        'api':{
+        'api': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOGGING_ROOT, 'api.log'),
-            'maxBytes': 1024 * 1024 * 1, 
+            'maxBytes': 1024 * 1024 * 1,
             'backupCount': 1,
             'formatter': 'api',
-        },
+            },
         'request_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -263,10 +263,10 @@ LOGGING = {
 }
 
 #account
-LOGIN_URL=reverse_lazy('login')
-LOGIN_REDIRECT_URL=reverse_lazy('index')
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('index')
 
-SHOW_EXCEPTION_DETAIL=False
+SHOW_EXCEPTION_DETAIL = False
 
 try:
     from settings_dev import *
