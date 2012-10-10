@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
@@ -697,30 +698,6 @@ class MealInvitation(models.Model):
 
 
 class ImageTest(models.Model):
-    image = ImageCropField(blank=True, null=True, upload_to='apps')
+    image = ImageField(blank=True, null=True, upload_to='apps')
     # size is "width x height"
-    cropping = ImageRatioField('image', '430x360')
-
-'''
-class CategoryRestaurant(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=45)
-    parent_category = models.ForeignKey('self', null=True, blank=True)
-    class Meta:
-        db_table = u'category_restaurant'
-
-class DishOtherUom(models.Model):
-    id = models.IntegerField(primary_key=True)
-    price = models.DecimalField(max_digits=11, decimal_places=0)
-    uom = models.CharField(max_length=30)
-    dish = models.ForeignKey(Dish)
-    restaurant = models.ForeignKey(Dish)
-    class Meta:
-        db_table = u'dish_other_uom'
-
-class Table(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=60)
-    class Meta:
-        db_table = u'table'
-'''
+    cropping = ImageRatioField('image', '640x640')
