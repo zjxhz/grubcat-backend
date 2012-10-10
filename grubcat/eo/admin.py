@@ -1,7 +1,7 @@
 #coding=utf-8
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
-from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
+from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment, ImageTest
 from models import Group, GroupCategory, UserProfile
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -55,6 +55,10 @@ class GroupAdmin(admin.ModelAdmin):
 class GroupCommentAdmin(admin.ModelAdmin):
     list_display = ('id','group','comment')
     list_filter = ('group',)
+
+class ImageTestAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(ImageTest, ImageTestAdmin)
 
 #admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Meal, MealAdmin)
