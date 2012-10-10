@@ -623,8 +623,8 @@ def img_test(request):
         return createGeneralResponse('OK', 'File uploaded')
     else:
         form = ImgTestForm()
-        img_test = ImageTest.objects.get(id=5)
-    return render_to_response('test/img_test1.html', {'form':form, 'img_test': img_test })
+        img_test = ImageTest.objects.get(id=2)
+    return render_to_response('test/img_test.html', {'img_test': img_test, })
 
 
 def handle_uploaded_image(file):
