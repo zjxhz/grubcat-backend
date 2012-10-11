@@ -1,7 +1,7 @@
 # Django settings for grubcat project.
 import os
 from django.core.urlresolvers import reverse_lazy
-
+print "grubcat"
 DEBUG = True
 TEMPLATE_DEBUG = True
 
@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     )
+
 SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
 }
@@ -159,11 +160,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages"
     )
 
-from easy_thumbnails.conf import settings as thumbnail_settings
 
-THUMBNAIL_PROCESSORS = (
-                           'image_cropping.thumbnail_processors.crop_corners',
-                           ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
@@ -267,6 +264,11 @@ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 SHOW_EXCEPTION_DETAIL = False
+
+#Constants
+BIG_AVATAR_SIZE=(219, 219)
+SMALL_AVATAR_SIZE=(50, 50)
+
 
 try:
     from settings_dev import *

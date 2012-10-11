@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+  {{ form.media.css }}
+{% endblock %}
+{% block page_js %}
+    {{ block.super }}
+    {{ form.media.js }}
+{% endblock %}
+
+{% block content %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.avatar }}
+
+        <br/>
+        选择合适的区域做为头像：{{ form.cropping }}
+        <input type="submit" value="保存">
+    </form>
+{% endblock %}
+

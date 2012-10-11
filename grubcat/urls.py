@@ -15,7 +15,7 @@ from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_following, remove_following, followers,\
     get_recommended_following, messages,\
     meal_participants, view_or_send_meal_invitations,\
-    accept_or_reject_meal_invitations, img_test, upload_app
+    accept_or_reject_meal_invitations, upload_app
 from grubcat.eo.views import *
 from django.conf import settings
 
@@ -62,7 +62,6 @@ urlpatterns = patterns('',
 
     # developer interfaces...
     ('^updateLatLng/$', updateLatLng),
-    ('^img_test/$', img_test),
     ('^upload_app/$', upload_app),
 
     ######################below is used for website urls
@@ -104,10 +103,11 @@ urlpatterns = patterns('',
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-    url(r'^profile/$', login_required(TemplateView.as_view(template_name='user/profile.html')), name='edit_profile'),
-    url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
+     url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
+    url(r'^profile/$', login_required(TemplateView.as_view(template_name='user/profile.html')), name='edit_profile'),
+    url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
 
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),
