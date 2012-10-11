@@ -14,6 +14,7 @@ from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
 import random
 from datetime import timedelta
+from easy_thumbnails.files import get_thumbnailer
 
 # Create your models here.
 
@@ -394,6 +395,7 @@ class UserProfile(models.Model):
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField(null=True)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
+    cropping = ImageRatioField('avatar', '640x640')
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)
@@ -404,6 +406,39 @@ class UserProfile(models.Model):
     weibo_id = models.CharField(max_length=20, null=True)
     weibo_access_token = models.CharField(max_length=128, null=True)
     tags = TaggableManager(through=TaggedUser)
+
+    @property
+    def big_avatar(self):
+        if self.avatar:
+            thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
+                'size': settings.BIG_AVATAR_SIZE,
+                'box': self.cropping,
+                'crop': True,
+                'detail': True,
+                }).url
+        else:
+            thumbnail_url =  settings.STATIC_URL + "img/default/big_avatar.png"
+        return thumbnail_url
+
+    @property
+    def small_avatar(self):
+        if self.avatar:
+            thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
+                'size': settings.SMALL_AVATAR_SIZE,
+                'box': self.cropping,
+                'crop': True,
+                'detail': True,
+                }).url
+        else:
+            thumbnail_url =  settings.STATIC_URL + "img/default/big_avatar.png"
+        return thumbnail_url
+
+    @property
+    def avatar_default_if_none(self):
+        if self.avatar:
+            return self.avatar.url
+        else:
+            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     @property
     def followers(self):
@@ -425,13 +460,6 @@ class UserProfile(models.Model):
         """ Invitation sent from others.
         """
         return MealInvitation.objects.filter(to_person=self).filter(status=0)
-
-    @property
-    def avatar_default_if_none(self):
-        if self.avatar:
-            return self.avatar.url
-        else:
-            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     @property
     def recommendations(self):

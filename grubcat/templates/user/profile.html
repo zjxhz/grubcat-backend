@@ -8,9 +8,9 @@
 
 {% block content %}
     {% with profile=user.get_profile %}
-    {{ user.username }}
 
-    <img alt="U2" class="shadow" src="{{profile.avatar_default_if_none }}">
+    <img alt="{{ user.username }}" class="shadow" src="{{profile.big_avatar }}"> <br/>
+        <a href="{% url upload_avatar %}">修改头像</a>
     {% endwith %}
 {% endblock %}
 

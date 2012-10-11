@@ -613,26 +613,19 @@ def get_restaurants_in_region(request, region_id):
     return getJsonResponse(Region.objects.get(id=region_id).restaurant_set.all())
 
 
-'''For TEST only'''
+class UploadAvatarView(UpdateView):
+    form_class = UploadAvatarForm
+    model = UserProfile
+    template_name = "user/upload_avatar.html"
 
-def img_test(request):
-    if request.method == 'POST':
-        form = ImgTestForm(request.POST, request.FILES)
-        #if form.is_valid():
-#        handle_uploaded_image(request.FILES['image'])
-        return createGeneralResponse('OK', 'File uploaded')
-    else:
-        form = ImgTestForm()
-        img_test = ImageTest.objects.all()[0]
-    return render_to_response('test/img_test1.html', {'form':form, 'img_test': img_test, })
+    def get_object(self, queryset=None):
+        return self.request.user.get_profile()
+
+    def get_success_url(self):
+        return reverse('upload_avatar')
 
 
-#def handle_uploaded_image(file):
-#    it = ImageTest()
-#    it.image = file
-#    it.save()
-
-#    temp use
+    #    temp use
 def handle_uploaded_app(file):
     destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
     for chunk in file.chunks():
