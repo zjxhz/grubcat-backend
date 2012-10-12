@@ -698,8 +698,6 @@ def checkemail(request):
         if len(usersWithEmail) > 0:
             return createGeneralResponse("NOK", "That email already exists")
         else:
-            request.user.email = email
-            request.user.save()
             return createGeneralResponse("OK", "email is OK to use")
     else:
         raise
