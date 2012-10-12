@@ -1,6 +1,7 @@
 # Django settings for grubcat project.
 import os
 from django.core.urlresolvers import reverse_lazy
+
 print "grubcat"
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -160,6 +161,19 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages"
     )
 
+from easy_thumbnails.conf import settings as thumbnail_settings
+
+#THUMBNAIL_PROCESSORS = (
+#                           'image_cropping.thumbnail_processors.crop_corners',
+#                           ) + thumbnail_settings.THUMBNAIL_PROCESSORS
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'easy_thumbnails.processors.scale_and_crop',
+    'easy_thumbnails.processors.filters',)
+BIG_AVATAR_SIZE = (219, 219)
+SMALL_AVATAR_SIZE = (50, 50)
 
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
@@ -184,14 +198,14 @@ LOGGING = {
         'api': {
             'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
         },
-        },
+    },
     'filters': {
     },
     'handlers': {
         'null': {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
-            },
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -201,7 +215,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
-            },
+        },
         'default': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -209,7 +223,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 2, # 5 MB
             'backupCount': 7,
             'formatter': 'verbose',
-            },
+        },
         'api': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -217,7 +231,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 1,
             'backupCount': 1,
             'formatter': 'api',
-            },
+        },
         'request_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -225,7 +239,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5, # 5 MB
             'backupCount': 5,
             'formatter': 'verbose',
-            },
+        },
         'scprits_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -233,8 +247,8 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5, # 5 MB
             'backupCount': 5,
             'formatter': 'verbose',
-            },
         },
+    },
     'loggers': {
         'django': {
             'handlers': ['default'],
@@ -256,7 +270,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False
         },
-        }
+    }
 }
 
 #account
@@ -264,10 +278,6 @@ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 SHOW_EXCEPTION_DETAIL = False
-
-#Constants
-BIG_AVATAR_SIZE=(219, 219)
-SMALL_AVATAR_SIZE=(50, 50)
 
 
 try:
