@@ -161,7 +161,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages"
     )
 
-from easy_thumbnails.conf import settings as thumbnail_settings
+#from easy_thumbnails.conf import settings as thumbnail_settings
 
 #THUMBNAIL_PROCESSORS = (
 #                           'image_cropping.thumbnail_processors.crop_corners',
