@@ -5,15 +5,16 @@
     {{ form.media.css }}
     <style type="text/css">
 
-    #crop_area{
-        width: 430px;
-        float: left;
-    }
+        #crop_area {
+            width: 430px;
+            float: left;
+        }
+
         .preview-container {
             overflow: hidden;
         }
 
-        #cropping-tip{
+        #cropping-tip {
             margin-top: 60px;
             color: #ff471d;
         }
@@ -41,47 +42,53 @@
 {% endblock %}
 {% block page_js %}
     {{ block.super }}
-{#    {{ form.media.js }}#}
+    {#    {{ form.media.js }}#}
     {% assets "image_cropping_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
-        function showPreview(coords) {
-            var rxBig = 200 / coords.w;
-            var ryBig = 200 / coords.h;
-            var rxMiddle = 100 / coords.w;
-            var ryMiddle = 100 / coords.h;
-            var rxSmall = 30 / coords.w;
-            var rySmall = 30 / coords.h;
 
-            $('#preview_big').css({
-                width:Math.round(rxBig * $("#id_avatar").data('org-width')) + 'px',
-                height:Math.round(ryBig * $("#id_avatar").data('org-height')) + 'px',
-                marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
-                marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
-            });
-            $('#preview_middle').css({
-                width:Math.round(rxMiddle * $("#id_avatar").data('org-width')) + 'px',
-                height:Math.round(ryMiddle * $("#id_avatar").data('org-height')) + 'px',
-                marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
-                marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
-            });
-            $('#preview_small').css({
-                width:Math.round(rxSmall * $("#id_avatar").data('org-width')) + 'px',
-                height:Math.round(rySmall * $("#id_avatar").data('org-height')) + 'px',
-                marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
-                marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
-            });
-        }
-        image_cropping.update_selection = function ($crop_field) {
-            return function (sel) {
-                image_cropping._update_selection(sel, $crop_field);
-                showPreview(sel);
-            };
+        $(function () {
+
+            $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+
+            function showPreview(coords) {
+                var rxBig = 200 / coords.w;
+                var ryBig = 200 / coords.h;
+                var rxMiddle = 100 / coords.w;
+                var ryMiddle = 100 / coords.h;
+                var rxSmall = 30 / coords.w;
+                var rySmall = 30 / coords.h;
+
+                $('#preview_big').css({
+                    width:Math.round(rxBig * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(ryBig * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
+                });
+                $('#preview_middle').css({
+                    width:Math.round(rxMiddle * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(ryMiddle * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
+                });
+                $('#preview_small').css({
+                    width:Math.round(rxSmall * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(rySmall * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
+                    marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
+                });
+            }
+
+            image_cropping.update_selection = function ($crop_field) {
+                return function (sel) {
+                    image_cropping._update_selection(sel, $crop_field);
+                    showPreview(sel);
+                };
 
 
-        }
-
+            }
+        })
     </script>
 {% endblock %}
 
@@ -99,13 +106,13 @@
         您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
     </div>
     <div id="preview_big_container" class="preview-container">
-        <img id="preview_big" src="{{ form.instance.avatar.url }}">
+        <img id="preview_big">
     </div>
     <div id="preview_middle_container" class="preview-container">
-        <img id="preview_middle" src="{{ form.instance.avatar.url }}">
+        <img id="preview_middle">
     </div>
     <div id="preview_small_container" class="preview-container">
-        <img id="preview_small" src="{{ form.instance.avatar.url }}">
+        <img id="preview_small">
     </div>
 {% endblock %}
 
