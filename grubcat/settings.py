@@ -172,9 +172,9 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
-BIG_AVATAR_SIZE = (219, 219)
+BIG_AVATAR_SIZE = (200, 200)
 SMALL_AVATAR_SIZE = (50, 50)
-
+IMAGE_CROPPING_THUMB_SIZE=(400, 400)
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 

@@ -395,7 +395,7 @@ class UserProfile(models.Model):
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField(null=True)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
-    cropping = ImageRatioField('avatar', '640x640')
+    cropping = ImageRatioField('avatar', '640x640',adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)
@@ -433,6 +433,8 @@ class UserProfile(models.Model):
             thumbnail_url =  settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
 
+
+#    To Be Deleted
     @property
     def avatar_default_if_none(self):
         if self.avatar:
