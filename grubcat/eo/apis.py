@@ -184,14 +184,14 @@ class UserResource(ModelResource):
     def dehydrate(self, bundle):
         if not bundle.data['location']:
             # simulate a location. TODO remove these lines in production
-            bundle.data['lat'] = bundle.obj.faked_location.lat
-            bundle.data['lng'] = bundle.obj.faked_location.lng
-            bundle.data['updated_at'] = bundle.obj.faked_location.updated_at
+            bundle.data['lat'] = 30.275
+            bundle.data['lng'] = 120.148
+            bundle.data['updated_at'] = "2012-10-16"
             
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
-    
+       
     def override_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/favorite%s$" % (self._meta.resource_name, trailing_slash()),
@@ -222,6 +222,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_users_nearby'), name="api_get_users_nearby"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/photos%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('view_upload_photos'), name="api_view_upload_photos"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/location%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('update_location'), name="api_update_location"),   
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -392,8 +394,26 @@ class UserResource(ModelResource):
             photo.save()
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
+            raise NotImplementedError        
+    
+    def update_location(self, request, **kwargs):
+        user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == "POST":
+            location = None
+            if user_to_query.location:
+                location = user_to_query.location
+            else:
+                location = UserLocation()
+            location.lat = request.POST.get("lat")
+            location.lng = request.POST.get("lng")
+            location.updated_at = datetime.now()
+            location.save()
+            user_to_query.location = location
+            user_to_query.save()
+            return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
+        elif request.method == 'DELETE':
             raise NotImplementedError
-            
+        
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
