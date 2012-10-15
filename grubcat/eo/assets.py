@@ -84,6 +84,9 @@ jquery_ajax_bootstrap_js = Bundle(
 
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/jquery-ui-1.8.21.custom%(version)s.js')
 
+image_cropping_js = Bundle(jquery_js, 'js/jquery.jcrop.js','js/image_cropping.js',filters='jsmin', output='gen/iamge-cropping%(version)s.js')
+
+
 register('base_css', base_css)
 register('common_css', common_css)
 register('form_css', form_css)
@@ -109,4 +112,5 @@ register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
 register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
 register('jquery_ui_js', jquery_ui_js)
+register('image_cropping_js', image_cropping_js)
 
