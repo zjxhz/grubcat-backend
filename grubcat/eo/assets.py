@@ -84,7 +84,7 @@ jquery_ajax_bootstrap_js = Bundle(
 
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/jquery-ui-1.8.21.custom%(version)s.js')
 
-image_cropping_js = Bundle(jquery_js, 'js/jquery.jcrop.js','js/image_cropping.js',filters='jsmin', output='gen/iamge-cropping%(version)s.js')
+image_cropping_js = Bundle(jquery_js, 'js/jquery.Jcrop.js','js/image_cropping.js', filters='jsmin', output='gen/iamge-cropping%(version)s.js')
 
 
 register('base_css', base_css)
