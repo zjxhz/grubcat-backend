@@ -184,12 +184,23 @@ class UserResource(ModelResource):
     def dehydrate(self, bundle):
         if not bundle.data['location']:
             # simulate a location. TODO remove these lines in production
-            bundle.data['lat'] = bundle.obj.faked_location.lat
-            bundle.data['lng'] = bundle.obj.faked_location.lng
-            bundle.data['updated_at'] = bundle.obj.faked_location.updated_at
+            bundle.data['lat'] = 30.275
+            bundle.data['lng'] = 120.148
+            bundle.data['updated_at'] = "2012-10-16"
             
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
+        return bundle
+    
+    def hydrate(self, bundle):
+        location = bundle.data.get('location')
+        if location:
+            if bundle.obj.location:
+                bundle.obj.location.lat = location.get("lat")
+                bundle.obj.location.lng = location.get("lng")
+                bundle.obj.location.updated_at = location.get("updated_at")
+            else:
+                bundle.obj.location = UserLocation(location.get("lat"), location.get("lng"), location.get("updated_at"))
         return bundle
     
     def override_urls(self):
@@ -392,8 +403,8 @@ class UserResource(ModelResource):
             photo.save()
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
-            raise NotImplementedError
-            
+            raise NotImplementedError        
+
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
