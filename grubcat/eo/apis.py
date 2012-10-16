@@ -191,15 +191,7 @@ class UserResource(ModelResource):
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
-    
-    def hydrate(self, bundle):
-        location = bundle.data.get('location')
-        if location:
-            if bundle.obj.location: #TODO seems a new location is usually created when not needed so i have to delete the old one always
-                bundle.obj.location.delete()
-            bundle.obj.location = UserLocation(location.get("lat"), location.get("lng"), location.get("updated_at"))
-        return bundle
-    
+       
     def override_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/favorite%s$" % (self._meta.resource_name, trailing_slash()),
@@ -230,6 +222,8 @@ class UserResource(ModelResource):
                 self.wrap_view('get_users_nearby'), name="api_get_users_nearby"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/photos%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('view_upload_photos'), name="api_view_upload_photos"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/location%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('update_location'), name="api_update_location"),   
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -401,7 +395,25 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
             raise NotImplementedError        
-
+    
+    def update_location(self, request, **kwargs):
+        user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == "POST":
+            location = None
+            if user_to_query.location:
+                location = user_to_query.location
+            else:
+                location = UserLocation()
+            location.lat = request.POST.get("lat")
+            location.lng = request.POST.get("lng")
+            location.updated_at = datetime.now()
+            location.save()
+            user_to_query.location = location
+            user_to_query.save()
+            return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
+        elif request.method == 'DELETE':
+            raise NotImplementedError
+        
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
