@@ -195,12 +195,9 @@ class UserResource(ModelResource):
     def hydrate(self, bundle):
         location = bundle.data.get('location')
         if location:
-            if bundle.obj.location:
-                bundle.obj.location.lat = location.get("lat")
-                bundle.obj.location.lng = location.get("lng")
-                bundle.obj.location.updated_at = location.get("updated_at")
-            else:
-                bundle.obj.location = UserLocation(location.get("lat"), location.get("lng"), location.get("updated_at"))
+            if bundle.obj.location: #TODO seems a new location is usually created when not needed so i have to delete the old one always
+                bundle.obj.location.delete()
+            bundle.obj.location = UserLocation(location.get("lat"), location.get("lng"), location.get("updated_at"))
         return bundle
     
     def override_urls(self):
