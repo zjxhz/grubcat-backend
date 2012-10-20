@@ -98,7 +98,7 @@ class MealListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MealListView, self).get_context_data(**kwargs)
-        context['recent_users'] = UserProfile.objects.filter(avatar__isnull=False).select_related("user")[:12]
+        context['recent_users'] = UserProfile.objects.exclude(avatar="").select_related("user")[:12]
         return context
 
 
