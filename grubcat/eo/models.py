@@ -481,17 +481,17 @@ class UserProfile(models.Model):
     
     # return a list of values with the order how keys are sorted for a given dict
     def sortedDictValues(self, some_dict):
-        keys = some_dict.keys()
-        keys.sort()
-        return [some_dict[key] for key in keys]
+        from operator import itemgetter
+        sortedItems = sorted(some_dict.items(), key=itemgetter(1))
+        return [key[0] for key in sortedItems]
     
     @property
     def users_nearby(self):
         distance_user_dict = {}
-        for user in UserProfile.objects.exclude(pk=self.id).exclude(pk__in=self.following.values('id')):
+        for user in UserProfile.objects.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
                 distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng, user.faked_location.lat)
-                distance_user_dict[distance] = user
+                distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)
     
     # get distance in meter, code from google maps
@@ -515,8 +515,8 @@ class UserProfile(models.Model):
             return self.location
         else:
             location = UserLocation()
-            location.lat = 30.28 + random.randint(0, 99)/1000.0
-            location.lng = 120.13 + random.randint(0, 99)/1000.0
+            location.lat = 30.275
+            location.lng = 120.148
             location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60*24*30))
             self.location = location
             return location
