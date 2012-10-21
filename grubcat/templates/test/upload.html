@@ -1,0 +1,10 @@
+{% block title %}Upload a file{% endblock %}
+
+{% block content %}
+  <h1>Upload a file</h1>
+
+  <form action="" method="post" enctype="multipart/form-data">
+      {{ form.as_p }}
+      <input type="submit" value="Upload">
+  </form>
+{% endblock %}
