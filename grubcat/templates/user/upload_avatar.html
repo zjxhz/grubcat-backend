@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+    {{ form.media.css }}
+    <style type="text/css">
+        #id_avatar, .file-upload {
+            position: absolute;
+            z-index: 2000;
+            opacity: 0;
+            margin-left: -1000px;
+        }
+
+        #id_cropping{
+            display: none;
+        }
+        #id_upload_form{
+            width: 755px;
+            margin-left: 125px;
+        }
+
+        #cropping-area{
+            float: left;
+        }
+
+        #preview_area{
+            float: left;
+            margin-left: 30px;
+        }
+        div.buttons {
+            clear: left;
+            float: right;
+            margin-right: 103px;
+            margin-top: 10px;
+        }
+
+        #id_choose_avatar {
+            margin-right: 26px;
+        }
+
+{#        #crop_form {#}
+{#            width: 320px;#}
+{#            float: left;#}
+{#            height: 320px;#}
+{#            margin-right: 30px;#}
+{#        }#}
+
+        .preview-container {
+            overflow: hidden;
+        }
+
+        #cropping-tip {
+            margin-top: 20px;
+            color: #ff471d;
+        }
+
+        #preview_big_container {
+            width: 200px;
+            height: 200px;
+            float: left;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+
+        #preview_middle_container {
+            width: 100px;
+            height: 100px;
+            margin-top: 40px;
+        }
+
+        #preview_small_container {
+            width: 50px;
+            height: 50px;
+            margin-top: 30px;
+        }
+
+    </style>
+{% endblock %}
+{% block page_js %}
+    {{ block.super }}
+    {#    {{ form.media.js }}#}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript">
+
+        $(function () {
+
+            $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+            $("#id_choose_avatar").click(function () {
+                $("#id_avatar").click();
+                return false;
+            })
+            $("#id_avatar").change(function () {
+                $(".uploadding").show();
+                $("#id_upload_form").submit();
+                {#                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
+            })
+
+            function showPreview(coords) {
+                var rxBig = 200 / coords.w;
+                var ryBig = 200 / coords.h;
+                var rxMiddle = 100 / coords.w;
+                var ryMiddle = 100 / coords.h;
+                var rxSmall = 50 / coords.w;
+                var rySmall = 50 / coords.h;
+
+                $('#preview_big').css({
+                    width:Math.round(rxBig * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(ryBig * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
+                });
+                $('#preview_middle').css({
+                    width:Math.round(rxMiddle * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(ryMiddle * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
+                });
+                $('#preview_small').css({
+                    width:Math.round(rxSmall * $("#id_avatar").data('org-width')) + 'px',
+                    height:Math.round(rySmall * $("#id_avatar").data('org-height')) + 'px',
+                    marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
+                    marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
+                });
+            }
+
+            image_cropping.update_selection = function ($crop_field) {
+                return function (sel) {
+                    image_cropping._update_selection(sel, $crop_field);
+                    showPreview(sel);
+                };
+
+
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+        <form action="" id="id_upload_form" method="post" enctype="multipart/form-data">
+            <div id="cropping-area">
+
+                {{ form.avatar }}
+
+                <br/>
+                {{ form.cropping }}
+
+
+            </div>
+            <div id="preview_area">
+                <div id="cropping-tip">
+                    您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
+                </div>
+                <div id="preview_big_container" class="preview-container">
+                    <img id="preview_big">
+                </div>
+                <div id="preview_middle_container" class="preview-container">
+                    <img id="preview_middle">
+                </div>
+                <div id="preview_small_container" class="preview-container">
+                    <img id="preview_small">
+                </div>
+            </div>
+            <div class="buttons">
+
+                <input id="id_choose_avatar" type="button" value="选择头像" class="button">
+                <input type="submit" value="保存" class="button">
+            </div>
+
+        </form>
+
+{% endblock %}
+
