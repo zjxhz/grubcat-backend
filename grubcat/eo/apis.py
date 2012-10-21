@@ -162,6 +162,8 @@ class UserPhotoResource(ModelResource):
     photo = Base64FileField('photo')
     class Meta:
         queryset = UserPhoto.objects.all()
+        authorization = Authorization()
+        allowed_methods = ['get', 'post', 'delete']
                     
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
@@ -392,7 +394,7 @@ class UserResource(ModelResource):
         elif request.method == "POST":
             photo = UserPhoto(user=user_to_query, photo=request.FILES['file'])
             photo.save()
-            return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
+            return createGeneralResponse('OK', 'Photo uploaded.' , {"id":photo.id, "photo":photo.photo.url})
         elif request.method == 'DELETE':
             raise NotImplementedError        
     
@@ -793,3 +795,4 @@ v1_api.register(MealCommentResource())
 v1_api.register(TagResource())
 v1_api.register(UserTagResource())
 v1_api.register(DishItemResource())
+v1_api.register(UserPhotoResource())
