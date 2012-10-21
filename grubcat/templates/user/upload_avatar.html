@@ -21,6 +21,7 @@
 
         #cropping-area{
             float: left;
+            width: 320px;
         }
 
         #preview_area{
@@ -51,6 +52,7 @@
 
         #cropping-tip {
             margin-top: 20px;
+            margin-left: 12px;
             color: #ff471d;
         }
 
@@ -86,7 +88,13 @@
 
         $(function () {
 
-            $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+            if($("#id_avatar").data("thumbnail-url"))
+            {
+                $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+            } else
+            {
+                $("#preview_area").css("border","1px solid #DDD")
+            }
             $("#id_choose_avatar").click(function () {
                 $("#id_avatar").click();
                 return false;
