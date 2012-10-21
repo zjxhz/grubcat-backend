@@ -166,6 +166,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 #THUMBNAIL_PROCESSORS = (
 #                           'image_cropping.thumbnail_processors.crop_corners',
 #                           ) + thumbnail_settings.THUMBNAIL_PROCESSORS
+THUMBNAIL_QUALITY=100
 THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
     'easy_thumbnails.processors.colorspace',

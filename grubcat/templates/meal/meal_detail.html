@@ -64,11 +64,11 @@
             {% endif %}
             {% for user in meal.participants.all %}
                 <div class="user-wrapper">
-                    <h3 class="name">{{ user.user.username }}</h3>
+                    <h3 class="name">{{ user.user.username}}</h3>
 
                     <p class="work">{{ user.occupation|default:"" }}</p>
                     <a href=""><img alt="{{ user.user.username }}" class="user-pic" width="185" height="185"
-                                    src="{{ user.avatar_default_if_none }}"></a>
+                                    src="{{ user.big_avatar }}"></a>
 
                 </div>
             {% endfor %}

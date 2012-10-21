@@ -46,7 +46,7 @@ var image_cropping = {
 
       var options = {
         aspectRatio: min_width/min_height,
-        minSize: [400, 400],
+        minSize: [640, 640],
         trueSize: [org_width, org_height],
         onSelect: image_cropping.update_selection($this),
         onChange: image_cropping.update_selection($this),
