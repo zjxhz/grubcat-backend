@@ -78,7 +78,7 @@
 
 #desc {
     margin-bottom: 20px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .user-wrapper {
@@ -252,6 +252,7 @@ h3.name {
 }
 
 .work {
+    height: 13px;
     color: #444;
     display: block;
     margin-bottom: 10px;

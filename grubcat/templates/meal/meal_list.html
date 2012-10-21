@@ -11,7 +11,7 @@
 {% block page_js %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $("select.pretty").dropkick( );
+            $("select.pretty").dropkick();
             $("#nav-meal").addClass("current");
             $("#faq .sidebar-box-inner a").click(function () {
                 var $next = $(this).next("p");
@@ -34,7 +34,8 @@
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
                 <div class="meal-img-wrapper fl">
-                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px" src="{{ meal.get_cover_url }}"></a>
+                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px"
+                                                               src="{{ meal.get_cover_url }}"></a>
 
                     <div class="date-wrapper">
                         <span class="month">{{ meal.start_date|date:"n" }}月</span>
@@ -44,13 +45,15 @@
                     <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                 </div>
                 <div class="meal-info">
-                    <div class="meal-location png-fix"><span>Mission</span></div>
-                    <div class="host">
-                        <img width="30px" height="30px" alt="Social San Francisco"
-                             src="{% static 'img/location.jpg' %}"
-                                >
-                        <span class="png-fix">Social San Francisco</span></div>
-                    <p>{{ meal.introduction }}</p>
+                    {#                    <div class="meal-location png-fix"><span>Mission</span></div>#}
+                    {#                    <div class="host">#}
+                    {#                        <img width="30px" height="30px" alt="Social San Francisco"#}
+                    {#                             src="{% static 'img/location.jpg' %}"#}
+                    {#                                >#}
+                    {#                        <span class="png-fix">Social San Francisco</span></div>#}
+                    <p>
+                        {{ meal.introduction|truncatechars:"90" }}
+                    </p>
                     <a class="png-fix" href="{{ meal.get_absolute_url }}">加入饭局</a>
                 </div>
             </div>
@@ -62,7 +65,7 @@
     <div class="sidebar">
         {% include "support/faq_sidebar.html" %}
         <div id="recently-grubbed" class="sidebar-box">
-            <div class="sidebar-box-title">Recently Grubbed</div>
+            <div class="sidebar-box-title">最近参加饭局的朋友</div>
             <div class="sidebar-box-inner">
                 <a href="/users/rebecca-fleming-947a466e2319"><img alt="Rebecca Fleming"
                                                                    src="https://s3.amazonaws.com/grub_user_pics/14387/thumb/48990_127_7977_n.jpg?1309917037"
@@ -79,7 +82,7 @@
                 <a href="/users/joe-masciocco-aad267521659"><img alt="Joe Masciocco"
                                                                  src="https://s3.amazonaws.com/grub_user_pics/17199/thumb/Grub%20Pic.png?1314989835"
                                                                  width="50px" height="50px"></a>
-                <a href="/users/lauraigomez"><img alt="Laura Gómez"
+                <a href="/users/lauraigomez"><img alt="Laura G贸mez"
                                                   src="https://s3.amazonaws.com/grub_user_pics/12991/thumb/mememme.jpeg?1307811260"
                                                   width="50px" height="50px"></a>
                 <a href="/users/jenny-ng-824a6f060aa2"><img alt="Jenny N"
@@ -100,22 +103,23 @@
                 <a href="/users/mika-kasumov-76a9edc2ed43"><img alt="Mika Kasumov"
                                                                 src="https://s3.amazonaws.com/grub_user_pics/10377/thumb/10377_pic20110521-1-ims2vh-0.?1306011622"
                                                                 width="50px" height="50px"></a>
+
             </div>
         </div>
         <div id="create-a-meal" class="sidebar-box">
             <div class="sidebar-box-title">没有感兴趣的饭局？</div>
             <div class="sidebar-box-inner">
-{#                <form accept-charset="UTF-8" action="/create-a-meal" method="get">#}
-{#                    <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>#}
-{#                    <input class="cart_day hasDatepicker" id="cart_day" name="cyo[day]" readonly="readonly" size="30"#}
-{#                           type="text" value="May 15, 2012">#}
-{##}
-{#                    <select class="pretty">#}
-{#                        <option value="07:00">7:00 AM</option>#}
-{#                        <option value="22:30">10:30 PM</option>#}
-{#                    </select>#}
-{#                    <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>#}
-{#                </form>#}
+                {#                <form accept-charset="UTF-8" action="/create-a-meal" method="get">#}
+                {#                    <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>#}
+                {#                    <input class="cart_day hasDatepicker" id="cart_day" name="cyo[day]" readonly="readonly" size="30"#}
+                {#                           type="text" value="May 15, 2012">#}
+                {##}
+                {#                    <select class="pretty">#}
+                {#                        <option value="07:00">7:00 AM</option>#}
+                {#                        <option value="22:30">10:30 PM</option>#}
+                {#                    </select>#}
+                {#                    <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>#}
+                {#                </form>#}
                 <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>
             </div>
         </div>

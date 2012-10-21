@@ -90,14 +90,16 @@
 }
 
 .meal-info p {
-    line-height: 130%;
+    line-height: 160%;
     margin: 10px 0 30px 0;
+    font-size: 1.2em;
+    color: #494949;
 }
 
 .meal-info a {
     display: block;
     width: 290px;
-    height: 82px;
+    height: 85px;
     text-align: center;
     color: white;
     font-weight: bold;
