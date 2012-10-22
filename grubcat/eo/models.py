@@ -395,7 +395,7 @@ class UserProfile(models.Model):
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField(null=True)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
-    cropping = ImageRatioField('avatar', '640x640',adapt_rotation=False)
+    cropping = ImageRatioField('avatar', '640x640',adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)

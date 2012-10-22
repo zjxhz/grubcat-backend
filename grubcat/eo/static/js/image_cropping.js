@@ -46,7 +46,7 @@ var image_cropping = {
 
       var options = {
         aspectRatio: min_width/min_height,
-        minSize: [640, 640],
+        minSize: [200, 200],
         trueSize: [org_width, org_height],
         onSelect: image_cropping.update_selection($this),
 //        onChange: image_cropping.update_selection($this),
@@ -67,7 +67,6 @@ var image_cropping = {
       } else {
 
         initial = image_cropping.max_cropping(min_width, min_height, org_width, org_height);
-
           // set cropfield to initial value
         $this.val(initial.join(','));
       }
