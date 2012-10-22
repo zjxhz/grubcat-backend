@@ -90,7 +90,8 @@
 
             if($("#id_avatar").data("thumbnail-url"))
             {
-                $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+//                $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+                $(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
             } else
             {
                 $("#preview_area").css("border","1px solid #DDD")
@@ -101,6 +102,7 @@
             })
             $("#id_avatar").change(function () {
                 $(".uploadding").show();
+                $("#id_action").val("");
                 $("#id_upload_form").submit();
                 {#                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
             })
@@ -112,22 +114,25 @@
                 var ryMiddle = 100 / coords.h;
                 var rxSmall = 50 / coords.w;
                 var rySmall = 50 / coords.h;
+                var originalWidth = $("#id_avatar").data('org-width');
+                var originalHeight = $("#id_avatar").data('org-height');
+
 
                 $('#preview_big').css({
-                    width:Math.round(rxBig * $("#id_avatar").data('org-width')) + 'px',
-                    height:Math.round(ryBig * $("#id_avatar").data('org-height')) + 'px',
+                    width:Math.round(rxBig * originalWidth) + 'px',
+                    height:Math.round(ryBig * originalHeight) + 'px',
                     marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
                     marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
                 });
-                $('#preview_middle').css({
-                    width:Math.round(rxMiddle * $("#id_avatar").data('org-width')) + 'px',
-                    height:Math.round(ryMiddle * $("#id_avatar").data('org-height')) + 'px',
+               $('#preview_middle').css({
+                    width:Math.round(rxMiddle * originalWidth) + 'px',
+                    height:Math.round(ryMiddle * originalHeight) + 'px',
                     marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
                     marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
                 });
                 $('#preview_small').css({
-                    width:Math.round(rxSmall * $("#id_avatar").data('org-width')) + 'px',
-                    height:Math.round(rySmall * $("#id_avatar").data('org-height')) + 'px',
+                    width:Math.round(rxSmall * originalWidth) + 'px',
+                    height:Math.round(rySmall * originalHeight) + 'px',
                     marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
                     marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
                 });
@@ -154,7 +159,7 @@
                 <br/>
                 {{ form.cropping }}
 
-
+                <input type="hidden" name="action" id="id_action" value="crop"/>
             </div>
             <div id="preview_area">
                 <div id="cropping-tip">

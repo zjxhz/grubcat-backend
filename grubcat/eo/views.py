@@ -626,11 +626,20 @@ class UploadAvatarView(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user.get_profile()
 
+
     def get_success_url(self):
         return reverse('upload_avatar')
 
+    def form_valid(self, form):
+        response = super(UploadAvatarView,self).form_valid(form)
+        if form.cleaned_data['action'] == 'crop':
+            return HttpResponseRedirect(reverse('edit_profile'))
+        else:
+            return HttpResponseRedirect(reverse('upload_avatar'))
 
-    #    temp use
+
+
+        #    temp use
 def handle_uploaded_app(file):
     destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
     for chunk in file.chunks():
