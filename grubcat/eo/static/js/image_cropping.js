@@ -49,7 +49,7 @@ var image_cropping = {
         minSize: [640, 640],
         trueSize: [org_width, org_height],
         onSelect: image_cropping.update_selection($this),
-        onChange: image_cropping.update_selection($this),
+//        onChange: image_cropping.update_selection($this),
         addClass: ($this.data('size-warning') && ((org_width < min_width) || (org_height < min_height))) ? 'size-warning jcrop-image': 'jcrop-image'
       }
 

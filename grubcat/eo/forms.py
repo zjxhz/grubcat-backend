@@ -122,10 +122,10 @@ class ImgTestForm(ModelForm):
         }
 
 class UploadAvatarForm(ModelForm):
-
+    action = forms.CharField(required=False)
     class Meta:
         model = UserProfile
-        fields=('avatar','cropping')
+        fields=('avatar','cropping','action')
         widgets = {
             'avatar': ImageCropWidget,
             }
