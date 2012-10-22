@@ -56,7 +56,7 @@ class MealCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(MealCreateView, self).get_context_data(**kwargs)
         context.update({
-            "my_groups":self.request.user.interest_groups.all()
+            "my_groups": self.request.user.interest_groups.all()
         })
         return context
 
@@ -165,10 +165,11 @@ class GroupDetailView(DetailView):
     template_name = "group/group_detail.html"
 
     def get_queryset(self):
-        return Group.objects.prefetch_related( 'comments__from_person', 'comments__replies__from_person')
+        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
 
     def get_context_data(self, **kwargs):
-        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related('group',
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
+            'group',
             'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context.update({
@@ -631,15 +632,21 @@ class UploadAvatarView(UpdateView):
         return reverse('upload_avatar')
 
     def form_valid(self, form):
-        response = super(UploadAvatarView,self).form_valid(form)
+        profile = form.save(False)
         if form.cleaned_data['action'] == 'crop':
-            return HttpResponseRedirect(reverse('edit_profile'))
+            redirect_url = reverse('edit_profile')
         else:
-            return HttpResponseRedirect(reverse('upload_avatar'))
+            profile.cropping = ''
+            redirect_url = reverse('upload_avatar')
+        super(UploadAvatarView, self).form_valid(form)
+        print 'cropping' + profile.cropping
+        return HttpResponseRedirect(redirect_url)
 
 
 
         #    temp use
+
+
 def handle_uploaded_app(file):
     destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
     for chunk in file.chunks():
