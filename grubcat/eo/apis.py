@@ -189,7 +189,8 @@ class UserResource(ModelResource):
             bundle.data['lat'] = 30.275
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
-            
+        
+        bundle.data['small_avatar'] = bundle.obj.small_avatar    
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
@@ -226,6 +227,8 @@ class UserResource(ModelResource):
                 self.wrap_view('view_upload_photos'), name="api_view_upload_photos"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/location%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('update_location'), name="api_update_location"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/avatar%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('avatar_thumbnail'), name="api_avatar_thumbnail"),  
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -415,7 +418,18 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
             raise NotImplementedError
-        
+    def avatar_thumbnail(self, request, **kwargs):
+        user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == "GET":
+            width = request.GET.get("width")
+            height = request.GET.get("height")
+            if not width or not height:
+                return createGeneralResponse('NOK', 'width and height expected') 
+            url = user_to_query.avatar_thumbnail(int(width), int(height))
+            return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
+        elif request.method == 'DELETE':
+            raise NotImplementedError
+            
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()
