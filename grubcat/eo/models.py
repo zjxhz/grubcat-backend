@@ -407,6 +407,12 @@ class UserProfile(models.Model):
     weibo_access_token = models.CharField(max_length=128, null=True)
     tags = TaggableManager(through=TaggedUser)
 
+    def avatar_thumbnail(self, width, height):
+        if self.avatar:
+            return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height)}).url
+        else:
+            return settings.MEDIA_URL + "uploaded_images/anno.png"
+        
     @property
     def big_avatar(self):
         if self.avatar:
