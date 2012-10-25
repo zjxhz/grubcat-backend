@@ -459,22 +459,6 @@ def login_required_response(request):
 def order_last_modified(request, order_id):
     return Order.objects.get(id=order_id).confirmed_time
 
-#@condition(last_modified_func=order_last_modified)
-def get_order_by_id(request, order_id):
-    print request.GET.get('ETag')
-    if not request.user.is_authenticated():
-        return login_required_response(request)
-    response = HttpResponse()
-    # TODO check if the user has permission to view the order
-    serializer = serializers.get_serializer("json")()
-    order = Order.objects.get(id=order_id)
-    jsonOrder = simplejson.loads(serializer.serialize([order], relations={'restaurant': {'fields': ('name',)}}))[0]
-    orderDishes = OrderDishes.objects.filter(order__id=order_id)
-    jsonOrderDishes = serializer.serialize(orderDishes, relations=('dish',))
-    jsonOrder['fields']['dishes'] = simplejson.loads(jsonOrderDishes)
-    response.write(simplejson.dumps(jsonOrder, ensure_ascii=False))
-    return response
-
 
 def get_orders(request):
     if not request.user.is_authenticated():
@@ -483,27 +467,6 @@ def get_orders(request):
     serializer = serializers.get_serializer("json")()
     orders = Order.objects.filter(customer__id=request.user.id).order_by("-created_time")
     serializer.serialize(orders, relations={'restaurant': {'fields': ('name',)}}, stream=response, ensure_ascii=False)
-    return response
-
-# get detailed information including dishes of all of the orders, not used by now
-def get_orders_detailed(request):
-    if not request.user.is_authenticated():
-        return login_required_response(request)
-    response = HttpResponse()
-    serializer = serializers.get_serializer("json")()
-    orders = Order.objects.filter(customer__id=request.user.id)
-    jsonOrders = []
-    jsonOrders = simplejson.loads(serializer.serialize(orders, relations={'restaurant': {'fields': ('name',)}}))
-    for jsonOrder in jsonOrders:
-        orderID = jsonOrder['pk']
-        orderDishes = OrderDishes.objects.filter(order__id=orderID)
-        jsonDishes = []
-        for orderDish in orderDishes:
-            dish = orderDish.dish
-            jsonDish = serializer.serialize([dish])
-            jsonDishes.append(simplejson.loads(jsonDish)[0])
-        jsonOrder['fields']['dishes'] = jsonDishes
-    response.write(simplejson.dumps(jsonOrders, ensure_ascii=False))
     return response
 
 
@@ -618,7 +581,7 @@ def get_regions(request):
 def get_restaurants_in_region(request, region_id):
     return getJsonResponse(Region.objects.get(id=region_id).restaurant_set.all())
 
-
+#User related
 class UploadAvatarView(UpdateView):
     form_class = UploadAvatarForm
     model = UserProfile
@@ -642,6 +605,8 @@ class UploadAvatarView(UpdateView):
         print 'cropping' + profile.cropping
         return HttpResponseRedirect(redirect_url)
 
+def edit_profile(request):
+    pass
 
 
         #    temp use

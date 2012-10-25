@@ -45,6 +45,11 @@ user_list_css = Bundle(
     base_css,  common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
+edit_profile_css = Bundle(
+    base_css, common_css, 'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+)
+
+
 order_css = Bundle(
     bootstrap_css, base_css, common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
@@ -100,6 +105,7 @@ register('group_detail_css', group_detail_css)
 
 register('account_css', account_css)
 register('user_list_css', user_list_css)
+register('edit_profile_css', edit_profile_css)
 register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 

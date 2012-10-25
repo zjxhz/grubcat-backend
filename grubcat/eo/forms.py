@@ -121,6 +121,7 @@ class ImgTestForm(ModelForm):
             'image': ImageCropWidget,
         }
 
+#User related
 class UploadAvatarForm(ModelForm):
     action = forms.CharField(required=False)
     class Meta:
@@ -130,6 +131,13 @@ class UploadAvatarForm(ModelForm):
             'avatar': ImageCropWidget,
             }
 
+class BasicProfileForm(ModelForm):
+    action = forms.CharField(required=False)
+    class Meta:
+        model = UserProfile
+        fields=('motto','birthday','gender')
+        widgets = {
+            }
 
 #restaurant admin related
 class OrderCheckInForm(forms.Form):

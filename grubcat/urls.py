@@ -11,7 +11,7 @@ from eo.decorators import restaurant_login_required
 from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
-    get_order_by_id, get_user_profile, favorite_restaurant, favorite_restaurants,\
+    get_user_profile, favorite_restaurant, favorite_restaurants,\
     get_following, remove_following, followers,\
     get_recommended_following, messages,\
     meal_participants, view_or_send_meal_invitations,\
@@ -41,7 +41,6 @@ urlpatterns = patterns('',
     ('^api/v1/checkemail/$', checkemail),
     ('^api/v1/register/$', mobile_user_register),
     ('^order/$', get_orders),
-    ('^order/(\d+)/$', get_order_by_id),
 #    ('^profile/$', get_user_profile),
     ('^profile/favorite/restaurant/(\d+)/$', favorite_restaurant),
     ('^profile/favorite/restaurant/$', favorite_restaurants),

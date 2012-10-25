@@ -23,6 +23,7 @@ class Privacy:
     PUBLIC = 0
     PRIVATE = 1
 
+
 class Company(models.Model):
     name = models.CharField(max_length=135)
 
@@ -117,7 +118,7 @@ class RatingPic(models.Model):
 class DishCategory(models.Model):
 #    menu = models.ForeignKey(Menu, related_name="categories")
 #    TODO unique for restaurant and name
-    name = models.CharField(u'菜名', max_length=45,)
+    name = models.CharField(u'菜名', max_length=45, )
     #    if restaurant is null,it means the category is public, all restaurant can see the category
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True)
     #    parent_category = models.ForeignKey('self', null=True) #not used temporary
@@ -199,6 +200,7 @@ class DishItem(models.Model):
     num = models.SmallIntegerField()
     order_no = models.SmallIntegerField() #菜在一个Menu中的顺序
 
+
 class DishCategoryItem(models.Model):
     menu = models.ForeignKey(Menu)
     category = models.ForeignKey(DishCategory)
@@ -207,7 +209,7 @@ class DishCategoryItem(models.Model):
 ###    group related  ###
 class GroupCategory(models.Model):
     name = models.CharField(u'圈子分类名', max_length=30, unique=True)
-    cover = models.ImageField(u'分类图片',upload_to='category_cover',blank=True, null=True)
+    cover = models.ImageField(u'分类图片', upload_to='category_cover', blank=True, null=True)
 
     @property
     def cover_url_default_if_none(self):
@@ -223,6 +225,7 @@ class GroupCategory(models.Model):
         verbose_name = u'圈子分类'
         verbose_name_plural = u'圈子分类'
 
+
 class GroupPrivacy(Privacy):
     pass
 
@@ -235,20 +238,24 @@ class Group(models.Model):
     """圈子"""
     name = models.CharField(u'名称', max_length=15, unique=True)
     desc = models.CharField(u'描述', max_length=100)
-    category = models.ForeignKey(GroupCategory,verbose_name=u'分类',null=True, blank=True)
+    category = models.ForeignKey(GroupCategory, verbose_name=u'分类', null=True, blank=True)
     privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
-    owner = models.ForeignKey(User,verbose_name=u'创建者')
-    logo = models.ImageField(upload_to='group_logos',blank=True, null=True)
-    members = models.ManyToManyField(User, verbose_name=u'成员',related_name='interest_groups')
+    owner = models.ForeignKey(User, verbose_name=u'创建者')
+    logo = models.ImageField(upload_to='group_logos', blank=True, null=True)
+    members = models.ManyToManyField(User, verbose_name=u'成员', related_name='interest_groups')
 
     @property
     def recent_meals(self):
-        return Meal.objects.filter(group=self).filter(Q( start_date__gt=datetime.today()) | Q(start_date = datetime.today() ,start_time__gt=datetime.now() )).order_by("start_date",
+        return Meal.objects.filter(group=self).filter(
+            Q(start_date__gt=datetime.today()) | Q(start_date=datetime.today(),
+                start_time__gt=datetime.now())).order_by("start_date",
             "start_time")
 
     @property
     def passed_meals(self):
-        return Meal.objects.filter(group=self).filter(Q( start_date__lt=datetime.today()) | Q(start_date = datetime.today() , start_time__lte=datetime.now() ) ).order_by("start_date",
+        return Meal.objects.filter(group=self).filter(
+            Q(start_date__lt=datetime.today()) | Q(start_date=datetime.today(),
+                start_time__lte=datetime.now())).order_by("start_date",
             "start_time")
 
     @property
@@ -395,24 +402,28 @@ class UserProfile(models.Model):
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
     gender = models.IntegerField(null=True)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
-    cropping = ImageRatioField('avatar', '640x640',adapt_rotation=True)
+    cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
     birthday = models.DateTimeField(null=True)
     college = models.CharField(max_length=64, null=True)
     work_for = models.CharField(max_length=64, null=True)
     occupation = models.CharField(max_length=64, null=True)
-    motto = models.CharField(max_length=140, null=True)
+    motto = models.CharField(max_length=140, null=True, blank=True)
     weibo_id = models.CharField(max_length=20, null=True)
     weibo_access_token = models.CharField(max_length=128, null=True)
     tags = TaggableManager(through=TaggedUser)
 
     def avatar_thumbnail(self, width, height):
         if self.avatar:
-            return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height)}).url
+            return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height),
+                                                               'box': self.cropping,
+                                                               'crop': True,
+                                                               'detail': True
+            }).url
         else:
             return settings.MEDIA_URL + "uploaded_images/anno.png"
-        
+
     @property
     def big_avatar(self):
         if self.avatar:
@@ -421,9 +432,9 @@ class UserProfile(models.Model):
                 'box': self.cropping,
                 'crop': True,
                 'detail': True,
-                }).url
+            }).url
         else:
-            thumbnail_url =  settings.STATIC_URL + "img/default/big_avatar.png"
+            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
 
     @property
@@ -434,13 +445,13 @@ class UserProfile(models.Model):
                 'box': self.cropping,
                 'crop': True,
                 'detail': True,
-                }).url
+            }).url
         else:
-            thumbnail_url =  settings.STATIC_URL + "img/default/big_avatar.png"
+            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
 
 
-#    To Be Deleted
+    #    To Be Deleted
     @property
     def avatar_default_if_none(self):
         if self.avatar:
@@ -478,33 +489,35 @@ class UserProfile(models.Model):
         """
         recommended_list = self.tags.similar_objects()
         recommended_not_following = [u for u in recommended_list if u not in self.following.all()]
-        
+
         recommended_list_ids = [user.id for user in recommended_list]
-        other_users=UserProfile.objects.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
+        other_users = UserProfile.objects.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
         other_users_not_following = other_users.exclude(pk__in=self.following.values('id'))
-        
+
         return recommended_not_following + list(other_users_not_following)
-    
+
     # return a list of values with the order how keys are sorted for a given dict
     def sortedDictValues(self, some_dict):
         from operator import itemgetter
+
         sortedItems = sorted(some_dict.items(), key=itemgetter(1))
         return [key[0] for key in sortedItems]
-    
+
     @property
     def users_nearby(self):
         distance_user_dict = {}
         for user in UserProfile.objects.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
-                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng, user.faked_location.lat)
+                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng,
+                    user.faked_location.lat)
                 distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)
-    
+
     # get distance in meter, code from google maps
     def getDistance(self, lng1, lat1, lng2, lat2):
         EARTH_RADIUS = 6378.137
         from math import asin, sin, cos, radians, pow, sqrt
-    
+
         radLat1 = radians(lat1)
         radLat2 = radians(lat2)
         a = radLat1 - radLat2
@@ -512,6 +525,7 @@ class UserProfile(models.Model):
         s = 2 * asin(sqrt(pow(sin(a / 2), 2) + cos(radLat1) * cos(radLat2) * pow(sin(b / 2), 2)))
         s = s * EARTH_RADIUS
         return s * 1000
+
     @property
     def faked_location(self):
         """
@@ -523,22 +537,24 @@ class UserProfile(models.Model):
             location = UserLocation()
             location.lat = 30.275
             location.lng = 120.148
-            location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60*24*30))
+            location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60 * 24 * 30))
             self.location = location
             return location
-        
+
     def __unicode__(self):
         return self.user.username
 
     class Meta:
         db_table = u'user_profile'
 
+
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
-    
+
     class Meta:
         db_table = u'user_photo'
+
 
 class UserMessage(models.Model):
     from_person = models.ForeignKey(UserProfile, related_name="sent_from_user")
@@ -601,23 +617,24 @@ MEAL_STATUS_CHOICE = (
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
-#    time = models.DateTimeField(u'开始时间', )
+    #    time = models.DateTimeField(u'开始时间', )
     start_date = models.DateField(u'开始日期', default=datetime.today())
     start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=time(19, 00))
-    group = models.ForeignKey('Group', verbose_name=u'通知圈子',null=True,blank=True)
+    group = models.ForeignKey('Group', verbose_name=u'通知圈子', null=True, blank=True)
     privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
         choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
-    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,blank=True, null=True)
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
+        blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
         upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅',blank=True,null=True) #TODO retrieve from menu
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
-    host = models.ForeignKey(UserProfile, null=True,blank=True, related_name="host_user", verbose_name=u'发起者', )
+    host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
     participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
         null=True)
@@ -676,34 +693,36 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
+
 class Comment(models.Model):
-    from_person = models.ForeignKey(UserProfile, verbose_name='作者',blank=True)
+    from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)
     comment = models.CharField(u'评论', max_length=300)
-    timestamp = models.DateTimeField(blank=True,auto_now_add=True)
+    timestamp = models.DateTimeField(blank=True, auto_now_add=True)
 
     @property
     def time_gap(self):
         gap = datetime.now() - self.timestamp
         if gap.days >= 365:
-            result  = u"%d年前" % (gap.days/365)
+            result = u"%d年前" % (gap.days / 365)
         elif gap.days >= 31:
-            result  = u"%d个月前" % (gap.days/31)
+            result = u"%d个月前" % (gap.days / 31)
         elif gap.days > 0:
-            result  = u"%d天前" % gap.days
+            result = u"%d天前" % gap.days
         elif gap.seconds >= 3600:
-            result  = u"%d小时前" % (gap.seconds/3600)
+            result = u"%d小时前" % (gap.seconds / 3600)
         elif gap.seconds >= 60:
-            result  = u"%d分钟前" % (gap.seconds/60)
+            result = u"%d分钟前" % (gap.seconds / 60)
         else:
-            result  = u"1分钟内"
+            result = u"1分钟内"
         return result
 
     class Meta:
-        abstract=True
+        abstract = True
+
 
 class GroupComment(Comment):
-    group = models.ForeignKey(Group,verbose_name=u'圈子', related_name='comments')
-    parent = models.ForeignKey('self',related_name='replies', verbose_name=u'父评论',null=True, blank=True)
+    group = models.ForeignKey(Group, verbose_name=u'圈子', related_name='comments')
+    parent = models.ForeignKey('self', related_name='replies', verbose_name=u'父评论', null=True, blank=True)
 
     class Meta:
         verbose_name = u'圈子评论'
@@ -711,6 +730,7 @@ class GroupComment(Comment):
 
     def __unicode__(self):
         return  u'圈子(%s) 评论%s' % (self.group, self.id)
+
 
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
