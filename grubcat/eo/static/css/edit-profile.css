@@ -1,0 +1,22 @@
+.left-column {
+    float: left;
+    width: 220px;
+    padding: 10px;
+    border-right: 1px solid #BBB;
+}
+
+.right-column {
+    width: 685px;
+    padding: 9px;
+    float: right;
+}
+.avatar img{
+    border: 3px solid white;
+}
+
+.avatar h1{
+    text-align: center;
+    font-size: 18px;
+    margin: 0 0 10px 0;
+}
+
