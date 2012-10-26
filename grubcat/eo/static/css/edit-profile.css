@@ -19,4 +19,24 @@
     font-size: 18px;
     margin: 0 0 10px 0;
 }
+.form-horizontal .control-label {
+    width: 68px;
+}
+.form-horizontal .controls {
+    margin-left: 83px;
+}
 
+#id_birthday_year,#id_birthday_month,#id_birthday_day
+{
+    margin-right: 1px;
+}
+
+.controls .errorlist{
+    display: inline-block;
+    list-style: none;
+}
+
+.controls textarea {
+    height: auto;
+    resize: none;
+}

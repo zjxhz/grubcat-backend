@@ -46,7 +46,7 @@ user_list_css = Bundle(
 )
 
 edit_profile_css = Bundle(
-    base_css, common_css, 'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    base_css, common_css, bootstrap_css, 'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 
