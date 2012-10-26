@@ -105,7 +105,7 @@ urlpatterns = patterns('',
      url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
-    url(r'^profile/$', login_required(TemplateView.as_view(template_name='user/profile.html')), name='edit_profile'),
+    url(r'^profile/$', login_required(edit_profile), name='edit_profile'),
     url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
 
     #restaurant admin

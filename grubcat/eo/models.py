@@ -392,6 +392,13 @@ class TaggedUser(GenericTaggedItemBase):
     class Meta:
         db_table = u'tagged_user'
 
+class Gender:
+    MALE=0
+    FEMAL=1
+GENDER_CHOICE=(
+    (Gender.MALE, u'男'),
+    (Gender.FEMAL, u'女'),
+)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -400,12 +407,12 @@ class UserProfile(models.Model):
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
-    gender = models.IntegerField(null=True)
+    gender = models.IntegerField(blank=True, null=True,choices=GENDER_CHOICE)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
-    birthday = models.DateTimeField(null=True)
+    birthday = models.DateField(null=True,blank=True)
     college = models.CharField(max_length=64, null=True)
     work_for = models.CharField(max_length=64, null=True)
     occupation = models.CharField(max_length=64, null=True)

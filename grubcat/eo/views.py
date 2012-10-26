@@ -606,7 +606,17 @@ class UploadAvatarView(UpdateView):
         return HttpResponseRedirect(redirect_url)
 
 def edit_profile(request):
-    pass
+    profile = request.user.get_profile()
+    if request.method == 'GET':
+        form = BasicProfileForm(instance=profile)
+    elif request.method == 'POST':
+        form = BasicProfileForm(request.POST,instance=profile)
+        if form.is_valid():
+            profile = form.save()
+            print "sucess"
+            return HttpResponseRedirect(reverse('edit_profile'))
+    return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
+
 
 
         #    temp use
