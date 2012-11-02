@@ -15,7 +15,7 @@ from taggit.models import GenericTaggedItemBase, Tag
 import random
 from datetime import timedelta
 from easy_thumbnails.files import get_thumbnailer
-
+import os
 # Create your models here.
 
 
@@ -428,7 +428,7 @@ class UserProfile(models.Model):
 
     @property
     def small_avatar(self):
-        if self.avatar:
+        if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
                 'size': settings.SMALL_AVATAR_SIZE,
                 'box': self.cropping,

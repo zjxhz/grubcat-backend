@@ -228,7 +228,7 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/location%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('update_location'), name="api_update_location"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/avatar%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('avatar_thumbnail'), name="api_avatar_thumbnail"),  
+                self.wrap_view('avatar'), name="api_avatar"),  
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -418,7 +418,7 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
             raise NotImplementedError
-    def avatar_thumbnail(self, request, **kwargs):
+    def avatar(self, request, **kwargs):
         user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
         if request.method == "GET":
             width = request.GET.get("width")
@@ -427,6 +427,10 @@ class UserResource(ModelResource):
                 return createGeneralResponse('NOK', 'width and height expected') 
             url = user_to_query.avatar_thumbnail(int(width), int(height))
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
+        elif request.method == 'POST':
+            user_to_query.avatar = request.FILES['file']
+            user_to_query.save()
+            return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError
             
