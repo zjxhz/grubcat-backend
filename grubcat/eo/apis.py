@@ -88,6 +88,9 @@ def get_my_list(resource, queryset, request):
     
     This is useful when the filtering string is difficult to construct
     '''
+    applicable_filters = resource.build_filters(filters=request.GET.copy())
+    if len(applicable_filters.keys()) and hasattr(queryset, 'filter') > 0:
+        queryset = queryset.filter(**applicable_filters)
     base_object_list = resource.apply_authorization_limits(request, queryset)
     sorted_objects = resource.apply_sorting(base_object_list, options=request.GET)
 
@@ -229,6 +232,8 @@ class UserResource(ModelResource):
                 self.wrap_view('update_location'), name="api_update_location"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/avatar%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('avatar'), name="api_avatar"),  
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/latest_messages%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_latest_messages_by_user'), name="api_get_latest_messages_by_user"),  
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -330,10 +335,22 @@ class UserResource(ModelResource):
                                   type=message_type)
             message.save()
             return createGeneralResponse('OK', 'Message sent to %s' % to_person)
+        elif request.method == 'GET':
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs)) 
+            return get_my_list(UserMessageResource(), user_to_query.messages, request)
         else:
-            message_resource = UserMessageResource()
-            return message_resource.get_list(request, to_person=to_person)
+            raise NotImplementedError
     
+    def get_latest_messages_by_user(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        if request.method == 'GET':
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs)) 
+            return get_my_list(UserMessageResource(), user_to_query.latest_messages_by_user, request)
+        else:
+            raise NotImplementedError
+        
     def get_invitation(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         return get_my_list(MealInvitationResource(), obj.invitations, request)
