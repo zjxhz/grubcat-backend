@@ -546,8 +546,27 @@ class UserProfile(models.Model):
             location.lng = 120.148
             location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60 * 24 * 30))
             self.location = location
+    
             return location
-
+    
+    @property
+    def messages(self):
+        return UserMessage.objects.filter(Q(from_person=self) | Q(to_person=self))
+    
+    @property
+    def latest_messages_by_user(self):
+        dic = {}
+        for message in self.messages.filter(type=0):
+            other_person = message.from_person 
+            if other_person == self:
+                other_person = message.to_person
+            temp = dic.get(other_person)
+            if temp and temp.timestamp > message.timestamp:
+                continue
+            else:
+                dic[other_person] = message
+        return dic.values()
+             
     def __unicode__(self):
         return self.user.username
 
@@ -572,7 +591,9 @@ class UserMessage(models.Model):
 
     class Meta:
         db_table = u'user_message'
-
+    
+    def __unicode__(self):
+        return "%s -> %s(%s): %s" % (self.from_person, self.to_person, self.timestamp, self.message)
 
 # Create a user profile if the profile does not exist
 def create_user_profile(sender, instance, created, **kwargs):
