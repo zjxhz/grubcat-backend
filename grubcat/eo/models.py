@@ -554,6 +554,10 @@ class UserProfile(models.Model):
         return UserMessage.objects.filter(Q(from_person=self) | Q(to_person=self))
     
     @property
+    def received_comments(self):
+        return UserMessage.objects.filter(to_person=self).filter(type=1)
+    
+    @property
     def latest_messages_by_user(self):
         dic = {}
         for message in self.messages.filter(type=0):
