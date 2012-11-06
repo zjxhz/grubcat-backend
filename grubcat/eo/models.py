@@ -560,7 +560,7 @@ class UserProfile(models.Model):
     @property
     def latest_messages_by_user(self):
         dic = {}
-        for message in self.messages.filter(type=0):
+        for message in self.messages.filter(type=0): #TODO order by time
             other_person = message.from_person 
             if other_person == self:
                 other_person = message.to_person
@@ -570,6 +570,9 @@ class UserProfile(models.Model):
             else:
                 dic[other_person] = message
         return dic.values()
+    
+    def chat_history_with_user(self, other_user, limit=20):
+        return self.messages.filter(Q(from_person=other_user) | Q(to_person=other_user) ).order_by('-timestamp')[:limit]
              
     def __unicode__(self):
         return self.user.username

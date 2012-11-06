@@ -25,6 +25,7 @@ import base64
 import logging
 import re
 import simplejson
+import os
 
 logger = logging.getLogger('api')
 
@@ -236,6 +237,8 @@ class UserResource(ModelResource):
                 self.wrap_view('avatar'), name="api_avatar"),  
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/latest_messages%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_latest_messages_by_user'), name="api_get_latest_messages_by_user"),  
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_chat_history'), name="api_get_chat_history"),  
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -363,6 +366,17 @@ class UserResource(ModelResource):
         else:
             raise NotImplementedError
         
+    def get_chat_history(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        if request.method == 'GET':
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            other_user = request.GET.get("user_id") 
+            return get_my_list(UserMessageResource(), user_to_query.chat_history_with_user(other_user), request)
+        else:
+            raise NotImplementedError
+            
     def get_invitation(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         return get_my_list(MealInvitationResource(), obj.invitations, request)
@@ -457,8 +471,13 @@ class UserResource(ModelResource):
             url = user_to_query.avatar_thumbnail(int(width), int(height))
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
         elif request.method == 'POST':
+            old_avatar = user_to_query.avatar
             user_to_query.avatar = request.FILES['file']
+            user_to_query.cropping = "" #cropping is not supported by app yet so clear it
             user_to_query.save()
+            if old_avatar and os.path.exists(old_avatar.path):
+                os.remove(old_avatar.path)
+            
             return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError
