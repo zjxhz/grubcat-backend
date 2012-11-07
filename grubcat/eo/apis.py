@@ -194,7 +194,8 @@ class UserResource(ModelResource):
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
         
-        bundle.data['small_avatar'] = bundle.obj.small_avatar    
+        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['big_avatar'] = bundle.obj.big_avatar    
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
@@ -373,6 +374,8 @@ class UserResource(ModelResource):
         if request.method == 'GET':
             user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
             other_user = request.GET.get("user_id") 
+            if not other_user:
+                return createGeneralResponse("NOK", "user_id expected.")
             return get_my_list(UserMessageResource(), user_to_query.chat_history_with_user(other_user), request)
         else:
             raise NotImplementedError
