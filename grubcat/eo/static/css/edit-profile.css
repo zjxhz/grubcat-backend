@@ -40,3 +40,9 @@
     height: auto;
     resize: none;
 }
+
+.control-group.gender .errorlist{
+    padding-top: 5px;
+    margin: 0 0 0 226px;
+    vertical-align: middle;
+}

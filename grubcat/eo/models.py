@@ -407,7 +407,7 @@ class UserProfile(models.Model):
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
-    gender = models.IntegerField(blank=True, null=True,choices=GENDER_CHOICE)
+    gender = models.IntegerField( null=True,choices=GENDER_CHOICE)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
@@ -711,7 +711,12 @@ class Meal(models.Model):
 
     def get_cover_url(self):
         if self.photo:
-            url = self.photo.url
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size':(376,210),
+                'crop': True,
+#                'quality':85,
+                'detail': True,
+                }).url
         else:
             url = settings.STATIC_URL + "img/default_meal_cover.jpg"
         return url

@@ -106,6 +106,9 @@ urlpatterns = patterns('',
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
     url(r'^profile/$', login_required(edit_profile), name='edit_profile'),
+    url(r'^profile/basic/$', login_required(edit_profile_basic), name='edit_profile_basic'),
+    url(r'^profile/education/$', login_required(edit_profile), name='edit_profile_education'),
+    url(r'^profile/work/$', login_required(edit_profile), name='edit_profile_work'),
     url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
 
     #restaurant admin
