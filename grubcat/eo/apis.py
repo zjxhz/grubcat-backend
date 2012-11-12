@@ -407,9 +407,6 @@ class UserResource(ModelResource):
             return get_my_list(UserTagResource(), user.tags.all(), request) 
 
     def filter_list(self, request, users):
-        if request.GET.get('gender'):
-                gender = int(request.GET.get('gender'))
-                users = [u for u in users if u.gender == gender]
         if request.GET.get('seen_within_minutes'):
             minutes = int(request.GET.get('seen_within_minutes'))
             users = [u for u in users if datetime.now() - u.faked_location.updated_at < timedelta(minutes=minutes)]    
@@ -489,7 +486,7 @@ class UserResource(ModelResource):
         authorization = Authorization()
         queryset = UserProfile.objects.all()
         resource_name = 'user'
-        filtering = {'from_user':ALL,}
+        filtering = {'from_user':ALL,'gender': ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
 
 
