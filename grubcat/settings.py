@@ -2,7 +2,6 @@
 import os
 from django.core.urlresolvers import reverse_lazy
 
-print "grubcat"
 DEBUG = True
 TEMPLATE_DEBUG = True
 
@@ -17,25 +16,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'fanju', # Or path to database file if using sqlite3.
         'USER': 'fanju',
-        'PASSWORD': 'fanju',
+        'PASSWORD': 'fan321',
         'HOST': '',
         'PORT': '',
         'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
     }
 }
-#DATABASES = {
-#   'default': {
-#        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#        'NAME': 'easyorder',                      # Or path to database file if using sqlite3.
-#        'USER': 'root',
-#        'PASSWORD': 'CD7nJt6Uwk0XRdagy830',
-#        'HOST': 'easyorder-JackZhu.dotcloud.com',
-#        'PORT': '22402',
-#        'OPTIONS': {"init_command": "SET storage_engine=INNODB",}
-#    }
-#}
 
-# Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # On Unix systems, a value of None will cause Django to use the same
