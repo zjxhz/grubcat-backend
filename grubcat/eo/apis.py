@@ -406,7 +406,11 @@ class UserResource(ModelResource):
         else:
             return get_my_list(UserTagResource(), user.tags.all(), request) 
 
+    # we need to do the filtering of list by ourselves as tastypie filters only queryset
     def filter_list(self, request, users):
+        if request.GET.get('gender'):
+            gender = int(request.GET.get('gender'))
+            users = [u for u in users if u.gender == gender]
         if request.GET.get('seen_within_minutes'):
             minutes = int(request.GET.get('seen_within_minutes'))
             users = [u for u in users if datetime.now() - u.faked_location.updated_at < timedelta(minutes=minutes)]    
