@@ -96,10 +96,10 @@ class MealListView(ListView):
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
-#    def get_context_data(self, **kwargs):
-#        context = super(MealListView, self).get_context_data(**kwargs)
-#        context['recent_users'] = UserProfile.objects.exclude(avatar="").select_related("user")[:12]
-#        return context
+    def get_context_data(self, **kwargs):
+        context = super(MealListView, self).get_context_data(**kwargs)
+        context['hot_users'] = UserProfile.objects.exclude(avatar="").select_related("user")[:12]
+        return context
 
 
 class MealDetailView(DetailView):
