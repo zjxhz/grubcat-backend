@@ -36,9 +36,16 @@
                 <h2><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
                 <div class="meal-img-wrapper fl">
-                    <a href="{{ meal.get_absolute_url }}"><img width="376px" height="210px"
-                                                               class="lazy"
-                                                               data-original="{{ meal.get_cover_url }}"></a>
+                    <a href="{{ meal.get_absolute_url }}">
+                        {% if forloop.counter0 < 4 %}
+                            <img width="376px" height="210px"
+                                 src="{{ meal.get_cover_url }}">
+                        {% else %}
+                            <img width="376px" height="210px"
+                                 class="lazy"
+                                 data-original="{{ meal.get_cover_url }}">
+                        {% endif %}
+                    </a>
 
                     <div class="date-wrapper">
                         <span class="month">{{ meal.start_date|date:"n" }}月</span>
