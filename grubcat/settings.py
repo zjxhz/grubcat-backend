@@ -64,8 +64,8 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStora
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
-
+#STATIC_URL = '/static/'
+STATIC_URL = 'http://fanju.dn.qbox.me/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
