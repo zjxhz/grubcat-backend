@@ -239,7 +239,9 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/latest_messages%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_latest_messages_by_user'), name="api_get_latest_messages_by_user"),  
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_chat_history'), name="api_get_chat_history"),  
+                self.wrap_view('get_chat_history'), name="api_get_chat_history"), 
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_new_messages'), name="api_get_new_messages") 
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -379,7 +381,20 @@ class UserResource(ModelResource):
             return get_my_list(UserMessageResource(), user_to_query.chat_history_with_user(other_user), request)
         else:
             raise NotImplementedError
-            
+   
+    def get_new_messages(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return login_required(request)
+        
+        if request.method == 'GET':
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            last_messsage = request.GET.get("last_message_id")
+            if not last_messsage:
+                return createGeneralResponse("NOK", "last_message_id expected.")
+            return get_my_list(UserMessageResource(), user_to_query.new_messages(last_messsage), request)
+        else:
+            raise NotImplementedError
+                
     def get_invitation(self, request, **kwargs):
         obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         return get_my_list(MealInvitationResource(), obj.invitations, request)

@@ -573,7 +573,11 @@ class UserProfile(models.Model):
     
     def chat_history_with_user(self, other_user, limit=20):
         return self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user) ).order_by('timestamp')[:limit]
-             
+    
+    def new_messages(self, last_message_id):
+        last_message = UserMessage.objects.get(pk=last_message_id)
+        return UserMessage.objects.filter(from_person=last_message.from_person).filter(timestamp__gt=last_message.timestamp)
+                     
     def __unicode__(self):
         return self.user.username
 
