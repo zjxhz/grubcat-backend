@@ -576,7 +576,7 @@ class UserProfile(models.Model):
     
     def new_messages(self, last_message_id):
         last_message = UserMessage.objects.get(pk=last_message_id)
-        return UserMessage.objects.filter(from_person=last_message.from_person).filter(timestamp__gt=last_message.timestamp)
+        return UserMessage.objects.filter(from_person=last_message.from_person).filter(timestamp__gt=last_message.timestamp).filter(type=0).order_by('timestamp')
                      
     def __unicode__(self):
         return self.user.username
