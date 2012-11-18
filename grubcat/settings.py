@@ -2,7 +2,7 @@
 import os
 from django.core.urlresolvers import reverse_lazy
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = True
 
 ADMINS = (
@@ -34,7 +34,7 @@ TIME_ZONE = 'Asia/Shanghai'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'zh-cn'
-DATE_FORMAT='Y n j'
+DATE_FORMAT = 'Y n j'
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'ajax_select',
     'taggit',
+    'raven.contrib.django',
     #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
@@ -162,7 +163,7 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters',)
 BIG_AVATAR_SIZE = (200, 200)
 SMALL_AVATAR_SIZE = (50, 50)
-IMAGE_CROPPING_THUMB_SIZE=(320, 320)
+IMAGE_CROPPING_THUMB_SIZE = (320, 320)
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
@@ -171,39 +172,26 @@ API_LIMIT_PER_PAGE = 5
 #don't auto compress css/jss files, use command by manual
 ASSETS_AUTO_BUILD = False
 
+RAVEN_CONFIG = {
+    'register_signals': True,
+    'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@42.121.34.164:9000/2',
+    }
+
 LOGGING_ROOT = "/home/fanju/logs/user/"
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-        'api': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
-        },
-    },
-    'filters': {
     },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
-        },
         'default': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -212,49 +200,34 @@ LOGGING = {
             'backupCount': 7,
             'formatter': 'verbose',
         },
-        'api': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOGGING_ROOT, 'api.log'),
-            'maxBytes': 1024 * 1024 * 1,
-            'backupCount': 1,
-            'formatter': 'api',
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.handlers.SentryHandler',
         },
-        'request_handler': {
+        'console': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOGGING_ROOT, 'request.log'),
-            'maxBytes': 1024 * 1024 * 5, # 5 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'scprits_handler': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOGGING_ROOT, 'script.log'),
-            'maxBytes': 1024 * 1024 * 5, # 5 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
     },
     'loggers': {
-        'django': {
+        'django.db.backends': {
+            'level': 'ERROR',
             'handlers': ['default'],
-            'level': 'INFO',
-            'propagate': False
+            'propagate': False,
         },
-        'django.request': {
-            'handlers': ['request_handler'],
+        'raven': {
             'level': 'DEBUG',
-            'propagate': False
+            'handlers': ['default'],
+            'propagate': False,
         },
-        'scripts': {
-            'handlers': ['scprits_handler'],
-            'level': 'INFO',
-            'propagate': False
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['default'],
+            'propagate': False,
         },
         'api': {
-            'handlers': ['api'],
+            'handlers': ['sentry'],
             'level': 'DEBUG',
             'propagate': False
         },
