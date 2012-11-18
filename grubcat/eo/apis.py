@@ -360,7 +360,7 @@ class UserResource(ModelResource):
                                   type=message_type)
             message.save()
             if to_person.apns_token:
-                pyapns_wrapper.notify(to_person.apns_token, "%You have new messages from %s " % from_person.name);
+                pyapns_wrapper.notify(to_person.apns_token, "You have new messages from %s" % from_person.name);
                 
             return createGeneralResponse('OK', 'Message sent to %s' % to_person)
         elif request.method == 'GET':
