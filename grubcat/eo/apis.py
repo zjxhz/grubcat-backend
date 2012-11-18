@@ -171,7 +171,6 @@ class UserPhotoResource(ModelResource):
                     
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
-    avatar = Base64FileField('avatar')
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
     from_user = fields.ToManyField('eo.apis.RelationshipResource', 'from_user')
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
@@ -187,6 +186,10 @@ class UserResource(ModelResource):
                 bundle.data[key] = bundle.data[field_name].data[key]
             del bundle.data[field_name]
     
+    def hydrate(self, bundle):
+        bundle.data['avatar'] = str(bundle.obj.avatar) # never change avatar in a patch request, or it always add /media/
+        return bundle
+        
     def dehydrate(self, bundle):
         if not bundle.data['location']:
             # simulate a location. TODO remove these lines in production
@@ -241,7 +244,7 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_chat_history'), name="api_get_chat_history"), 
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_new_messages'), name="api_get_new_messages") 
+                self.wrap_view('get_new_messages'), name="api_get_new_messages"), 
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -358,7 +361,7 @@ class UserResource(ModelResource):
             return get_my_list(UserMessageResource(), user_to_query.messages, request)
         else:
             raise NotImplementedError
-    
+        
     def get_latest_messages_by_user(self, request, **kwargs):
         if not request.user.is_authenticated():
             return login_required(request)
