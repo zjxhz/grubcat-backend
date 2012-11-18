@@ -12,7 +12,7 @@
     <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $("img.lazy").lazyload({ threshold:200 });
+            $("img.lazy").lazyload({ threshold:200, effect :'fadeIn' });
             $("select.pretty").dropkick();
             $("#nav-meal").addClass("current");
             $("#faq .sidebar-box-inner a").click(function () {
@@ -37,7 +37,7 @@
 
                 <div class="meal-img-wrapper fl">
                     <a href="{{ meal.get_absolute_url }}">
-                        {% if forloop.counter0 < 4 %}
+                        {% if forloop.counter0 < 3 %}
                             <img width="376px" height="210px"
                                  src="{{ meal.get_cover_url }}">
                         {% else %}

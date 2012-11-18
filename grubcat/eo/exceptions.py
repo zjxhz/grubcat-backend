@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.template.response import TemplateResponse
 from django.views.generic.simple import direct_to_template
+from raven.contrib.django.models import sentry_exception_handler
 
 class BusinessException(Exception):
     message = u"对不起，您的操作有误！"
@@ -15,4 +16,5 @@ class AlreadyJoinedError(BusinessException):
 class ProcessExceptionMiddleware(object):
     def process_exception(self, request, exception):
         if not settings.DEBUG and (isinstance(exception, BusinessException) or not settings.SHOW_EXCEPTION_DETAIL):
+            sentry_exception_handler(request=request)
             return TemplateResponse(request, "500.html", {'exception': exception})
