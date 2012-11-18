@@ -26,7 +26,11 @@ import logging
 import re
 import simplejson
 import os
-
+import util
+from django.conf import settings
+pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
+                            settings.APP_ID,
+                            settings.APNS_CERTIFICATE_LOCATION)
 logger = logging.getLogger('api')
 
 
@@ -244,7 +248,7 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_chat_history'), name="api_get_chat_history"), 
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_new_messages'), name="api_get_new_messages"), 
+                self.wrap_view('get_new_messages'), name="api_get_new_messages"),             
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -355,6 +359,9 @@ class UserResource(ModelResource):
                                   timestamp=datetime.now(), 
                                   type=message_type)
             message.save()
+            if to_person.apns_token:
+                pyapns_wrapper.notify(to_person.apns_token, "%You have new messages from %s " % from_person.name);
+                
             return createGeneralResponse('OK', 'Message sent to %s' % to_person)
         elif request.method == 'GET':
             user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs)) 
@@ -503,7 +510,7 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError
-            
+               
     class Meta:
         authorization = Authorization()
         queryset = UserProfile.objects.all()

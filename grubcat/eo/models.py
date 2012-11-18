@@ -15,6 +15,7 @@ from taggit.models import GenericTaggedItemBase, Tag
 import random
 from datetime import timedelta
 from easy_thumbnails.files import get_thumbnailer
+#import redis
 import os
 # Create your models here.
 
@@ -420,7 +421,8 @@ class UserProfile(models.Model):
     weibo_id = models.CharField(max_length=20, null=True)
     weibo_access_token = models.CharField(max_length=128, null=True)
     tags = TaggableManager(through=TaggedUser)
-
+    apns_token = models.CharField(max_length=255, blank=True)
+    
     def avatar_thumbnail(self, width, height):
         if self.avatar:
             return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height),
@@ -577,7 +579,32 @@ class UserProfile(models.Model):
     def new_messages(self, last_message_id):
         last_message = UserMessage.objects.get(pk=last_message_id)
         return UserMessage.objects.filter(from_person=last_message.from_person).filter(timestamp__gt=last_message.timestamp).filter(type=0).order_by('timestamp')
-                     
+
+#    def talk_to(self, another, message):
+#        r = redis.StrictRedis(host='localhost', port=6379, db=0)
+#        mid = r.incr("global.message.id")
+#        r.set("mid:%d:message" % mid, message)
+#        r.set("mid:%d:from" % mid, self.id)
+#        r.set("mid:%d:to" % mid, another.id)
+#        r.set("mid:%d:time" % mid, datetime.now())
+#        r.sadd("uid:%d:contacts" %  self.id, another.id)
+#        r.sadd("uid:%d:contacts" %  another.id, self.id)
+#        r.lpush("uid:%d:chat:%d" %  (self.id, another.id), mid)
+#        r.lpush("uid:%d:chat:%d" %  (another.id, self.id), mid)
+#    
+#    def contacts(self):
+#        r = redis.StrictRedis(host='localhost', port=6379, db=0)
+#        response = []
+#        for uid in r.smembers("uid:%d:contacts" % self.id):
+#            message = {}
+#            mid = int(r.lrange("uid:%d:chat:%s" % (self.id, uid), 0, 1)[0])
+#            message["from_person"] = r.get("mid:%d:from" % mid)
+#            message["to_person"] = r.get("mid:%d:to" % mid)
+#            message["time"] = r.get("mid:%d:time" % mid)
+#            message["message"] = r.get("mid:%d:message" % mid)
+#            response.append(message)
+#        print response
+                             
     def __unicode__(self):
         return self.user.username
 

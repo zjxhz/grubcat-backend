@@ -15,4 +15,5 @@ DATABASES = {
     }
 }
 
+APNS_CERTIFICATE_LOCATION = "/home/fanju/workspace/grubcat-backend/apns-dev.pem" # Created in step 2
 
