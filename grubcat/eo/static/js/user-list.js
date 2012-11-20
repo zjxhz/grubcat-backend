@@ -14,6 +14,7 @@ $(function () {
         });
     });
 
+    var ajaxLoaderImageId=$("#ajax-load-image-id").attr('href');
     $container.infinitescroll({
             navSelector:'#page-nav', // selector for the paged navigation
             nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
@@ -24,7 +25,7 @@ $(function () {
             loading:{
                 msgText:'加载中...',
                 finishedMsg:'已经是最后一页了',
-                img:'/static/img/ajax-loader.gif'
+                img:ajaxLoaderImageId
             }
         },
         // trigger Masonry as a callback
