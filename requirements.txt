@@ -17,3 +17,4 @@ django-ajax-selects
 django-taggit
 argparse
 pyapns
+raven

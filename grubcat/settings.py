@@ -129,7 +129,6 @@ INSTALLED_APPS = (
     'ajax_select',
     'taggit',
     'raven.contrib.django',
-    'gunicorn',
     #    'debug_toolbar'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
