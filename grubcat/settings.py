@@ -227,7 +227,7 @@ LOGGING = {
             'propagate': False,
         },
         'api': {
-            'handlers': ['sentry'],
+            'handlers': ['default', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
         },
