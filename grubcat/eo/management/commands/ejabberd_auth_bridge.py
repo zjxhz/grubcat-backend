@@ -77,7 +77,9 @@ class Command(BaseCommand):
         """
         try:
             user = User.objects.get(username=username)
-            if check_password(password, user.password):
+            #password can be the hash one when the request is initiated from django(e.g. to sync avatar and name) where the original password is unknown, 
+            # or the raw one when the request is from client
+            if password == user.password or check_password(password, user.password):
                 self._generate_response(True)
                 logger.info(username + ' has logged in from ejabberd')
             else:
