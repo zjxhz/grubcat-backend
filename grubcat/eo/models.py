@@ -433,15 +433,18 @@ class UserProfile(models.Model):
         else:
             return settings.MEDIA_URL + "uploaded_images/anno.png"
 
+    def avatar_thumbnailer(self, avatar_size):
+        return get_thumbnailer(self.avatar).get_thumbnail({
+            'size': avatar_size,
+            'box': self.cropping,
+            'crop': True,
+            'detail': True,
+        })
+        
     @property
     def big_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
-                'size': settings.BIG_AVATAR_SIZE,
-                'box': self.cropping,
-                'crop': True,
-                'detail': True,
-            }).url
+            thumbnail_url = self.avatar_thumbnailer(settings.BIG_AVATAR_SIZE).url
         else:
             thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
@@ -449,16 +452,18 @@ class UserProfile(models.Model):
     @property
     def small_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
-                'size': settings.SMALL_AVATAR_SIZE,
-                'box': self.cropping,
-                'crop': True,
-                'detail': True,
-            }).url
+            thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).url
         else:
             thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
-
+    
+    @property
+    def small_avatar_path(self):
+        if self.avatar and os.path.exists(self.avatar.path):
+            thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
+        else:
+            thumbnail_url = None
+        return thumbnail_url
 
     #    To Be Deleted
     @property
