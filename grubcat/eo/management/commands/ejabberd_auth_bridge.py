@@ -105,22 +105,38 @@ class Command(BaseCommand):
                     logger.debug('Got data of size ' + str(size))
                     input_ejabberd = sys.stdin.read(size).split(':')
                     operation = input_ejabberd.pop(0)
+                    username = self.escape(input_ejabberd[0])
+                    
                 except Exception:
                     # It wasn't even in the right format if we get here ...
                     self._generate_response(False)
         #                    continue
                 if operation == 'auth':
-                    logger.info('Auth request being processed for ' + input_ejabberd[1])
-                    self._handle_auth(input_ejabberd[0], input_ejabberd[2])
+                    logger.debug('Auth request being processed for ' + input_ejabberd[1])
+                    self._handle_auth(username, input_ejabberd[2])
                 elif operation == 'isuser':
-                    logger.info('Asked if ' + input_ejabberd[0] + ' is a user')
-                    self._handle_isuser(input_ejabberd[0])
+                    logger.debug('Asked if ' + username + ' is a user')
+                    self._handle_isuser(username)
                 elif operation == 'setpass':
-                    logger.info('Asked if to change password for ' + input_ejabberd[0])
+                    logger.debug('Asked if to change password for ' + username)
                     self._generate_repsonse(False)
         except KeyboardInterrupt:
             raise SystemExit(0)
  
+    def escape(self, username):
+        username = username.strip()
+        username = username.replace("\\20", " ")
+        username = username.replace("\\22", '"')
+        username = username.replace("\\26", "&")
+        username = username.replace("\\27", "'")
+        username = username.replace("\\2f", "/")
+        username = username.replace("\\3a", ":")
+        username = username.replace("\\3c", "<")
+        username = username.replace("\\3e", ">")
+        username = username.replace("\\40", "@")
+        username = username.replace("\\5c", "\\")
+        return username
+        
     def __del__(self):
         """
         What to do when we are shut off.
