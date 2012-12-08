@@ -28,6 +28,9 @@ import simplejson
 import os
 import util
 from django.conf import settings
+from xmpp import syncAvatar
+from xmpp import syncName
+
 pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
                             settings.APP_ID,
                             settings.APNS_CERTIFICATE_LOCATION)
@@ -257,12 +260,20 @@ class UserResource(ModelResource):
         By overwritting this method, PUT request may not work, and any PATCH request that tries to update foreign keys or m2m relations will not work either.
         Hope this will be a new version of tastypie, or we shall use a complete new rest framework.  
         """
+        nameChanged = False
+        if bundle.data['name'] != bundle.obj.name:
+            nameChanged = True
         bundle = self.full_hydrate(bundle)
         self.save_related(bundle)
         if bundle.data['email']:
             bundle.obj.user.email = bundle.data['email']
             bundle.obj.user.save()
+        
+        
         bundle.obj.save()
+        if nameChanged:
+            logger.debug('sync name to xmpp server')
+            syncName(bundle.obj.user.username, bundle.obj.user.password, bundle.obj.name )
         return bundle
     
     def get_favorite(self, request, **kwargs):
@@ -506,7 +517,7 @@ class UserResource(ModelResource):
             user_to_query.save()
             if old_avatar and os.path.exists(old_avatar.path):
                 os.remove(old_avatar.path)
-            
+            syncAvatar(user_to_query.user.username, user_to_query.user.password, user_to_query.small_avatar_path)
             return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError
