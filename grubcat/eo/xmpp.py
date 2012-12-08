@@ -6,6 +6,7 @@ from wokkel.subprotocols import XMPPHandler
 from wokkel.xmppim import Presence
 import hashlib
 import logging
+from django.conf import settings
 
 logger = logging.getLogger('api')
 
@@ -73,7 +74,7 @@ class AvatarClient(XMPPHandler):
 def syncName(username, password, name):
     logger.debug("sync name of user '%s' to %s" % (username, name))
     jidStr = username + "@fanjoin.com"
-    client = XMPPClient(JID(jidStr), password) 
+    client = XMPPClient(JID(jidStr), password, settings.XMPP_SERVER) 
     roster = RosterClient(jidStr, name)
     roster.setHandlerParent(client)
     client.startService()
@@ -82,7 +83,7 @@ def syncName(username, password, name):
 def syncAvatar(username, password, avatar):
     logger.debug("sync avatar of user '%s'" % username)
     jidStr = username + "@fanjoin.com"
-    client = XMPPClient(JID(jidStr), password) 
+    client = XMPPClient(JID(jidStr), password, settings.XMPP_SERVER) 
     avatar = AvatarClient(jidStr, avatar)
     avatar.setHandlerParent(client)
     client.startService()

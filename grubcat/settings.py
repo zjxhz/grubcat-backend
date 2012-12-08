@@ -244,6 +244,7 @@ APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
 APNS_HOST = 'http://localhost:7077/'
 APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Created in step 2
 
+XMPP_SERVER='localhost'
 try:
     from settings_dev import *
 except Exception: pass
