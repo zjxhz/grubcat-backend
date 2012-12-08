@@ -40,7 +40,6 @@ class RosterClient(XMPPHandler):
         item['subscription']='both'
         d = iq.send()
         d.addCallback(processRosterResult)
-        d.addBoth(lambda _ : reactor.stop() )
         return d
     
     def connectionInitialized(self):
@@ -69,7 +68,6 @@ class AvatarClient(XMPPHandler):
         photo.addElement('BINVAL', content=content)
         d = iq.send()
         d.addCallback(processvCardAvatarUpdateResult)
-        d.addBoth(lambda _ : reactor.stop())
         return d
 
 def syncName(username, password, name):
@@ -79,7 +77,6 @@ def syncName(username, password, name):
     roster = RosterClient(jidStr, name)
     roster.setHandlerParent(client)
     client.startService()
-    reactor.run()  
 
 def syncAvatar(username, password, avatar):
     logger.debug("sync avatar of user '%s'" % username)
@@ -88,13 +85,14 @@ def syncAvatar(username, password, avatar):
     avatar = AvatarClient(jidStr, avatar)
     avatar.setHandlerParent(client)
     client.startService()
-    reactor.run()  
+  
 
 def syncBoth(user_profile):
     syncName(user_profile.user.username, user_profile.user.password, user_profile.name)
     if user_profile.avatar:
         syncAvatar(user_profile.user.username, user_profile.user.password, user_profile.small_avatar_path)
-    
+
+reactor.run()    
 #syncName("xuaxu","pbkdf2_sha256$10000$SOpptq1FcF8k$c8ttyX5qWC+bLlC71E2wPoFB54+oOz4wsleOKLptNBU=", "Wayne")
 #syncAvatar("xuaxu","pbkdf2_sha256$10000$SOpptq1FcF8k$c8ttyX5qWC+bLlC71E2wPoFB54+oOz4wsleOKLptNBU=", "/home/fanju/media/uploaded_images/2012/11/06/file_1.50x50_q85_crop_detail.jpg")
 #    def publishAvatar(self):
