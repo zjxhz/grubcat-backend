@@ -28,14 +28,12 @@ import simplejson
 import os
 import util
 from django.conf import settings
-from xmpp import syncAvatar
-from xmpp import syncName
 
 pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
                             settings.APP_ID,
                             settings.APNS_CERTIFICATE_LOCATION)
+xmpp_client = util.XMPPClientWrapper()
 logger = logging.getLogger('api')
-
 
 class Base64FileField(FileField):
     """
@@ -273,7 +271,7 @@ class UserResource(ModelResource):
         bundle.obj.save()
         if nameChanged:
             logger.debug('sync name to xmpp server')
-            syncName(bundle.obj.user.username, bundle.obj.user.password, bundle.obj.name )
+            xmpp_client.syncName(bundle.obj )
         return bundle
     
     def get_favorite(self, request, **kwargs):
@@ -517,7 +515,7 @@ class UserResource(ModelResource):
             user_to_query.save()
             if old_avatar and os.path.exists(old_avatar.path):
                 os.remove(old_avatar.path)
-            syncAvatar(user_to_query.user.username, user_to_query.user.password, user_to_query.small_avatar_path)
+            xmpp_client.syncAvatar(user_to_query)
             return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError

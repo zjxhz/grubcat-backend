@@ -1,17 +1,14 @@
-from django.conf import settings
-from twisted.application import service
 from twisted.internet import reactor
 from twisted.python import log
 from twisted.words.protocols.jabber.jid import JID
 from wokkel import client
-from wokkel.client import XMPPClient, XMPPClientConnector
+from wokkel.client import  XMPPClientConnector
 from wokkel.compat import IQ
-from wokkel.subprotocols import XMPPHandler
 from wokkel.xmppim import Presence
 import hashlib
-import logging
-
-logger = logging.getLogger('api')
+#import logging
+#
+#logger = logging.getLogger("api")
 
 def clientCreator(factory, host=None):
     if not host:
@@ -62,36 +59,36 @@ def publishvCardAvatar(jid, avatar, xmlstream):
     return d
 
 def syncName(username, password, name):
-    logger.debug("sync name of user '%s' to %s" % (username, name))
+#    logger.debug("sync name of user '%s' to %s" % (username, name))
+    log.msg("sync name of user '%s' to %s" % (username, name))
     jidStr = username + "@fanjoin.com"
     jid = JID(jidStr)
     factory = client.DeferredClientFactory(jid, password)    
     factory.streamManager.logTraffic = True
     d = clientCreator(factory,"42.121.34.164")
-    d.addCallback(lambda _ : addOrUpdateRosterItem(jidStr, "Wayne1234", factory.streamManager.xmlstream) )
-    d.addBoth(lambda _: reactor.callLater(1, reactor.stop))
+    d.addCallback(lambda _ : addOrUpdateRosterItem(jidStr, name, factory.streamManager.xmlstream) )
     d.addErrback(log.err)
-    reactor.run()
-
 
 def syncAvatar(username, password, avatar):
-    logger.debug("sync avatar of user '%s'" % username)
+#    logger.debug("sync avatar of user '%s'" % username)
+    log.msg("sync avatar of user '%s'" % username)
     jidStr = username + "@fanjoin.com"
     jid = JID(jidStr)
     factory = client.DeferredClientFactory(jid, password)    
     d = clientCreator(factory, "42.121.34.164")
     d.addCallback(lambda _ : publishvCardAvatar(jidStr, avatar, factory.streamManager.xmlstream) )
     d.addErrback(log.err)
-    d.addBoth(lambda _: reactor.callLater(1, reactor.stop))
-    reactor.run()
+
 
 def syncBoth(user_profile):
     syncName(user_profile.user.username, user_profile.user.password, user_profile.name)
     if user_profile.avatar:
         syncAvatar(user_profile.user.username, user_profile.user.password, user_profile.small_avatar_path)
 
-#syncName("xuaxu","qqqqqq","Waynexyz")
+syncName("xuaxu","qqqqqq","Waynexyz")
 #syncAvatar("xuaxu","qqqqqq","/home/fanju/media/uploaded_images/2012/09/11/abc.com_avatar.jpg.50x50_q85_crop_detail.jpg")
+
+
 #reactor.run()    
 #syncName("xuaxu","pbkdf2_sha256$10000$SOpptq1FcF8k$c8ttyX5qWC+bLlC71E2wPoFB54+oOz4wsleOKLptNBU=", "Wayne")
 #syncAvatar("xuaxu","pbkdf2_sha256$10000$SOpptq1FcF8k$c8ttyX5qWC+bLlC71E2wPoFB54+oOz4wsleOKLptNBU=", "/home/fanju/media/uploaded_images/2012/11/06/file_1.50x50_q85_crop_detail.jpg")
