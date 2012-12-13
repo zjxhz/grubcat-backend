@@ -271,7 +271,7 @@ class UserResource(ModelResource):
         bundle.obj.save()
         if nameChanged:
             logger.debug('sync name to xmpp server')
-            xmpp_client.syncName(bundle.obj )
+            xmpp_client.syncProfile(bundle.obj )
         return bundle
     
     def get_favorite(self, request, **kwargs):
@@ -515,7 +515,7 @@ class UserResource(ModelResource):
             user_to_query.save()
             if old_avatar and os.path.exists(old_avatar.path):
                 os.remove(old_avatar.path)
-            xmpp_client.syncAvatar(user_to_query)
+            xmpp_client.syncProfile(user_to_query)
             return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
         elif request.method == 'DELETE':
             raise NotImplementedError
