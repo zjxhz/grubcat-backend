@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 logger.info(username + ' has logged in from ejabberd')
             else:
                 self._generate_response(False)
-                logger.info(username + ' failed auth from ejabberd')
+                logger.info(username + ' failed auth from ejabberd, incorrect password: %s' % password)
         except User.DoesNotExist:
             self._generate_response(False)
             logger.info(username + ' is not a valid user from ejabberd')
