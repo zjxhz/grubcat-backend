@@ -64,15 +64,15 @@
                     <p>
                         {{ meal.introduction|truncatechars:"90" }}
                     </p>
-                    <a class="png-fix" href="{{ meal.get_absolute_url }}">加入饭局</a>
+{#                    <a class="png-fix" href="{{ meal.get_absolute_url }}">查看饭局</a>#}
                 </div>
             </div>
-            <div class="meal-cell-shadow">
-            </div>
+          {% comment %}  <div class="meal-cell-shadow">
+            </div>{% endcomment %}
         {% endfor %}
     </div>
 
-    <div class="sidebar">
+    {% comment %}<div class="sidebar">
         {% include "support/faq_sidebar.html" %}
         {% if hot_users %}
             <div id="recently-grubbed" class="sidebar-box">
@@ -104,7 +104,7 @@
                 <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>
             </div>
         </div>
-    </div>
+    </div>{% endcomment %}
 
 {% endblock %}
 

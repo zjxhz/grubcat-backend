@@ -16,12 +16,12 @@
 }
 
 .meal-cell {
-    border: 1px solid #DDD;
-    margin: 10px 10px 30px 0px;
-    padding-right: 15px;
+    border-bottom: 1px solid #DDD;
+    margin: 0 10px 10px 0;
+    padding-bottom: 25px;
     position: relative;
-    bottom: 0;
-    background: #ffffff;
+    bottom: 2px;
+    background: white;
 }
 
 .meal-cell h2{
