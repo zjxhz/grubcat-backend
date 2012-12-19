@@ -4,7 +4,7 @@
 /*}*/
 
 html, body {
-    font-size: 12px;
+    /*font-size: 12px;*/
     font-family: helvetica, arial, sans-serif;
 }
 
@@ -94,6 +94,10 @@ img {
     width:1008px;
     margin: 0 auto;
     _margin-top:-50px;
+}
+
+ul.dropdown-menu{
+    min-width: 100px;
 }
 
 #container-upper {
