@@ -22,12 +22,13 @@
         {% assets "common_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
+        <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
     {% endblock %}
 </head>
-<body>
+<body class="">
 
 {% block nav %}
-    <div id="main-nav" class="logged-out">
+    {% comment %} <div id="main-nav" class="logged-out">
         <div class="nav-inner">
             {#            <div class="logo">#}
             {#                <a href="/">#}
@@ -61,6 +62,55 @@
                 {% endif %}
             </ul>
         </div>
+    </div>{% endcomment %}
+    <div class="navbar navbar-static-top">
+        <div class="navbar-inner  ">
+            <div class="container">
+                <a class="brand " href="/">饭聚 @杭州</a>
+                <ul class="nav pull-right">
+                    <li id="nav-meal"><a href="{% url meal_list %}">首页</a></li>
+                    {% comment %} </ul>
+            <ul class="nav pull-right">{% endcomment %}
+
+                    <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
+                    <li id="nav-create-meal"><a href="{% url create_meal %}">发起饭局</a></li>
+
+                    {% if request.user.is_authenticated %}
+
+
+                        {% if request.user.restaurant %}
+                            <li><a href="{% url restaurant_admin %}">餐厅后台</a></li>
+                        {% endif %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">dds<b class="caret"></b></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                                <li><a tabindex="-1" href="{% url edit_profile %}">个人主页</a></li>
+                                <li><a tabindex="-1" href="#">我的饭局</a></li>
+                                <li class="divider"></li>
+                                <li><a tabindex="-1" href="{% url edit_profile %}">账号设置</a></li>
+                                <li><a tabindex="-1" href="{% url logout %}">退出</a></li>
+                            </ul>
+                        </li>
+
+                    {% else %}
+                        {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}
+                            <li><a href="
+                                    {% url login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
+                                   id="login_link"
+                                    >登录</a></li>
+                            <li><a href="
+                                    {% url register %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
+                                   id="signup_link"
+                                    >注册</a></li>
+                        {% else %}
+                            <li><a href="{% url login %}?next={{ request.path_info }}">登录</a></li>
+                            <li><a href="{% url register %}?next={{ request.path_info }}">注册</a></li>
+                        {% endif %}
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -92,16 +142,17 @@
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
 {% endblock %}
 <script type="text/javascript">
     $(document).ready(function ($) {
 
-        $("#main-nav .nav-inner ul li").removeClass("current");
-        $("#" + $("#nav-active-id").html()).addClass("current");
-        $("#main-nav .nav-inner ul li").not(".current").hover(function () {
-            $(this).addClass("current");
+        $("ul.nav li").removeClass("active");
+        $("#" + $("#nav-active-id").html()).addClass("active");
+        $("ul.nav  li").not(".active").hover(function () {
+            $(this).addClass("active");
         }, function () {
-            $(this).removeClass("current");
+            $(this).removeClass("active");
         });
     })
 </script>

@@ -193,7 +193,7 @@
 
 {% block content %}
 
-    <div id="faq" class="faq sidebar-box">
+  {% comment %}  <div id="faq" class="faq sidebar-box">
         <div class="sidebar-box-title">常见问题</div>
         <div class="sidebar-box-inner">
             <a>饭聚网是什么？</a>
@@ -207,7 +207,7 @@
 
             <a>更多>></a>
         </div>
-    </div>
+    </div>{% endcomment %}
     <div class="form-wrapper">
         <form id="create_meal_form" action="{% url create_meal %}" method="post"
               class="form form-horizontal"> {% csrf_token %}
@@ -330,4 +330,4 @@
     </div>
 
 {% endblock %}
-{% block active-nav-id %}nav-meal{% endblock %}
+{% block active-nav-id %}nav-create-meal{% endblock %}

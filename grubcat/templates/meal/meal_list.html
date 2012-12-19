@@ -7,6 +7,7 @@
     {% assets "meal_list_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+    <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block page_js %}
     <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
@@ -29,7 +30,7 @@
     </script>
 {% endblock %}
 {% block content %}
-    <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>
+{#    <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>#}
     <div id="meal-list">
         {% for meal in meal_list %}
             <div class="meal-cell clearfix">
