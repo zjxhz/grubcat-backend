@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load bootstrap_tags %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}发起饭局{% endblock %}
+{% block page_css %}
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
+
+    {% assets "common_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+
+    {% assets "meal_add_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript" src="{% static_asset "js/jquery.lionbars.0.3.js" %}"></script>
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
+            $("#choose-menu-wrapper").css('visibility', 'hidden');
+            $ajax_loader = $('#loading-menus');
+            $ajax_loader.show(1, function () {
+                $.get("{% url menu_list %}", {num_persons:numPersons}, function (data) {
+                    $ajax_loader.hide();
+                    $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
+                    $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
+                    $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
+                    $("#id_menu_id").val("");
+                    if (if_let_fanjoin_choose) {
+                        $("#let-fanjon-choose-link").click()
+                    } else if (menuIdToSelect) {
+                        $("li[menu-id=" + menuIdToSelect + "]").click();
+                    }
+
+                    if ($("#restaurant-list ul li").length >= 5) {
+                        $("#restaurant-list ul li:last").css('border-bottom-width', '0');
+                        $("#restaurant-list").lionbars();
+                        $("#lb-wrap-0-restaurant-list").css('height', 377)
+                    }
+
+
+                }, 'html');
+            })
+        }
+
+        $(document).ready(function () {
+            $("#id_privacy").dropkick({width:313, startSpeed:0})
+
+            {% if my_groups %}
+                var group_privacy_josn = { {% for group in my_groups %}{{ group.id}}:{{ group.privacy }},{% endfor %} };
+                $("#id_group").dropkick({
+                            change:false,
+                            width:313,
+                            startSpeed:0,
+                            change:function (group_id, label) {
+                                if (!group_id) { //no grouop selected, show privacy select
+                                    $("#dk_container_id_privacy").dropkick('reset');
+                                    $("#dk_container_id_privacy").show();
+                                    $("#privacy-text").hide();
+                                    $("#id_privacy").val(0);
+                                } else{
+                                    var privacy = group_privacy_josn[group_id];
+                                    $("#dk_container_id_privacy").hide();
+                                    $("#id_privacy").val(privacy);
+
+                                    var privacy_text=$("#id_privacy option[value=" + privacy + "]").text();
+                                    if( privacy == 0 ) { //public
+                                        privacy_text += " （圈子是公开类型）"
+                                    } else if(privacy == 1) {// private
+                                        privacy_text += " （圈子是私密类型）"
+                                    }
+
+                                    if($("#privacy-text")[0])
+                                    {
+                                        $("#privacy-text").text(privacy_text).show();
+                                    } else {
+                                        $("#id_privacy").before("<span id='privacy-text'>" +  privacy_text + "</span>");
+                                    }
+                                }
+                            }
+                        }
+                )
+
+
+                var $current_group = $("#dk_container_id_group li.dk_option_current a");
+                if($current_group.attr("data-dk-dropdown-value"))
+                {
+                    $current_group.click();
+                } else {
+                {% if request.GET.group %}
+                    $("#dk_container_id_group li a[data-dk-dropdown-value=" + {{ request.GET.group }} + "]").click();
+                    {% endif %}
+                }
+            {% endif %}
+
+        $.datepicker.regional['zh-CN'] =
+        {
+            clearText:'清除', clearStatus:'清除已选日期',
+            closeText:'关闭', closeStatus:'不改变当前选择',
+            prevText:'&lt;上月', prevStatus:'显示上月',
+            nextText:'下月&gt;', nextStatus:'显示下月',
+            currentText:'今天', currentStatus:'显示本月',
+            monthNames:['一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            monthNamesShort:['一', '二', '三', '四', '五', '六',
+                '七', '八', '九', '十', '十一', '十二'],
+            monthStatus:'选择月份', yearStatus:'选择年份',
+            weekHeader:'周', weekStatus:'年内周次',
+            dayNames:['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+            dayNamesShort:['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+            dayNamesMin:['日', '一', '二', '三', '四', '五', '六'],
+            dayStatus:'设置 DD 为一周起始', dateStatus:'选择 m月 d日, DD',
+            dateFormat:'yy-mm-dd', firstDay:1,
+            initStatus:'请选择日期', isRTL:false
+        };
+
+        $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+        $("#id_start_date").css('visibility', 'visible').datepicker({
+            onSelect:function (dateText, inst) {
+                $(inst.input).change().focusout();
+            },
+            defaultDate:"2012-8-17",
+            numberOfMonths:1,
+            minDate:'+4D',
+            maxDate:'+1M'
+        })
+
+
+        $('#id_start_time').dropkick({width:116, startSpeed:0});
+        $("#id_min_persons").dropkick({
+                    change:false,
+                    width:313,
+                    startSpeed:0,
+                    change:function (value, label) {
+                        getMenuList(value);
+                    }
+                }
+        )
+        $('#id_list_price,#id_region').dropkick({width:120, startSpeed:100});
+        var if_let_fanjoin_choose = $("#id_if_let_fanjoin_choose").val() == "True";
+        var oldMenuId = $("#id_menu_id").val();
+        getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
+
+
+        /*            $("#extra_request_link").click(function () {
+         $("#more-options").slideToggle(500);
+         return false;
+         })*/
+
+        $("#let-fanjon-choose-link").live("click", function () {
+            $("#choose-restaurant-info").hide();
+            $("#id_menu_id").val("");
+            if (!$("#choose-menu-container #let-fanjoin-choose")[0]) {
+                $("#choose-menu").append($("#let-fanjoin-choose"));
+            }
+            $("#let-fanjoin-choose").show();
+            $("#id_if_let_fanjoin_choose").val("True")
+            var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
+            $("#menu-" + oldMenuId).hide();
+            $("li.restaurant-item.selected").removeClass("selected");
+            return false;
+        })
+
+        $("li.restaurant-item").live("click", function () {
+            $("#menu-info-wrapper").show();
+            $("#choose-restaurant-info,#let-fanjoin-choose").hide();
+            $("#id_if_let_fanjoin_choose").val("False")
+            var oldMenuId = $(this).siblings(".selected").attr("menu-id");
+            $("#menu-" + oldMenuId).hide();
+            $(this).addClass('selected').siblings().removeClass("selected");
+            $("#menu-" + $(this).attr("menu-id")).show();
+            $("#id_menu_id").val($(this).attr("menu-id"));
+        })
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="faq" class="faq sidebar-box">
+        <div class="sidebar-box-title">常见问题</div>
+        <div class="sidebar-box-inner">
+            <a>饭聚网是什么？</a>
+
+            <p>饭聚网是刚刚流行起来的基于兴趣的美食社交网站，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。</p>
+
+
+            <a>如何取消一个饭局？</a>
+
+            <p>如果你已经为一个饭局付费了，但又因为其他计划而不能参加了，那么你可以在饭局开始前的72个小时内取消，可以通过拨打热线0000000000联系我们，我们会帮您取消饭局。</p>
+
+            <a>更多>></a>
+        </div>
+    </div>
+    <div class="form-wrapper">
+        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+              class="form form-horizontal"> {% csrf_token %}
+            <fieldset>
+
+                <legend>发起一个饭局</legend>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_topic">饭局主题</label>
+
+                    <div class="controls">
+                        {{ form.topic }} {{ form.topic.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_introduction">饭局简介</label>
+
+                    <div class="controls">
+                        {{ form.introduction }} {{ form.introduction.errors }}
+                    </div>
+                </div>
+
+
+                {#            </fieldset>#}
+
+                {#            <fieldset class="full">#}
+
+                {#                <legend>2、餐厅信息</legend>#}
+                <div class="control-group start_time">
+                    <label class="control-label" for="id_privacy">就餐时间</label>
+
+                    <div class="controls">
+                        {{ form.start_date }} {{ form.start_time }}
+                        {{ form.start_date.errors }} {{ form.start_time.errors }}
+                    </div>
+                </div>
+                <div class="control-group min_persons">
+                    <label class="control-label" for="id_min_persons">就餐人数</label>
+
+                    <div class="controls">
+
+                        {{ form.min_persons }} {{ form.min_persons.errors }}
+                    </div>
+                </div>
+                {% if form.group %}
+                    <div class="control-group group">
+                        <label class="control-label" for="id_group">通知圈子</label>
+
+                        <div class="controls">
+                            {{ form.group }} {{ form.group.errors }}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="control-group privacy">
+                    <label class="control-label" for="id_privacy">是否公开</label>
+
+                    <div class="controls">
+                        {{ form.privacy }} {{ form.privacy.errors }}
+                    </div>
+                </div>
+                <div id="choose-menu-container">
+                    <div id="loading-menus" class="hide"><img alt="载入菜单"
+                                                              src="{% static_asset "img/loading-menus.gif" %}"/></div>
+                    <div id="choose-menu-wrapper"></div>
+                </div>
+            </fieldset>
+
+            {#            <fieldset class="more-options">#}
+            {#                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>#}
+            {#                <div id="more-options" class="hide">#}
+            {##}
+            {#                    <div class="control-group" id="extra_request_div">#}
+            {#                        <label class="control-label" for="id_extra_requests">其它需求</label>#}
+            {##}
+            {#                        <div class="controls">#}
+            {#                            {{ form.extra_requests }}{{ form.extra_requests.errors }}#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </fieldset>#}
+            <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
+                <div class="info">
+                    还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
+                </div>
+
+                <div class="control-group region">
+                    <label class="control-label" for="id_region">就餐地点</label>
+
+                    <div class="controls">
+                        {{ form.region }}{{ form.region.errors }}
+                    </div>
+                </div>
+                <div class="control-group list-price">
+
+                    <label class="control-label" for="id_list_price">平均消费</label>
+
+                    <div class="controls">
+
+                        {{ form.list_price }} {{ form.list_price.errors }}
+                    </div>
+                </div>
+            </div>
+
+            {{ form.menu_id }} {{ form.if_let_fanjoin_choose }}
+            <div class="form-actions">
+                <button type="submit" class="btn-create-meal">确定</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="choose-restaurant-msg" style="display: none">
+
+        {% if form.menu_id.errors %}
+            {{ form.menu_id.errors }}
+        {% else %}
+            左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
+        {% endif %}
+    </div>
+
+{% endblock %}
+{% block active-nav-id %}nav-meal{% endblock %}

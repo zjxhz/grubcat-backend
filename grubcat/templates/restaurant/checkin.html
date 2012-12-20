@@ -1,0 +1,19 @@
+{% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
+{% block title %}就餐管理{% endblock %}
+{% block page_js %}
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+    <form id="checkin-form" action="{% url restaurant_checkin %}" method="post" class="well form-search">
+        {{ form.code }}
+        &nbsp;&nbsp; &nbsp;&nbsp;
+        <button type="submit" class="btn btn-primary">查询</button>
+    </form>
+
+    <div id="result" class="row">
+
+    </div>
+    <div id="nav-active-id" style="display: none">nav-checkin</div>
+{% endblock %}
