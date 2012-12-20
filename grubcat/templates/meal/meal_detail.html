@@ -3,18 +3,17 @@
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ meal.topic }}{% endblock %}
 {% block page_css %}
+    <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
+
     {% assets "meal_detail_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     <style type="text/css">
-        #cboxOverlay {
-            background-color: #222;
-        }
     </style>
 {% endblock %}
 {% block active-nav-id %}nav-meal{% endblock %}
 {% block content %}
-    <div id="meal-main">
+    <div id="meal-main" class="span12">
         <div id="title" class="box-seperator">
             <a id="creator" href="/host">
                 <span class="host-name">由 {{ meal.host.user.username }} 发起</span>
@@ -120,7 +119,7 @@
                 </div>
             </div>
         </div>
-        {% include "support/faq_sidebar.html" %}
+{#        {% include "support/faq_sidebar.html" %}#}
     </div>
 {% endblock %}
 

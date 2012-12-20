@@ -1,4 +1,4 @@
-#meal-list-city {
+/*#meal-list-city {
     border-bottom: 1px solid #bbb;
 }
 
@@ -8,27 +8,25 @@
     text-align: center;
     font-size: 1.65em;
     font-weight: bold;
-}
+}*/
 
-#meal-list {
+/*#meal-list {
     float: left;
     width: 707px;
-}
+}*/
 
+#meal-list a:hover{
+    text-decoration: none;
+}
 .meal-cell {
-    border-bottom: 1px solid #DDD;
+    /*border-bottom: 1px solid #DDD;*/
     margin: 0 10px 10px 0;
-    padding-bottom: 25px;
+    padding-bottom:10px;
     position: relative;
     bottom: 2px;
-    background: white;
+    /*background: white;*/
 }
 
-.meal-cell h2{
-    padding: 10px;
-    font-size: 1.8em;
-    font-weight: bold;
-}
 .meal-cell-title {
     padding: 10px;
     font-size: 1.8em;
@@ -40,23 +38,33 @@
 }
 
 .meal-img-wrapper {
-    height: 210px;
-    width: 376px;
+    /*height: 210px;*/
+    /*width: 376px;*/
     position: relative;
 
 }
+
 
 .meal-img-wrapper a img {
-    height: 210px;
-    width: 376px;
+    height: 200px;
+    width: 300px;
 }
 
-.meal-info {
-    float: right;
-    width: 280px;
-    height: 210px;
-    position: relative;
+#meal-list .thumbnails .span4{
+    width:312px;
+    margin-left: 8px;
+    margin-bottom: 0;
 }
+
+
+.meal-topic{
+    height: 35px;
+    overflow: hidden;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+
 
 .meal-location {
     display: block;
@@ -82,6 +90,16 @@
     vertical-align: middle;
 }
 
+.meal-info {
+    float: right;
+    position: absolute;
+    top: 45px;
+    left: 0px;
+    width: 290px;
+    height: 200px;
+    background: white;
+}
+
 .meal-info .org span {
     line-height: 30px;
     margin-left: 5px;
@@ -89,9 +107,10 @@
     display: inline-block;
 }
 
+
 .meal-info p {
     line-height: 160%;
-    margin: 10px 0 30px 0;
+    margin: 10px ;
     font-size: 1.2em;
     color: #494949;
 }
