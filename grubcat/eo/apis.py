@@ -24,7 +24,6 @@ from urllib import urlencode
 import base64
 import logging
 import re
-import simplejson
 import os
 import util
 from django.conf import settings
