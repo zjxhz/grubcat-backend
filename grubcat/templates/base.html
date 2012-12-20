@@ -1,31 +1,32 @@
 {% load static_asset %}
 {% load static from staticfiles %}
 {% load assets %}
-<!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+{#PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"#}
+{#"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"#}
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
     <meta content="饭聚，饭局，杭州的饭聚，fanju,杭州的饭局,美食社交，社交晚餐" name="keywords">
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
     <!--[if IE 6]>
-    {% assets "fix_ie6_png_js" %}
+    {% comment %}{% assets "fix_ie6_png_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
+    {% endassets %}{% endcomment %}
 <![endif]-->
     {% block page_css %}
+        <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
         {% assets "base_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
         {% assets "common_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
-        <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
     {% endblock %}
 </head>
-<body class="">
+<body>
 
 {% block nav %}
     {% comment %} <div id="main-nav" class="logged-out">
@@ -67,22 +68,31 @@
         <div class="navbar-inner  ">
             <div class="container">
                 <a class="brand " href="/">饭聚 @杭州</a>
-                <ul class="nav pull-right">
+                <ul class="nav ">
                     <li id="nav-meal"><a href="{% url meal_list %}">首页</a></li>
-                    {% comment %} </ul>
-            <ul class="nav pull-right">{% endcomment %}
-
                     <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url create_meal %}">发起饭局</a></li>
-
+                </ul>
+                <ul class="nav pull-right">
                     {% if request.user.is_authenticated %}
-
-
                         {% if request.user.restaurant %}
                             <li><a href="{% url restaurant_admin %}">餐厅后台</a></li>
                         {% endif %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">dds<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">消息<b class="caret"></b></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                                <li><a tabindex="-1" href="#">查看私信</a></li>
+                                <li><a tabindex="-1" href="#">查看留言</a></li>
+                                <li><a tabindex="-1" href="#">新增“赞”</a></li>
+                                <li><a tabindex="-1" href="#">系统通知</a></li>
+                                <li class="divider"></li>
+                                <li><a tabindex="-1" href="#">查看全部消息</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b
+                                    class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                                 <li><a tabindex="-1" href="{% url edit_profile %}">个人主页</a></li>
                                 <li><a tabindex="-1" href="#">我的饭局</a></li>
@@ -91,6 +101,7 @@
                                 <li><a tabindex="-1" href="{% url logout %}">退出</a></li>
                             </ul>
                         </li>
+
 
                     {% else %}
                         {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}
@@ -111,48 +122,52 @@
                 </ul>
             </div>
         </div>
+        <div id="nav-active-id" style="display:none;">{% block active-nav-id %}{% endblock %}</div>
     </div>
 {% endblock %}
-
 
 {% block page-container %}
-    <div id="page-container">
+    <div   class="container">
         {% block container-inner %}
-            <div id="container-upper" class="png-fix"></div>
-            <div id="container-middle" class="png-fix">
-                <div class="content clearfix">
-                    {% block content %}{% endblock %}
-                    {#    use for active nav item, see example on meal_list page#}
-                    <div id="nav-active-id" style="display:none;">{% block active-nav-id %}{% endblock %}</div>
-                </div>
-                {% block footer %}
-                    <div id="footer" class="png-fix">
-                        <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">
-
-                        <p style="margin:5px 40px "></p>
-                    </div>
-                {% endblock %}
+            {#            <div id="container-upper" class="png-fix"></div>#}
+            {#            <div id="container-middle" class="png-fix">#}
+            <div class="row">
+                {% block content %}{% endblock %}
+                {#    use for active nav item, see example on meal_list page#}
             </div>
 
-            <div id="container-lower" class="png-fix"></div>
+            {#            </div>#}
+
+            {#            <div id="container-lower" class="png-fix"></div>#}
         {% endblock %}
     </div>
+    {% block footer %}
+        <div id="footer" >
+            {#                        <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">#}
+
+            <p style="margin:5px 40px "></p>
+        </div>
+    {% endblock %}
 {% endblock %}
+
 {% block base_js %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endblock %}
 <script type="text/javascript">
     $(document).ready(function ($) {
 
         $("ul.nav li").removeClass("active");
-        $("#" + $("#nav-active-id").html()).addClass("active");
+        var $active = $("#" + $("#nav-active-id").html());
+        $active.addClass("active");
         $("ul.nav  li").not(".active").hover(function () {
+            $active.removeClass("active");
             $(this).addClass("active");
         }, function () {
             $(this).removeClass("active");
+            $active.addClass("active");
         });
     })
 </script>

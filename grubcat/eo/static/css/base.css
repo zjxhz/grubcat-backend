@@ -1,4 +1,4 @@
-html {
+/*html {
     color: #000;
     background: #FFF
 }
@@ -69,7 +69,7 @@ legend {
 
 h1,h2,h3{
     font-weight: bold;
-}
+}*/
 /*文字排版*/
 .f12 {
     font-size: 12px
@@ -555,21 +555,21 @@ h1,h2,h3{
     padding: 0px;
 }*/
 
-li {
-    display: list-item;
-    text-align: -webkit-match-parent;
-}
+/*li {*/
+    /*display: list-item;*/
+    /*text-align: -webkit-match-parent;*/
+/*}*/
 
-a {
-    text-decoration: none;
-    cursor: pointer;
-    color: black;
-}
+/*a {*/
+    /*text-decoration: none;*/
+    /*cursor: pointer;*/
+    /*color: black;*/
+/*}*/
 
-div.hidden, a.hidden, p.hidden {
-    display: none;
-}
+/*div.hidden, a.hidden, p.hidden {*/
+    /*display: none;*/
+/*}*/
 
-body {
-    display: block;
-}
+/*body {*/
+    /*display: block;*/
+/*}*/
