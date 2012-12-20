@@ -14,14 +14,14 @@
             <h1>{{ user.username }}</h1>
             <img alt="{{ user.username }}" class="shadow" src="{{ profile.big_avatar }}" width="200" height="200">
             <br/>
-            <a href="{% url upload_avatar %}">修改头像</a>
+            <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
         </div>
 
         </div>
         <div class="right-column">
             <form  action="{% url edit_profile_basic %}" method="post" class="form form-horizontal">
                 <fieldset>
-                    <legend>重要信息</legend>
+                    <legend>基本资料</legend>
                     <div class="control-group ">
 
                         <label class="control-label" for="id_motto">个人签名：</label>
@@ -57,20 +57,6 @@
                 <button type="submit" class="button">保存</button>
             </form>
 
-            <form id="id_education_info" method="post" action="{% url edit_profile_education %}" class="">
-                <fieldset>
-                    <legend></legend>
-                    <div class="control-group ">
-
-                        <label class="control-label" for="id_motto">个人签名：</label>
-
-                        <div class="controls">
-                            <textarea id="id_motto" class="input-xlarge" type="text" name="motto" rows="3">{{  form.motto.value|default:"" }}</textarea>
-                        </div>
-                    </div>
-                </fieldset>
-                <button type="submit" class="button">添加学校</button>
-            </form>
         </div>
 
 {% endblock %}

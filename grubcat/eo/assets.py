@@ -30,10 +30,10 @@ meal_add_css= Bundle(
 
 #group related
 group_list_css = Bundle(
-    base_css, common_css, dropkick_css, bootstrap_css,  'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
+    bootstrap_css, base_css, common_css, dropkick_css,   'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
 )
 group_detail_css = Bundle(
-    base_css, common_css, dropkick_css, bootstrap_css,  'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
+    bootstrap_css, base_css, common_css, dropkick_css,   'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
 )
 
 #user related
@@ -46,7 +46,7 @@ user_list_css = Bundle(
 )
 
 edit_profile_css = Bundle(
-    base_css, common_css, bootstrap_css, 'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    bootstrap_css, base_css, common_css,  'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 
