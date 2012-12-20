@@ -46,14 +46,14 @@
 
                         <div class="meal-img-wrapper ">
                             <a href="{{ meal.get_absolute_url }}">
-                              {% comment %}  {% if forloop.counter0 < 0 %}
+                                {% if forloop.counter0 < 6 %}
                                     <img width="300" height="200" class="img-polaroid"
                                          src="{{ meal.get_cover_url }}">
-                                {% else %}{% endcomment %}
+                                {% else %}
                                     <img width="300" height="200"
                                          class="lazy img-polaroid"
                                          data-original="{{ meal.get_cover_url }}">
-{#                                {% endif %}#}
+                                {% endif %}
                             </a>
 
                             <div class="date-wrapper">
