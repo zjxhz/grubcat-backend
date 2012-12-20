@@ -19,8 +19,9 @@ $(function () {
             navSelector:'#page-nav', // selector for the paged navigation
             nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
             itemSelector:'.box', // selector for all items you'll retrieve
-            animate:true,
-            speed:500,
+            animate:false,
+
+//            speed:100,
 //            debug:true,
             loading:{
                 msgText:'加载中...',
