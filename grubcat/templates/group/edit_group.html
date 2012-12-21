@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load bootstrap_tags %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}修改 {{ group.name }}{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "dropkick_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <style type="text/css">
+        .error {
+            margin: auto auto;
+            width: auto;
+            padding: 0px;
+        }
+
+        #edit_group_title {
+            text-align: center;
+            width: 600px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 21px;
+            color: #222;
+        }
+        #div_id_logo .controls label{
+            margin-left: 15px;;
+            margin-top: 5px;;
+        }
+        #logo-clear_id{
+            display: block;
+            float: left;
+            margin-top: 8px;;
+        }
+
+    </style>
+{% endblock %}
+
+{% block page_js %}
+
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("<br/>").insertBefore($("#logo-clear_id"));
+            $("select").dropkick({width:163, startSpeed:0});
+        })
+    </script>
+{% endblock %}
+{% block active-nav-id %}nav-group{% endblock %}
+
+{% block content %}
+    <div id="edit_group_title">修改信息</div>
+    <form id="id_create_group_form" enctype="multipart/form-data" action="{{ request.path }}" method="post"
+          class="form-horizontal"> {% csrf_token %}
+        {{ form|as_bootstrap }}
+        <div class="form-actions">
+            <input type="submit" class="button" value="确定"/>
+        </div>
+    </form>
+{% endblock %}

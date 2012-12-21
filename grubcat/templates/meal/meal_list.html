@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    {% assets "meal_list_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block page_js %}
+    <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+            $(".meal-img-wrapper").mouseenter(function () {
+                $(this).next().show();
+            })
+            $(".meal-info").mouseleave(function () {
+                $(this).hide();
+            })
+
+//            $("select.pretty").dropkick();
+            /*$("#faq .sidebar-box-inner a").click(function () {
+             var $next = $(this).next("p");
+             var speed = 100;
+             if ($next.is(":visible")) {
+             $(this).next("p").slideUp(speed);
+             } else {
+             $(this).siblings("p:visible").slideUp(speed);
+             $(this).next("p").slideDown(speed);
+             }
+             })*/
+        })
+    </script>
+{% endblock %}
+{% block content %}
+    {#    <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>#}
+    <div id="meal-list" class="span12 ">
+        <div class="row">
+            {% for meal in meal_list %}
+                <div class="span4">
+                    <div class="meal-cell ">
+                        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+
+                        <div class="meal-img-wrapper ">
+                            <a href="{{ meal.get_absolute_url }}">
+                                {% if forloop.counter0 < 6 %}
+                                    <img width="300" height="200" class="img-polaroid"
+                                         src="{{ meal.get_cover_url }}">
+                                {% else %}
+                                    <img width="300" height="200"
+                                         class="lazy img-polaroid"
+                                         data-original="{{ meal.get_cover_url }}">
+                                {% endif %}
+                            </a>
+
+                            <div class="date-wrapper">
+                                <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                            </div>
+                            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
+                        </div>
+                        <a href="{{ meal.get_absolute_url }}" class="meal-info img-polaroid" style="display: none">
+                            {#                    <div class="meal-location png-fix"><span>Mission</span></div>#}
+                            {#                    <div class="host">#}
+                            {#                        <img width="30px" height="30px" alt="Social San Francisco"#}
+                            {#                             src="{% static 'img/location.jpg' %}"#}
+                            {#                                >#}
+                            {#                        <span class="png-fix">Social San Francisco</span></div>#}
+                            <p>
+                                {{ meal.introduction|truncatechars:"90" }}
+                            </p>
+                            {#                    <a class="png-fix" href="{{ meal.get_absolute_url }}">查看饭局</a>#}
+                        </a>
+                    </div>
+                    {% comment %}  <div class="meal-cell-shadow">
+            </div>{% endcomment %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% comment %}<div class="sidebar">
+        {% include "support/faq_sidebar.html" %}
+        {% if hot_users %}
+            <div id="recently-grubbed" class="sidebar-box">
+                <div class="sidebar-box-title">热门用户</div>
+                <div class="sidebar-box-inner">
+                    {% for user_profile in hot_users %}
+                        <a href=""><img alt="{{ user_profile.user.username }}"
+                                        src="{{ user_profile.small_avatar }}"
+                                        width="50px" height="50px"></a>
+                    {% endfor %}
+
+                </div>
+            </div>
+        {% endif %}
+        <div id="create-a-meal" class="sidebar-box">
+            <div class="sidebar-box-title">没有感兴趣的饭局？</div>
+            <div class="sidebar-box-inner">
+                {#                <form accept-charset="UTF-8" action="/create-a-meal" method="get">#}
+                {#                    <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>#}
+                {#                    <input class="cart_day hasDatepicker" id="cart_day" name="cyo[day]" readonly="readonly" size="30"#}
+                {#                           type="text" value="May 15, 2012">#}
+                {##}
+                {#                    <select class="pretty">#}
+                {#                        <option value="07:00">7:00 AM</option>#}
+                {#                        <option value="22:30">10:30 PM</option>#}
+                {#                    </select>#}
+                {#                    <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>#}
+                {#                </form>#}
+                <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>
+            </div>
+        </div>
+    </div>{% endcomment %}
+
+{% endblock %}
+
+{% block active-nav-id %}nav-meal{% endblock %}

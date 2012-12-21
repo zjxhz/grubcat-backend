@@ -1,0 +1,85 @@
+#user-container {
+    padding: 5px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    border-radius: 5px;
+    clear: both;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.box {
+    width: 223px;
+    margin: 5px 10px 5px 0;
+    /*background: #D8D5D2;*/
+    font-size: 11px;
+    line-height: 1.4em;
+    float: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.box .user-img img{
+    border: 2px solid white;
+    width: 219px;
+    height: 219px;
+}
+
+.box .speech-outer {
+    margin-left: 0;
+    width: 100%;
+    border: 1px solid #CCC;
+}
+
+/*#user-container {*/
+    /*width: auto;*/
+    /*margin: 0;*/
+    /*text-align  : center;*/
+/*}*/
+
+.common-interst{
+
+}
+
+
+.speech-inner p {
+    padding: 0 5px 4px 5px;
+    border-bottom: 1px solid #BBB;
+    margin-bottom: 6px;
+    line-height: 120%;
+}
+
+.speech-inner p.common-interst {
+    background: #F1F5AB;
+    padding-top: 5px;
+    margin-top: -6px;
+}
+
+.post-meal-comment {
+    border-bottom: 1px solid #BBB;
+    padding-bottom: 5px;
+    font-size: 80%;
+    margin-bottom: 6px;
+    line-height: 120%;
+    color: #333;
+}
+
+.post-meal-comment img {
+    border: none;
+    float: left;
+    margin-right: 5px;
+}
+.post-meal-comment-content {
+    float: left;
+    width: 80%;
+    overflow: hidden;
+    font-size: 1.1em;
+}
+
+.post-meal-comment-time {
+    color: #888;
+    font-size: 11px;
+    padding-left: 3px;
+    display: none;
+}
