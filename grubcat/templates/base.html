@@ -15,6 +15,7 @@
     {% comment %}{% assets "fix_ie6_png_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}{% endcomment %}
+<div id="ie6-warning">您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用 <a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div>
 <![endif]-->
     {% block page_css %}
         <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
