@@ -64,7 +64,7 @@
             </ul>
         </div>
     </div>{% endcomment %}
-    <div class="navbar navbar-static-top">
+    <div class="navbar navbar-static-top" id="main-nav">
         <div class="navbar-inner  ">
             <div class="container">
                 <a class="brand " href="/">饭聚 @杭州</a>
@@ -127,7 +127,7 @@
 {% endblock %}
 
 {% block page-container %}
-    <div   class="container">
+    <div   class="container" id="main-container">
         {% block container-inner %}
             {#            <div id="container-upper" class="png-fix"></div>#}
             {#            <div id="container-middle" class="png-fix">#}
@@ -151,6 +151,7 @@
 {% endblock %}
 
 {% block base_js %}
+
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
@@ -159,10 +160,10 @@
 <script type="text/javascript">
     $(document).ready(function ($) {
 
-        $("ul.nav li").removeClass("active");
+        $("#main-nav ul.nav li").removeClass("active");
         var $active = $("#" + $("#nav-active-id").html());
         $active.addClass("active");
-        $("ul.nav  li").not(".active").hover(function () {
+        $("#main-nav ul.nav  li").not(".active").hover(function () {
             $active.removeClass("active");
             $(this).addClass("active");
         }, function () {
