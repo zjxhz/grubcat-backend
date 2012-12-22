@@ -32,5 +32,5 @@ class ProcessProtocol(Protocol):
         
         if toUser.apns_token:
             logger.debug("pushing message to %s from %s" % (toUser.name, fromUser.name))
-            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message) )            
+            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message), 1 ) #TODO now badge is always 1. should be recorded somewhere    
         return ""

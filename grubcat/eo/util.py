@@ -14,8 +14,11 @@ class PyapnsWrapper(object):
                          open(apns_certificate_file).read(),
                          mode)
  
-    def notify(self, token, message):
-        pyapns.notify(self.app_id,token,{'aps':{'alert': message}})
+    def notify(self, token, message, badge=-1):
+        dic = {'alert': message}
+        if badge != -1:
+            dic['badge'] = badge
+        pyapns.notify(self.app_id,token,{'aps': dic})
 
 class XMPPClientWrapper(object):
     PORT = 5055
