@@ -13,14 +13,14 @@ pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
 class Command(BaseCommand, Protocol):
     def handle(self, *args, **options):
         proto = ProcessProtocol()
-        logging.debug("Handle") 
+        logging.debug("Handle offline message") 
         proto.run(Port(use_stdio=True, packet=4))        
  
 class ProcessProtocol(Protocol):
     def handle_message(self, fromUser, toUser, message):
         toUser = String(toUser).split('@')[0]
         message = String(message)
-        fromUser = String(fromUser).split('/')[0]
+        fromUser = String(fromUser).split('@')[0]
         if len(message) > 160:
             message = message[0:160] + " ... "
           
@@ -31,5 +31,6 @@ class ProcessProtocol(Protocol):
                
         
         if toUser.apns_token:
+            logger.debug("pushing message to %s from %s" % (toUser.name, fromUser.name))
             pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message) )            
         return ""
