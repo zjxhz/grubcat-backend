@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from django.conf import settings
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
@@ -22,11 +23,11 @@ from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from urllib import urlencode
 import base64
+import json
 import logging
-import re
 import os
+import re
 import util
-from django.conf import settings
 
 pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
                             settings.APP_ID,
@@ -112,7 +113,7 @@ def get_my_list(resource, queryset, request):
 #todo maybe we can use decorator
 def login_required(request):
     response = {"status": "NOK", "info": "You were not logged in"}
-    return HttpUnauthorized(simplejson.dumps(response))
+    return HttpUnauthorized(json.dumps(response))
          
 
 # Create a general response with status and message)
@@ -122,7 +123,7 @@ def createGeneralResponse(status, message, extra_dict=None):
     response['info'] = message
     if extra_dict:
         response.update(extra_dict)
-    return HttpResponse(simplejson.dumps(response))
+    return HttpResponse(json.dumps(response))
 
 class PageNumberPaginator(Paginator):
     def get_offset(self):
@@ -791,10 +792,10 @@ def createLoggedInResponse(loggedInuser):
     user_resource = UserResource()
     ur_bundle = user_resource.build_bundle(obj=loggedInuser.get_profile())
     serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
-    dic = simplejson.loads(serialized)
+    dic = json.loads(serialized)
     dic['status'] = 'OK'
     dic['info'] = "You've logged in"
-    return HttpResponse(simplejson.dumps(dic), content_type ='application/json')
+    return HttpResponse(json.dumps(dic), content_type ='application/json')
             
 def mobile_user_register(request):
     if request.method == 'POST':
@@ -859,10 +860,10 @@ def mobile_user_login(request):
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user.get_profile())
             serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
-            dic = simplejson.loads(serialized)
+            dic = json.loads(serialized)
             dic['status'] = 'OK'
             dic['info'] = "You've logged in"
-            return HttpResponse(simplejson.dumps(dic), content_type ='application/json')
+            return HttpResponse(json.dumps(dic), content_type ='application/json')
         else:
             return createGeneralResponse('NOK', "Incorrect username or password")
     else:
