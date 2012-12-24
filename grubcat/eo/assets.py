@@ -6,16 +6,16 @@ import django_assets
 from webassets.env import Environment
 
 #css below
-
-base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
+bootstrap_css = Bundle(
+    'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
+)
+base_css = Bundle(bootstrap_css, 'css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
 #form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
 form_css = Bundle('css/form.css',filters='cssmin',output='gen/form.%(version)s.css')
 common_css = Bundle('css/common.css', form_css, filters='cssmin', output='gen/common.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.%(version)s.css')
 
-bootstrap_css = Bundle(
-    'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'
-)
+
 
 meal_list_css = Bundle(
     base_css, common_css,dropkick_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
