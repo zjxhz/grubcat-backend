@@ -17,12 +17,13 @@
 """
 Authenticate XMPP user.
 """
+from django.contrib.auth.models import User, check_password
+from django.core.management.base import BaseCommand
+import logging
 import struct
 import sys
+from eo import util
  
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User, check_password
-import logging
 logger = logging.getLogger('api') 
  
 class Command(BaseCommand):
@@ -105,7 +106,7 @@ class Command(BaseCommand):
                     logger.debug('Got data of size ' + str(size))
                     input_ejabberd = sys.stdin.read(size).split(':')
                     operation = input_ejabberd.pop(0)
-                    username = self.escape(input_ejabberd[0])
+                    username = util.escape_xmpp_username(input_ejabberd[0])
                     
                 except Exception:
                     # It wasn't even in the right format if we get here ...
@@ -122,20 +123,6 @@ class Command(BaseCommand):
                     self._generate_repsonse(False)
         except KeyboardInterrupt:
             raise SystemExit(0)
- 
-    def escape(self, username):
-        username = username.strip()
-        username = username.replace("\\20", " ")
-        username = username.replace("\\22", '"')
-        username = username.replace("\\26", "&")
-        username = username.replace("\\27", "'")
-        username = username.replace("\\2f", "/")
-        username = username.replace("\\3a", ":")
-        username = username.replace("\\3c", "<")
-        username = username.replace("\\3e", ">")
-        username = username.replace("\\40", "@")
-        username = username.replace("\\5c", "\\")
-        return username
         
     def __del__(self):
         """

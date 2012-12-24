@@ -6,52 +6,53 @@ import django_assets
 from webassets.env import Environment
 
 #css below
-
-base_css = Bundle('css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
-#form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
-form_css = Bundle('css/form.css',filters='cssmin',output='gen/form.%(version)s.css')
-common_css = Bundle('css/common.css', form_css, filters='cssmin', output='gen/common.%(version)s.css')
-dropkick_css = Bundle('css/dropkick.css', filters='cssmin',output='gen/dropkick.%(version)s.css')
-
 bootstrap_css = Bundle(
-    'css/bootstrap.css', filters='cssmin', output='gen/bootstrap.%(version)s.css'
+    'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
 )
+bootstrap_main_css = Bundle(
+    'less/bootstrap/bootstrap-main.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
+)
+#form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
+form_css = Bundle('css/form.css', filters='cssmin', output='gen/form.%(version)s.css')
+common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
+dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
+
+base_css = Bundle(bootstrap_css, common_css, filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_list_css = Bundle(
-    base_css, common_css,dropkick_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+    bootstrap_main_css, common_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    base_css, common_css, 'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
-meal_add_css= Bundle(
-    base_css, common_css, dropkick_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
+meal_add_css = Bundle(
+    dropkick_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 #group related
 group_list_css = Bundle(
-    bootstrap_css, base_css, common_css, dropkick_css,   'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
+    dropkick_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
 )
 group_detail_css = Bundle(
-    bootstrap_css, base_css, common_css, dropkick_css,   'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
+    dropkick_css, 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
 )
 
 #user related
 account_css = Bundle(
-    base_css, common_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    base_css,  common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
+    'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
 edit_profile_css = Bundle(
-    bootstrap_css, base_css, common_css,  'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
-
 order_css = Bundle(
-    bootstrap_css, base_css, common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+    common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
 restaurant_admin_css = Bundle(
@@ -60,9 +61,10 @@ restaurant_admin_css = Bundle(
 
 
 #js below
-jquery_js = Bundle('js/jquery-1.7.2.min.js' ,output='gen/jquery-1.7.2.%(version)s.js')
+jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)s.js')
 
-base_js = Bundle( jquery_js, 'js/jquery.dropkick-1.0.0.js','js/common.js',filters='jsmin', output="gen/base.%(version)s.js")
+base_js = Bundle(jquery_js, 'js/jquery.dropkick-1.0.0.js', 'js/common.js', filters='jsmin',
+    output="gen/base.%(version)s.js")
 
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
@@ -87,13 +89,14 @@ jquery_ajax_bootstrap_js = Bundle(
     output='gen/jquery.ajax.bootstrap.js.%(version)s.js'
 )
 
-jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin', output='gen/jquery-ui-1.8.21.custom%(version)s.js')
+jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin',
+    output='gen/jquery-ui-1.8.21.custom%(version)s.js')
 
-image_cropping_js = Bundle(jquery_js, 'js/jquery.Jcrop.js','js/image_cropping.js', filters='jsmin', output='gen/iamge-cropping%(version)s.js')
+image_cropping_js = Bundle(jquery_js, 'js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
+    output='gen/iamge-cropping%(version)s.js')
 
-
-register('base_css', base_css)
 register('common_css', common_css)
+register('base_css', base_css)
 register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)

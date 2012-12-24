@@ -14,8 +14,11 @@ class PyapnsWrapper(object):
                          open(apns_certificate_file).read(),
                          mode)
  
-    def notify(self, token, message):
-        pyapns.notify(self.app_id,token,{'aps':{'alert': message}})
+    def notify(self, token, message, badge=-1):
+        dic = {'alert': message}
+        if badge != -1:
+            dic['badge'] = badge
+        pyapns.notify(self.app_id,token,{'aps': dic})
 
 class XMPPClientWrapper(object):
     PORT = 5055
@@ -57,3 +60,17 @@ class XMPPClientWrapper(object):
         soc.connect(('localhost',self.PORT)) 
         soc.send(json.dumps(dic))
         logger.debug("sync profile finished with response: %s " % soc.recv(1024))
+
+def escape_xmpp_username(username):
+    username = username.strip()
+    username = username.replace("\\20", " ")
+    username = username.replace("\\22", '"')
+    username = username.replace("\\26", "&")
+    username = username.replace("\\27", "'")
+    username = username.replace("\\2f", "/")
+    username = username.replace("\\3a", ":")
+    username = username.replace("\\3c", "<")
+    username = username.replace("\\3e", ">")
+    username = username.replace("\\40", "@")
+    username = username.replace("\\5c", "\\")  
+    return username      

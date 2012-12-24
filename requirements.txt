@@ -1,5 +1,4 @@
 django
-simplejson
 wadofstuff-django-serializers
 BeautifulSoup
 django-image-cropping
@@ -12,6 +11,7 @@ cssmin
 jsmin
 south
 webassets
+django_assets
 django_forms_bootstrap
 django-ajax-selects
 django-taggit
