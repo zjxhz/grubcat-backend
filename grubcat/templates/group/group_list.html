@@ -4,6 +4,7 @@
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的圈子{% endblock %}
 {% block page_css %}
+    {{ block.super }}
     {% assets "group_list_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}

@@ -4,6 +4,7 @@
 {% load assets %}
 {% block title %}预定{% endblock %}
 {% block page_css %}
+    {{ block.super }}
     {% assets "order_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
@@ -95,7 +96,7 @@
                     </div>
                 </fieldset>
                 <div class="form-actions">
-                    <input type="submit" class="btn-large btn-order" value="买单"/>
+                    <input type="submit" class="btn btn-primary btn-large span2" value="买单"/>
                 </div>
             </form>
         </div>

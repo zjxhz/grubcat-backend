@@ -25,15 +25,18 @@
 }
 
 .addlink {
-    background: url(../img/icon_addlink.gif) 0 4px no-repeat;
+    background: url(../img/icon_addlink.gif) 0 5px no-repeat;
+    float: right;
+    margin-bottom: 10px;
 }
 
 .changelink {
-    background: url(../img/icon_changelink.gif) 0 4px no-repeat;
+    background: url(../img/icon_changelink.gif) 0 5px no-repeat;
+    margin-right: 10px;
 }
 
 .dellink {
-    background: url(../img/icon_deletelink.gif) 0 4px no-repeat;
+    background: url(../img/icon_deletelink.gif) 0 5px no-repeat;
 }
 
 #dish-list td {
@@ -179,8 +182,8 @@ dt.tag {
 }
 
 .add-category {
-    background: url(../img/icon_addlink.gif) 1px 8px no-repeat;
-    padding: 5px 14px;
+    background: url(../img/icon_addlink.gif) 0px 5px no-repeat;
+    padding-left: 15px;
 }
 
 #add-category-dialog {
@@ -228,9 +231,6 @@ span.num-persons, span.average-price{
     font-weight: bold;
 }
 
-/*html {*/
-/*background: white url("../img/site-bg.jpg") repeat-x fixed top center;*/
-/*}*/
 
 /*#header{*/
 /*margin: 20px 2px 25px;*/

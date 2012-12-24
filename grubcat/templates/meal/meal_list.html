@@ -4,10 +4,10 @@
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
+{#    {{ block.super }}#}
     {% assets "meal_list_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
-    <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block page_js %}
     <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
@@ -21,8 +21,8 @@
                 $(this).hide();
             })
 
-//            $("select.pretty").dropkick();
-            /*$("#faq .sidebar-box-inner a").click(function () {
+{% comment %}           $("select.pretty").dropkick();
+            $("#faq .sidebar-box-inner a").click(function () {
              var $next = $(this).next("p");
              var speed = 100;
              if ($next.is(":visible")) {
@@ -31,7 +31,7 @@
              $(this).siblings("p:visible").slideUp(speed);
              $(this).next("p").slideDown(speed);
              }
-             })*/
+             }){% endcomment %}
         })
     </script>
 {% endblock %}
@@ -44,7 +44,7 @@
                     <div class="meal-cell ">
                         <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
-                        <div class="meal-img-wrapper ">
+                        <div class="meal-img-wrapper">
                             <a href="{{ meal.get_absolute_url }}">
                                 {% if forloop.counter0 < 6 %}
                                     <img width="300" height="200" class="img-polaroid"

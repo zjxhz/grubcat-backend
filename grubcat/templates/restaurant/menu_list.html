@@ -26,7 +26,7 @@
         {% for menu in menu_list %}
             <div class="menu-container">
                 <div class="fr actions">
-                    <a href="{% url edit_menu menu.id %}" class="changelink mr10" title="编辑"
+                    <a href="{% url edit_menu menu.id %}" class="changelink" title="编辑"
                        rel="modal-dialog">编辑</a> <br/>
                     <a href="{% url del_menu menu.id %}" class="dellink">删除</a></div>
                 <span class="menu-info">

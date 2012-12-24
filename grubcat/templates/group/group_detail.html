@@ -6,6 +6,7 @@
 
 
 {% block page_css %}
+    {{ block.super }}
     {% assets "group_detail_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
