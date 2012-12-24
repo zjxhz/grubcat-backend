@@ -9,7 +9,7 @@ from webassets.env import Environment
 bootstrap_css = Bundle(
     'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
 )
-base_css = Bundle(bootstrap_css, 'css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
+base_css = Bundle( 'css/base.css', filters='cssmin', output='gen/base.%(version)s.css')
 #form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
 form_css = Bundle('css/form.css',filters='cssmin',output='gen/form.%(version)s.css')
 common_css = Bundle('css/common.css', form_css, filters='cssmin', output='gen/common.%(version)s.css')
@@ -46,12 +46,12 @@ user_list_css = Bundle(
 )
 
 edit_profile_css = Bundle(
-    bootstrap_css, base_css, common_css,  'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    base_css, common_css,  'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 
 order_css = Bundle(
-    bootstrap_css, base_css, common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+    base_css, common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
 restaurant_admin_css = Bundle(

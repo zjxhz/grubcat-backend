@@ -3,8 +3,6 @@
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ meal.topic }}{% endblock %}
 {% block page_css %}
-{#    <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">#}
-
     {% assets "meal_detail_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
