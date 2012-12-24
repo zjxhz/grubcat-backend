@@ -17,7 +17,9 @@
     {% endassets %}{% endcomment %}
 <![endif]-->
     {% block page_css %}
-        <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
+        {% assets "bootstrap" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
         {% assets "base_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
