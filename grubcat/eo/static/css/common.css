@@ -1,4 +1,6 @@
-
+body{
+    background-image: url('../img/site-bg.png')
+}
 /*html {*/
     /*background: black url("../img/site-bg.jpg") repeat-x fixed top center;*/
 /*}*/
@@ -395,4 +397,12 @@ a.restaurant-name {
 
 ul.dropdown-menu{
     min-width: 100px;
+}
+
+.btn-book{
+    font-size: 30px;
+    line-height: 45px;
+    width: 80%;
+    margin: 10px;
+    /*border-bottom: 3px solid #245237;*/
 }

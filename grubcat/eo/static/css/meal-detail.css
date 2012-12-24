@@ -1,8 +1,4 @@
 /*TODO remove height*/
-#meal-grub {
-    text-align: center;
-
-}
 
 #meal-container {
     margin-bottom: 15px;
@@ -27,6 +23,7 @@
 }
 
 #meal-grub {
+    text-align: center;
     float: left;
     margin: 0 12px 0 0;
     width: 275px;
@@ -83,12 +80,12 @@
 
 .user-wrapper {
     float: left;
-    width: 208px;
-    height: 240px;
+    /*width: 208px;*/
+    /*height: 240px;*/
     padding: 7px 5px;
     margin-left: 8px;
     margin-bottom: 10px;
-    border: 1px solid #DDD;
+    /*border: 1px solid #DDD;*/
     background: white;
     position: relative;
     z-index: 1;
@@ -97,8 +94,8 @@
 }
 
 .user-wrapper:hover {
-    border: 1px solid #bbb;
-    -webkit-box-shadow: inset 0 0 6px #ddd;
+    /*border: 1px solid #bbb;*/
+    /*-webkit-box-shadow: inset 0 0 6px #ddd;*/
 }
 
 #title h1 {
@@ -168,41 +165,6 @@ a.map {
     top: 5px;
     right: 5px;
 }
-
-.reserve-button {
-    margin: 15px auto;
-    display: block;
-    padding: 8px 0;
-    width: 250px;
-    _background: #42A621;
-    background: -moz-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #57D62D), color-stop(100%, #42A621));
-    background: -webkit-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -o-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -ms-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: linear-gradient(top, #57D62D 0%, #42A621 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#57D62D', endColorstr = '#42A621', GradientType = 0);
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 6px;
-    color: white;
-    font-size: 210%;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 0 8px #888;
-    text-shadow: 0 1px 1px black;
-    border: 2px solid #EEE;
-    text-align: center
-}
-
-.reserve-button span {
-    font-size: 60%;
-    display: block;
-    font-weight: normal;
-    text-transform: none;
-}
-
 .what-is-fanju {
     display: block;
     float: left;
@@ -260,9 +222,11 @@ h3.name {
 }
 
 img.user-pic {
-    margin: auto;
-    border: 2px solid white;
-    box-shadow: 0 0 4px #444;
+    /*margin: auto;*/
+    /*border: 2px solid white;*/
+    /*box-shadow: 0 0 4px #444;*/
+    width: 100px;
+    height: 100px;
 }
 
 .speech-outter {
