@@ -7,20 +7,20 @@ from webassets.env import Environment
 
 #css below
 bootstrap_css = Bundle(
-    'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
+    'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
 )
-bootstrap_main_css = Bundle(
-    'less/bootstrap/bootstrap-main.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css'
-)
+#bootstrap_main_css = Bundle(
+#        'less/bootstrap/bootstrap-main.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css',
+#)
 #form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
 form_css = Bundle('css/form.css', filters='cssmin', output='gen/form.%(version)s.css')
 common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
 
-base_css = Bundle(bootstrap_css, common_css, filters='cssmin', output='gen/base.%(version)s.css')
+base_css = Bundle(bootstrap_css,   filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_list_css = Bundle(
-    bootstrap_main_css, common_css, 'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+    'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
     'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
@@ -63,7 +63,10 @@ restaurant_admin_css = Bundle(
 #js below
 jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)s.js')
 
-base_js = Bundle(jquery_js, 'js/jquery.dropkick-1.0.0.js', 'js/common.js', filters='jsmin',
+base_js = Bundle(jquery_js,'js/jquery.dropkick-1.0.0.js', 'js/bootstrap.min.js', filters='jsmin',
+    output="gen/base.%(version)s.js")
+
+base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
     output="gen/base.%(version)s.js")
 
 user_list_js = Bundle(
@@ -74,9 +77,9 @@ restaurant_admin_js = Bundle(
     'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
 )
 
-fix_ie6_png_js = Bundle(
-    'js/DD_belatedPNG_0.0.8a.js', filters='jsmin', output='gen/DD_belatedPNG_0.0.8a.%(version)s.js'
-)
+#fix_ie6_png_js = Bundle(
+#    'js/DD_belatedPNG_0.0.8a.js', filters='jsmin', output='gen/DD_belatedPNG_0.0.8a.%(version)s.js'
+#)
 
 water_fall_js = Bundle(
     'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
@@ -114,9 +117,10 @@ register('restaurant_admin_css', restaurant_admin_css)
 
 register('jquery_js', jquery_js)
 register('base_js', base_js)
+register('base_main_js', base_main_js)
 register('restaurant_admin_js', restaurant_admin_js)
 register('user_list_js', user_list_js)
-register('fix_ie6_png_js', fix_ie6_png_js)
+#register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
 register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
