@@ -68,7 +68,7 @@ base_js = Bundle(jquery_js, jquery_dropkick_js, 'js/bootstrap.min.js',
     output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
-    output="gen/base.%(version)s.js")
+    output="gen/base.main.%(version)s.js")
 
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
