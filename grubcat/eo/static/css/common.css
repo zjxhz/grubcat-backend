@@ -2,14 +2,6 @@ body{
     /*background-image: url('../img/site-bg.png')*/
 }
 
-.fl{
-    float: left;
-}
-
-.fr{
-    float: right;
-}
-
 .navbar{
     margin-bottom: 5px;
 }

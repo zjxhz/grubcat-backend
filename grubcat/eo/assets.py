@@ -20,7 +20,7 @@ dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick
 base_css = Bundle(bootstrap_css,   filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_list_css = Bundle(
-   'css/common.css',  'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+   'css/common.css',  'less/meal.less', filters='less,cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
     'css/common.css',  'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'

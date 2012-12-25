@@ -6,7 +6,7 @@
 {% block page_css %}
     {{ block.super }}
     {% assets "meal_list_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet"  type="text/css">
     {% endassets %}
 {% endblock %}
 {% block base_js %}
@@ -67,7 +67,7 @@
                             </div>
                             <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                         </div>
-                        <a href="{{ meal.get_absolute_url }}" class="meal-info img-polaroid" style="display: none">
+                        <a href="{{ meal.get_absolute_url }}" class="meal-info img-polaroid">
                             {#                    <div class="meal-location png-fix"><span>Mission</span></div>#}
                             {#                    <div class="host">#}
                             {#                        <img width="30px" height="30px" alt="Social San Francisco"#}
@@ -102,23 +102,6 @@
                 </div>
             </div>
         {% endif %}
-        <div id="create-a-meal" class="sidebar-box">
-            <div class="sidebar-box-title">没有感兴趣的饭局？</div>
-            <div class="sidebar-box-inner">
-                {#                <form accept-charset="UTF-8" action="/create-a-meal" method="get">#}
-                {#                    <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>#}
-                {#                    <input class="cart_day hasDatepicker" id="cart_day" name="cyo[day]" readonly="readonly" size="30"#}
-                {#                           type="text" value="May 15, 2012">#}
-                {##}
-                {#                    <select class="pretty">#}
-                {#                        <option value="07:00">7:00 AM</option>#}
-                {#                        <option value="22:30">10:30 PM</option>#}
-                {#                    </select>#}
-                {#                    <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>#}
-                {#                </form>#}
-                <a class="btn-create-meal" href="{% url create_meal %}">发起饭局</a>
-            </div>
-        </div>
     </div>{% endcomment %}
 
 {% endblock %}
