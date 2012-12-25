@@ -59,7 +59,7 @@ MEDIA_URL = '/media/'
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/home/fanju/webapps/static/'
-
+ASSETS_ROOT=r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 
 # URL prefix for static files.
