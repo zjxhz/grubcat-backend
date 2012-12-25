@@ -5,9 +5,9 @@
 {% block title %}发起饭局{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    {#    TODO don't use juqery ui#}
-    {#    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">#}
-    {#    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">#}
+{#    TODO don't use juqery ui#}
+    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
     {% assets "meal_add_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
@@ -62,22 +62,23 @@
                                     $("#dk_container_id_privacy").show();
                                     $("#privacy-text").hide();
                                     $("#id_privacy").val(0);
-                                } else {
+                                } else{
                                     var privacy = group_privacy_josn[group_id];
                                     $("#dk_container_id_privacy").hide();
                                     $("#id_privacy").val(privacy);
 
-                                    var privacy_text = $("#id_privacy option[value=" + privacy + "]").text();
-                                    if (privacy == 0) { //public
+                                    var privacy_text=$("#id_privacy option[value=" + privacy + "]").text();
+                                    if( privacy == 0 ) { //public
                                         privacy_text += " （圈子是公开类型）"
-                                    } else if (privacy == 1) {// private
+                                    } else if(privacy == 1) {// private
                                         privacy_text += " （圈子是私密类型）"
                                     }
 
-                                    if ($("#privacy-text")[0]) {
+                                    if($("#privacy-text")[0])
+                                    {
                                         $("#privacy-text").text(privacy_text).show();
                                     } else {
-                                        $("#id_privacy").before("<span id='privacy-text'>" + privacy_text + "</span>");
+                                        $("#id_privacy").before("<span id='privacy-text'>" +  privacy_text + "</span>");
                                     }
                                 }
                             }
@@ -86,12 +87,13 @@
 
 
                 var $current_group = $("#dk_container_id_group li.dk_option_current a");
-                if ($current_group.attr("data-dk-dropdown-value")) {
+                if($current_group.attr("data-dk-dropdown-value"))
+                {
                     $current_group.click();
                 } else {
                 {% if request.GET.group %}
-                    $("#dk_container_id_group li a[data-dk-dropdown-value=" + {{ request.GET.group }} +"]").click();
-                {% endif %}
+                    $("#dk_container_id_group li a[data-dk-dropdown-value=" + {{ request.GET.group }} + "]").click();
+                    {% endif %}
                 }
             {% endif %}
 
@@ -180,7 +182,7 @@
 
 {% block content %}
 
-    {% comment %}  <div id="faq" class="faq sidebar-box">
+  {% comment %}  <div id="faq" class="faq sidebar-box">
         <div class="sidebar-box-title">常见问题</div>
         <div class="sidebar-box-inner">
             <a>饭聚网是什么？</a>
