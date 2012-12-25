@@ -754,7 +754,7 @@ class Meal(models.Model):
                 'detail': True,
                 }).url
         else:
-            url = settings.STATIC_URL + "img/default_meal_cover.jpg"
+            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url
 
     @models.permalink
