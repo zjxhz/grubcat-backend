@@ -27,7 +27,7 @@ meal_detail_css = Bundle(
 )
 
 meal_add_css = Bundle(
-   'css/lionbars.css', 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css', dropkick_css, 'css/common.css', 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
+   dropkick_css, 'css/common.css', 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 #group related
