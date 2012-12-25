@@ -6,3 +6,4 @@ syntax: glob
 grubcat/settings_dev.py
 grubcat/eo/static/gen/*
 grubcat/eo/static/.webassets*
+*.orig

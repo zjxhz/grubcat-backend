@@ -20,50 +20,51 @@ dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick
 base_css = Bundle(bootstrap_css,   filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_list_css = Bundle(
-    'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
+   'css/common.css',  'css/meal-list.css', filters='cssmin', output='gen/meal-list.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    'css/common.css',  'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
 meal_add_css = Bundle(
-    dropkick_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
+   'css/lionbars.css', 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css', dropkick_css, 'css/common.css', 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 #group related
 group_list_css = Bundle(
-    dropkick_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
+    dropkick_css, 'css/common.css', 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
 )
 group_detail_css = Bundle(
-    dropkick_css, 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
+    dropkick_css, 'css/common.css', 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
 )
 
 #user related
 account_css = Bundle(
-    'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    'css/common.css',   'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
+    'css/common.css',  'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
 edit_profile_css = Bundle(
-    'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    'css/common.css',   'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 order_css = Bundle(
-    common_css, dropkick_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+     dropkick_css, 'css/common.css',  'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
 restaurant_admin_css = Bundle(
-    'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
+    'css/common.css', 'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
-
 
 #js below
 jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)s.js')
 
-base_js = Bundle(jquery_js,'js/jquery.dropkick-1.0.0.js', 'js/bootstrap.min.js', filters='jsmin',
+jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='jsmin')
+
+base_js = Bundle(jquery_js, jquery_dropkick_js, 'js/bootstrap.min.js',
     output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
