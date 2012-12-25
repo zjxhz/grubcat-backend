@@ -4,13 +4,17 @@
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
-{#    {{ block.super }}#}
+    {{ block.super }}
     {% assets "meal_list_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
+{% block base_js %}
+    {% assets "base_main_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
 {% block page_js %}
-    <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });

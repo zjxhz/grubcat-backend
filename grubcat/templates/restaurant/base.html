@@ -1,6 +1,6 @@
-    {% load static_asset %}
-    {% load static from staticfiles %}
-    {% load assets %}
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -14,8 +14,11 @@
         {% assets "base_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
+        {% assets "common_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
         <style type="text/css">
-            html body{
+            html body {
                 background-image: none;
             }
         </style>
@@ -24,7 +27,9 @@
         {% endassets %}
     {% endblock %}
     {% block base_js %}
-        <script type="text/javascript" src="{% static 'js/jquery-1.7.2.min.js' %}"></script>
+        {% assets "base_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
     {% endblock %}
     {% block page_js %}
         {% assets "restaurant_admin_js" %}
