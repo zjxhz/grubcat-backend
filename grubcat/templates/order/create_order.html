@@ -65,7 +65,7 @@
 
         <div class="order-info ">
 
-            <form id="order_info_form" action="" method="post" class="form-horizontal shadow"> {% csrf_token %}
+            <form id="order_info_form" action="" method="post" class="form-horizontal"> {% csrf_token %}
                 <legend>订单信息</legend>
                 <fieldset>
                     {% for hidden in form.hidden_fields %}
