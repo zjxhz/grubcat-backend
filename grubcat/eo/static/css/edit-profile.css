@@ -3,9 +3,6 @@
 }
 
 .avatar img{
-    margin: 0 7px;
-    border: 3px solid white;
-    height: 200px;
 }
 
 .avatar h1{
@@ -14,8 +11,8 @@
 }
 .avatar a.edit-avatar{
     display: block;
-    text-align: center;
-    margin-top: 12px;
+    margin-left: 50px;
+    margin-top: 15px;
 }
 
 
@@ -68,20 +65,17 @@
 {#        }#}
 
 #cropping-area {
-    float: left;
-    width: 320px;
+    width: 360px;
 }
 
 #preview_area {
-    float: left;
-    margin-left: 30px;
 }
 
 div.buttons {
     clear: left;
     float: right;
     margin-right: 103px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 #id_choose_avatar {
@@ -94,27 +88,23 @@ div.buttons {
 }
 
 #cropping-tip {
-    margin-top: 18px;
-    margin-left: 12px;
     color: #ff471d;
 }
 
 #preview_big_container {
-    width: 200px;
-    height: 200px;
-    float: left;
-    margin-right: 30px;
+    width: 220px;
+    height: 220px;
     margin-top: 20px;
 }
 
 #preview_middle_container {
-    width: 100px;
-    height: 100px;
-    margin-top: 40px;
+    height: 140px;
+    margin-top: 20px;
+    width: 140px;
 }
 
 #preview_small_container {
-    width: 50px;
-    height: 50px;
-    margin-top: 30px;
+    width: 60px;
+    height: 60px;
+    margin-top: 20px;
 }

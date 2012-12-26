@@ -20,7 +20,7 @@
             if ($("#id_avatar").data("thumbnail-url")) {
                 $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
             {% if  form.instance.avatar %}
-                                $(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
+                $(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
             {% endif %}
             } else {
                 $("#preview_area").css("border", "1px solid #DDD")
@@ -33,29 +33,25 @@
                 $(".uploadding").show();
                 $("#id_action").val("");
                 $("#id_upload_form").submit();
-{#                                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
+                {#                                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
             })
 
-
-
-   {% comment %}         image_cropping.update_selection = function ($crop_field) {
-                return function (sel) {
-                    image_cropping._update_selection(sel, $crop_field);
-                    showPreview(sel);
-                };
-            }{% endcomment %}
+            {% comment %}         image_cropping.update_selection = function ($crop_field) {
+                         return function (sel) {
+                             image_cropping._update_selection(sel, $crop_field);
+                             showPreview(sel);
+                         };
+                     }{% endcomment %}
         })
         var originalWidth = $("#id_avatar").data('org-width');
         var originalHeight = $("#id_avatar").data('org-height');
         function showPreview(coords) {
-            var rxBig = 200 / coords.w;
-            var ryBig = 200 / coords.h;
-            var rxMiddle = 100 / coords.w;
-            var ryMiddle = 100 / coords.h;
-            var rxSmall = 50 / coords.w;
-            var rySmall = 50 / coords.h;
-
-
+            var rxBig = 220 / coords.w;
+            var ryBig = 220 / coords.h;
+            var rxMiddle = 140 / coords.w;
+            var ryMiddle = 140 / coords.h;
+            var rxSmall = 60 / coords.w;
+            var rySmall = 60 / coords.h;
 
             $('#preview_big').css({
                 width:Math.round(rxBig * originalWidth) + 'px',
@@ -83,7 +79,7 @@
     {% include "user/profile_nav.html" %}
     <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
         <div class="row">
-            <div id="cropping-area" class="span4">
+            <div id="cropping-area" class="span5">
 
                 {{ form.avatar }}
 
@@ -95,16 +91,17 @@
                 <div id="cropping-tip">
                     您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
                 </div>
-                <div id="preview_big_container" class="preview-container">
-                    <img id="preview_big">
+                <div class="row">
+                    <div id="preview_big_container" class="preview-container span3">
+                        <img id="preview_big">
+                    </div>
+                    <div id="preview_middle_container" class="preview-container span2">
+                        <img id="preview_middle">
+                    </div>
+                    <div id="preview_small_container" class="preview-container span1">
+                        <img id="preview_small">
+                    </div>
                 </div>
-                <div id="preview_middle_container" class="preview-container">
-                    <img id="preview_middle">
-                </div>
-                <div id="preview_small_container" class="preview-container">
-                    <img id="preview_small">
-                </div>
-
             </div>
             <div class="buttons">
                 <input id="id_choose_avatar" type="button" value="选择头像" class="btn">
