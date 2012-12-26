@@ -5,8 +5,8 @@
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    {% assets "meal_list_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet"  type="text/css">
+    {% assets "meal_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 {% block base_js %}
@@ -18,73 +18,69 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
-            $(".meal-img-wrapper").mouseenter(function () {
-                $(this).next().show();
-            })
-            $(".meal-info").mouseleave(function () {
-                $(this).hide();
-            })
+//            $(".meal-img-wrapper").mouseenter(function () {
+//                $(this).next().show();
+//            })
+//            $(".meal-info").mouseleave(function () {
+//                $(this).hide();
+//            })
 
-{% comment %}           $("select.pretty").dropkick();
-            $("#faq .sidebar-box-inner a").click(function () {
-             var $next = $(this).next("p");
-             var speed = 100;
-             if ($next.is(":visible")) {
-             $(this).next("p").slideUp(speed);
-             } else {
-             $(this).siblings("p:visible").slideUp(speed);
-             $(this).next("p").slideDown(speed);
-             }
-             }){% endcomment %}
+            {% comment %}           $("select.pretty").dropkick();
+         $("#faq .sidebar-box-inner a").click(function () {
+          var $next = $(this).next("p");
+          var speed = 100;
+          if ($next.is(":visible")) {
+          $(this).next("p").slideUp(speed);
+          } else {
+          $(this).siblings("p:visible").slideUp(speed);
+          $(this).next("p").slideDown(speed);
+          }
+          }){% endcomment %}
         })
     </script>
 {% endblock %}
 {% block content %}
     {#    <div id="meal-list-city"><h1>{{ city|default:"杭州" }}的饭局</h1></div>#}
-    <div id="meal-list" class="span12 ">
-        <div class="row">
-            {% for meal in meal_list %}
-                <div class="span4">
-                    <div class="meal-cell ">
-                        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+    <div id="meal-list" class="span9">
+        {% for meal in meal_list %}
+            <div class="meal-cell">
+                <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
-                        <div class="meal-img-wrapper">
-                            <a href="{{ meal.get_absolute_url }}">
-                                {% if forloop.counter0 < 6 %}
-                                    <img width="300" height="200" class="img-polaroid"
-                                         src="{{ meal.get_cover_url }}">
-                                {% else %}
-                                    <img width="300" height="200"
-                                         class="lazy img-polaroid"
-                                         data-original="{{ meal.get_cover_url }}">
-                                {% endif %}
-                            </a>
-
-                            <div class="date-wrapper">
-                                <span class="month">{{ meal.start_date|date:"n" }}月</span>
-                                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
-                                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
-                            </div>
-                            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
-                        </div>
-                        <a href="{{ meal.get_absolute_url }}" class="meal-info img-polaroid">
-                            {#                    <div class="meal-location png-fix"><span>Mission</span></div>#}
-                            {#                    <div class="host">#}
-                            {#                        <img width="30px" height="30px" alt="Social San Francisco"#}
-                            {#                             src="{% static 'img/location.jpg' %}"#}
-                            {#                                >#}
-                            {#                        <span class="png-fix">Social San Francisco</span></div>#}
-                            <p>
-                                {{ meal.introduction|truncatechars:"90" }}
-                            </p>
-                            {#                    <a class="png-fix" href="{{ meal.get_absolute_url }}">查看饭局</a>#}
+                <div class="row">
+                    <div class="meal-img-wrapper span5">
+                        <a href="{{ meal.get_absolute_url }}">
+                            {% if forloop.counter0 < 6 %}
+                                <img width="300" height="200" class="img-polaroid"
+                                     src="{{ meal.get_cover_url }}">
+                            {% else %}
+                                <img width="300" height="200"
+                                     class="lazy img-polaroid"
+                                     data-original="{{ meal.get_cover_url }}">
+                            {% endif %}
                         </a>
+
+                        <div class="date-wrapper">
+                            <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                            <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                            <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                        </div>
+                        <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                     </div>
-                    {% comment %}  <div class="meal-cell-shadow">
-            </div>{% endcomment %}
+                    <div class="meal-info span4">
+                        {#                    <div class="meal-location png-fix"><span>Mission</span></div>#}
+                        {#                    <div class="host">#}
+                        {#                        <img width="30px" height="30px" alt="Social San Francisco"#}
+                        {#                             src="{% static 'img/location.jpg' %}"#}
+                        {#                                >#}
+                        {#                        <span class="png-fix">Social San Francisco</span></div>#}
+                        <p class="introduction">
+                            {{ meal.introduction|truncatechars:"90" }}
+                        </p>
+                                            <a class="btn btn-primary btn-block btn-book" href="{{ meal.get_absolute_url }}">查看饭局</a>
+                    </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
 
     {% comment %}<div class="sidebar">

@@ -19,8 +19,8 @@ dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick
 
 base_css = Bundle(bootstrap_css,   filters='cssmin', output='gen/base.%(version)s.css')
 
-meal_list_css = Bundle(
-   'css/common.css',  'less/meal.less', filters='less,cssmin', output='gen/meal-list.%(version)s.css'
+meal_css = Bundle(
+   'css/common.css',  'less/meal.less', filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 meal_detail_css = Bundle(
     'css/common.css',  'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
@@ -104,7 +104,7 @@ register('base_css', base_css)
 register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)
-register('meal_list_css', meal_list_css)
+register('meal_css', meal_css)
 register('meal_detail_css', meal_detail_css)
 register('meal_add_css', meal_add_css)
 register('group_list_css', group_list_css)
