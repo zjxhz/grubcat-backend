@@ -59,9 +59,8 @@
                         </div>
                     </fieldset>
                 </form>
-    <div class="avatar span3">
-        <img alt="{{ user.username }}" class="shadow" src="{{ profile.big_avatar }}" width="200" height="200">
-        <br/>
+    <div class="avatar span2">
+        <img alt="{{ user.username }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="140" height="140">
         <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
     </div>
 

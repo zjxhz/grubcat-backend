@@ -450,6 +450,14 @@ class UserProfile(models.Model):
         return thumbnail_url
 
     @property
+    def normal_avatar(self):
+        if self.avatar and os.path.exists(self.avatar.path):
+            thumbnail_url = self.avatar_thumbnailer(settings.NORMAL_AVATAR_SIZE).url
+        else:
+            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
+        return thumbnail_url
+
+    @property
     def small_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).url
