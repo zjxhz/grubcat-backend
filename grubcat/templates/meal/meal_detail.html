@@ -4,13 +4,13 @@
 {% block title %}{{ meal.topic }}{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    {% assets "meal_detail_css" %}
+    {% assets "meal_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 {#{% block active-nav-id %}nav-meal{% endblock %}#}
 {% block content %}
-    <div id="meal-main" class="span12">
+    <div id="meal-detail" class="span12">
         <div id="title" class="box-seperator">
             <a id="creator" href="/host">
                 <span class="host-name">由  dds 发起</span>
@@ -27,6 +27,11 @@
         <p id="desc">{{ meal.introduction }}</p>
 
         <div id="meal-container" class="clearfix box-seperator">
+            <div id="meal-img-wrapper">
+                <img alt="{{ meal.topic }}" id="meal-photo"
+                     src="{{ meal.get_cover_url }}"
+                     width="385px">
+            </div>
             <div id="meal-grub">
                 {% if not request.user.get_profile in meal.participants.all %}
                     <a href="{% url create_order meal.id %}"
@@ -41,16 +46,12 @@
                     </a>
                 {% endif %}
 
-                <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>
+{#                <p class="what-is-fanju">你可以在享受美食的同时，认识有着相同兴趣的新朋友!<br></p>#}
                     <span class="date">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
                     <br/>{{ meal.start_time|date:"G:i " }}</span>
                 {#                    <a href="#" id="show-menu-link" class="show-menu">查看菜单</a>#}
             </div>
-            <div id="meal-img-wrapper">
-                <img alt="{{ meal.topic }}" id="meal-photo"
-                     src="{{ meal.get_cover_url }}"
-                     width="385px">
-            </div>
+
         </div>
         <div id="users" class="clearfix">
             {% if meal.actual_persons %}
