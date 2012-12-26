@@ -50,7 +50,7 @@
                     <div class="meal-img-wrapper span5">
                         <a href="{{ meal.get_absolute_url }}">
                             {% if forloop.counter0 < 6 %}
-                                <img width="300" height="200" class="img-polaroid"
+                                <img width="360" height="240" class="img-polaroid"
                                      src="{{ meal.get_cover_url }}">
                             {% else %}
                                 <img width="300" height="200"
@@ -74,7 +74,7 @@
                         {#                                >#}
                         {#                        <span class="png-fix">Social San Francisco</span></div>#}
                         <p class="introduction">
-                            {{ meal.introduction|truncatechars:"90" }}
+                            {{ meal.introduction|truncatechars:"92" }}
                         </p>
                                             <a class="btn btn-primary btn-block btn-book" href="{{ meal.get_absolute_url }}">查看饭局</a>
                     </div>

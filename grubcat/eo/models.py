@@ -748,7 +748,7 @@ class Meal(models.Model):
     def get_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
-                'size':(376,210),
+                'size':(360,240),
                 'crop': True,
 #                'quality':85,
                 'detail': True,

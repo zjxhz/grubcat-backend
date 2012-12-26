@@ -13,83 +13,6 @@
     padding-bottom: 15px;
 }
 
-.meal-img-wrapper {
-/*height: 210px;*/
-/*width: 376px;*/
-    position: relative;
-
-}
-
-.meal-img-wrapper a img {
-    height: 240px;
-    width: 360px;
-}
-
-#meal-list .thumbnails .span4 {
-    width: 312px;
-    margin-left: 8px;
-    margin-bottom: 0;
-}
-
-.date-wrapper {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 70px;
-    text-align: center;
-    background: white;
-    box-shadow: 0 0 10px #000;
-    .border-radius(3px);
-}
-
-.month {
-    background: #EEE;
-    border-bottom: 1px solid #CCC;
-    text-transform: uppercase;
-    color: #777;
-    padding-top: 5px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    -webkit-border-top-left-radius: 3px;
-    -webkit-border-top-right-radius: 3px;
-    -moz-border-top-left-radius: 3px;
-    -moz-border-top-right-radius: 3px;
-}
-
-.date-wrapper span {
-    display: block;
-    padding: 3px;
-    text-align: center;
-    color: #666;
-    font-size: 13px;
-}
-
-.date-wrapper .day-num {
-    font-size: 230%;
-    margin-top: 3px;
-    font-weight: bold;
-}
-
-.date-wrapper .day-text {
-    margin-top: -3px;
-}
-
-.time {
-    position: absolute;
-    top: 105px;
-    left: 16px;
-    width: 70px;
-    text-align: center;
-    color: white;
-    background: black;
-    opacity: 0.8;
-    padding: 3px 0 3px 0;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    box-shadow: 0 0 10px #000;
-}
-
 .meal-topic {
     overflow: hidden;
     padding-left: 15px;
@@ -102,23 +25,64 @@
     }
 }
 
-.meal-location {
-    display: block;
-    height: 19px;
-    background: url("../img/meal-location-line.png") repeat-x;
-    text-align: center;
-
-    span {
-        background: white url("../img/meal-location.png") no-repeat 11px 1px;
-        padding: 3px 10px 3px 32px;
-        color: #777;
-        font-size: 115%;
-        text-align: center;
+.meal-img-wrapper {
+    position: relative;
+    a img {
+        width: 360px;
+        height: 240px;
     }
 }
 
-.host img, .host span {
-    vertical-align: middle;
+.date-wrapper {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 70px;
+    text-align: center;
+    background: white;
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
+
+    span {
+        display: block;
+        padding: 3px;
+        text-align: center;
+        color: #666;
+        font-size: 13px;
+    }
+    .month {
+        background: #EEE;
+        border-bottom: 1px solid #CCC;
+        text-transform: uppercase;
+        color: #777;
+        padding-top: 5px;
+        .border-top-radius(3px);
+    }
+
+    .day-num {
+        font-size: 230%;
+        margin-top: 3px;
+        font-weight: bold;
+    }
+
+    .day-text {
+        margin-top: -3px;
+    }
+
+}
+
+.time {
+    position: absolute;
+    top: 105px;
+    left: 16px;
+    width: 70px;
+    text-align: center;
+    color: white;
+    background: black;
+    padding: 3px 0 3px 0;
+    .opacity(80);
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
 }
 
 .meal-info {
@@ -128,38 +92,13 @@
         color: #666;
         height: 183px;
     }
-    a.btn {
-    }
-    .org {
-        span {
-            line-height: 30px;
-            margin-left: 5px;
-            vertical-align: top;
-            display: inline-block;
-        }
-        img {
-            height: 30px;
-            width: 30px;
-        }
-    }
 }
 
-#create-a-meal {
-    text-align: center;
-    height: 105px;
-
-    .sidebar-box-inner {
-        padding: 22px 7px;
-    }
-
-    .btn-create-meal {
-        color: #ffffff;
-        line-height: 20px;
-        font-size: 18px;
-    }
-}
-
-#recently-grubbed img {
-    border: 0 solid #ddd;
+.btn-book {
+    font-size: 30px;
+    line-height: 45px;
+    width: 80%;
+    margin: 0 auto;
+    .border-radius(0);
 }
 

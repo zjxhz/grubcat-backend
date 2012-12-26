@@ -14,49 +14,49 @@ bootstrap_css = Bundle(
 #)
 #form_css = Bundle('less/form.less',filters='less',output='gen/form.%(version)s.css')
 form_css = Bundle('css/form.css', filters='cssmin', output='gen/form.%(version)s.css')
-common_css = Bundle('css/common.css', filters='cssmin', output='gen/common.%(version)s.css')
+common_css = Bundle('less/common.less', filters='less,cssmin', output='gen/common.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
 
 base_css = Bundle(bootstrap_css,   filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_css = Bundle(
-   'css/common.css',  'less/meal.less', filters='less,cssmin', output='gen/meal.%(version)s.css'
+   common_css,  'less/meal.less', filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 meal_detail_css = Bundle(
-    'css/common.css',  'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
+    common_css,  'css/meal-detail.css', filters='cssmin', output='gen/meal-detail.%(version)s.css'
 )
 
 meal_add_css = Bundle(
-   dropkick_css, 'css/common.css', 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
+   dropkick_css, common_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
 )
 
 #group related
 group_list_css = Bundle(
-    dropkick_css, 'css/common.css', 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
+    dropkick_css, common_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s.css'
 )
 group_detail_css = Bundle(
-    dropkick_css, 'css/common.css', 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
+    dropkick_css, common_css, 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
 )
 
 #user related
 account_css = Bundle(
-    'css/common.css',   'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    common_css,   'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    'css/common.css',  'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
+    common_css,  'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
 )
 
 edit_profile_css = Bundle(
-    'css/common.css',   'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    common_css,   'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 order_css = Bundle(
-     dropkick_css, 'css/common.css',  'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+     dropkick_css, common_css,  'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
 )
 
 restaurant_admin_css = Bundle(
-    'css/common.css', 'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
+    common_css, 'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below
