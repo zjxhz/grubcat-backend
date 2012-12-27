@@ -10,6 +10,7 @@
 
 
 {% block content %}
+    <div id="edit-profile">
     {% include "user/profile_nav.html" %}
 
                 <form id="basic-profile-form" action="{% url edit_profile_basic %}" method="post" class="form-horizontal span7">
@@ -63,7 +64,7 @@
         <img alt="{{ user.username }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="140" height="140">
         <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
     </div>
-
+    </div>
 {% endblock %}
 
 {% block page_js %}
