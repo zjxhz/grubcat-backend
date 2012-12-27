@@ -11,6 +11,7 @@ cssmin
 jsmin
 south
 webassets
+django_assets
 django_forms_bootstrap
 django-ajax-selects
 django-taggit
@@ -19,3 +20,4 @@ pyapns
 erlport
 raven
 wokkel
+sinaweibopy
