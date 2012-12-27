@@ -11,11 +11,11 @@
 {#{% block active-nav-id %}nav-meal{% endblock %}#}
 {% block content %}
     <div id="meal-detail" class="span9">
-        <div id="title" class="box-seperator">
+        <div id="title" class="box-seperator clearfix">
 
             <h1>{{ meal.topic }}</h1>
-                <span id="restaurant-location">在 <a
-                        class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}   </span>
+                <span id="restaurant-location"><a href="http://map.baidu.com?wd={{ meal.menu.restaurant.name }}" target="_blank"
+                        class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}</span>
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
                     {{ meal.start_time|date:"G:i " }}</span>
         </div>
