@@ -29,9 +29,6 @@ import os
 import re
 import util
 
-pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
-                            settings.APP_ID,
-                            settings.APNS_CERTIFICATE_LOCATION)
 xmpp_client = util.XMPPClientWrapper()
 logger = logging.getLogger('api')
 
@@ -369,7 +366,11 @@ class UserResource(ModelResource):
                                   type=message_type)
             message.save()
             if to_person.apns_token:
-                pyapns_wrapper.notify(to_person.apns_token, "You have new messages from %s" % from_person.name);
+                if not self.pyapns_wrapper:
+                    self.pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
+                            settings.APP_ID,
+                            settings.APNS_CERTIFICATE_LOCATION)
+                self.pyapns_wrapper.notify(to_person.apns_token, "You have new messages from %s" % from_person.name);
                 
             return createGeneralResponse('OK', 'Message sent to %s' % to_person)
         elif request.method == 'GET':
@@ -829,17 +830,17 @@ def checkemail(request):
         raise
     
 def weibo_user_login(request):
-    if request.method == 'POST':
-        access_token = request.POST.get('access_token')
-        weibo_id = request.POST.get('weibo_id')
+    if request.method == 'POST':        
         if request.user.is_authenticated():
             # a logged in user, could be logged in as an ordinary user which has no weibo account set, so set weibo account
             # next time when the user logs in as a weibo user, we will know which user who he really is
-            user_profile = request.user.get_profile()
-            user_profile.weibo_id = weibo_id
-            user_profile.weibo_access_token = access_token
-            user_profile.save()
-            return createLoggedInResponse(request.user)
+            raise Exception("Currently only logging in from sina weibo is possible")
+#            user_profile = request.user.get_profile()
+#            weibo_user_id = json.loads(weibo_client.account.get_uid.get())['uid']
+#            user_profile.weibo_id = weibo_user_id
+#            user_profile.weibo_access_token = access_token
+#            user_profile.save()
+#            return createLoggedInResponse(request.user)
         else:
             # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
@@ -852,20 +853,21 @@ def weibo_user_login(request):
        
 def mobile_user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        user = auth.authenticate(username=username, password=password)
-        if user is not None and user.is_active:
-            auth.login(request, user)
-            user_resource = UserResource()
-            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
-            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
-            dic = json.loads(serialized)
-            dic['status'] = 'OK'
-            dic['info'] = "You've logged in"
-            return HttpResponse(json.dumps(dic), content_type ='application/json')
-        else:
-            return createGeneralResponse('NOK', "Incorrect username or password")
+        return createGeneralResponse('NOK', "Currently only logging in from sina weibo is possible")
+#        username = request.POST.get('username', '')
+#        password = request.POST.get('password', '')
+#        user = auth.authenticate(username=username, password=password)
+#        if user is not None and user.is_active:
+#            auth.login(request, user)
+#            user_resource = UserResource()
+#            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
+#            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+#            dic = json.loads(serialized)
+#            dic['status'] = 'OK'
+#            dic['info'] = "You've logged in"
+#            return HttpResponse(json.dumps(dic), content_type ='application/json')
+#        else:
+#            return createGeneralResponse('NOK', "Incorrect username or password")
     else:
         raise # not used by mobile client
     

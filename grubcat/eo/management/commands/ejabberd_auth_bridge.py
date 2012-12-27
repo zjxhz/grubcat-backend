@@ -14,15 +14,16 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Authenticate XMPP user.
-"""
+from django.contrib import auth
 from django.contrib.auth.models import User, check_password
 from django.core.management.base import BaseCommand
+from eo import util
 import logging
 import struct
 import sys
-from eo import util
+"""
+Authenticate XMPP user.
+"""
  
 logger = logging.getLogger('api') 
  
@@ -77,12 +78,17 @@ class Command(BaseCommand):
            - `password`: the password to verify with the user
         """
         try:
-            user = User.objects.get(username=username)
-            #password can be the hash one when the request is initiated from django(e.g. to sync avatar and name) where the original password is unknown, 
+            # password can be the hash one when the request is initiated from django(e.g. to sync avatar and name) where the original password is unknown, 
             # or the raw one when the request is from client
+            user = User.objects.get(username=username)
             if password == user.password or check_password(password, user.password):
                 self._generate_response(True)
                 logger.info(username + ' has logged in from ejabberd')
+            elif username.startswith("weibo_"):
+                dic = {"username":username, "access_token":password}
+                if auth.authenticate(**dic):
+                    self._generate_response(True)
+                    logger.info(username + ' has logged in from ejabberd')
             else:
                 self._generate_response(False)
                 logger.info(username + ' failed auth from ejabberd, incorrect password: %s' % password)
