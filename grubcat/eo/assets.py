@@ -7,7 +7,7 @@ from webassets.env import Environment
 
 #css below
 bootstrap_css = Bundle(
-    'less/bootstrap/bootstrap.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
+    'less/bootstrap/bootstrap.less','less/bootstrap/responsive.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
 )
 #bootstrap_main_css = Bundle(
 #        'less/bootstrap/bootstrap-main.less', filters='less,cssmin', output='gen/bootstrap.%(version)s.css',
