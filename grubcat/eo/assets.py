@@ -53,7 +53,7 @@ order_css = Bundle(
 )
 
 restaurant_admin_css = Bundle(
-    common_css, 'css/restaurant-admin.css', filters='cssmin', output='gen/restaurant-admin.%(version)s.css'
+     'less/restaurant-admin.less', filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below
