@@ -49,7 +49,7 @@ var image_cropping = {
         minSize: [200, 200],
         trueSize: [org_width, org_height],
         onSelect: image_cropping.update_selection($this),
-//        onChange: image_cropping.update_selection($this),
+        onChange: image_cropping.update_selection($this),
         addClass: ($this.data('size-warning') && ((org_width < min_width) || (org_height < min_height))) ? 'size-warning jcrop-image': 'jcrop-image'
       }
 
@@ -149,6 +149,8 @@ var image_cropping = {
       sel.x2,
       sel.y2
     ).join(','));
+      showPreview && showPreview(sel);
+
   },
   update_selection: function($crop_field) {
     return function(sel) { image_cropping._update_selection(sel, $crop_field); };

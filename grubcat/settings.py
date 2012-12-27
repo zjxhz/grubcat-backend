@@ -59,7 +59,7 @@ MEDIA_URL = '/media/'
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/home/fanju/webapps/static/'
-
+ASSETS_ROOT=r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 
 # URL prefix for static files.
@@ -161,9 +161,11 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
-BIG_AVATAR_SIZE = (200, 200)
-SMALL_AVATAR_SIZE = (50, 50)
-IMAGE_CROPPING_THUMB_SIZE = (320, 320)
+BIG_AVATAR_SIZE = (220, 220)
+NORMAL_AVATAR_SIZE = (140, 140)
+SMALL_AVATAR_SIZE = (60, 60)
+IMAGE_CROPPING_THUMB_SIZE = (360, 360)
+#THUMBNAIL_QUALITY=90
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 

@@ -6,14 +6,12 @@
         </div>
     {% else %}
         <div id="check-in-title" class="span10 check-in-title">
-            <div class="span3"><h3>订单还未使用过！</h3></div>
-            <div class="span5">
-                <form id="use-order-form" action="{% url restaurant_use_order %}" method="post" class="form-inline">
+            <div class="span3 order-status"><h3>订单还未使用过！</h3></div>
+                <form id="use-order-form" action="{% url restaurant_use_order %}" method="post" class="form-inline span5">
                     <input type="hidden" name="code" value="{{ order.code }}">
                     <input type="hidden" name="id" value="{{ order.id }}">
                     <button type="submit" class="btn btn-success pull-right btn-use">使用</button>
                 </form>
-            </div>
         </div>
     {% endif %}
 

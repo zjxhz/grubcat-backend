@@ -24,7 +24,7 @@
     </script>
 {% endblock %}
 {% block content %}
-    <a href="{% url restaurant_dish_add %}" class="open-dialog addlink fr mb10 mr20" title="添加一道菜" rel="modal-dialog">添加一道菜</a>
+    <a href="{% url restaurant_dish_add %}" class="open-dialog addlink" title="添加一道菜" rel="modal-dialog">添加一道菜</a>
     <table id="dish-list" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -51,7 +51,7 @@
                         <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
                 {% endif %}
 
-                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink mr10" title="编辑" rel="modal-dialog">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink" data-dialog-class="span2">删除</a></td>
+                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink" title="编辑" rel="modal-dialog">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink" data-dialog-class="span2">删除</a></td>
             </tr>
             {% endfor %}
         </tbody>
