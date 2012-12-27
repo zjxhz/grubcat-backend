@@ -1,7 +1,112 @@
-/*TODO remove height*/
-#meal-grub {
-    text-align: center;
+// Core variables and mixins
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
 
+#meal-list a:hover {
+    text-decoration: none;
+}
+
+.meal-cell {
+    position: relative;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+}
+
+.meal-topic {
+    overflow: hidden;
+    padding-left: 15px;
+    background-image: url(../img/logo.png);
+    background-repeat: repeat-y;
+    background-position: -10px 0px;
+    font-size: 2em;
+    a {
+        color: #555;
+    }
+}
+
+.meal-img-wrapper {
+    position: relative;
+    img{
+        height: 240px;
+    }
+}
+
+.date-wrapper {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 70px;
+    text-align: center;
+    background: white;
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
+
+    span {
+        display: block;
+        padding: 3px;
+        text-align: center;
+        color: #666;
+        font-size: 13px;
+    }
+    .month {
+        background: #EEE;
+        border-bottom: 1px solid #CCC;
+        text-transform: uppercase;
+        color: #777;
+        padding-top: 5px;
+        .border-top-radius(3px);
+    }
+
+    .day-num {
+        font-size: 230%;
+        margin-top: 3px;
+        font-weight: bold;
+    }
+
+    .day-text {
+        margin-top: -3px;
+    }
+
+}
+
+.time {
+    position: absolute;
+    top: 105px;
+    left: 16px;
+    width: 70px;
+    text-align: center;
+    color: white;
+    background: black;
+    padding: 3px 0 3px 0;
+    .opacity(80);
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
+}
+
+.meal-info {
+    .introduction {
+        line-height: 30px;
+        font-size: 16px;
+        color: #666;
+        min-height: 183px;
+    }
+}
+
+.btn-book {
+    font-size: 30px;
+    line-height: 40px;
+    width: 80%;
+    margin: 0 auto;
+    .border-radius(0);
+}
+
+/*TODO remove height*/
+
+#meal-detail {
+    .btn-book {
+        line-height: 50px;
+    }
 }
 
 #meal-container {
@@ -17,21 +122,11 @@
     border-bottom: 1px solid #bbb;
 }
 
-#meal-main {
-    float: left;
-    /*width: 686px;*/
-    /*border-right: 1px solid #BBB;*/
-    padding-right: 12px;
-    margin-right: -1px;
-    margin-top: 10px;
-}
-
 #meal-grub {
+    text-align: center;
     float: left;
-    margin: 0 12px 0 0;
-    width: 275px;
+    width: 270px;
     background: white;
-    border: 1px solid #BBB;
 }
 
 #meal-img-wrapper {
@@ -42,7 +137,7 @@
 
 #meal-img-wrapper img {
     border: 4px solid white;
-    height: 255px;
+    min-height: 100px;
 }
 
 .sidebar {
@@ -51,7 +146,6 @@
     padding: 0 0 9px 9px;
     border-left: 1px solid #BBB;
 }
-
 
 .faq b {
     text-decoration: none;
@@ -73,83 +167,32 @@
     position: relative;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    zoom:1;
+    zoom: 1;
+    h1 {
+        margin-bottom: 10px;
+        text-align: left;
+        padding-left: 15px;
+        background-image: url("../img/logo.png");
+        background-repeat: repeat-y;
+        background-position: -10px 0;
+        font-size: 2em;
+    }
+    span{
+        margin-top:5px;
+    }
+    #restaurant-location {
+        color: #777777;
+        display: block;
+        float: left;
+    }
 }
 
 #desc {
-    margin-bottom: 20px;
-    font-size: 12px;
+    line-height: 30px;
+    font-size: 16px;
 }
 
 .user-wrapper {
-    float: left;
-    width: 208px;
-    height: 240px;
-    padding: 7px 5px;
-    margin-left: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #DDD;
-    background: white;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    text-align: center;
-}
-
-.user-wrapper:hover {
-    border: 1px solid #bbb;
-    -webkit-box-shadow: inset 0 0 6px #ddd;
-}
-
-#title h1 {
-    margin-bottom: 10px;
-    font-size: 190%;
-    text-align: left;
-    font-weight: bold;
-}
-
-a.map {
-    text-decoration: none;
-    font-family: helvetica, arial, sans-serif;
-    font-style: normal;
-    text-align: center;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    font-size: 100%;
-    background: -moz-linear-gradient(top, white 0%, #DDD 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #DDD));
-    background: -webkit-linear-gradient(top, white 0%, #DDD 100%);
-    background: -o-linear-gradient(top, white 0%, #DDD 100%);
-    background: -ms-linear-gradient(top, white 0%, #DDD 100%);
-    background: linear-gradient(top, white 0%, #DDD 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#dddddd', GradientType = 0);
-    color: #333;
-
-    float: none;
-    display: inline;
-    text-decoration: none;
-    border: 0;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background: #CCC;
-    color: #333;
-    font-weight: normal;
-    text-shadow: none;
-    padding: 3px 7px;
-    margin-left: 5px;
-}
-
-#creator {
-    display: block;
-    float: right;
-    padding: 11px 6px;
-    border: 1px solid #CCC;
-    background: #EEE;
-    color: #444;
-    font-size: 110%;
-    vertical-align: middle;
 }
 
 .host-name {
@@ -169,40 +212,6 @@ a.map {
     right: 5px;
 }
 
-.reserve-button {
-    margin: 15px auto;
-    display: block;
-    padding: 8px 0;
-    width: 250px;
-    _background: #42A621;
-    background: -moz-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #57D62D), color-stop(100%, #42A621));
-    background: -webkit-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -o-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: -ms-linear-gradient(top, #57D62D 0%, #42A621 100%);
-    background: linear-gradient(top, #57D62D 0%, #42A621 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#57D62D', endColorstr = '#42A621', GradientType = 0);
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 6px;
-    color: white;
-    font-size: 210%;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 0 8px #888;
-    text-shadow: 0 1px 1px black;
-    border: 2px solid #EEE;
-    text-align: center
-}
-
-.reserve-button span {
-    font-size: 60%;
-    display: block;
-    font-weight: normal;
-    text-transform: none;
-}
-
 .what-is-fanju {
     display: block;
     float: left;
@@ -215,14 +224,7 @@ a.map {
 }
 
 .date {
-    border-bottom: 0;
-    font-size: 146%;
     font-weight: bold;
-    color: #333;
-    padding-bottom: 10px;
-    display: block;
-    width: 90%;
-    margin: 10px auto auto;
 }
 
 .price {
@@ -236,8 +238,8 @@ a.map {
     color: #20538C;
 }
 
-#users{
-    width:100%;
+#users {
+    width: 100%;
 }
 
 #users h1 {
@@ -260,9 +262,6 @@ h3.name {
 }
 
 img.user-pic {
-    margin: auto;
-    border: 2px solid white;
-    box-shadow: 0 0 4px #444;
 }
 
 .speech-outter {
@@ -342,7 +341,7 @@ img.user-pic {
     padding: 5px 30px 0 30px;
     font-size: 15px;
     color: #666;
-    /*width: 500px;*/
+/*width: 500px;*/
 }
 
 #menu-popup .content h3 {
@@ -371,7 +370,7 @@ img.user-pic {
     float: left;
 }
 
-dt.category{
+dt.category {
     width: 240px;
     padding: 10px 0;
     font-size: 15px;
@@ -379,17 +378,18 @@ dt.category{
     line-height: 18px;
 }
 
-dd.dish{
+dd.dish {
     width: 230px;
     padding: 0 0 5px 7px;
     font-size: 14px;
     line-height: 18px;
 }
 
-.dish-info{
-    float:right;
+.dish-info {
+    float: right;
 }
-.dish-info .num{
+
+.dish-info .num {
     margin-right: 5px;
 }
 
@@ -397,3 +397,4 @@ dd.dish{
     background-color: #57D62D;
     color: white;
 }
+

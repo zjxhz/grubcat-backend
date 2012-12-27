@@ -2,9 +2,6 @@
     /*width: 568px;*/
 /*}*/
 
-#container-middle {
-    background: url(../img/small-container-bg.png)
-}
 
 .content {
     width: 63%;
@@ -49,6 +46,10 @@ input {
     font-size: 120%;
     padding: 10px 15px;
     width: 190px;
+}
+
+.register-wrapper, .login-wrapper{
+    margin-top: 30px;
 }
 
 .login-panel,.register-panel {

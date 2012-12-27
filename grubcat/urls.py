@@ -25,7 +25,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
-
+(r'^google18a5c2f5487d3add.html',TemplateView.as_view(template_name='google18a5c2f5487d3add.html') ),
     ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     ('^restaurant/(\d+)/$', get_restaurant),
     ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),

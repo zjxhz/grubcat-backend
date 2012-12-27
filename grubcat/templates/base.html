@@ -8,78 +8,37 @@
 <html lang="zh-CN">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
     <meta content="饭聚，饭局，杭州的饭聚，fanju,杭州的饭局,美食社交，社交晚餐" name="keywords">
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
-    <!--[if IE 6]>
-    {% comment %}{% assets "fix_ie6_png_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}{% endcomment %}
-<![endif]-->
     {% block page_css %}
-        <link href="{% static 'css/bootstrap.css' %}" media="screen" rel="stylesheet" type="text/css">
         {% assets "base_css" %}
-            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
-        {% endassets %}
-        {% assets "common_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
 </head>
 <body>
-
+<!--[if IE 6]>
+<div id="ie6-warning">您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用 <a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div>
+<![endif]-->
 {% block nav %}
-    {% comment %} <div id="main-nav" class="logged-out">
-        <div class="nav-inner">
-            {#            <div class="logo">#}
-            {#                <a href="/">#}
-            {#                    <img class="png-fix" width="198px" height="58px" alt="饭局"#}
-            {#                         src="{% static 'img/site-logo.bmp' %}"></a>#}
-            {#            </div>#}
-            <ul>
-                <li id="nav-meal"><a href="{% url meal_list %}">饭局</a></li>
-                <li id="nav-group"><a href="{% url group_list %}">圈子</a></li>
-                <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
-                {% if request.user.is_authenticated %}
-                    <a href="{% url logout %}" class="nav-sign png-fix">退出</a>
-                    {% if request.user.restaurant %}
-                        <a href="{% url restaurant_admin %}" class="nav-sign png-fix">餐厅后台</a>
-                    {% endif %}
-                    <a href="{% url edit_profile %}" class="nav-sign png-fix">修改资料</a>
-
-                {% else %}
-                    {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}
-                        <a href="{% url login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
-                           id="login_link"
-                           class="nav-sign png-fix">登录</a>
-                        <a href="{% url register %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
-                           id="signup_link"
-                           class="nav-sign png-fix">注册</a>
-                    {% else %}
-                        <a href="{% url login %}?next={{ request.path_info }}" class="nav-sign png-fix">登录</a>
-                        <a href="{% url register %}?next={{ request.path_info }}" class="nav-sign png-fix">注册</a>
-                    {% endif %}
-
-                {% endif %}
-            </ul>
-        </div>
-    </div>{% endcomment %}
     <div class="navbar navbar-static-top" id="main-nav">
         <div class="navbar-inner  ">
             <div class="container">
                 <a class="brand " href="/">饭聚 @杭州</a>
                 <ul class="nav ">
-                    <li id="nav-meal"><a href="{% url meal_list %}">首页</a></li>
+                    <li id="nav-meal"><a href="{% url meal_list %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
-                    <li id="nav-create-meal"><a href="{% url create_meal %}">发起饭局</a></li>
+                    <li id="nav-create-meal"><a href="{% url create_meal %}" class="hidden-phone">发起饭局</a></li>
                 </ul>
                 <ul class="nav pull-right">
                     {% if request.user.is_authenticated %}
                         {% if request.user.restaurant %}
-                            <li><a href="{% url restaurant_admin %}">餐厅后台</a></li>
+                            <li><a href="{% url restaurant_admin %}" class="hidden-phone">餐厅后台</a></li>
                         {% endif %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">消息<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">消息<b class="caret hidden-phone"></b></a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                                 <li><a tabindex="-1" href="#">查看私信</a></li>
                                 <li><a tabindex="-1" href="#">查看留言</a></li>
@@ -91,7 +50,7 @@
                         </li>
 
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-phone">{{ user.username }}</span><b
                                     class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                                 <li><a tabindex="-1" href="{% url edit_profile %}">个人主页</a></li>
@@ -109,13 +68,13 @@
                                     {% url login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
                                    id="login_link"
                                     >登录</a></li>
-                            <li><a href="
+                            <li class="hidden-phone"><a href="
                                     {% url register %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
                                    id="signup_link"
                                     >注册</a></li>
                         {% else %}
                             <li><a href="{% url login %}?next={{ request.path_info }}">登录</a></li>
-                            <li><a href="{% url register %}?next={{ request.path_info }}">注册</a></li>
+                            <li class="hidden-phone"><a href="{% url register %}?next={{ request.path_info }}">注册</a></li>
                         {% endif %}
 
                     {% endif %}
@@ -127,35 +86,24 @@
 {% endblock %}
 
 {% block page-container %}
-    <div   class="container" id="main-container">
+    <div class="container" id="main-container">
         {% block container-inner %}
-            {#            <div id="container-upper" class="png-fix"></div>#}
-            {#            <div id="container-middle" class="png-fix">#}
             <div class="row">
                 {% block content %}{% endblock %}
                 {#    use for active nav item, see example on meal_list page#}
             </div>
-
-            {#            </div>#}
-
-            {#            <div id="container-lower" class="png-fix"></div>#}
         {% endblock %}
     </div>
     {% block footer %}
-        <div id="footer" >
-            {#                        <img alt="Footer_shadows" class="png-fix" src="{% static 'img/footer-shadow.png' %}">#}
-
-            <p style="margin:5px 40px "></p>
+        <div id="footer">
         </div>
     {% endblock %}
 {% endblock %}
 
 {% block base_js %}
-
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endblock %}
 <script type="text/javascript">
     $(document).ready(function ($) {

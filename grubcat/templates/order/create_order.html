@@ -4,6 +4,7 @@
 {% load assets %}
 {% block title %}预定{% endblock %}
 {% block page_css %}
+    {{ block.super }}
     {% assets "order_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
@@ -64,7 +65,7 @@
 
         <div class="order-info ">
 
-            <form id="order_info_form" action="" method="post" class="form-horizontal shadow"> {% csrf_token %}
+            <form id="order_info_form" action="" method="post" class="form-horizontal"> {% csrf_token %}
                 <legend>订单信息</legend>
                 <fieldset>
                     {% for hidden in form.hidden_fields %}
@@ -95,7 +96,7 @@
                     </div>
                 </fieldset>
                 <div class="form-actions">
-                    <input type="submit" class="btn-large btn-order" value="买单"/>
+                    <input type="submit" class="btn btn-primary btn-large span2" value="买单"/>
                 </div>
             </form>
         </div>
