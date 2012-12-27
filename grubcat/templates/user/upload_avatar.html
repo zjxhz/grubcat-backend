@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {% assets "edit_profile_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    {{ form.media.css }}
+{% endblock %}
+{% block page_js %}
+    {{ block.super }}
+    {#    {{ form.media.js }}#}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript">
+
+        $(function () {
+            $("#profile-nav-avatar").addClass("active");
+            if ($("#id_avatar").data("thumbnail-url")) {
+                $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
+            {% if  form.instance.avatar %}
+                {#                $(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');#}
+            {% endif %}
+            } else {
+                $("#preview_area").css("border", "1px solid #DDD")
+            }
+            $("#id_choose_avatar").click(function () {
+                $("#id_avatar").click();
+                return false;
+            })
+            $("#id_avatar").change(function () {
+                $(".uploadding").show();
+                $("#id_action").val("");
+                $("#id_upload_form").submit();
+                {#                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
+            })
+
+            function showPreview(coords) {
+                var rxBig = 200 / coords.w;
+                var ryBig = 200 / coords.h;
+                var rxMiddle = 100 / coords.w;
+                var ryMiddle = 100 / coords.h;
+                var rxSmall = 50 / coords.w;
+                var rySmall = 50 / coords.h;
+                var originalWidth = $("#id_avatar").data('org-width');
+                var originalHeight = $("#id_avatar").data('org-height');
+
+
+                $('#preview_big').css({
+                    width:Math.round(rxBig * originalWidth) + 'px',
+                    height:Math.round(ryBig * originalHeight) + 'px',
+                    marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
+                });
+                $('#preview_middle').css({
+                    width:Math.round(rxMiddle * originalWidth) + 'px',
+                    height:Math.round(ryMiddle * originalHeight) + 'px',
+                    marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
+                    marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
+                });
+                $('#preview_small').css({
+                    width:Math.round(rxSmall * originalWidth) + 'px',
+                    height:Math.round(rySmall * originalHeight) + 'px',
+                    marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
+                    marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
+                });
+            }
+
+            image_cropping.update_selection = function ($crop_field) {
+                return function (sel) {
+                    image_cropping._update_selection(sel, $crop_field);
+                    showPreview(sel);
+                };
+
+
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% include "user/profile_nav.html" %}
+    <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
+        <div class="row">
+            <div id="cropping-area" class="span4">
+
+                {{ form.avatar }}
+
+                {{ form.cropping }}
+
+                <input type="hidden" name="action" id="id_action" value="crop"/>
+            </div>
+            <div id="preview_area" class="span5">
+                <div id="cropping-tip">
+                    您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
+                </div>
+                <div id="preview_big_container" class="preview-container">
+                    <img id="preview_big">
+                </div>
+                <div id="preview_middle_container" class="preview-container">
+                    <img id="preview_middle">
+                </div>
+                <div id="preview_small_container" class="preview-container">
+                    <img id="preview_small">
+                </div>
+
+            </div>
+            <div class="buttons">
+                <input id="id_choose_avatar" type="button" value="选择头像" class="btn">
+                <input type="submit" value="保存" class="btn">
+            </div>
+        </div>
+    </form>
+{% endblock %}
+

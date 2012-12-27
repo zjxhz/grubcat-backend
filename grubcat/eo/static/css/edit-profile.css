@@ -1,0 +1,120 @@
+#main-container{
+    margin-top: 40px;;
+}
+
+.avatar img{
+    margin: 0 7px;
+    border: 3px solid white;
+    height: 200px;
+}
+
+.avatar h1{
+    text-align: center;
+    font-size: 18px;
+}
+.avatar a.edit-avatar{
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+}
+
+
+/*.form-horizontal .control-label {*/
+    /*width: 68px;*/
+/*}*/
+/*.form-horizontal .controls {*/
+    /*margin-left: 83px;*/
+/*}*/
+
+#id_birthday_year,#id_birthday_month,#id_birthday_day
+{
+    margin-right: 1px;
+}
+
+.controls .errorlist{
+    display: inline-block;
+    list-style: none;
+}
+
+.controls textarea {
+    height: auto;
+    resize: none;
+}
+
+.control-group.gender .errorlist{
+    padding-top: 5px;
+    margin: 0 0 0 226px;
+    vertical-align: middle;
+}
+
+#id_avatar, .file-upload {
+    position: absolute;
+    z-index: 2000;
+    opacity: 0;
+    margin-left: -1000px;
+}
+
+#id_upload_form img {
+    max-width: 320px;;
+}
+
+#id_cropping {
+    display: none;
+}
+
+{#        #id_upload_form {#}
+{#            width: 755px;#}
+{#            margin-left: 125px;#}
+{#        }#}
+
+#cropping-area {
+    float: left;
+    width: 320px;
+}
+
+#preview_area {
+    float: left;
+    margin-left: 30px;
+}
+
+div.buttons {
+    clear: left;
+    float: right;
+    margin-right: 103px;
+    margin-top: 10px;
+}
+
+#id_choose_avatar {
+    margin-right: 26px;
+}
+
+
+.preview-container {
+    overflow: hidden;
+}
+
+#cropping-tip {
+    margin-top: 18px;
+    margin-left: 12px;
+    color: #ff471d;
+}
+
+#preview_big_container {
+    width: 200px;
+    height: 200px;
+    float: left;
+    margin-right: 30px;
+    margin-top: 20px;
+}
+
+#preview_middle_container {
+    width: 100px;
+    height: 100px;
+    margin-top: 40px;
+}
+
+#preview_small_container {
+    width: 50px;
+    height: 50px;
+    margin-top: 30px;
+}

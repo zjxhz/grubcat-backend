@@ -1,0 +1,153 @@
+/*#meal-list-city {
+    border-bottom: 1px solid #bbb;
+}
+
+#meal-list-city h1 {
+    position: relative;
+    top: -10px;
+    text-align: center;
+    font-size: 1.65em;
+    font-weight: bold;
+}*/
+
+/*#meal-list {
+    float: left;
+    width: 707px;
+}*/
+
+#meal-list a:hover{
+    text-decoration: none;
+}
+.meal-cell {
+    /*border-bottom: 1px solid #DDD;*/
+    margin: 0 10px 10px 0;
+    padding-bottom:10px;
+    position: relative;
+    bottom: 2px;
+    /*background: white;*/
+}
+
+.meal-cell-title {
+    padding: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.meal-cell-title a:hover {
+    color: #20538c;
+}
+
+.meal-img-wrapper {
+    /*height: 210px;*/
+    /*width: 376px;*/
+    position: relative;
+
+}
+
+
+.meal-img-wrapper a img {
+    height: 200px;
+    width: 300px;
+}
+
+#meal-list .thumbnails .span4{
+    width:312px;
+    margin-left: 8px;
+    margin-bottom: 0;
+}
+
+
+.meal-topic{
+    height: 35px;
+    overflow: hidden;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+
+
+.meal-location {
+    display: block;
+    height: 19px;
+    background: url("../img/meal-location-line.png") repeat-x;
+    text-align: center;
+}
+
+.meal-location span {
+    background: white url("../img/meal-location.png") no-repeat 11px 1px;
+    padding: 3px 10px 3px 32px;
+    color: #777;
+    font-size: 115%;
+    text-align: center;
+}
+
+.meal-info .org img {
+    height: 30px;
+    width: 30px;
+}
+
+.host img,.host span{
+    vertical-align: middle;
+}
+
+.meal-info {
+    float: right;
+    position: absolute;
+    top: 45px;
+    left: 0px;
+    width: 290px;
+    height: 200px;
+    background: white;
+}
+
+.meal-info .org span {
+    line-height: 30px;
+    margin-left: 5px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+
+.meal-info p {
+    line-height: 160%;
+    margin: 10px ;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.meal-info a {
+    display: block;
+    width: 290px;
+    height: 85px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 176%;
+    background: url("../img/meal-check-out-bg.png") no-repeat;
+    margin-left: -11px;
+    line-height: 300%;
+    bottom: -4px;
+    position: absolute;
+    text-shadow: 0 1px 1px black;
+}
+
+
+#create-a-meal {
+    text-align: center;
+    height: 105px;
+}
+
+#create-a-meal .sidebar-box-inner {
+    padding: 22px 7px;
+}
+
+#recently-grubbed img {
+    border: 0 solid #ddd;
+}
+
+#create-a-meal .btn-create-meal{
+    color: #ffffff;
+    line-height: 20px;
+    font-size: 18px;
+}
+
