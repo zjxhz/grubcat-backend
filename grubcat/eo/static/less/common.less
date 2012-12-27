@@ -1,49 +1,95 @@
-.navbar{
+.navbar {
     margin-bottom: 15px;
     font-size: 16px;
 }
 
-.navbar ul.nav > li > a
-{
+.navbar ul.nav > li > a {
     font-size: 18px;
 }
 
 /*form*/
-.errorlist{
+.errorlist {
     color: red;
     margin-bottom: 10px;
 }
 
-.error{
+.error {
     margin: auto auto;
     width: 800px;
     padding: 40px;
 }
 
-.error h3{
+.error h3 {
     text-align: center;
     font-weight: normal;
     font-size: 16px;
 }
 
-ul.dropdown-menu{
+ul.dropdown-menu {
     min-width: 120px;
 }
-@media (max-width: 767px) {
-    .container, .navbar .container{
-        width:280px;
+
+//pad
+@media (min-width: 768px) and (max-width: 979px) {
+    .navbar .container, {
+        width: 710px;
     }
-    .navbar .nav.pull-right{
+
+    .container, {
+        width: 700px;
+    }
+
+    #meal-list {
+        width: auto;
+
+        .meal-img-wrapper {
+            width: 380px;
+        }
+        .meal-info {
+            width: 300px;
+        }
+    }
+
+    #meal-detail {
+        width: auto;
+    }
+
+    #user-container {
+        .box {
+            margin-right: 8px;
+        }
+    }
+
+}
+
+/*
+@media (min-width: 480px) and (max-width: 767px){
+
+}*/
+//phones
+@media (max-width: 767px) {
+    .navbar .container {
+        width: 290px;
+    }
+
+    .container, {
+        width: 280px;
+    }
+
+    .navbar .nav.pull-right {
         float: left;
     }
-    .navbar .nav > li > a{
+
+    .navbar .nav > li > a {
         padding: 15px 10px 15px;
     }
-    .profile-nav li{
+
+    .profile-nav li {
         float: left;
     }
-    #meal-list{
-        .introduction{
+
+    #meal-list {
+        .introduction {
             min-height: 30px;
             margin-top: 10px;
         }
@@ -54,21 +100,22 @@ ul.dropdown-menu{
             }
         }
     }
-    #meal-detail{
-        #meal-grub{
+
+    #meal-detail {
+        #meal-grub {
             margin-top: 10px;
         }
-        .user-wrapper{
-            width:140px;
+        .user-wrapper {
+            width: 140px;
             float: left
         }
     }
 
-    #edit-profile{
+    #edit-profile {
         #id_birthday_year, #id_birthday_month, #id_birthday_day {
             margin-right: 0;
         }
     }
 
-
 }
+
