@@ -832,15 +832,7 @@ def checkemail(request):
 def weibo_user_login(request):
     if request.method == 'POST':        
         if request.user.is_authenticated():
-            # a logged in user, could be logged in as an ordinary user which has no weibo account set, so set weibo account
-            # next time when the user logs in as a weibo user, we will know which user who he really is
-            raise Exception("Currently only logging in from sina weibo is possible")
-#            user_profile = request.user.get_profile()
-#            weibo_user_id = json.loads(weibo_client.account.get_uid.get())['uid']
-#            user_profile.weibo_id = weibo_user_id
-#            user_profile.weibo_access_token = access_token
-#            user_profile.save()
-#            return createLoggedInResponse(request.user)
+            return createLoggedInResponse(request.user)
         else:
             # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
