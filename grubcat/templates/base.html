@@ -53,10 +53,10 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-phone">{{ user.username }}</span><b
                                     class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-                                <li><a tabindex="-1" href="{% url edit_profile %}">个人主页</a></li>
+                                <li><a tabindex="-1" href="{% url user_detail request.user.id %}">个人主页</a></li>
                                 <li><a tabindex="-1" href="#">我的饭局</a></li>
                                 <li class="divider"></li>
-                                <li><a tabindex="-1" href="{% url edit_profile %}">账号设置</a></li>
+                                <li><a tabindex="-1" href="{% url edit_basic_profile %}">账号设置</a></li>
                                 <li><a tabindex="-1" href="{% url logout %}">退出</a></li>
                             </ul>
                         </li>

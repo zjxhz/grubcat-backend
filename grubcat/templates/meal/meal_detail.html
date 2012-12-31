@@ -14,10 +14,11 @@
         <div id="title" class="box-seperator clearfix">
 
             <h1>{{ meal.topic }}</h1>
-                <span id="restaurant-location"><a href="http://maps.google.com.hk?q={{ meal.menu.restaurant.name }}" target="_blank"
-                        class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}</span>
+                <span id="restaurant-location"><a href="http://maps.google.com.hk?q={{ meal.menu.restaurant.name }}"
+                                                  target="_blank"
+                                                  class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}</span>
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
-                    {{ meal.start_time|date:"G:i " }}</span>
+               {{ meal.start_time|date:"G:i " }}</span>
         </div>
         <p id="desc">{{ meal.introduction }}</p>
 
@@ -29,17 +30,48 @@
             </div>
             <div id="meal-grub">
                 {% if not request.user.get_profile in meal.participants.all %}
-                    <a href="{% url create_order meal.id %}"
+                    <a href="#"
                        class="btn btn-primary btn-book fr">
                         马上预定
                         {#                        <span class="mt5">{{ meal.list_price }}RMB/人</span>#}
                     </a>
                 {% else %}
-                    <a href="#"
+                    <a href=""
                        class="btn btn-primary btn-book fr">
                         已预定
                     </a>
                 {% endif %}
+
+                <form id="order_info_form" action="" method="post" class="form-horizontal"> {% csrf_token %}
+                    <fieldset>
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <div class="control-group num_persons">
+                            <label class="control-label" for="id_num_persons">为几人付款:</label>
+
+                            <div class="controls">
+                                {{ form.num_persons }}
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">价钱:</label>
+
+                            <div class="controls">
+                                <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">总价钱:</label>
+
+                            <div class="controls">
+                                <label><span id="total_price" class="bl">{{ meal.list_price }}</span> 元</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
 
             </div>
 
@@ -52,14 +84,14 @@
             {% endif %}
             <ul class="thumbnails">
                 {% for user in meal.participants.all %}
-                    <li class="user-wrapper span2">
+                    <li class="user-wrapper span3">
                         {#                    <h3 class="name">{{ user.user.username}}</h3>#}
 
                         {#                    <p class="work">{{ user.occupation|default:"" }}</p>#}
-                        <a href="" class="thumbnail">
-                            <img alt="{{ user.user.username }}" class=" user-pic" width="140"
-                                 height="140"
-                                 src="{{ user.normal_avatar }}">
+                        <a href="{% url user_detail user.id %}" class="thumbnail" title="{{ user.user.username }}">
+                            <img alt="{{ user.user.username }}" class="user-pic" width="220"
+                                 height="220"
+                                 src="{{ user.big_avatar }}">
                         </a>
                     </li>
                 {% endfor %}

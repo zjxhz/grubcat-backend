@@ -102,15 +102,17 @@ class MealListView(ListView):
         return context
 
 
-class MealDetailView(DetailView):
-    model = Meal
-    context_object_name = "meal"
+class MealDetailView( CreateView):
+#    model = Meal
+#    context_object_name = "meal"
+    form_class = OrderCreateForm
     template_name = "meal/meal_detail.html"
-    queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user')
+#    queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user')
 
-    def get_object(self, queryset=None):
-        meal = super(MealDetailView, self).get_object()
-        return meal
+    def get_context_data(self, **kwargs):
+        context = super(MealDetailView, self).get_context_data(**kwargs)
+        context['meal'] = queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('pk'))
+        return context
 
 ### group related views ###
 class GroupListView(ListView):
@@ -303,6 +305,13 @@ class UserListView(ListView):
     context_object_name = "user_list"
     paginate_by = 2
 
+
+class UserDetailView(DetailView):
+    model = User
+    context_object_name = "profile"
+    template_name = "user/user_detail.html"
+
+
 ### Order related views ###
 class OrderCreateView(CreateView):
     form_class = OrderCreateForm
@@ -322,6 +331,7 @@ class OrderCreateView(CreateView):
         order.meal_id = form.cleaned_data['meal_id']
         order.status = OrderStatus.CREATED
         order.total_price = order.meal.list_price * order.num_persons
+#        TODO some checks
         response = super(OrderCreateView, self).form_valid(form)
         meal = order.meal
         if order.customer == meal.host:
@@ -597,15 +607,15 @@ class UploadAvatarView(UpdateView):
     def form_valid(self, form):
         profile = form.save(False)
         if form.cleaned_data['action'] == 'crop':
-            redirect_url = reverse('edit_profile')
+            redirect_url = reverse('edit_basic_profile')
         else:
             profile.cropping = ''
             redirect_url = reverse('upload_avatar')
         super(UploadAvatarView, self).form_valid(form)
-        print 'cropping' + profile.cropping
+#        print 'cropping' + profile.cropping
         return HttpResponseRedirect(redirect_url)
 
-def edit_profile(request):
+def edit_basic_profile(request):
     profile = request.user.get_profile()
     if request.method == 'GET':
         form = BasicProfileForm(instance=profile)
@@ -613,39 +623,8 @@ def edit_profile(request):
         form = BasicProfileForm(request.POST, instance=profile)
         if form.is_valid():
             profile = form.save()
-            return HttpResponseRedirect(reverse('edit_profile'))
+            return HttpResponseRedirect(reverse('edit_basic_profile'))
     return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
-
-def edit_profile_basic(request):
-    if request.method == 'POST':
-        profile = request.user.get_profile()
-        form = BasicProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('edit_profile'))
-        else:
-            return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
-
-def edit_profile_education(request):
-    profile = request.user.get_profile()
-    if request.method == 'POST':
-        form = BasicProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('edit_profile'))
-        else:
-            return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
-
-def edit_profile_work(request):
-    profile = request.user.get_profile()
-    if request.method == 'POST':
-        form = BasicProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('edit_profile'))
-        else:
-            return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
-
 
         #    temp use
 

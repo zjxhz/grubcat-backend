@@ -408,7 +408,7 @@ class UserProfile(models.Model):
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
-    gender = models.IntegerField( null=True,choices=GENDER_CHOICE)
+    gender = models.IntegerField(blank=False, null=False,choices=GENDER_CHOICE)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)

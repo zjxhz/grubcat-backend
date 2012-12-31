@@ -135,9 +135,9 @@ class UploadAvatarForm(ModelForm):
 class BasicProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields=('motto','birthday','gender')
+        fields=('name','motto','birthday','gender')
         widgets = {
-            'gender' : RadioSelect(choices=GENDER_CHOICE),
+            'gender' : RadioSelect(choices=GENDER_CHOICE,),
             'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
         }
 #restaurant admin related

@@ -1,4 +1,3 @@
-import django
 from django.conf.urls.defaults import *
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -11,7 +10,7 @@ from eo.decorators import restaurant_login_required
 from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
-    get_user_profile, favorite_restaurant, favorite_restaurants,\
+    favorite_restaurant, favorite_restaurants,\
     get_following, remove_following, followers,\
     get_recommended_following, messages,\
     meal_participants, view_or_send_meal_invitations,\
@@ -25,7 +24,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
-(r'^google18a5c2f5487d3add.html',TemplateView.as_view(template_name='google18a5c2f5487d3add.html') ),
     ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     ('^restaurant/(\d+)/$', get_restaurant),
     ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
@@ -102,13 +100,10 @@ urlpatterns = patterns('',
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-     url(r'^user/(?P<pk>\d+)/$', TemplateView.as_view(template_name='user/user_detail.html'), name='user_detail'),
+     url(r'^user/(?P<pk>\d+)/$', UserDetailView.as_view(), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
-    url(r'^profile/$', login_required(edit_profile), name='edit_profile'),
-    url(r'^profile/basic/$', login_required(edit_profile_basic), name='edit_profile_basic'),
-    url(r'^profile/education/$', login_required(edit_profile), name='edit_profile_education'),
-    url(r'^profile/work/$', login_required(edit_profile), name='edit_profile_work'),
+    url(r'^profile/$', login_required(edit_basic_profile), name='edit_basic_profile'),
     url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
 
     #restaurant admin
