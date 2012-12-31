@@ -32,12 +32,13 @@
 {
     display: inline-block;
     list-style: none outside none;
+    margin-left: 0;
 }
 
-.birthday.control-group  .controls .errorlist
+.nickname.control-group  .controls .errorlist
 {
-    margin-left: 0px;
-    margin-top: 15px;
+    margin-left: 10px;
+    margin-top: 0px;
 }
 
 .controls textarea {
