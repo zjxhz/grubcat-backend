@@ -12,13 +12,13 @@ class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput, required=False)
     if_let_fanjoin_choose = forms.BooleanField(widget=HiddenInput, initial=False, required=False)
 
-    def __init__(self, *args, **kwargs  ):
-        super(MealForm, self).__init__(*args, **kwargs)
-        interest_groups = kwargs.get('initial').get('request').user.interest_groups.all()
-        if interest_groups:
-            self.fields['group'].queryset = interest_groups
-        else:
-            del self.fields['group']
+#    def __init__(self, *args, **kwargs  ):
+#        super(MealForm, self).__init__(*args, **kwargs)
+#        interest_groups = kwargs.get('initial').get('request').user.interest_groups.all()
+#        if interest_groups:
+#            self.fields['group'].queryset = interest_groups
+#        else:
+#            del self.fields['group']
 
 
     class Meta:
@@ -47,7 +47,7 @@ class MealForm(ModelForm):
         return cleaned_data
 
 
-NUM_PERSON_CHOICE = [(x, "%s人" % x) for x in range(1, 10)]
+NUM_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(1, 13)]
 
 class OrderCreateForm(ModelForm):
     meal_id = forms.CharField(widget=HiddenInput)

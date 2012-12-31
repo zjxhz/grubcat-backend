@@ -9,8 +9,8 @@
 
 {% block content %}
     <div class="span3">
-        <img src="{{ profile.get_profile.big_avatar }}" alt="{{ profile.username }}" class="img-polaroid"/>
-        <h3 class="tc">{{ profile.username }}</h3>
+        <img src="{{ profile.big_avatar }}" alt="{{ profile.name }}" class="img-polaroid"/>
+        <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
     </div>
 {% endblock %}
 
