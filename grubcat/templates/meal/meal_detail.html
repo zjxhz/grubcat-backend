@@ -29,7 +29,14 @@
                      width="420" height="280">
             </div>
             <div id="meal-grub">
-                {% if not request.user.get_profile in meal.participants.all %}
+{#                {% if not request.user.get_profile in meal.participants.all %}#}
+            {% if meal.left_persons == 0 %}
+                <a href=""
+                   class="btn btn-book btn-sold-out fr btn-disabled">
+                    卖光了
+                    {#                        <span class="mt5">{{ meal.list_price }}RMB/人</span>#}
+                </a>
+                {% elif not order %}
                     <a href="#"
                        class="btn btn-primary btn-book fr">
                         马上预定

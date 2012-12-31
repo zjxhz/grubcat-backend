@@ -93,17 +93,23 @@
   }
 }
 
-.btn-book {
+.btn-book, .btn-create-meal {
   font-size: 30px;
-  line-height: 40px;
+  line-height: 45px;
   width: 80%;
   margin: 0 auto;
   .border-radius(0);
+}
+.btn-create-meal{
+  line-height: 50px;
 }
 
 #meal-detail {
   .btn-book {
     line-height: 50px;
+  }
+  .btn-sold-out{
+      .buttonBackground(#FF4545, #FF4545);
   }
   .btn-booked {
     width: 82%;
@@ -467,4 +473,340 @@ dd.dish {
 
 }
 
+/*create meal page*/
+#create-meal-page{
+  .min_persons .errorlist, .region .errorlist, .list-price .errorlist {
+    float: left;
+  }
+  #restaurant-list {
+    height: 377px;
+    overflow-y: auto ;
+    overflow-x: hidden;
+    background-color: #EEE;
+    margin-bottom: 15px;
+    border: 1px solid #DDD;
+    border-left: none;
+    padding-right: 1px;
+    width:329px;
+
+    ul{
+      margin: 0;
+    }
+  }
+
+  .form-wrapper {
+    width: 685px;
+    float: left;
+  }
+
+  #faq {
+    float: right;
+    width: 250px;
+    margin: 0 0 10px 0;
+  }
+
+  #faq .sidebar-box-inner p {
+    display: block;
+  }
+
+  #create_meal_form fieldset {
+    background: white;
+    border-bottom: 1px solid #CCC;
+    width: 100%;
+    position: relative;
+    font-size: 16px;
+    padding: 53px 0px 5px 1px;
+    margin-bottom: 30px;
+  }
+
+  #create_meal_form legend {
+    padding: 12px;
+    font-size: 140%;
+    font-weight: bold;
+    color: #222;
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+
+  .control-group label {
+    font-size: 16px;
+  }
+
+  .controls input, .controls textarea {
+    width: 360px;
+    height: 25px;
+    padding: 5px;
+    font-size: 18px;
+  }
+
+  .controls textarea {
+    height: auto;
+    resize: none;
+  }
+
+  .dk_label {
+    color: #666;
+    font-size: 16px;
+  }
+
+  .dk_toggle {
+    padding: 10px 44px 10px 13px;
+  }
+
+  #dk_container_id_start_time .dk_toggle {
+    background-image: url(../img/clock.png);
+    background-position: 12px center;
+    padding: 12px 10px 9px 45px;
+  }
+
+  #id_start_date {
+    float: left;
+    font-size: 16px;
+    padding: 5px 5px 5px 43px;
+    width: 139px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    visibility: hidden;
+    background: url(../img/calendar.png), -webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
+    background: url(../img/calendar.png), -moz-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png), -o-linear-gradient(top, white, whiteSmoke);
+    background: url(../img/calendar.png), linear-gradient(top, white, whiteSmoke);
+    background-repeat: no-repeat;
+    background-position: 6% center;
+    font-weight: bold;
+    line-height: 14px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: pointer;
+    color: #666;
+    box-shadow: none;
+  }
+
+  #choose-menu {
+
+    margin-left: 0;
+    padding-top: 15px;
+  /*padding-bottom: 10px;*/
+  }
+
+  #choose-restaurant {
+    width: 330px;
+    margin-left: 0px;
+    position: relative;
+  }
+
+  .restaurant-item {
+    width: 312px;
+    display: inline-block;
+    border-bottom: 1px solid #DDD;
+    height: 50px;
+    padding: 6px 2px 6px 8px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .restaurant-item.selected {
+    background-color: white;
+  }
+
+  .restaurant-item img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    float: left;
+    opacity: 0.6;
+  }
+
+  .restaurant-item.selected img{
+    opacity: 1.0
+  }
+
+  span.rest-address, span.rest-location {
+    display: block;
+    float: left;
+    width: 140px;
+    font-size: 88%;
+    margin-top: 15px;
+    color: black;
+  }
+
+  .restaurant-item span.rest-price {
+    float: right;
+    line-height: 46px;
+    margin-right: 5px;
+  }
+
+
+  #choose-restaurant-info {
+    line-height: 30px;
+    text-align: left;
+    padding-top: 30px;
+    text-shadow: 0 1px 2px #DDD;
+    padding-left: 30px;
+  }
+
+  #extra_request_link {
+    margin-right: 29px;
+    font-size: 30px;
+  }
+
+  .more-options a:hover {
+    text-decoration: none;
+  }
+
+  #extra_request_div{
+    margin-top: 18px;
+  }
+
+  #create_meal_form .form-actions {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 0;
+    border: none;
+  }
+
+  button.btn-create-meal {
+    width: 150px;
+    display: block;
+  }
+
+  .form-horizontal .control-group {
+    margin-bottom: 18px;
+    margin-left: 13px;
+  }
+
+  .form-horizontal .control-group label {
+    width: 100px;
+  }
+
+  .form-horizontal .controls {
+    margin-left: 120px;
+  }
+
+  .menu-info {
+    margin-left: 10px;
+  }
+
+  .menu-info .title {
+    font-size: 16px;
+    color: #000;
+  }
+
+  .menu-info .rest-address {
+    font-size: 14px;
+    color: #333;
+    font-weight: normal;
+  }
+
+  .menu-info .rest-address {
+    margin-top: 10px;
+  }
+
+  .rest-address a{
+    font-weight: normal;
+  }
+
+  .menu-info .menu-name {
+    margin: 15px 0;
+  }
+
+  .dish-info {
+    float: right;
+  }
+
+  dt {
+    width: 290px;
+    padding: 10px 0px;
+    font-size: 15px;
+  }
+
+  dd {
+    width: 250px;
+    padding: 0px 0px 5px 15px;
+    font-size: 14px;
+  }
+
+  .no-menu-info{
+    padding: 30px 15px;
+  }
+
+  #menu-info-wrapper{
+    width:340px;
+    margin-left: 15px;
+  }
+
+  a.map {
+    text-decoration: none;
+    font-family: helvetica, arial, sans-serif;
+    font-style: normal;
+    text-align: center;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-size: 100%;
+    background: -moz-linear-gradient(top, white 0%, #DDD 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #DDD));
+    background: -webkit-linear-gradient(top, white 0%, #DDD 100%);
+    background: -o-linear-gradient(top, white 0%, #DDD 100%);
+    background: -ms-linear-gradient(top, white 0%, #DDD 100%);
+    background: linear-gradient(top, white 0%, #DDD 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#dddddd', GradientType = 0);
+    color: #333;
+    float: none;
+    display: inline;
+    text-decoration: none;
+    border: 0;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    background: #CCC;
+    color: #333;
+    font-weight: normal;
+    text-shadow: none;
+    padding: 3px 7px;
+    margin-left: 5px;
+  }
+
+  #choose-menu-container{
+    border-top: 1px solid #DDD;
+    min-height: 400px;
+  }
+
+  #loading-menus{
+    width: 100px;
+    margin: 40px 300px;
+    z-index: 2;
+    position: absolute;
+  }
+
+  #dk_container_id_start_time a{
+    background-position: 89% center;
+  }
+
+  dl.menu-items{
+    margin-bottom: 20px;
+  }
+
+  .privacy, .start_time, .min_persons{
+    height: 54px;
+  }
+
+  .privacy select, .start_time select, .min_persons select{
+    visibility: hidden;
+  }
+
+  #choose-restaurant-msg ul li{
+    margin-bottom: 6px;
+  }
+
+  #privacy-text{
+    line-height: 30px;
+    font-weight: bold;
+    color: #666;
+  }
+}
 

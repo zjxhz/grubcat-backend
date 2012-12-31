@@ -17,13 +17,10 @@ if ($("#create-meal-page")[0]) {
         $ajax_loader.show(1, function () {
             $.get($("#data").attr('menu-list-link'), {num_persons:numPersons}, function (data) {
                 $ajax_loader.hide();
-                $("#let-fanjoin-choose").hide().appendTo("#create_meal_form");
                 $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
                 $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
                 $("#id_menu_id").val("");
-                if (if_let_fanjoin_choose) {
-                    $("#let-fanjon-choose-link").click()
-                } else if (menuIdToSelect) {
+                if (menuIdToSelect) {
                     $("li[menu-id=" + menuIdToSelect + "]").click();
                 }
 
@@ -90,29 +87,9 @@ if ($("#create-meal-page")[0]) {
         getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
 
-        /*            $("#extra_request_link").click(function () {
-         $("#more-options").slideToggle(500);
-         return false;
-         })*/
-
-        $("#let-fanjon-choose-link").live("click", function () {
-            $("#choose-restaurant-info").hide();
-            $("#id_menu_id").val("");
-            if (!$("#choose-menu-container #let-fanjoin-choose")[0]) {
-                $("#choose-menu").append($("#let-fanjoin-choose"));
-            }
-            $("#let-fanjoin-choose").show();
-            $("#id_if_let_fanjoin_choose").val("True")
-            var oldMenuId = $("li.restaurant-item.selected").attr("menu-id");
-            $("#menu-" + oldMenuId).hide();
-            $("li.restaurant-item.selected").removeClass("selected");
-            return false;
-        })
-
         $("li.restaurant-item").live("click", function () {
             $("#menu-info-wrapper").show();
-            $("#choose-restaurant-info,#let-fanjoin-choose").hide();
-            $("#id_if_let_fanjoin_choose").val("False")
+            $("#choose-restaurant-info").hide();
             var oldMenuId = $(this).siblings(".selected").attr("menu-id");
             $("#menu-" + oldMenuId).hide();
             $(this).addClass('selected').siblings().removeClass("selected");

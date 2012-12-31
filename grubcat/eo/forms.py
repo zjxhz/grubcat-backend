@@ -10,7 +10,6 @@ from grubcat.eo.models import *
 
 class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput, required=False)
-    if_let_fanjoin_choose = forms.BooleanField(widget=HiddenInput, initial=False, required=False)
 
 #    def __init__(self, *args, **kwargs  ):
 #        super(MealForm, self).__init__(*args, **kwargs)
@@ -24,8 +23,8 @@ class MealForm(ModelForm):
     class Meta:
         model = Meal
         fields = (
-        'topic', 'introduction', 'start_date', 'start_time', 'region', 'min_persons', 'group', 'privacy', 'list_price',
-        'extra_requests', 'if_let_fanjoin_choose')
+        'topic', 'introduction', 'start_date', 'start_time', 'region', 'min_persons', 'list_price',
+         )
         widgets = {
             'introduction': Textarea({'rows': 5}),
             'extra_requests': Textarea({'rows': 5}),
@@ -34,16 +33,8 @@ class MealForm(ModelForm):
     def clean(self):
         cleaned_data = super(MealForm, self).clean()
         menu_id = cleaned_data.get("menu_id")
-        list_price = cleaned_data.get("list_price")
-        region = cleaned_data.get("region")
-        if_let_fanjoin_choose = cleaned_data.get("if_let_fanjoin_choose")
-        if if_let_fanjoin_choose:
-            if not list_price:
-                self._errors["list_price"] = self.error_class([u'请选择平均消费'])
-            if not region:
-                self._errors["region"] = self.error_class([u'请选择区域'])
-        elif not menu_id:
-            self._errors["menu_id"] = self.error_class([u'请您在左边选择一个套餐', u'或者点击"让饭聚网帮我选"按钮'])
+        if not menu_id:
+            self._errors["menu_id"] = self.error_class([u'请您在左边选择一个套餐'])
         return cleaned_data
 
 

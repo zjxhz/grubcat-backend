@@ -7,7 +7,8 @@
     {{ block.super }}
     {#    TODO don't use juqery ui#}
     <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
-    {% assets "meal_add_css" %}
+    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
+    {% assets "meal_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
@@ -133,24 +134,7 @@
                         <label class="control-label" for="id_min_persons">就餐人数</label>
 
                         <div class="controls">
-
                             {{ form.min_persons }} {{ form.min_persons.errors }}
-                        </div>
-                    </div>
-                    {% comment %}{% if form.group %}
-                        <div class="control-group group">
-                            <label class="control-label" for="id_group">通知圈子</label>
-
-                            <div class="controls">
-                                {{ form.group }} {{ form.group.errors }}
-                            </div>
-                        </div>
-                    {% endif %}{% endcomment %}
-                    <div class="control-group privacy">
-                        <label class="control-label" for="id_privacy">是否公开</label>
-
-                        <div class="controls">
-                            {{ form.privacy }} {{ form.privacy.errors }}
                         </div>
                     </div>
                     <div id="choose-menu-container">
@@ -160,46 +144,9 @@
                         <div id="choose-menu-wrapper"></div>
                     </div>
                 </fieldset>
-
-                {#            <fieldset class="more-options">#}
-                {#                <legend>3、更多选项 <a href="#" id="extra_request_link" class="fr extra_request_link">+</a></legend>#}
-                {#                <div id="more-options" class="hide">#}
-                {##}
-                {#                    <div class="control-group" id="extra_request_div">#}
-                {#                        <label class="control-label" for="id_extra_requests">其它需求</label>#}
-                {##}
-                {#                        <div class="controls">#}
-                {#                            {{ form.extra_requests }}{{ form.extra_requests.errors }}#}
-                {#                        </div>#}
-                {#                    </div>#}
-                {#                </div>#}
-                {#            </fieldset>#}
-                <div id="let-fanjoin-choose" class="fl span4 hide" style="display: none">
-                    <div class="info">
-                        还在为选择餐厅和点菜而烦扰吗？让我们来替您搞定这些繁琐的事情吧！
-                    </div>
-
-                    <div class="control-group region">
-                        <label class="control-label" for="id_region">就餐地点</label>
-
-                        <div class="controls">
-                            {{ form.region }}{{ form.region.errors }}
-                        </div>
-                    </div>
-                    <div class="control-group list-price">
-
-                        <label class="control-label" for="id_list_price">平均消费</label>
-
-                        <div class="controls">
-
-                            {{ form.list_price }} {{ form.list_price.errors }}
-                        </div>
-                    </div>
-                </div>
-
-                {{ form.menu_id }} {{ form.if_let_fanjoin_choose }}
+                {{ form.menu_id }}
                 <div class="form-actions">
-                    <button type="submit" class="btn-create-meal">确定</button>
+                    <button type="submit" class="btn btn-primary btn-create-meal">确定</button>
                 </div>
             </form>
         </div>

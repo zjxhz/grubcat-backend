@@ -21,10 +21,6 @@ meal_css = Bundle(
     common_css, 'less/meal.less', filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 
-meal_add_css = Bundle(
-    'css/lionbars.css', common_css, 'css/create-meal.css', filters='cssmin', output='gen/meal-add.%(version)s.css'
-)
-
 #group related
 group_list_css = Bundle(
      common_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s..css'
@@ -106,7 +102,6 @@ register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)
 register('meal_css', meal_css)
-register('meal_add_css', meal_add_css)
 register('group_list_css', group_list_css)
 register('group_detail_css', group_detail_css)
 

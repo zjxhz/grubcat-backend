@@ -341,7 +341,9 @@ class MealDetailView( OrderCreateView):
         meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         if self.request.user.get_profile() in meal.participants.all():
-            context['order'] = Order.objects.get(meal=meal, customer=self.request.user.get_profile(), status=OrderStatus.PAYIED)
+            orders = Order.objects.filter(meal=meal, customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
+            if orders.exists():
+                context['order'] = orders[0]
         return context
 
 
