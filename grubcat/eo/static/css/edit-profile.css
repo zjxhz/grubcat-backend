@@ -28,9 +28,16 @@
     margin-right: 1px;
 }
 
-.controls .errorlist{
+.controls .errorlist
+{
     display: inline-block;
-    list-style: none;
+    list-style: none outside none;
+}
+
+.birthday.control-group  .controls .errorlist
+{
+    margin-left: 0px;
+    margin-top: 15px;
 }
 
 .controls textarea {

@@ -11,67 +11,79 @@
 
 {% block content %}
     <div id="edit-profile">
-    {% include "user/profile_nav.html" %}
+        {% include "user/profile_nav.html" %}
 
-                <form id="basic-profile-form" action="{% url edit_profile_basic %}" method="post" class="form-horizontal span7">
-                    <fieldset>
-                        {#                    <legend>基本资料</legend>#}
-                        <div class="control-group ">
+        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span7">
+            <fieldset>
+                {#                    <legend>基本资料</legend>#}
+                <div class="control-group nickname">
 
-                            <label class="control-label" for="id_motto">签名：</label>
+                    <label class="control-label" for="id_motto">* 昵称：</label>
 
-                            <div class="controls">
-                                <textarea id="id_motto" class="input-xlarge" type="text" name="motto"
-                                          rows="3">{{ form.motto.value|default:"" }}</textarea>
-                            </div>
-                        </div>
+                    <div class="controls">
+                        <input id="id_nickname" class="input-small" type="text"
+                               name="name" value="{{ form.name.value|default:"" }}" />
+                        {{ form.name.errors }}
+                    </div>
+                </div>
+                <div class="control-group ">
 
-                        <div class="control-group ">
+                    <label class="control-label" for="id_motto">签名：</label>
 
-                            <label class="control-label"> 生日：</label>
+                    <div class="controls">
+                        <textarea id="id_motto" class="input-xlarge" type="text" name="motto"
+                                  rows="3">{{ form.motto.value|default:"" }}</textarea>
+                    </div>
+                </div>
 
-                            <div class="controls">
 
-                                {{ form.birthday }}
-                                {{ form.birthday.errors }}
+                <div class="control-group birthday ">
 
-                            </div>
-                        </div>
+                    <label class="control-label"> * 生日：</label>
 
-                        <div class="control-group gender">
+                    <div class="controls">
 
-                            <label class="control-label"> 性别：</label>
+                        {{ form.birthday }}
+                        {{ form.birthday.errors }}
 
-                            <div class="controls">
-                                <label class="radio inline" for="id_gender_1"><input
-                                        {% if form.gender.value == 0 %}checked="checked"{% endif %} type="radio" id="id_gender_1"
-                                        value="0" name="gender"> 男</label>
-                                <label class="radio inline" for="id_gender_2"><input
-                                        {% if form.gender.value == 1 %}checked="checked"{% endif %} type="radio" id="id_gender_2"
-                                        value="1" name="gender"> 女</label>
-                                {{ form.gender.errors }}
-                            </div>
-                        </div>
+                    </div>
+                </div>
+                <div class="control-group gender">
 
-                        <div class="control-group">
-                            <div class="controls">
-                                <button type="submit" class="btn">保存</button>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-    <div class="avatar span2 hidden-phone">
-        <img alt="{{ user.username }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="140" height="140">
-        <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
-    </div>
+                    <label class="control-label"> * 性别：</label>
+
+                    <div class="controls">
+                        <label class="radio inline" for="id_gender_1"><input
+                                {% if form.gender.value == '0' or  form.gender.value == 0 %}checked="checked"{% endif %} type="radio"
+                                id="id_gender_1"
+                                value="0" name="gender"> 男</label>
+                        <label class="radio inline" for="id_gender_2"><input
+                                {% if form.gender.value == '1' or form.gender.value == 1 %}checked="checked"{% endif %} type="radio"
+                                id="id_gender_2"
+                                value="1" name="gender"> 女</label>
+                        {{ form.gender.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn">保存</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div class="avatar span2 hidden-phone">
+            <img alt="{{ user.username }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="140" height="140">
+            <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
+        </div>
     </div>
 {% endblock %}
 
 {% block page_js %}
     {{ block.super }}
     <script type="text/javascript">
-    $(function(){
-        $("#profile-nav-info").addClass("active");
-    })
+        $(function () {
+            $("#profile-nav-info").addClass("active");
+        })
     </script>
 {% endblock %}
