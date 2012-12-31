@@ -35,14 +35,7 @@
                         马上预定
                         {#                        <span class="mt5">{{ meal.list_price }}RMB/人</span>#}
                     </a>
-                {% else %}
-                    <a href=""
-                       class="btn btn-primary btn-book fr">
-                        已预定
-                    </a>
-                {% endif %}
-
-                <form id="order_info_form" action="" method="post" class="form-horizontal"> {% csrf_token %}
+                    <form id="order_info_form" method="post" class="form-horizontal"> {% csrf_token %}
                     <fieldset>
                         {% for hidden in form.hidden_fields %}
                             {{ hidden }}
@@ -72,6 +65,14 @@
                         </div>
                     </fieldset>
                 </form>
+                {% else %}
+                    <a href="{% url order_detail meal.id order.id %}"
+                       class="btn btn-primary btn-book btn-booked fr">
+                        已预订 查看订单
+                    </a>
+                {% endif %}
+
+
 
             </div>
 
@@ -145,12 +146,21 @@
         </div>
 {#        {% include "support/faq_sidebar.html" %}#}
     </div>{% endcomment %}
+
 {% endblock %}
 
 {% block page_js %}
+    {{ block.super }}
+    {% comment %}    {% assets "jquery_dropkick_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}{% endcomment %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#faq .sidebar-box-inner a").click(function () {
+
+            {% comment %}$("#faq .sidebar-box-inner a").click(function () {
                 var $next = $(this).next("p");
                 var speed = 100;
                 if ($next.is(":visible")) {
@@ -159,7 +169,7 @@
                     $(this).siblings("p:visible").slideUp(speed);
                     $(this).next("p").slideDown(speed);
                 }
-            })
+            }){% endcomment %}
         })
     </script>
 {% endblock %}

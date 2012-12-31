@@ -110,38 +110,4 @@ form legend {
 }
 
 /*order-detail page related*/
-#order_detail{
-    text-align: center;
-    margin: 0 auto 20px auto;
-}
-
-#order_detail h2{
-    font-size: 1.8em;
-    margin-bottom: 5px;
-}
-
-#code{
-    font-size: 1.9em;
-}
-
-.auth-code, .reminder, .hotline{
-    border-bottom: 1px solid #aaa;
-    padding-bottom: 14px;
-    margin-top: 22px;
-}
-
-.meal-title{
-    margin-bottom: 40px;
-}
-
-#map{
-    width: 540px;
-    height: 330px;
-    border: 1px solid #333;
-}
-
-.rest-name{
-    display: block;
-    margin-bottom: 5px;
-}
 

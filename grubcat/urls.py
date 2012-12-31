@@ -65,7 +65,7 @@ urlpatterns = patterns('',
     # meal
     url(r'^$', MealListView.as_view(), name="index"),
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
-    url(r'^meal/(?P<pk>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
+    url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
     url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
 
     #menu
@@ -92,7 +92,7 @@ urlpatterns = patterns('',
     url(r'^group/(?P<group_id>\d+)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
 
     # order
-    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
+#    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
 
     #account

@@ -102,17 +102,6 @@ class MealListView(ListView):
         return context
 
 
-class MealDetailView( CreateView):
-#    model = Meal
-#    context_object_name = "meal"
-    form_class = OrderCreateForm
-    template_name = "meal/meal_detail.html"
-#    queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user')
-
-    def get_context_data(self, **kwargs):
-        context = super(MealDetailView, self).get_context_data(**kwargs)
-        context['meal'] = queryset = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('pk'))
-        return context
 
 ### group related views ###
 class GroupListView(ListView):
@@ -307,7 +296,7 @@ class UserListView(ListView):
 
 
 class UserDetailView(DetailView):
-    model = User
+    model = UserProfile
     context_object_name = "profile"
     template_name = "user/user_detail.html"
 
@@ -329,7 +318,7 @@ class OrderCreateView(CreateView):
         order = form.save(False)
         order.customer = self.request.user.get_profile()
         order.meal_id = form.cleaned_data['meal_id']
-        order.status = OrderStatus.CREATED
+        order.status = OrderStatus.PAYIED #TODO if alipay is used, here should be created status
         order.total_price = order.meal.list_price * order.num_persons
 #        TODO some checks
         response = super(OrderCreateView, self).form_valid(form)
@@ -342,6 +331,18 @@ class OrderCreateView(CreateView):
                 meal.status = MealStatus.PUBLISHED
         order.meal.join(order)
         return response
+
+class MealDetailView( OrderCreateView):
+    form_class = OrderCreateForm
+    template_name = "meal/meal_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(MealDetailView, self).get_context_data(**kwargs)
+        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
+        context['meal'] = meal
+        if self.request.user.get_profile() in meal.participants.all():
+            context['order'] = Order.objects.get(meal=meal, customer=self.request.user.get_profile(), status=OrderStatus.PAYIED)
+        return context
 
 
 class OrderDetailView(DetailView):

@@ -408,7 +408,7 @@ class UserProfile(models.Model):
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
-    gender = models.IntegerField(blank=False, null=False,choices=GENDER_CHOICE)
+    gender = models.IntegerField(blank=False, null=True,choices=GENDER_CHOICE)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
@@ -670,7 +670,7 @@ MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
     )
 
-MEAL_PERSON_CHOICE = [(x, "%s人" % x) for x in range(3, 13)]
+MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(3, 13)]
 START_TIME_CHOICE = (
     (time(9, 00), "9:00"), (time(9, 30), "9:30"), (time(10, 00), "10:00"), (time(10, 30), "10:30"),
     (time(11, 00), "11:00"), (time(11, 30), "11:30"), (time(12, 00), "12:00"), (time(12, 30), "12:30"),
