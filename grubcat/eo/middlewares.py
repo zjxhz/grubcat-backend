@@ -39,12 +39,15 @@ class WeiboAuthenticationBackend(object):
                     username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password)
                     user_profile = user_to_authenticate.get_profile()
-                    user_data = json.loads(weibo_client.users.show.get())
+                    user_data = weibo_client.users.show.get(uid=weibo_id)
                     user_profile.weibo_id = weibo_id
                     user_profile.weibo_access_token = access_token
                     user_profile.name = user_data.get('name')
                     user_profile.motto = user_data.get('description') 
-                    user_profile.gender = int(user_data.get('gender')) 
+                    if user_data.get('gender') == "m":
+                        user_profile.gender = 0
+                    elif user_data.get('gender') == "f":
+                        user_profile.gender = 1
                     avatar_url = user_data.get('avatar_large') 
                     user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_profile.save()
@@ -52,7 +55,7 @@ class WeiboAuthenticationBackend(object):
             except Exception as e:
                 if user_to_authenticate:
                     user_to_authenticate.delete()
-                logger.error("failed to auth %s with error: %s" % (user_to_authenticate, e))
+                logger.exception("failed to auth %s " % user_to_authenticate)
                 raise e
             
         return user_to_authenticate

@@ -80,15 +80,20 @@ class Command(BaseCommand):
         try:
             # password can be the hash one when the request is initiated from django(e.g. to sync avatar and name) where the original password is unknown, 
             # or the raw one when the request is from client
+            logger.debug("auth for user: %s" % username)
             user = User.objects.get(username=username)
             if password == user.password or check_password(password, user.password):
                 self._generate_response(True)
                 logger.info(username + ' has logged in from ejabberd')
             elif username.startswith("weibo_"):
+                logger.debug("verifying a weibo user")
                 dic = {"username":username, "access_token":password}
                 if auth.authenticate(**dic):
                     self._generate_response(True)
                     logger.info(username + ' has logged in from ejabberd')
+                else:
+                    self._generate_response(False)
+                    logger.info(username + ' (a weibo user ) failed to log in from ejabberd')
             else:
                 self._generate_response(False)
                 logger.info(username + ' failed auth from ejabberd, incorrect password: %s' % password)
@@ -119,7 +124,7 @@ class Command(BaseCommand):
                     self._generate_response(False)
         #                    continue
                 if operation == 'auth':
-                    logger.debug('Auth request being processed for ' + input_ejabberd[1])
+                    logger.debug('Auth request being processed for ' + username)
                     self._handle_auth(username, input_ejabberd[2])
                 elif operation == 'isuser':
                     logger.debug('Asked if ' + username + ' is a user')

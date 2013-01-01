@@ -36,13 +36,13 @@ SENTRY_WEB_OPTIONS = {
 # For more information check Django's documentation:
 #  https://docs.djangoproject.com/en/1.3/topics/email/?from=olddocs#e-mail-backends
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_PASSWORD = ''
-EMAIL_HOST_USER = ''
-EMAIL_PORT = 25
-EMAIL_USE_TLS = False
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_HOST_PASSWORD = 'ddsjiayou124126'
+#EMAIL_HOST_USER = 'ddsfeifei@gmail.com'
+#EMAIL_PORT = 465
+##EMAIL_USE_TLS = False
 
 # http://twitter.com/apps/new
 # It's important that input a callback URL, even if its useless. We have no idea why, consult Twitter.
