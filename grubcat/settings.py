@@ -60,6 +60,7 @@ MEDIA_URL = '/media/'
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/home/fanju/webapps/static/'
 ASSETS_ROOT=r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
+
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 
 # URL prefix for static files.
@@ -235,6 +236,12 @@ LOGGING = {
         },
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'ddsfeifei@gmail.com'
+EMAIL_HOST_PASSWORD='ddsjiayou124126'
 
 #account
 LOGIN_URL = reverse_lazy('login')
