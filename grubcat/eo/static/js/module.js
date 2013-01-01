@@ -1,15 +1,34 @@
-if($("#meal-detail")[0]){
+$(document).ready(function () {
+    if ($("#faq")[0]) {
+
+        $("#faq .sidebar-box-content a").click(function () {
+            var $next = $(this).next("p");
+            var speed = 200;
+            if ($next.is(":visible")) {
+                $(this).next("p").slideUp(speed);
+            } else {
+                $(this).siblings("p:visible").slideUp(speed);
+                $(this).next("p").slideDown(speed);
+            }
+        })
+    }
+
+    if($("#meal-list")[0]){
+        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+    }
+
+    if ($("#meal-detail")[0]) {
 //    $("select").dropkick({width:30, startSpeed:0})
-    $("#id_num_persons").change(function(){
-        $("#total_price").html($("#meal_price").html() * $(this).val());
-    })
-    $(".btn-book").not('.btn-booked').click(function () {
-        $("#order_info_form").submit();
-        return false;
-    })
+        $("#id_num_persons").change(function () {
+            $("#total_price").html($("#meal_price").html() * $(this).val());
+        })
+        $(".btn-book-now").click(function () {
+            $("#order_info_form").submit();
+            return false;
+        })
 
-}
-
+    }
+})
 if ($("#create-meal-page")[0]) {
     function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
         $("#choose-menu-wrapper").css('visibility', 'hidden');
@@ -34,6 +53,7 @@ if ($("#create-meal-page")[0]) {
             }, 'html');
         })
     }
+
     $(document).ready(function () {
         $("#id_privacy").dropkick({width:313, startSpeed:0})
 

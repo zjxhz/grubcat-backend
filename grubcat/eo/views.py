@@ -311,7 +311,10 @@ class OrderCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderCreateView, self).get_context_data(**kwargs)
-        context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
+        try:
+            context['meal'] = Meal.objects.get(pk=self.kwargs['meal_id'])
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(u'饭局不存在')
         return context
 
     def form_valid(self, form):
@@ -338,9 +341,12 @@ class MealDetailView( OrderCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MealDetailView, self).get_context_data(**kwargs)
-        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
+        try:
+            meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
+        except ObjectDoesNotExist:
+            return Http404(u'饭局不存在')
         context['meal'] = meal
-        if self.request.user.get_profile() in meal.participants.all():
+        if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
             orders = Order.objects.filter(meal=meal, customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
             if orders.exists():
                 context['order'] = orders[0]

@@ -13,45 +13,46 @@ bootstrap_css = Bundle(
 #form_css = Bundle('less/form.less',filters='less',output='gen/form.css')
 form_css = Bundle('css/form.css', filters='cssmin', output='gen/form.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
-common_css = Bundle(dropkick_css, 'less/common.less', filters='less,cssmin', output='gen/common.%(version)s.css')
+common_css = Bundle(dropkick_css, 'less/common.less',filters='less,cssmin', output='gen/common.%(version)s.css')
+responsive_css = Bundle( 'less/responsive.less',filters='less,cssmin', output='gen/responsive.%(version)s.css')
 
 base_css = Bundle(bootstrap_css, filters='cssmin', output='gen/base.%(version)s.css')
 
 meal_css = Bundle(
-    common_css, 'less/meal.less', filters='less,cssmin', output='gen/meal.%(version)s.css'
+    common_css, 'less/meal.less', responsive_css, filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 
 #group related
-group_list_css = Bundle(
-     common_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s..css'
-)
-group_detail_css = Bundle(
-     common_css, 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
-)
+#group_list_css = Bundle(
+#     common_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s..css'
+#)
+#group_detail_css = Bundle(
+#     common_css, 'css/group-detail.css', filters='cssmin', output='gen/group-detail.%(version)s.css'
+#)
 
 #user related
 account_css = Bundle(
-    common_css, 'css/account.css', filters='cssmin', output='gen/account.%(version)s.css'
+    common_css, 'css/account.css',responsive_css,  filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    common_css, 'css/user-list.css', filters='cssmin', output='gen/user-list.%(version)s.css'
+    common_css, 'css/user-list.css',responsive_css,  filters='less, cssmin', output='gen/user-list.%(version)s.css'
 )
 
 user_css = Bundle(
-    common_css, filters='cssmin', output='gen/user.%(version)s.css'
+    common_css, responsive_css,  filters='cssmin', output='gen/user.%(version)s.css'
 )
 
 edit_profile_css = Bundle(
-    common_css, 'css/edit-profile.css', filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    common_css, 'css/edit-profile.css', responsive_css, filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
-order_css = Bundle(
-     common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
-)
+#order_css = Bundle(
+#     common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
+#)
 
 restaurant_admin_css = Bundle(
-    'less/restaurant-admin.less', filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
+    'less/restaurant-admin.less',responsive_css,  filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below
@@ -63,7 +64,7 @@ base_js = Bundle(jquery_js, 'js/bootstrap.min.js',
     output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
-    output="gen/base.main..%(version)sjs")
+    output="gen/base.main.%(version)s.js")
 
 module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version)s.js")
 
@@ -102,13 +103,13 @@ register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)
 register('meal_css', meal_css)
-register('group_list_css', group_list_css)
-register('group_detail_css', group_detail_css)
+#register('group_list_css', group_list_css)
+#register('group_detail_css', group_detail_css)
 
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('edit_profile_css', edit_profile_css)
-register('order_css', order_css)
+#register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 
 register('jquery_js', jquery_js)

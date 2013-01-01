@@ -2,8 +2,15 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
-#meal-list a:hover {
-  text-decoration: none;
+#meal-list-page   {
+  #faq-what-is-fanju, #faq-what-is-fanju + p{
+    display: block;
+  }
+}
+#meal-detail-page{
+  #faq-how-to-book-meal, #faq-how-to-book-meal +p, #faq-how-to-cancel-meal{
+    display: block;
+  }
 }
 
 .meal-cell {
@@ -27,9 +34,7 @@
 
 .meal-img-wrapper {
   position: relative;
-  img {
-    height: 240px;
-  }
+  float: left;
 }
 
 .date-wrapper {
@@ -100,7 +105,8 @@
   margin: 0 auto;
   .border-radius(0);
 }
-.btn-create-meal{
+
+.btn-create-meal {
   line-height: 50px;
 }
 
@@ -108,8 +114,8 @@
   .btn-book {
     line-height: 50px;
   }
-  .btn-sold-out{
-      .buttonBackground(#FF4545, #FF4545);
+  .btn-sold-out {
+    .buttonBackground(#FF4545, #FF4545);
   }
   .btn-booked {
     width: 82%;
@@ -117,7 +123,6 @@
   #id_num_persons {
     width: 73px;
   }
-
   .dk_toggle {
     padding: 7px 45px 7px 10px;
   }
@@ -136,70 +141,57 @@
       .controls {
         margin-left: 100px;
       }
-
-    }
-    .control-group.num_persons {
     }
   }
 
 }
 
+/*meal list page*/
 #meal-container {
   margin-bottom: 15px;
   padding-bottom: 15px;
 }
 
-#users {
-  margin-right: -10px;
-}
-
-.box-seperator {
+/*.box-seperator {
   border-bottom: 1px solid #bbb;
-}
+}*/
 
 #meal-grub {
   float: left;
   width: 270px;
 }
 
-#meal-img-wrapper {
-  border: 1px solid #DDD;
-  float: left;
-  position: relative;
-}
-
-#meal-img-wrapper img {
-  border: 4px solid white;
-  min-height: 100px;
-}
-
 .sidebar {
-  float: right;
-  width: 250px;
-  padding: 0 0 9px 9px;
-  border-left: 1px solid #BBB;
+  margin-left:20px;
+  padding: 14px 14px 0px 14px;
+  border: 1px solid #ddd;
+//  border-right: 0;
+  width: 190px;
+  margin-top: 20px;
+
+  .faq a {
+    display: none;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #444;
+  }
+
+  .faq p {
+    display: none;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    color: #666;
+    padding-left: 5px;
+    line-height: 25px;
+    font-size: 13px;
+  }
 }
 
-.faq b {
-  text-decoration: none;
-  margin-bottom: 10px;
-  font-size: 115%;
-  color: #20538C;
-  text-transform: uppercase;
-}
-
-.faq p {
-  margin-top: 4px;
-  margin-bottom: 10px;
-  color: #444;
-  padding-left: 5px;
-  line-height: 130%;
-}
-
-#title {
+.meal-simple-info {
   position: relative;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+  margin-bottom: 0px;
+  padding-bottom: 15px;
   zoom: 1;
   h1 {
     margin-bottom: 10px;
@@ -225,24 +217,13 @@
   font-size: 16px;
 }
 
-.user-wrapper {
-}
-
-.host-name {
+a.user-img-wrapper {
+  display: block;
+  margin: 0px 7px 7px 0;
   float: left;
-  padding-right: 37px;
-}
-
-#creator:hover {
-  border: 1px solid #bbb;
-  -webkit-box-shadow: inset 0 0 6px #bbb;
-}
-
-#creator img {
-  position: absolute;
-  margin-left: 5px;
-  top: 5px;
-  right: 5px;
+  img {
+    .square(80px);
+  }
 }
 
 .what-is-fanju {
@@ -260,11 +241,6 @@
   font-weight: bold;
 }
 
-.price {
-  font-size: 146%;
-  font-weight: bold;
-}
-
 .show-menu {
   font-size: 146%;
   font-weight: bold;
@@ -275,65 +251,10 @@
   width: 100%;
 }
 
-#users h1 {
+#users h3 {
   margin-bottom: 8px;
-  font-size: 1.6em;
-  font-weight: bold;
-}
-
-h3.name {
-  font-size: 165%;
-  display: block;
-}
-
-.work {
-  height: 13px;
+  font-size: 1.4em;
   color: #444;
-  display: block;
-  margin-bottom: 10px;
-  margin-left: 10px;
-}
-
-img.user-pic {
-}
-
-.speech-outter {
-  margin: 10px 9px 12px 0;
-  position: relative;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  width: 193px;
-  border: 1px solid #CCC;
-  float: right;
-}
-
-.speech-arrow {
-  width: 15px;
-  height: 15px;
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  position: absolute;
-  background: #E5E5E5;
-  left: -5px;
-  top: 6px;
-}
-
-.speech-inner {
-  padding: 10px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  position: relative;
-  text-align: left;
-  font-size: 120%;
-  line-height: 130%;
-  overflow: hidden;
-  background: #E5E5E5;
-  margin-top: -2px;
 }
 
 #menu-popup.ui-widget-content {
@@ -435,21 +356,26 @@ dd.dish {
 /*order details page*/
 #order_detail {
   text-align: center;
-  margin: 0 auto 20px auto;
+
+  .meal-simple-info {
+    margin-bottom: 10px;
+  }
 
   h2 {
     font-size: 1.8em;
     margin-bottom: 5px;
   }
 
+
   #code {
     font-size: 1.9em;
+    color: @green;
   }
 
   .auth-code, .reminder, .hotline {
     border-bottom: 1px solid #aaa;
-    padding-bottom: 14px;
-    margin-top: 22px;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
   }
 
   .meal-title {
@@ -474,22 +400,22 @@ dd.dish {
 }
 
 /*create meal page*/
-#create-meal-page{
+#create-meal-page {
   .min_persons .errorlist, .region .errorlist, .list-price .errorlist {
     float: left;
   }
   #restaurant-list {
     height: 377px;
-    overflow-y: auto ;
+    overflow-y: auto;
     overflow-x: hidden;
     background-color: #EEE;
     margin-bottom: 15px;
     border: 1px solid #DDD;
     border-left: none;
     padding-right: 1px;
-    width:329px;
+    width: 329px;
 
-    ul{
+    ul {
       margin: 0;
     }
   }
@@ -505,7 +431,7 @@ dd.dish {
     margin: 0 0 10px 0;
   }
 
-  #faq .sidebar-box-inner p {
+  #faq .sidebar-box-content p {
     display: block;
   }
 
@@ -529,7 +455,6 @@ dd.dish {
     top: 0;
     left: 0;
   }
-
 
   .control-group label {
     font-size: 16px;
@@ -578,9 +503,7 @@ dd.dish {
     background-position: 6% center;
     font-weight: bold;
     line-height: 14px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    .border-radius(5px);
     cursor: pointer;
     color: #666;
     box-shadow: none;
@@ -590,7 +513,6 @@ dd.dish {
 
     margin-left: 0;
     padding-top: 15px;
-  /*padding-bottom: 10px;*/
   }
 
   #choose-restaurant {
@@ -621,7 +543,7 @@ dd.dish {
     opacity: 0.6;
   }
 
-  .restaurant-item.selected img{
+  .restaurant-item.selected img {
     opacity: 1.0
   }
 
@@ -640,26 +562,12 @@ dd.dish {
     margin-right: 5px;
   }
 
-
   #choose-restaurant-info {
     line-height: 30px;
     text-align: left;
     padding-top: 30px;
     text-shadow: 0 1px 2px #DDD;
     padding-left: 30px;
-  }
-
-  #extra_request_link {
-    margin-right: 29px;
-    font-size: 30px;
-  }
-
-  .more-options a:hover {
-    text-decoration: none;
-  }
-
-  #extra_request_div{
-    margin-top: 18px;
   }
 
   #create_meal_form .form-actions {
@@ -669,7 +577,7 @@ dd.dish {
     border: none;
   }
 
-  button.btn-create-meal {
+  .btn-create-meal {
     width: 150px;
     display: block;
   }
@@ -689,29 +597,25 @@ dd.dish {
 
   .menu-info {
     margin-left: 10px;
-  }
 
-  .menu-info .title {
-    font-size: 16px;
-    color: #000;
-  }
+    .title {
+      font-size: 16px;
+      color: #000;
+    }
 
-  .menu-info .rest-address {
-    font-size: 14px;
-    color: #333;
-    font-weight: normal;
-  }
+    .rest-address {
+      font-size: 14px;
+      color: #333;
+      font-weight: normal;
+      margin-top: 10px;
+      a {
+        font-weight: normal;
+      }
+    }
 
-  .menu-info .rest-address {
-    margin-top: 10px;
-  }
-
-  .rest-address a{
-    font-weight: normal;
-  }
-
-  .menu-info .menu-name {
-    margin: 15px 0;
+    .menu-name {
+      margin: 15px 0;
+    }
   }
 
   .dish-info {
@@ -730,80 +634,57 @@ dd.dish {
     font-size: 14px;
   }
 
-  .no-menu-info{
+  .no-menu-info {
     padding: 30px 15px;
   }
 
-  #menu-info-wrapper{
-    width:340px;
+  #menu-info-wrapper {
+    width: 340px;
     margin-left: 15px;
   }
 
   a.map {
     text-decoration: none;
-    font-family: helvetica, arial, sans-serif;
-    font-style: normal;
-    text-align: center;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    font-size: 100%;
-    background: -moz-linear-gradient(top, white 0%, #DDD 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #DDD));
-    background: -webkit-linear-gradient(top, white 0%, #DDD 100%);
-    background: -o-linear-gradient(top, white 0%, #DDD 100%);
-    background: -ms-linear-gradient(top, white 0%, #DDD 100%);
-    background: linear-gradient(top, white 0%, #DDD 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#dddddd', GradientType = 0);
+    .border-radius(3px);
     color: #333;
-    float: none;
-    display: inline;
-    text-decoration: none;
-    border: 0;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background: #CCC;
-    color: #333;
-    font-weight: normal;
-    text-shadow: none;
+    background: #ddd;
     padding: 3px 7px;
     margin-left: 5px;
   }
 
-  #choose-menu-container{
+  #choose-menu-container {
     border-top: 1px solid #DDD;
     min-height: 400px;
   }
 
-  #loading-menus{
+  #loading-menus {
     width: 100px;
     margin: 40px 300px;
     z-index: 2;
     position: absolute;
   }
 
-  #dk_container_id_start_time a{
+  #dk_container_id_start_time a {
     background-position: 89% center;
   }
 
-  dl.menu-items{
+  dl.menu-items {
     margin-bottom: 20px;
   }
 
-  .privacy, .start_time, .min_persons{
+  .privacy, .start_time, .min_persons {
     height: 54px;
   }
 
-  .privacy select, .start_time select, .min_persons select{
+  .privacy select, .start_time select, .min_persons select {
     visibility: hidden;
   }
 
-  #choose-restaurant-msg ul li{
+  #choose-restaurant-msg ul li {
     margin-bottom: 6px;
   }
 
-  #privacy-text{
+  #privacy-text {
     line-height: 30px;
     font-weight: bold;
     color: #666;

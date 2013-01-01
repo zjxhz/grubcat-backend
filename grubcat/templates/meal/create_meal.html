@@ -77,21 +77,6 @@
 
 {% block content %}
     <div id="create-meal-page">
-        {% comment %}  <div id="faq" class="faq sidebar-box">
-        <div class="sidebar-box-title">常见问题</div>
-        <div class="sidebar-box-inner">
-            <a>饭聚网是什么？</a>
-
-            <p>饭聚网是刚刚流行起来的基于兴趣的美食社交网站，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。</p>
-
-
-            <a>如何取消一个饭局？</a>
-
-            <p>如果你已经为一个饭局付费了，但又因为其他计划而不能参加了，那么你可以在饭局开始前的72个小时内取消，可以通过拨打热线0000000000联系我们，我们会帮您取消饭局。</p>
-
-            <a>更多>></a>
-        </div>
-    </div>{% endcomment %}
         <div class="form-wrapper span10 offset1">
             <form id="create_meal_form" action="{% url create_meal %}" method="post"
                   class="form form-horizontal"> {% csrf_token %}
