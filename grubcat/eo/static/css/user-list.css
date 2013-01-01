@@ -1,7 +1,7 @@
 #user-container {
     padding: 0px;
     margin-bottom: 20px;
-    margin-left: 20px;
+    /*margin-left: 20px;*/
     border-radius: 5px;
     clear: both;
     -webkit-border-radius: 5px;
@@ -111,8 +111,8 @@
 
 .box .user-img img{
     border: 2px solid white;
-    width: 219px;
-    height: 219px;
+    width: 220px;
+    height: 220px;
 }
 
 .box .speech-outer {

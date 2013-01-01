@@ -198,8 +198,9 @@ $(document).ready(function () {
 
         $container.masonry({
             itemSelector:'.menu-container',
-            columnWidth:375,
-            gutterWidth:30
+            columns:2,
+//            columnWidth:340,
+            gutterWidth:15
 
         });
         $(".dellink").click(function (e) {

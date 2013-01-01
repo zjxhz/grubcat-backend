@@ -1,8 +1,5 @@
 #main-container{
-    margin-top: 40px;;
-}
-
-.avatar img{
+    margin-top: 40px;
 }
 
 .avatar h1{
@@ -15,13 +12,6 @@
     margin-top: 15px;
 }
 
-
-/*.form-horizontal .control-label {*/
-    /*width: 68px;*/
-/*}*/
-/*.form-horizontal .controls {*/
-    /*margin-left: 83px;*/
-/*}*/
 
 #id_birthday_year,#id_birthday_month,#id_birthday_day
 {
@@ -67,16 +57,8 @@
     display: none;
 }
 
-{#        #id_upload_form {#}
-{#            width: 755px;#}
-{#            margin-left: 125px;#}
-{#        }#}
-
 #cropping-area {
     width: 360px;
-}
-
-#preview_area {
 }
 
 div.buttons {

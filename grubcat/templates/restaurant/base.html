@@ -38,17 +38,15 @@
 <div class="container" id="restaurant-container">
     <div class="well" id="header"><h1>{{ request.user.restaurant.name }}</h1></div>
     <div class="row">
-        <div class="span2">
-            <ul id="restaurant-nav" class="nav nav-pills nav-stacked span2">
-                <li id="nav-checkin" class="active"><a href="{% url restaurant_checkin %}"><i
-                        class="icon-user"></i> 客人就餐</a></li>
-                <li id="nav-dish"><a href="{% url restaurant_dish_list %}"><i class="icon-list-alt"></i> 菜单管理</a></li>
-                <li id="nav-menu"><a href="{% url restaurant_menu_list %}"><i class="icon-th"></i> 套餐管理</a></li>
-                <li id="nav-order-history"><a href="{% url restaurant_order %}"> <i class="icon-list"></i>
-                    订单历史</a></li>
-                <li id="nav-logout"><a href="{% url logout %}"><i class="icon-off"></i> 退出</a></li>
-            </ul>
-        </div>
+        <ul id="restaurant-nav" class="nav nav-pills nav-stacked span2">
+            <li id="nav-checkin" class="active"><a href="{% url restaurant_checkin %}"><i
+                    class="icon-user"></i> 客人就餐</a></li>
+            <li id="nav-dish"><a href="{% url restaurant_dish_list %}"><i class="icon-list-alt"></i> 菜单管理</a></li>
+            <li id="nav-menu"><a href="{% url restaurant_menu_list %}"><i class="icon-th"></i> 套餐管理</a></li>
+            <li id="nav-order-history"><a href="{% url restaurant_order %}"> <i class="icon-list"></i>
+                订单历史</a></li>
+            <li id="nav-logout"><a href="{% url logout %}"><i class="icon-off"></i> 退出</a></li>
+        </ul>
         <div id="content" class="span10">
             {% block content %} {% endblock %}
         </div>

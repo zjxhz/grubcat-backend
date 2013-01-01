@@ -76,38 +76,40 @@
 {% endblock %}
 
 {% block content %}
-    {% include "user/profile_nav.html" %}
-    <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
-        <div class="row">
-            <div id="cropping-area" class="span5">
+    <div class="row">
+        {% include "user/profile_nav.html" %}
+        <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
+            <div class="row">
+                <div id="cropping-area" class="span5">
 
-                {{ form.avatar }}
+                    {{ form.avatar }}
 
-                {{ form.cropping }}
+                    {{ form.cropping }}
 
-                <input type="hidden" name="action" id="id_action" value="crop"/>
-            </div>
-            <div id="preview_area" class="span5">
-                <div id="cropping-tip">
-                    您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
+                    <input type="hidden" name="action" id="id_action" value="crop"/>
                 </div>
-                <div class="row">
-                    <div id="preview_big_container" class="preview-container span3">
-                        <img id="preview_big">
+                <div id="preview_area" class="span5">
+                    <div id="cropping-tip">
+                        您上传的头像会自动生成三种尺寸，<br/>请注意不同大小尺寸的头像是否清晰
                     </div>
-                    <div id="preview_middle_container" class="preview-container span2">
-                        <img id="preview_middle">
-                    </div>
-                    <div id="preview_small_container" class="preview-container span1">
-                        <img id="preview_small">
+                    <div class="row">
+                        <div id="preview_big_container" class="preview-container span3">
+                            <img id="preview_big">
+                        </div>
+                        <div id="preview_middle_container" class="preview-container span2">
+                            <img id="preview_middle">
+                        </div>
+                        <div id="preview_small_container" class="preview-container span1">
+                            <img id="preview_small">
+                        </div>
                     </div>
                 </div>
+                <div class="buttons">
+                    <input id="id_choose_avatar" type="button" value="选择头像" class="btn">
+                    <input type="submit" value="保存" class="btn">
+                </div>
             </div>
-            <div class="buttons">
-                <input id="id_choose_avatar" type="button" value="选择头像" class="btn">
-                <input type="submit" value="保存" class="btn">
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 {% endblock %}
 

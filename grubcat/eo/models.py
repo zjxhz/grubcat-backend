@@ -403,7 +403,7 @@ GENDER_CHOICE=(
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    name = models.CharField(max_length=30, null=True)
+    name = models.CharField(max_length=30, null=True,blank=False)
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
@@ -413,7 +413,7 @@ class UserProfile(models.Model):
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True)
     constellation = models.IntegerField(null=True, default=-1)
-    birthday = models.DateField(null=True,blank=True)
+    birthday = models.DateField(null=True,blank=False)
     college = models.CharField(max_length=64, null=True)
     work_for = models.CharField(max_length=64, null=True)
     occupation = models.CharField(max_length=64, null=True)
