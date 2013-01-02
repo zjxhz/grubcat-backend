@@ -454,7 +454,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.NORMAL_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
+            thumbnail_url = settings.STATIC_URL + "img/default/normal_avatar.png"
         return thumbnail_url
 
     @property
@@ -462,7 +462,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
+            thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
         return thumbnail_url
     
     @property
@@ -756,7 +756,7 @@ class Meal(models.Model):
     def get_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
-                'size':(360,240),
+                'size':(420,280),
                 'crop': True,
 #                'quality':85,
                 'detail': True,

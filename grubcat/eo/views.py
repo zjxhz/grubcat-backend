@@ -346,6 +346,7 @@ class MealDetailView( OrderCreateView):
         except ObjectDoesNotExist:
             return Http404(u'饭局不存在')
         context['meal'] = meal
+        context['avaliable_seats']=range(meal.left_persons)
         if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
             orders = Order.objects.filter(meal=meal, customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
             if orders.exists():
