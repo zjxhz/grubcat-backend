@@ -2,13 +2,14 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
-#meal-list-page   {
-  #faq-what-is-fanju, #faq-what-is-fanju + p{
+#meal-list-page {
+  #faq-what-is-fanju, #faq-what-is-fanju + p {
     display: block;
   }
 }
-#meal-detail-page{
-  #faq-how-to-book-meal, #faq-how-to-book-meal +p, #faq-how-to-cancel-meal{
+
+#meal-detail-page {
+  #faq-how-to-book-meal, #faq-how-to-book-meal +p, #faq-how-to-cancel-meal {
     display: block;
   }
 }
@@ -150,6 +151,7 @@
 #meal-container {
   margin-bottom: 15px;
   padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
 }
 
 /*.box-seperator {
@@ -162,19 +164,36 @@
 }
 
 .sidebar {
-  margin-left:20px;
-  padding: 14px 14px 0px 14px;
-  border: 1px solid #ddd;
-//  border-right: 0;
-  width: 190px;
+  margin-left: 20px;
   margin-top: 20px;
+
+  .sidebar-box{
+    border: 1px solid #ccc;
+
+    margin-top: 20px;
+
+    .sidebar-box-title{
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+      padding: 6px 10px 6px 14px;
+      background: none repeat scroll 0 0 #eee;
+      color: #444;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+    .sidebar-box-content{
+      padding: 0 14px;
+      margin-top: 15px;
+      color: #666;
+    }
+  }
 
   .faq a {
     display: none;
     margin-bottom: 10px;
     font-size: 14px;
     text-decoration: none;
-    color: #444;
+    cursor: pointer;
   }
 
   .faq p {
@@ -182,7 +201,6 @@
     margin-top: 4px;
     margin-bottom: 10px;
     color: #666;
-    padding-left: 5px;
     line-height: 25px;
     font-size: 13px;
   }
@@ -209,6 +227,10 @@
     color: #777777;
     display: block;
     float: left;
+    background-image: url('../img/meal-location.png');
+    background-repeat: no-repeat;
+    background-position: 0 1px;
+    padding-left: 15px;
   }
 }
 
@@ -219,7 +241,7 @@
 
 a.user-img-wrapper {
   display: block;
-  margin: 0px 7px 7px 0;
+  margin: 0 7.5px 7.5px 0;
   float: left;
   img {
     .square(80px);
@@ -248,13 +270,14 @@ a.user-img-wrapper {
 }
 
 #users {
-  width: 100%;
+  h3 {
+    margin-bottom: 8px;
+    font-size: 1.4em;
+    color: #444;
+  }
 }
 
-#users h3 {
-  margin-bottom: 8px;
-  font-size: 1.4em;
-  color: #444;
+#menu{
 }
 
 #menu-popup.ui-widget-content {
@@ -325,18 +348,11 @@ a.user-img-wrapper {
 }
 
 dt.category {
-  width: 240px;
-  padding: 10px 0;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 18px;
+  margin-bottom: 10px;
 }
 
 dd.dish {
-  width: 230px;
   padding: 0 0 5px 7px;
-  font-size: 14px;
-  line-height: 18px;
 }
 
 .dish-info {
@@ -345,12 +361,6 @@ dd.dish {
 
 .dish-info .num {
   margin-right: 5px;
-}
-
-#menu .sidebar-box-title {
-  background-color: #57D62D;
-  color: white;
-
 }
 
 /*order details page*/
@@ -365,7 +375,6 @@ dd.dish {
     font-size: 1.8em;
     margin-bottom: 5px;
   }
-
 
   #code {
     font-size: 1.9em;
@@ -431,9 +440,6 @@ dd.dish {
     margin: 0 0 10px 0;
   }
 
-  #faq .sidebar-box-content p {
-    display: block;
-  }
 
   #create_meal_form fieldset {
     background: white;

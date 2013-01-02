@@ -27,7 +27,7 @@
                 <div class="meal-img-wrapper">
                     <img alt="{{ meal.topic }}" class="img-polaroid"
                          src="{{ meal.get_cover_url }}"
-                         width="420" height="280">
+                         width="420" height="250">
                 </div>
                 <div id="meal-grub">
                     {% if not order and meal.left_persons > 0 %}
@@ -56,18 +56,18 @@
                                 </div>
 
                                 <div class="control-group">
-                                    <label class="control-label">价钱:</label>
+                                    <label class="control-label">单价:</label>
 
                                     <div class="controls">
-                                        <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
+                                        <label>¥ <span id="meal_price">{{ meal.list_price }}</span></label>
                                     </div>
                                 </div>
 
                                 <div class="control-group">
-                                    <label class="control-label">总价钱:</label>
+                                    <label class="control-label">总价:</label>
 
                                     <div class="controls">
-                                        <label><span id="total_price" class="bl">{{ meal.list_price }}</span> 元</label>
+                                        <label>¥ <span id="total_price" class="bl">{{ meal.list_price }}</span> </label>
                                     </div>
                                 </div>
                             </fieldset>
@@ -92,68 +92,55 @@
             </div>
             <div id="users" class="">
                 {% if meal.actual_persons %}
-                    <h3>还剩{{ meal.left_persons }}个空位</h3>
+                    {% if meal.left_persons <= 0 %}
+                        <h3>没有空位了！</h3>
+                    {% else %}
+                        <h3>还剩{{ meal.left_persons }}个空位，快来预定吧！</h3>
+                    {% endif %}
                 {% else %}
                     <h3>现在还没有人参加饭局，赶快预定吧！</h3>
                 {% endif %}
-                {#            <ul class="">#}
                 {% for user in meal.participants.all %}
-                    <a href="{% url user_detail user.id %}" class=" user-img-wrapper" title="{{ user.user.username }}">
-                        <img alt="{{ user.user.username }}" class="user-pic img-" width="100"
-                             height="100"
+                    <a href="{% url user_detail user.id %}" class=" user-img-wrapper"
+                       title="{{ user.user.username }}">
+                        <img alt="{{ user.user.username }}" width="80"
+                             height="80"
                              src="{{ user.normal_avatar }}">
                     </a>
-                    {#                    </li>#}
                 {% endfor %}
-                {#            </ul>#}
-            </div>
-        </div>
-        {% comment %}     <div style="display: none">
-        <div id="menu-popup">
-            <div id="menu-container">
-                <div class="ribbon ribbon-menu ribbon-notail">
-                    <div class="ribbon-right"></div>
-                    <div class="ribbon-title">
-                        Entrees&nbsp;
-                    </div>
-                </div>
 
-                <div class="content italic clearfix">
-                    {% for dish in meal.order.dishes.all %}
-                        <div class="dish-pic"><img src="{{ dish.pic }}" width="50" height="50"></div>
-                        <div class="dish-content"><h3>{{ dish.name }}</h3></div>
-                    {% endfor %}
-                </div>
+                {% for empty_user in avaliable_seats %}
+                    <img class="" width="80"
+                         height="80"
+                         src="{% static 'img/default/seat-placeholder.png' %}">
+                {% endfor %}
+
             </div>
         </div>
-    </div>{% endcomment %}
         <div class="sidebar span3  visible-desktop">
 
-{% comment %}            <div id="menu" class="menu sidebar-box">
-                <div class="sidebar-box-title">菜单 {{ meal.menu.name|default:"8人套餐 40元/人" }}</div>
-                <div class="sidebar-box-content">
-                    <div id="menu-info" class="">
-                        {#                            <div class="title">#}
-                        {#                                <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>#}
-                        {#                            </div>#}
-
-                        <dl class="menu-items">
-                            {% for item in meal.menu.items %}
-                                {% if item.num %}
-                                    <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
-                                <span class="dish-info"> <span class="dish-price">{{ item.dish.price }} 元</span><span
-                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
-                                        class="num">{{ item.num }}</span> </span>
-                                    </dd>
-                                {% else %}
-                                    <dt class="category">{{ item.category.name }}  </dt>
-                                {% endif %}
-                            {% endfor %}
-                        </dl>
-                    </div>
-                </div>
-            </div>{% endcomment %}
             {% include "support/faq_sidebar.html" %}
+
+            <div id="menu" class="menu sidebar-box">
+                <div class="sidebar-box-title">
+                    菜单 {% comment %}{{ meal.menu.name|default:"8人套餐 40元/人" }}{% endcomment %}</div>
+                <div class="sidebar-box-content">
+                    <dl class="menu-items">
+                        {% for item in meal.menu.items %}
+                            {% if item.num %}
+                                <dd class="dish">
+                                    <span class="dish-name">{{ item.dish.name }}</span>
+                                     <span class="dish-info">¥ <span class="dish-price">{{ item.dish.price }}</span>{% comment %}  <span
+                                        class="unit"> /{{ item.dish.unit }} </span> &times;<span
+                                        class="num">{{ item.num }}</span> {% endcomment %}</span>
+                                </dd>
+                            {% else %}
+                                <dt class="category">{{ item.category.name }}  </dt>
+                            {% endif %}
+                        {% endfor %}
+                    </dl>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
