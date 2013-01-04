@@ -31,11 +31,11 @@
                             <a href="{{ meal.get_absolute_url }}">
                                 {% if forloop.counter0 < 3 %}
                                     <img width="360" height="240" class="img-polaroid"
-                                         src="{{ meal.get_cover_url }}">
+                                         src="{{ meal.get_small_cover_url }}">
                                 {% else %}
                                     <img width="360" height="240" src="{% static 'img/meal-placeholder.png' %}"
                                          class="lazy img-polaroid"
-                                         data-original="{{ meal.get_cover_url }}">
+                                         data-original="{{ meal.get_small_cover_url }}">
                                 {% endif %}
                             </a>
 
