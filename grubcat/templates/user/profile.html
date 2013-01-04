@@ -6,12 +6,13 @@
     {% assets "edit_profile_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
+
 {% endblock %}
 
 
 {% block content %}
     <div id="edit-profile" class="row">
-            {% include "user/profile_nav.html" %}
+        {% include "user/profile_nav.html" %}
 
         <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span7">
             <fieldset>
@@ -61,8 +62,17 @@
                     <label class="control-label" for="id_motto">签名：</label>
 
                     <div class="controls">
-                        <textarea id="id_motto" class="input-xlarge" type="text" name="motto"
-                                  rows="3">{{ form.motto.value|default:"" }}</textarea>
+                        <input id="id_motto" class="input-xlarge" type="text" name="motto"
+                               value="{{ form.motto.value|default:'' }}"/>
+                    </div>
+                </div>
+
+                <div class="control-group interest-tags">
+
+                    <label class="control-label" for="id_motto">兴趣爱好：</label>
+
+                    <div class="controls">
+                        {{ form.tags }}
                     </div>
                 </div>
 
@@ -75,19 +85,24 @@
 
             </fieldset>
         </form>
-        <div class="avatar span2 hidden-phone">
-            <img alt="{{ user.username }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="140" height="140">
+        <div class="avatar span3 hidden-phone">
+            <img alt="{{ user.username }}" class="img-polaroid" src="{{ user.get_profile.big_avatar }}" width="220"
+                 height="220">
             <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
         </div>
     </div>
+
+    <div id="data" style="display: none" list-tags-url='{% url tag_list %}'></div>
 
 {% endblock %}
 
 {% block page_js %}
     {{ block.super }}
-    <script type="text/javascript">
-        $(function () {
-            $("#profile-nav-info").addClass("active");
-        })
-    </script>
+    {% assets "auto_suggest_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
 {% endblock %}

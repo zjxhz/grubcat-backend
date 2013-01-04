@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.serializers import json
 from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -610,7 +611,6 @@ class UploadAvatarView(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user.get_profile()
 
-
     def get_success_url(self):
         return reverse('upload_avatar')
 
@@ -625,19 +625,29 @@ class UploadAvatarView(UpdateView):
 #        print 'cropping' + profile.cropping
         return HttpResponseRedirect(redirect_url)
 
-def edit_basic_profile(request):
-    profile = request.user.get_profile()
-    if request.method == 'GET':
-        form = BasicProfileForm(instance=profile)
-    elif request.method == 'POST':
-        form = BasicProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            profile = form.save()
-            return HttpResponseRedirect(reverse('edit_basic_profile'))
-    return render_to_response('user/profile.html',{'form':form, 'profile':profile},context_instance=RequestContext(request))
+class ProfileUpdateView(UpdateView):
+    form_class = BasicProfileForm
+    model = UserProfile
+    template_name = 'user/profile.html'
 
+    def get_object(self, queryset=None):
+        return self.request.user.get_profile()
+
+    def get_success_url(self):
+        return reverse('edit_basic_profile')
         #    temp use
 
+def list_tags(request):
+    query = request.GET.get('q', '')
+    if query:
+        tag_name_qs = Tag.objects.filter(name__icontains=query).values_list('name')
+    else:
+        tag_name_qs = UserProfile.tags.most_common().values_list('name','num_times' )
+        if len(tag_name_qs) < 20:
+            tag_name_qs=[(u'读书',),(u'学习',)]
+    data = [{'value': tag[0]} for tag in tag_name_qs[:20]]
+
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def handle_uploaded_app(file):
     destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
