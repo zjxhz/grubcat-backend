@@ -1,5 +1,10 @@
 {% extends "base.html" %}
-
+{% block page_css %}
+    {{ block.super }}
+    {% assets "error_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
 {% block content %}
 
 <p>404</p>

@@ -22,6 +22,10 @@ meal_css = Bundle(
     common_css, 'less/meal.less', responsive_css, filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 
+error_css = Bundle(
+    common_css, responsive_css, filters='less,cssmin', output='gen/error.%(version)s.css'
+)
+
 #group related
 #group_list_css = Bundle(
 #     common_css, 'css/group-list.css', filters='cssmin', output='gen/group-list.%(version)s..css'
