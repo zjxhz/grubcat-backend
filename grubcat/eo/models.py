@@ -767,6 +767,18 @@ class Meal(models.Model):
             url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url
 
+    def get_small_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size':(360,240),
+                'crop': True,
+                #                'quality':85,
+                'detail': True,
+                }).url
+        else:
+            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+        return url
+
     @models.permalink
     def get_absolute_url(self):
         return 'meal_detail', [str(self.id)]
