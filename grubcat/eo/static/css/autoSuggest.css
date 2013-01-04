@@ -57,6 +57,7 @@ ul.as-selections li.as-selection-item a.as-close {
 	font-weight: bold;
 	text-shadow: 0 1px 1px #fff;
 	-webkit-transition: color .1s ease-in;
+    text-decoration: none;
 }
 
 ul.as-selections li.as-selection-item.blur {

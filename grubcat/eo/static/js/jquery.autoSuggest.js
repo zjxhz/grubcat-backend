@@ -124,20 +124,9 @@
 				var prev = "";
 				var totalSelections = 0;
 				var tab_press = false;
-				var lastKeyPressCode;
+				
 				// Handle input field events
 				input.focus(function(){
-                    if(opts.showResultList){
-                        if(opts.selectionLimit && $("li.as-selection-item", selections_holder).length >= opts.selectionLimit){
-                            results_ul.html('<li class="as-message">'+opts.limitText+'</li>');
-                            results_holder.show();
-                        } else {
-                            if (timeout){ clearTimeout(timeout); }
-                            lastKeyPressCode=188;//tab
-                            timeout = setTimeout(function(){ keyChange(); }, opts.keyDelay);
-                        }
-                    }
-                }).focus(function(){
 					if($(this).val() == opts.startText && values_input.val() == ""){
 						$(this).val("");
 					} else if(input_focus){
@@ -146,7 +135,18 @@
 							results_ul.css("width",selections_holder.outerWidth());
 							results_holder.show();
 						}
+
 					}
+                    /*if(opts.showResultList){
+                        if(opts.selectionLimit && $("li.as-selection-item", selections_holder).length >= opts.selectionLimit){
+                            results_ul.html('<li class="as-message">'+opts.limitText+'</li>');
+                            results_holder.show();
+                        } else {
+                            if (timeout){ clearTimeout(timeout); }
+                            lastKeyPressCode=188;//tab
+                            timeout = setTimeout(function(){ keyChange(); }, opts.keyDelay);
+                        }
+                    }*/
 					input_focus = true;
 					return true;
 				}).blur(function(){
@@ -232,7 +232,7 @@
 					// ignore if the following keys are pressed: [del] [shift] [capslock]
 					if( lastKeyPressCode == 46 || (lastKeyPressCode > 8 && lastKeyPressCode < 32) ){ return results_holder.hide(); }
 					var string = input.val().replace(/[\\]+|[\/]+/g,"");
-					if (string == prev && string != "") return;
+					if (string == prev /**&& string != ""**/) return;
 					prev = string;
 					if (string.length >= opts.minChars) {
 						selections_holder.addClass("loading");
@@ -282,7 +282,8 @@
 						}
 						if(str){
 							if (!opts.matchCase){ str = str.toLowerCase(); }
-							if(str && str.search(query) != -1 && values_input.val().search(","+data[num][opts.selectedValuesProp]+",") == -1){
+							if(str && str.search(query) != -1 && (values_input.val().search(","+data[num][opts.selectedValuesProp]+",") == -1
+                                && values_input.val().search(", "+data[num][opts.selectedValuesProp]+",") == -1)){
 								forward = true;
 							}
 						}
@@ -304,7 +305,7 @@
 									$(this).addClass("active");
 								}).data("data",{attributes: data[num], num: num_count});
 							var this_data = $.extend({},data[num]);
-                            if(query ){
+                            //if(query ){
                                 if (!opts.matchCase){
                                     var regx = new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + query + ")(?![^<>]*>)(?![^&;]+;)", "gi");
                                 } else {
@@ -314,7 +315,7 @@
                                 if(opts.resultsHighlight){
                                     this_data[opts.selectedItemProp] = this_data[opts.selectedItemProp].replace(regx,"<em>$1</em>");
                                 }
-                            }
+                           // }
 							if(!opts.formatList){
 								formatted = formatted.html(this_data[opts.selectedItemProp]);
 							} else {
@@ -327,7 +328,7 @@
 						}
 					}
 					selections_holder.removeClass("loading");
-					if(matchCount <= 0 && query){
+					if(matchCount <= 0 /**&& query**/){
 						results_ul.html('<li class="as-message">'+opts.emptyText+'</li>');
 					}
 					results_ul.css("width", selections_holder.outerWidth());

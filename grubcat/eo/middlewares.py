@@ -13,7 +13,9 @@ class WeiboAuthenticationBackend(object):
         user_to_authenticate = None # tell Python explicitly this is a local variable
         
         access_token =credentials.get('access_token')
-        expires_in = credentials.get('expires_in') 
+        if not access_token:
+            raise
+        expires_in = credentials.get('expires_in')
         if not expires_in:
             expires_in = str(3600*24*14)
         weibo_client = weibo.APIClient(app_key="4071331500",app_secret="5cf4910b217617cee72b2889a8e394eb")
