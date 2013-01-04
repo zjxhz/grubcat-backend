@@ -24,6 +24,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
+    url(r'autocomplete/', include('autocomplete_light.urls')),
     ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     ('^restaurant/(\d+)/$', get_restaurant),
     ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
@@ -103,8 +104,10 @@ urlpatterns = patterns('',
      url(r'^user/(?P<pk>\d+)/$', UserDetailView.as_view(), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
-    url(r'^profile/$', login_required(edit_basic_profile), name='edit_basic_profile'),
+    url(r'^profile/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
     url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
+
+    url(r'^tag/$', login_required(list_tags), name='tag_list'),
 
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),

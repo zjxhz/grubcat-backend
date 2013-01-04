@@ -44,7 +44,7 @@ user_css = Bundle(
 )
 
 edit_profile_css = Bundle(
-    common_css, 'css/edit-profile.css', responsive_css, filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    'css/autoSuggest.css',common_css ,'css/edit-profile.css', responsive_css, filters='cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 #order_css = Bundle(
@@ -67,6 +67,7 @@ base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.
     output="gen/base.main.%(version)s.js")
 
 module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version)s.js")
+auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
 
 user_list_js = Bundle(
     'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
@@ -117,6 +118,7 @@ register('jquery_dropkick_js', jquery_dropkick_js)
 register('base_js', base_js)
 register('base_main_js', base_main_js)
 register('module_js', module_js)
+register('auto_suggest_js', auto_suggest_js)
 register('restaurant_admin_js', restaurant_admin_js)
 register('user_list_js', user_list_js)
 #register('fix_ie6_png_js', fix_ie6_png_js)

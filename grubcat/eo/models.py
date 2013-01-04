@@ -404,22 +404,22 @@ GENDER_CHOICE=(
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     name = models.CharField(max_length=30, null=True,blank=False)
-    favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",
+    favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",  blank=True,
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
-    recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following")
+    recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",blank=True,null=True)
     gender = models.IntegerField(blank=False, null=True,choices=GENDER_CHOICE)
     avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
-    location = models.ForeignKey(UserLocation, unique=True, null=True)
-    constellation = models.IntegerField(null=True, default=-1)
+    location = models.ForeignKey(UserLocation, unique=True, null=True,blank=True)
+    constellation = models.IntegerField(blank=True, null=True, default=-1)
     birthday = models.DateField(null=True,blank=False)
-    college = models.CharField(max_length=64, null=True)
-    work_for = models.CharField(max_length=64, null=True)
-    occupation = models.CharField(max_length=64, null=True)
+    college = models.CharField(max_length=64, null=True,blank=True)
+    work_for = models.CharField(max_length=64, null=True,blank=True)
+    occupation = models.CharField(max_length=64, null=True,blank=True)
     motto = models.CharField(max_length=140, null=True, blank=True)
-    weibo_id = models.CharField(max_length=20, null=True)
-    weibo_access_token = models.CharField(max_length=128, null=True)
+    weibo_id = models.CharField(max_length=20, null=True,blank=True)
+    weibo_access_token = models.CharField(max_length=128, null=True,blank=True)
     tags = TaggableManager(through=TaggedUser)
     apns_token = models.CharField(max_length=255, blank=True)
     
@@ -623,6 +623,8 @@ class UserProfile(models.Model):
 
     class Meta:
         db_table = u'user_profile'
+        verbose_name = u'用户资料'
+        verbose_name_plural = u'用户资料'
 
 
 class UserPhoto(models.Model):

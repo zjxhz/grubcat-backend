@@ -2,13 +2,17 @@
     margin-top: 40px;
 }
 
+.avatar{
+    margin-left: 10px;
+}
+
 .avatar h1{
     text-align: center;
     font-size: 18px;
 }
 .avatar a.edit-avatar{
     display: block;
-    margin-left: 50px;
+    margin-left: 99px;
     margin-top: 15px;
 }
 
@@ -16,6 +20,14 @@
 #id_birthday_year,#id_birthday_month,#id_birthday_day
 {
     margin-right: 1px;
+}
+
+#id_tags{
+   display: none;
+}
+
+#tags{
+
 }
 
 .controls .errorlist
@@ -30,6 +42,10 @@
     margin-left: 10px;
     margin-top: 0px;
 }
+
+.control-group.interest-tags .as-selections{
+    width: 270px;
+    }
 
 .controls textarea {
     height: auto;

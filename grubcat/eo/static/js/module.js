@@ -28,6 +28,22 @@ $(document).ready(function () {
         })
 
     }
+
+    if($("#edit-profile")[0]){
+        $("#profile-nav-info").addClass("active");
+        var user_tags= $("#id_tags").val();
+        $("#id_tags").autoSuggest($("#data").attr('list-tags-url'), {
+            asHtmlID:'tags',
+            minChars:0,
+            preFill:user_tags,
+            neverSubmit: true,
+            startText:'请输入你的兴趣爱好，这样别人会更好地了解你，系统也会优先展示和你有共同兴趣的朋友'
+        })
+        $('#tags').parents().find('form').submit(function (){
+            $("#tags").remove();
+            $("#as-values-tags").attr('name','tags');
+        });
+    }
 })
 if ($("#create-meal-page")[0]) {
     function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
