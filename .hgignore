@@ -1,6 +1,6 @@
 # use glob syntax.
 syntax: glob
-
+build/*
 *.pyc
 .idea/*
 grubcat/settings_dev.py
