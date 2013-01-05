@@ -472,10 +472,10 @@ def get_restaurant_list_by_geo(request):
 
 
 def weibo_login(request):
-    weibo_client = weibo.APIClient(app_key="1086545555",app_secret="edc858db52e5c2bc803010a81b183c5d",redirect_uri="http://42.121.34.164/login/weibo/")
+    weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
 
     code = request.GET.get('code')
-    errorcode = request.GET.get('errcode')
+    errorcode = request.GET.get('error_code')
     if not code and not errorcode:
         #go to weibo site to auth
         return HttpResponseRedirect( weibo_client.get_authorize_url())
@@ -488,7 +488,7 @@ def weibo_login(request):
         user_to_authenticate = auth.authenticate(**data)
         auth.login(request, user_to_authenticate)
         return HttpResponseRedirect("/")
-        #TODO return back
+        #TODO return back and print error
 
 
 def login_required_response(request):
