@@ -2,6 +2,7 @@
 # Create your views here.
 from datetime import datetime
 import urlparse
+from django.contrib import auth
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -19,6 +20,7 @@ from django.utils.timezone import now
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+import weibo
 from eo.forms import DishForm, ImgTestForm,\
     UploadFileForm
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order,\
@@ -467,6 +469,26 @@ def get_restaurant_list_by_geo(request):
         print "Unexpected error:", sys.exc_info()[0]
         raise
     return  response
+
+
+def weibo_login(request):
+    weibo_client = weibo.APIClient(app_key="1086545555",app_secret="edc858db52e5c2bc803010a81b183c5d",redirect_uri="http://42.121.34.164/login/weibo/")
+
+    code = request.GET.get('code')
+    errorcode = request.GET.get('errcode')
+    if not code and not errorcode:
+        #go to weibo site to auth
+        return HttpResponseRedirect( weibo_client.get_authorize_url())
+    elif not code and errorcode:
+        # when weibo auth, user cancel auth
+        return HttpResponseRedirect("/")
+    else:
+        # after weibo auth
+        data = weibo_client.request_access_token(code)
+        user_to_authenticate = auth.authenticate(**data)
+        auth.login(request, user_to_authenticate)
+        return HttpResponseRedirect("/")
+        #TODO return back
 
 
 def login_required_response(request):
