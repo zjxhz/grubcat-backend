@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static_asset %}
+
 {% load bootstrap_tags %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}发起饭局{% endblock %}
@@ -9,21 +9,21 @@
     <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
     {% assets "meal_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 
 {% block page_js %}
-    <script type="text/javascript" src="{% static_asset "js/jquery.lionbars.0.3.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.lionbars.0.3.js" %}"></script>
     {% assets "jquery_ui_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {{ block.super }}
     {% assets "jquery_dropkick_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
         {% comment %}            {% if my_groups %}
@@ -124,7 +124,7 @@
                     </div>
                     <div id="choose-menu-container">
                         <div id="loading-menus" class="hide"><img alt="载入菜单"
-                                                                  src="{% static_asset "img/loading-menus.gif" %}"/>
+                                                                  src="{% static "img/loading-menus.gif" %}"/>
                         </div>
                         <div id="choose-menu-wrapper"></div>
                     </div>

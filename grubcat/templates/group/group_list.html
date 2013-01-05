@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
-{% load static_asset %}
+
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的圈子{% endblock %}
 {% block page_css %}
     {{ block.super }}
     {% assets "group_list_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
     <style type="text/css">
@@ -29,10 +29,10 @@
 {% block base_js %}
     {{ block.super }}
     {% assets "jquery_ui_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {% assets "jquery_form_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
 {% block page_js %}

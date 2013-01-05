@@ -342,10 +342,7 @@ class MealDetailView( OrderCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MealDetailView, self).get_context_data(**kwargs)
-        try:
-            meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
-        except ObjectDoesNotExist:
-            return Http404(u'饭局不存在')
+        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         context['avaliable_seats']=range(meal.left_persons)
         if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
