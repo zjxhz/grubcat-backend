@@ -1,7 +1,7 @@
 {% extends "restaurant/base.html" %}
 {% load static from staticfiles %}
 {% load assets %}
-
+{% load static_asset %}
 {% load bootstrap_tags %}
 {% block title %}套餐管理{% endblock %}
 {% block page_css %}
@@ -10,13 +10,13 @@
 {% endblock %}
 {% block page_js %}
     {% assets "jquery_ui_js" %}
-        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {% assets "jquery_form_js" %}
-        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {% assets "water_fall_js" %}
-        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {{ block.super }}
 {% endblock %}
