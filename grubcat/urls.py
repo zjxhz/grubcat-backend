@@ -99,7 +99,7 @@ urlpatterns = patterns('',
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
     #account
     url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
+    url(r'^user/logout/$', 'django.contrib.auth.views.logout', name="logout"),
     url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
      url(r'^user/(?P<pk>\d+)/$', UserDetailView.as_view(), name='user_detail'),

@@ -72,6 +72,9 @@ STATIC_URL = 'http://fanju.dn.qbox.me/'
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
 #ADMIN_MEDIA_PREFIX = '/static/admin/'
 
+WEIBO_APP_KEY="4071331500"
+WEIBO_APP_SECERT="5cf4910b217617cee72b2889a8e394eb"
+WEIBO_REDIRECT_URL="http://42.121.34.164/login/weibo/"
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
 

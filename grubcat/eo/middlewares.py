@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from eo.models import UserProfile
@@ -18,7 +19,7 @@ class WeiboAuthenticationBackend(object):
         expires_in = credentials.get('expires_in')
         if not expires_in:
             expires_in = str(3600*24*14)
-        weibo_client = weibo.APIClient(app_key="4071331500",app_secret="5cf4910b217617cee72b2889a8e394eb")
+        weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(access_token, expires_in)
         
         if UserProfile.objects.filter(weibo_access_token=access_token).count():
