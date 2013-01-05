@@ -1,6 +1,6 @@
 {% extends "restaurant/base.html" %}
 {% load static from staticfiles %}
-{% load static_asset %}
+
 {% load assets %}
 {% block title %}菜单管理{% endblock %}
 
@@ -11,10 +11,10 @@
 
 {% block page_js %}
     {% assets "jquery_form_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {% assets "jquery_ajax_bootstrap_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {{ block.super }}
     <script type="text/javascript">

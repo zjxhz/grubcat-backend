@@ -23,7 +23,7 @@ meal_css = Bundle(
 )
 
 error_css = Bundle(
-    common_css, responsive_css, filters='less,cssmin', output='gen/error.%(version)s.css'
+    common_css, responsive_css, output='gen/error.%(version)s.css'
 )
 
 #group related

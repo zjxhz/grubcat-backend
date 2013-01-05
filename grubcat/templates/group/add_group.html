@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load bootstrap_tags %}
-{% load static_asset %}
+
 {% load static from staticfiles %}{% load assets %}
 {% block title %}创建圈子{% endblock %}
 {% block page_css %}
     {{ block.super }}
     {% assets "bootstrap_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
     <style type="text/css">
     </style>
@@ -14,7 +14,7 @@
 
 {% block page_js %}
     {% assets "jquery_ajax_bootstrap_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
 {% block active-nav-id %}nav-group{% endblock %}

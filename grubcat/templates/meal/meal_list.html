@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
-{% load static_asset %}
+
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
     {{ block.super }}
     {% assets "meal_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 {% block base_js %}
     {% assets "base_main_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
     {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <script type="text/javascript" src="{% static ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
 {% block page_js %}
