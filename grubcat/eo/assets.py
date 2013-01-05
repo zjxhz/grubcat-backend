@@ -111,6 +111,7 @@ register('meal_css', meal_css)
 #register('group_list_css', group_list_css)
 #register('group_detail_css', group_detail_css)
 
+register('error_css', error_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('edit_profile_css', edit_profile_css)
