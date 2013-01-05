@@ -95,6 +95,8 @@ urlpatterns = patterns('',
 #    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
 
+
+    url(r'^login/weibo/$', weibo_login, name='weibo_login'),
     #account
     url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
