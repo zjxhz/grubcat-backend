@@ -97,7 +97,7 @@
     </script>
 {% endblock %}
 {% block content %}
-    {% url login as login_url %} {% url group_list as group_list_url %}
+    {% url weibo_login as login_url %} {% url group_list as group_list_url %}
     <div id="group-category-wrapper">
         {% if user.is_authenticated %}
             <a class="button" id="id_create_group_link" href="{% url create_group %}">创建圈子</a>
