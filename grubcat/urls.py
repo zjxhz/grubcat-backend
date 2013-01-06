@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
 from eo.db import query_restaurant_from_google, updateLatLng
-from eo.decorators import restaurant_login_required
+from eo.decorators import restaurant_login_required, active_login_required
 from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
     get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
@@ -66,49 +66,54 @@ urlpatterns = patterns('',
     url(r'^$', MealListView.as_view(), name="index"),
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
     url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
-    url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
+    url(r'^meal/add/$',active_login_required(MealCreateView.as_view()), name='create_meal'),
 
     #menu
-    url(r'^menu/$', login_required(MenuListView.as_view()), name="menu_list"),
+    url(r'^menu/$',active_login_required(MenuListView.as_view()), name="menu_list"),
 
     #ajax get menus
-    #    url(r'^menu/$', login_required(get_menu), name='get_menu'),
+    #    url(r'^menu/$',active_login_required(get_menu), name='get_menu'),
 
     #comment
 
     #group
 #    url(r'^group/$', GroupListView.as_view(), name="group_list"),
 #    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
-#    url(r'^group/add/$', login_required(GroupCreateView.as_view()), name='create_group'),
-#    url(r'^group/edit/(?P<pk>\d+)/$', login_required(GroupUpdateView.as_view()), name='edit_group'),
-#    url(r'^group/logo/edit/(?P<pk>\d+)/$', login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
-#    url(r'^group/(?P<pk>\d+)/join/$', login_required(join_group), name='join_group'),
-#    url(r'^group/(?P<pk>\d+)/leave/$', login_required(leave_group), name='leave_group'),
-#    url(r'^group/comment/add/$', login_required(create_group_comment), name='create_group_comment'),
-#    url(r'^group/comment/(?P<pk>\d+)/del/$', login_required(del_group_comment), name='del_group_comment'),
+#    url(r'^group/add/$',active_login_required(GroupCreateView.as_view()), name='create_group'),
+#    url(r'^group/edit/(?P<pk>\d+)/$',active_login_required(GroupUpdateView.as_view()), name='edit_group'),
+#    url(r'^group/logo/edit/(?P<pk>\d+)/$',active_login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
+#    url(r'^group/(?P<pk>\d+)/join/$',active_login_required(join_group), name='join_group'),
+#    url(r'^group/(?P<pk>\d+)/leave/$',active_login_required(leave_group), name='leave_group'),
+#    url(r'^group/comment/add/$',active_login_required(create_group_comment), name='create_group_comment'),
+#    url(r'^group/comment/(?P<pk>\d+)/del/$',active_login_required(del_group_comment), name='del_group_comment'),
 #    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(),
 #        name='group_comment_list'),
 #    url(r'^group/(?P<group_id>\d+)/member/$', GroupMemberListView.as_view(), name='group_member_list'),
 #    url(r'^group/(?P<group_id>\d +)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
 
     # order
-#    url(r'^meal/(?P<meal_id>\d+)/order/$', login_required(OrderCreateView.as_view()), name='create_order'),
-    url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()), name='order_detail'),
+#    url(r'^meal/(?P<meal_id>\d+)/order/$',active_login_required(OrderCreateView.as_view()), name='create_order'),
+    url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$',active_login_required(OrderDetailView.as_view()), name='order_detail'),
 
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
-    #account
+    url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
+    url(r'^bind/done/$', active_login_required(TemplateView.as_view(template_name='test.html')), name='bind_done'),
+
     url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url':"/"},name="logout"),
+
+
+    #account
 #    url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-     url(r'^user/(?P<pk>\d+)/$', UserDetailView.as_view(), name='user_detail'),
+     url(r'^user/(?P<pk>\d+)/$',active_login_required(UserDetailView.as_view()), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
-    url(r'^profile/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
-    url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
+    url(r'^profile/$',login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
+    url(r'profile/upload_avatar/$',login_required(UploadAvatarView.as_view()), name='upload_avatar'),
 
-    url(r'^tag/$', login_required(list_tags), name='tag_list'),
+    url(r'^tag/$',login_required(list_tags), name='tag_list'),
 
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),

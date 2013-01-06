@@ -130,7 +130,7 @@ INSTALLED_APPS = (
     'django_assets',
     'south',
     'django_forms_bootstrap',
-    'ajax_select',
+#    'ajax_select',
     'taggit',
     'raven.contrib.django',
     #    'debug_toolbar'
@@ -169,7 +169,7 @@ BIG_AVATAR_SIZE = (220, 220)
 NORMAL_AVATAR_SIZE = (80, 80)
 SMALL_AVATAR_SIZE = (30, 30)
 IMAGE_CROPPING_THUMB_SIZE = (360, 360)
-#THUMBNAIL_QUALITY=90
+THUMBNAIL_QUALITY=100
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
@@ -247,7 +247,7 @@ LOGGING = {
 #EMAIL_HOST_PASSWORD=''
 
 #account
-LOGIN_URL = reverse_lazy('login')
+LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 SHOW_EXCEPTION_DETAIL = False

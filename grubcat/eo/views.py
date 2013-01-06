@@ -68,7 +68,7 @@ class MealCreateView(CreateView):
             return super(MealCreateView, self).get_success_url()
         else:
         #普通用户发起饭聚后需要支付
-            return reverse_lazy('create_order', kwargs={'meal_id': self.object.id})
+            return reverse_lazy('meal_detail', kwargs={'meal_id': self.object.id})
 
     def form_valid(self, form):
         meal = form.save(False)
@@ -474,22 +474,49 @@ def get_restaurant_list_by_geo(request):
 def weibo_login(request):
     weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
 
+
+    if request.user.is_authenticated() and not request.user.is_active:
+        return HttpResponseRedirect(reverse_lazy('bind'))
+
     code = request.GET.get('code')
     errorcode = request.GET.get('error_code')
+    next = request.GET.get('state','/')
     if not code and not errorcode:
-        #go to weibo site to auth
-        return HttpResponseRedirect( weibo_client.get_authorize_url())
+#        #go to weibo site to auth
+        kw ={'state':request.GET.get('next','/')}
+        return HttpResponseRedirect( weibo_client.get_authorize_url(**kw))
     elif not code and errorcode:
         # when weibo auth, user cancel auth
+        #TODO inform user to auth again
         return HttpResponseRedirect("/")
     else:
-        # after weibo auth
+#        after weibo auth
         data = weibo_client.request_access_token(code)
+#        data = {'access_token':'2.00xQDpnBG_tW8E0de8255b9eL_rstB'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         auth.login(request, user_to_authenticate)
-        return HttpResponseRedirect("/")
-        #TODO return back and print error
+        if not request.user.is_active:
+            return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
+        else:
+            return HttpResponseRedirect(next)
 
+class BindProfileView(UpdateView):
+    form_class = BindProfileForm
+    model = UserProfile
+    template_name = 'user/bind_profile.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user.get_profile()
+
+    def get_success_url(self):
+        success_url = self.request.GET.get('next',reverse('index'))
+        return success_url
+
+    def form_valid(self, form):
+        profile = form.save(False)
+        profile.user.is_active = True
+        profile.user.save()
+        return super(BindProfileView, self).form_valid(form)
 
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
@@ -654,7 +681,6 @@ class ProfileUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('edit_basic_profile')
-        #    temp use
 
 def list_tags(request):
     query = request.GET.get('q', '')

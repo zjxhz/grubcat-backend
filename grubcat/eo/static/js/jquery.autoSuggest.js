@@ -194,7 +194,7 @@
 						case 9: case 188:  // tab or comma
 							tab_press = true;
 							var i_input = input.val().replace(/(,)/g, "");
-							if(i_input != "" && values_input.val().replace(/\s*,\s*/g,',').search(","+i_input+",") < 0 && i_input.length >= opts.minChars){
+							if(i_input != "" && (","+values_input.val()).replace(/\s*,\s*/g,',').search(","+i_input+",") < 0 && i_input.length >= opts.minChars){
 								e.preventDefault();
 								var n_data = {};
 								n_data[opts.selectedItemProp] = i_input;
@@ -203,6 +203,7 @@
 								add_selected_item(n_data, "00"+(lis+1));
 								input.val("");
 							}
+                            return false;
 						case 13: // return
 							tab_press = false;
 							var active = $("li.active:first", results_holder);
@@ -282,7 +283,7 @@
 						}
 						if(str){
 							if (!opts.matchCase){ str = str.toLowerCase(); }
-							if(str && str.search(query) != -1 && values_input.val().replace(/\s*,\s*/g,',').search(","+data[num][opts.selectedValuesProp]+",") == -1){
+							if(str && str.search(query) != -1 && (','+ values_input.val()).replace(/\s*,\s*/g,',').search(","+data[num][opts.selectedValuesProp]+",") == -1){
 								forward = true;
 							}
 						}

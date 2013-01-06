@@ -1,22 +1,38 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}{% load assets %}{% load static_asset %}
-{% block title %}修改个人资料{% endblock %}
+{% block title %}完善个人信息{% endblock %}
 {% block page_css %}
     {{ block.super }}
     {% assets "edit_profile_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 
+    <style type="text/css">
+        .interest-tags.control-group .controls .errorlist {
+            margin-left: 10px;
+            margin-top: 0px;
+        }
+    </style>
+
 {% endblock %}
 
 
 {% block content %}
-    <div id="edit-profile" class="row">
-        {% include "user/profile_nav.html" %}
+    <div id="bind-edit-profile" class="row">
+{% comment %}<div>
 
-        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span7">
+    第一次来到饭聚网，完善下你的资料，让朋友们更好地了解你吧。
+</div>{% endcomment %}
+
+      {% comment %}  <div class="avatar span3 hidden-phone">
+            <img alt="{{ user.username }}" class="img-polaroid" src="{{ user.get_profile.big_avatar }}" width="220"
+                 height="220">
+            <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
+        </div>
+{% endcomment %}
+        <form id="basic-profile-form" action="{% url bind %}" method="post" class="form-horizontal span8 ">
             <fieldset>
-                {#                    <legend>基本资料</legend>#}
+                                    <legend>第一次来到饭聚网，完善资料，让更多的人了解你吧！</legend>
                 <div class="control-group nickname">
 
                     <label class="control-label" for="id_motto">* 昵称：</label>
@@ -28,25 +44,25 @@
                     </div>
                 </div>
 
-                <div class="control-group gender">
+                    <div class="control-group gender" {% if form.gender.value != None or form.gender.value != ''  %}style="display: none" {% endif %}>
 
-                    <label class="control-label"> * 性别：</label>
+                        <label class="control-label"> * 性别：</label>
 
-                    <div class="controls">
-                        <label class="radio inline" for="id_gender_1"><input
-                                {% if form.gender.value == '0' or  form.gender.value == 0 %}checked="checked"{% endif %}
-                                type="radio"
-                                id="id_gender_1"
-                                value="0" name="gender"> 男</label>
-                        <label class="radio inline" for="id_gender_2"><input
-                                {% if form.gender.value == '1' or form.gender.value == 1 %}checked="checked"{% endif %}
-                                type="radio"
-                                id="id_gender_2"
-                                value="1" name="gender"> 女</label>
-                        {{ form.gender.errors }}
+                        <div class="controls">
+                            <label class="radio inline" for="id_gender_1"><input
+                                    {% if form.gender.value == '0' or form.gender.value == 0 %}checked="checked"{% endif %}
+                                    type="radio"
+                                    id="id_gender_1"
+                                    value="0" name="gender"> 男</label>
+                            <label class="radio inline" for="id_gender_2"><input
+                                    {% if form.gender.value == '1' or form.gender.value == 1 %}checked="checked"{% endif %}
+                                    type="radio"
+                                    id="id_gender_2"
+                                    value="1" name="gender"> 女</label>
+                            {{ form.gender.errors }}
+                        </div>
                     </div>
-                </div>
-                <div class="control-group birthday ">
+                {% comment %}<div class="control-group birthday ">
 
                     <label class="control-label"> * 生日：</label>
 
@@ -66,13 +82,15 @@
                                value="{{ form.motto.value|default:'' }}"/>
                     </div>
                 </div>
+                {% endcomment %}
 
                 <div class="control-group interest-tags">
 
                     <label class="control-label" for="id_motto"> * 兴趣：</label>
 
                     <div class="controls">
-                        {{ form.tags }}{{ form.tags.errors }}
+                        {{ form.tags }}
+                        {{ form.tags.errors }}
                     </div>
                 </div>
 
@@ -85,11 +103,7 @@
 
             </fieldset>
         </form>
-        <div class="avatar span3 hidden-phone">
-            <img alt="{{ user.username }}" class="img-polaroid" src="{{ user.get_profile.big_avatar }}" width="220"
-                 height="220">
-            <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
-        </div>
+
     </div>
 
     <div id="data" style="display: none" list-tags-url='{% url tag_list %}'></div>
@@ -104,5 +118,4 @@
     {% assets "module_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-
 {% endblock %}
