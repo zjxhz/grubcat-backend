@@ -29,7 +29,7 @@ $(document).ready(function () {
 
     }
 
-    if($("#edit-profile")[0]){
+    if($("#edit-profile")[0] || $("#bind-edit-profile")[0]){
         $("#profile-nav-info").addClass("active");
         var user_tags= $("#id_tags").val();
         $("#id_tags").autoSuggest($("#data").attr('list-tags-url'), {

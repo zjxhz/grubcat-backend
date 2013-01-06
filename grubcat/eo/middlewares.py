@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from eo.models import UserProfile
+from eo.models import UserProfile, Gender
 import json
 import logging
 import urllib2
@@ -41,6 +41,8 @@ class WeiboAuthenticationBackend(object):
                     logger.debug("Probably a new weibo user, create a new user for it")
                     username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password)
+                    user_to_authenticate.is_active = False #set unactive before complete some profile
+                    user_to_authenticate.save()
                     user_profile = user_to_authenticate.get_profile()
                     user_data = weibo_client.users.show.get(uid=weibo_id)
                     user_profile.weibo_id = weibo_id
@@ -48,9 +50,9 @@ class WeiboAuthenticationBackend(object):
                     user_profile.name = user_data.get('name')
                     user_profile.motto = user_data.get('description') 
                     if user_data.get('gender') == "m":
-                        user_profile.gender = 0
+                        user_profile.gender = Gender.MALE
                     elif user_data.get('gender') == "f":
-                        user_profile.gender = 1
+                        user_profile.gender = Gender.FEMALE
                     avatar_url = user_data.get('avatar_large') 
                     user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_profile.save()

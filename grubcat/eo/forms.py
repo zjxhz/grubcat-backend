@@ -131,6 +131,15 @@ class BasicProfileForm(ModelForm):
             'gender' : RadioSelect(choices=GENDER_CHOICE,),
             'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
         }
+
+class BindProfileForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        fields=('name','gender','tags')
+        widgets = {
+            'gender' : RadioSelect(choices=GENDER_CHOICE,),
+#            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
+        }
 #restaurant admin related
 class OrderCheckInForm(forms.Form):
     code = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))

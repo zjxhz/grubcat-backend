@@ -19,9 +19,6 @@
     {% assets "jquery_ajax_bootstrap_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    <div class="span6">
-        <script type="text/javascript" src="{% static 'js/jquery.autoSuggest.js' %}"></script>
-    </div>
 
 
 </head>
@@ -33,7 +30,6 @@
     </div>
     <div class="row">
         <div class="span6">
-            <input type="text" id="tags"/>
             <a href="{% url weibo_login %}">微博登录</a>
         </div>
     </div>

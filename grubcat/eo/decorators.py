@@ -33,6 +33,20 @@ def restaurant_login_required(function=None, redirect_field_name=REDIRECT_FIELD_
         return actual_decorator(function)
     return actual_decorator
 
+def active_login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
+    """
+    Decorator for views that checks that the user is logged in, redirecting
+    to the log-in page if necessary.
+    """
+    actual_decorator = user_passes_test(
+        lambda u: u.is_authenticated() and u.is_active,
+        login_url=login_url,
+        redirect_field_name=redirect_field_name
+    )
+    if function:
+        return actual_decorator(function)
+    return actual_decorator
+
 
 def test_restaurant_user(user):
     if user.is_authenticated():
