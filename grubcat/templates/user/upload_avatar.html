@@ -1,115 +1,50 @@
-{% extends "base.html" %}
 {% load static from staticfiles %}{% load assets %}{% load static_asset %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "edit_profile_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
-    {% endassets %}
-    {{ form.media.css }}
-{% endblock %}
-{% block page_js %}
-    {{ block.super }}
-    {#    {{ form.media.js }}#}
-    {% assets "image_cropping_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-    <script type="text/javascript">
 
-        $(function () {
-            $("#profile-nav-avatar").addClass("active");
-            if ($("#id_avatar").data("thumbnail-url")) {
-                $(".preview-container img").attr('src', $("#id_avatar").data("thumbnail-url"));
-            {% if  form.instance.avatar %}
-                $(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
-            {% endif %}
-            } else {
-                $("#preview_area").css("border", "1px solid #DDD")
-            }
-            $("#id_choose_avatar").click(function () {
-                $("#id_avatar").click();
-                return false;
-            })
-            $("#id_avatar").change(function () {
-                $(".uploadding").show();
-                $("#id_action").val("");
-                $("#id_upload_form").submit();
-                {#                                $(".preview-container img").attr("src","file:///"+$("#id_avatar").val());#}
-            })
 
-            {% comment %}         image_cropping.update_selection = function ($crop_field) {
-                         return function (sel) {
-                             image_cropping._update_selection(sel, $crop_field);
-                             showPreview(sel);
-                         };
-                     }{% endcomment %}
-        })
-        var originalWidth = $("#id_avatar").data('org-width');
-        var originalHeight = $("#id_avatar").data('org-height');
-        function showPreview(coords) {
-            var rxBig = 220 / coords.w;
-            var ryBig = 220 / coords.h;
-            var rxMiddle = 80 / coords.w;
-            var ryMiddle = 80 / coords.h;
-            var rxSmall = 30 / coords.w;
-            var rySmall = 30 / coords.h;
+<div id="crop_avatar_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4>请选择合适的区域作为头像，注意不同尺寸的头像是否清晰</h4>
+    </div>
+    <div class="modal-body">
+        <form action="{% url upload_avatar %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
+            <div id="cropping-area" class="">
+                {{ form.avatar }}
 
-            $('#preview_big').css({
-                width:Math.round(rxBig * originalWidth) + 'px',
-                height:Math.round(ryBig * originalHeight) + 'px',
-                marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
-                marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
-            });
-            $('#preview_middle').css({
-                width:Math.round(rxMiddle * originalWidth) + 'px',
-                height:Math.round(ryMiddle * originalHeight) + 'px',
-                marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
-                marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
-            });
-            $('#preview_small').css({
-                width:Math.round(rxSmall * originalWidth) + 'px',
-                height:Math.round(rySmall * originalHeight) + 'px',
-                marginLeft:'-' + Math.round(rxSmall * coords.x) + 'px',
-                marginTop:'-' + Math.round(rySmall * coords.y) + 'px'
-            });
-        }
-    </script>
-{% endblock %}
+                {{ form.cropping }}
 
-{% block content %}
-    <div class="row">
-        {% include "user/profile_nav.html" %}
-        <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
-            <div class="row">
-                <div id="cropping-area" class="span5">
-
-                    {{ form.avatar }}
-
-                    {{ form.cropping }}
-
-                    <input type="hidden" name="action" id="id_action" value="crop"/>
+                <input type="hidden" name="action" id="id_action" value="crop"/>
+            </div>
+            <div id="preview_area" class="">
+                {% comment %} <div id="cropping-tip">
+                    您上传的头像会生成不同尺寸的缩略图，<br/>请注意不同大小尺寸的头像是否清晰
+                </div>{% endcomment %}
+                <div id="preview_big_container" class="preview-container ">
+                    <img id="preview_big">
                 </div>
-                <div id="preview_area" class="span5">
-                    <div id="cropping-tip">
-                        您上传的头像会生成不同尺寸的缩略图，<br/>请注意不同大小尺寸的头像是否清晰
-                    </div>
-                    <div class="row">
-                        <div id="preview_big_container" class="preview-container span3">
-                            <img id="preview_big">
-                        </div>
-                        <div id="preview_middle_container" class="preview-container span2">
-                            <img id="preview_middle">
-                        </div>
-                        <div id="preview_small_container" class="preview-container span1">
-                            <img id="preview_small">
-                        </div>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <input id="id_choose_avatar" type="button" value="选择头像" class="btn">
-                    <input type="submit" value="保存" class="btn">
+                <div id="preview_middle_container" class="preview-container ">
+                    <img id="preview_middle">
                 </div>
             </div>
         </form>
+        <div id="data-avatar-page" class="hide" data-big-avatar-url='{{ user.get_profile.big_avatar }}'></div>
     </div>
-{% endblock %}
 
+    <div class="modal-footer">
+        <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button id="crop_submit" type="submit" class="btn btn-large btn-primary">保存</button>
+    </div>
+
+</div>
+
+{% block page_js %}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
+    <script type="text/javascript">
+
+        jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
+    </script>
+{% endblock %}

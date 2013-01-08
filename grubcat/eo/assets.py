@@ -48,7 +48,7 @@ user_css = Bundle(
 )
 
 edit_profile_css = Bundle(
-    'css/autoSuggest.css',common_css ,'css/edit-profile.css', responsive_css, filters='cssmin', output='gen/edit-profile.%(version)s.css'
+    'css/jquery.Jcrop.css','css/autoSuggest.css',common_css ,'less/edit-profile.less', responsive_css, filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 #order_css = Bundle(
@@ -99,7 +99,7 @@ jquery_ajax_bootstrap_js = Bundle(
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin',
     output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
 
-image_cropping_js = Bundle(jquery_js, 'js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
+image_cropping_js = Bundle( 'js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
     output='gen/iamge-cropping.%(version)s.js')
 
 register('common_css', common_css)

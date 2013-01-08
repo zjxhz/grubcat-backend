@@ -3,17 +3,23 @@
 }
 
 .avatar{
-    margin-left: 10px;
+
+  #upload-avatar-link{
+    margin-top: 20px;
+    margin-left:28px;
+  }
+
+#crop-avatar-link{
+  margin-top: 20px;
+  margin-left: 15px;
 }
 
-.avatar h1{
-    text-align: center;
-    font-size: 18px;
-}
-.avatar a.edit-avatar{
-    display: block;
-    margin-left: 99px;
-    margin-top: 15px;
+  .loading{
+    background: url("../img/loader.gif") no-repeat scroll right center transparent;
+    margin: 17px 117px 0 12px;
+    float: right;
+    padding-right: 25px;
+  }
 }
 
 
@@ -65,42 +71,30 @@
     margin-left: -1000px;
 }
 
-#id_upload_form img {
+#id_crop_form img {
     max-width: none;
 }
 
-#id_cropping {
-    display: none;
-}
+
+//crop avatar
 
 #cropping-area {
-    width: 360px;
+    float: left;
+    max-width: 360px;
+  min-width: 300px;
+  width: 360px;
 }
 
-div.buttons {
-    clear: left;
-    float: right;
-    margin-right: 103px;
-    margin-top: 20px;
+#preview_area{
+  float: right;
 }
-
-#id_choose_avatar {
-    margin-right: 26px;
-}
-
-
 .preview-container {
     overflow: hidden;
-}
-
-#cropping-tip {
-    color: #ff471d;
 }
 
 #preview_big_container {
     width: 220px;
     height: 220px;
-    margin-top: 20px;
 }
 
 #preview_middle_container {
@@ -109,8 +103,34 @@ div.buttons {
     width: 80px;
 }
 
-#preview_small_container {
-    width: 30px;
-    height: 30px;
-    margin-top: 20px;
+#crop_avatar_modal.modal {
+  padding: 10px;
+  max-width: 626px;
+  margin-left: -313px;
+  width: 626px; /* -1 * (width / 2) */
+
+  .modal-body{
+    max-height: 800px;
+    padding: 30px 15px;
+  }
+
+  .close{
+    margin: 10px 0 10px 0;
+  }
+
+  h4{
+    font-weight: normal;
+  }
 }
+
+#bind-edit-profile h1{
+  font-size: 20px;
+  color: #555;
+  font-weight: normal;
+  line-height: 30px;
+}
+
+.welcom-info{
+  margin-bottom: 15px;
+}
+
