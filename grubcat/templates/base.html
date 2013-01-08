@@ -70,13 +70,8 @@
                                     {% url weibo_login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
                                    id="login_link"
                                     >登录</a></li>
-{#                            <li class="hidden-phone"><a href="#}
-{#                                    {% url register %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"#}
-{#                                                        id="signup_link"#}
-{#                                    >注册</a></li>#}
                         {% else %}
-                            <li><a href="{% url weibo_login %}?next={{ request.path_info }}">登录</a></li>
-{#                            <li class="hidden-phone"><a href="{% url register %}?next={{ request.path_info }}">注册</a>#}
+                            <li><a  id="login_link" class="login" href="{% url weibo_login %}?next={{ request.path_info }}">登录</a></li>
                             </li>
                         {% endif %}
 
