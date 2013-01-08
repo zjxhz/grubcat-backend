@@ -98,8 +98,6 @@ urlpatterns = patterns('',
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
     url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
-    url(r'^bind/done/$', active_login_required(TemplateView.as_view(template_name='test.html')), name='bind_done'),
-
     url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url':"/"},name="logout"),
 

@@ -299,8 +299,8 @@ class UserListView(ListView):
 
 
 class UserDetailView(DetailView):
-    model = UserProfile
-    context_object_name = "profile"
+    model = User
+    context_object_name = "user_obj"
     template_name = "user/user_detail.html"
 
 
