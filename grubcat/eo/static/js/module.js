@@ -1,4 +1,4 @@
-$(document).ready(function () {
+(function ($) {
     if ($("#faq")[0]) {
 
         $("#faq .sidebar-box-content a").click(function () {
@@ -13,7 +13,7 @@ $(document).ready(function () {
         })
     }
 
-    if($("#meal-list")[0]){
+    if ($("#meal-list")[0]) {
         $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
     }
 
@@ -29,47 +29,96 @@ $(document).ready(function () {
 
     }
 
-    if($("#edit-profile")[0] || $("#bind-edit-profile")[0]){
+    if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
         $("#profile-nav-info").addClass("active");
-        var user_tags= $("#id_tags").val();
+        var user_tags = $("#id_tags").val();
         $("#id_tags").autoSuggest($("#data").attr('list-tags-url'), {
             asHtmlID:'tags',
             preFill:user_tags,
-            neverSubmit: true,
+            neverSubmit:true,
             startText:'请输入你的兴趣爱好，这样别人会更好地了解你，系统也会优先展示和你有共同兴趣的朋友'
         })
-        $('#tags').parents().find('form').submit(function (){
+        $('#tags').parents().find('form').submit(function () {
             $("#tags").remove();
-            $("#as-values-tags").attr('name','tags');
+            $("#as-values-tags").attr('name', 'tags');
         });
-    }
-})
-if ($("#create-meal-page")[0]) {
-    function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
-        $("#choose-menu-wrapper").css('visibility', 'hidden');
-        $ajax_loader = $('#loading-menus');
-        $ajax_loader.show(1, function () {
-            $.get($("#data").attr('menu-list-link'), {num_persons:numPersons}, function (data) {
-                $ajax_loader.hide();
-                $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
-                $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
-                $("#id_menu_id").val("");
-                if (menuIdToSelect) {
-                    $("li[menu-id=" + menuIdToSelect + "]").click();
-                }
 
-                if ($("#restaurant-list ul li").length >= 5) {
-                    $("#restaurant-list ul li:last").css('border-bottom-width', '0');
-                    $("#restaurant-list").lionbars();
-                    $("#lb-wrap-0-restaurant-list").css('height', 377)
-                }
+        //upload avatar
+        $("#id_avatar_for_upload").change(function () {
+            var options = {
+                target:'#crop_avatar_wrapper', // target element(s) to be updated with server response
+                beforeSubmit:function () {
+                    $(".avatar .loading").show();
+                }, // pre-submit callback
+                success:function (html) {
+                    $(".avatar .loading").hide()
+                    $("#avatar-wrapper img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'))
+                    $('#crop-avatar-link').show();
+                    submit_crop_form();
+                    $("#crop_avatar_modal").modal();
+                    return false;
+                }  // post-submit callback
+            };
+            $("#upload_avatar_form").ajaxSubmit(options);
 
-
-            }, 'html');
         })
-    }
+        $("#upload-avatar-link").click(function () {
+            $("#id_avatar_for_upload").click()
+            return false;
+        })
 
-    $(document).ready(function () {
+        $("#crop-avatar-link").click(function(){
+
+            $("#crop_avatar_wrapper").load($('#crop-avatar-link').attr('href'), function(){
+                submit_crop_form();
+                $("#crop_avatar_modal").modal();
+            })
+            return false;
+        })
+
+        function submit_crop_form(){
+            $("#crop_submit").click(function () {
+                $("#id_crop_form").ajaxSubmit({
+                    success:function (data) {
+                        $("#avatar-wrapper img").attr('src', data.big_avatar_url)
+
+                        $("#crop_avatar_modal").modal('hide');
+                        return false;
+                    },
+                    dataType:'json'        // 'xml', 'script', or 'json' (expected server response type)
+                })
+                return false;
+            })
+        }
+
+        //crop avatar
+
+    }
+    if ($("#create-meal-page")[0]) {
+        function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
+            $("#choose-menu-wrapper").css('visibility', 'hidden');
+            $ajax_loader = $('#loading-menus');
+            $ajax_loader.show(1, function () {
+                $.get($("#data").attr('menu-list-link'), {num_persons:numPersons}, function (data) {
+                    $ajax_loader.hide();
+                    $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
+                    $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
+                    $("#id_menu_id").val("");
+                    if (menuIdToSelect) {
+                        $("li[menu-id=" + menuIdToSelect + "]").click();
+                    }
+
+                    if ($("#restaurant-list ul li").length >= 5) {
+                        $("#restaurant-list ul li:last").css('border-bottom-width', '0');
+                        $("#restaurant-list").lionbars();
+                        $("#lb-wrap-0-restaurant-list").css('height', 377)
+                    }
+
+
+                }, 'html');
+            })
+        }
+
         $("#id_privacy").dropkick({width:313, startSpeed:0})
 
         $.datepicker.regional['zh-CN'] =
@@ -121,7 +170,6 @@ if ($("#create-meal-page")[0]) {
         var oldMenuId = $("#id_menu_id").val();
         getMenuList($("#id_min_persons>option:selected").val(), oldMenuId, if_let_fanjoin_choose);
 
-
         $("li.restaurant-item").live("click", function () {
             $("#menu-info-wrapper").show();
             $("#choose-restaurant-info").hide();
@@ -131,5 +179,26 @@ if ($("#create-meal-page")[0]) {
             $("#menu-" + $(this).attr("menu-id")).show();
             $("#id_menu_id").val($(this).attr("menu-id"));
         })
-    })
+    }
+})(jQuery);
+
+function showPreview(coords) {
+    var rxBig = 220 / coords.w;
+    var ryBig = 220 / coords.h;
+    var rxMiddle = 80 / coords.w;
+    var ryMiddle = 80 / coords.h;
+    var originalWidth = jQuery("#id_avatar").data('org-width');
+    var originalHeight = jQuery("#id_avatar").data('org-height');
+    jQuery('#preview_big').css({
+        width:Math.round(rxBig * originalWidth) + 'px',
+        height:Math.round(ryBig * originalHeight) + 'px',
+        marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
+        marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
+    });
+    jQuery('#preview_middle').css({
+        width:Math.round(rxMiddle * originalWidth) + 'px',
+        height:Math.round(ryMiddle * originalHeight) + 'px',
+        marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
+        marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
+    });
 }

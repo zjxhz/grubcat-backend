@@ -19,20 +19,14 @@
 
 {% block content %}
     <div id="bind-edit-profile" class="row">
-{% comment %}<div>
 
-    第一次来到饭聚网，完善下你的资料，让朋友们更好地了解你吧。
-</div>{% endcomment %}
-
-      {% comment %}  <div class="avatar span3 hidden-phone">
-            <img alt="{{ user.username }}" class="img-polaroid" src="{{ user.get_profile.big_avatar }}" width="220"
-                 height="220">
-            <a class="edit-avatar" href="{% url upload_avatar %}">修改头像</a>
-        </div>
-{% endcomment %}
+    <div class="welcom-info span12">
+        <h1>第一次来到饭聚网，完善资料，让更多的人了解你吧！</h1>
+        <hr/>
+    </div>
+        {% include 'user/profile_avatar.html' %}
         <form id="basic-profile-form" action="" method="post" class="form-horizontal span8 ">
             <fieldset>
-                                    <legend>第一次来到饭聚网，完善资料，让更多的人了解你吧！</legend>
                 <div class="control-group nickname">
 
                     <label class="control-label" for="id_motto">* 昵称：</label>
@@ -97,13 +91,12 @@
 
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" class="btn">保存</button>
+                        <button type="submit" class="btn btn-large btn-primary">保存</button>
                     </div>
                 </div>
 
             </fieldset>
         </form>
-
     </div>
 
     <div id="data" style="display: none" list-tags-url='{% url tag_list %}'></div>
@@ -113,6 +106,9 @@
 {% block page_js %}
     {{ block.super }}
     {% assets "auto_suggest_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_form_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {% assets "module_js" %}

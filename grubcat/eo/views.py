@@ -661,15 +661,12 @@ class UploadAvatarView(UpdateView):
         return reverse('upload_avatar')
 
     def form_valid(self, form):
-        profile = form.save(False)
-        if form.cleaned_data['action'] == 'crop':
-            redirect_url = reverse('edit_basic_profile')
-        else:
-            profile.cropping = ''
-            redirect_url = reverse('upload_avatar')
         super(UploadAvatarView, self).form_valid(form)
-#        print 'cropping' + profile.cropping
-        return HttpResponseRedirect(redirect_url)
+        if self.request.GET.get('action') == 'upload':
+            return HttpResponseRedirect(reverse('upload_avatar'))
+        else :
+            data = {'big_avatar_url':self.object.big_avatar}
+            return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
