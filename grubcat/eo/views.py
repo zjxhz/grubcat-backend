@@ -491,7 +491,10 @@ def weibo_login(request):
         return HttpResponseRedirect("/")
     else:
 #        after weibo auth
-        data = weibo_client.request_access_token(code)
+        try:
+            data = weibo_client.request_access_token(code)
+        except:
+            raise Exception(u'微博接口异常')
 #        data = {'access_token':'2.00xQDpnBG_tW8E0de8255b9eL_rstB'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         auth.login(request, user_to_authenticate)
