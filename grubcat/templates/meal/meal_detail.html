@@ -31,7 +31,7 @@
                 </div>
                 <div id="meal-grub">
                     {% if not order and meal.left_persons > 0 %}
-                        {% if user.is_authenticated %}
+                        {% if user.is_authenticated and user.is_active%}
                             <a href="#"
                                class="btn btn-primary btn-book btn-book-now fr">
                                 马上预定
