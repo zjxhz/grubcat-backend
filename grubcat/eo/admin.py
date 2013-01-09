@@ -6,8 +6,8 @@ from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag
 from models import Group, GroupCategory, UserProfile, ImageTest
 
 class UserProfileAdmin(admin.ModelAdmin):
-    pass
-
+    list_display = ('id','name','weibo_id','avatar')
+    list_editable = ('name','avatar',)
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
     list_display = ('restaurant', 'name', 'price', 'unit', 'available',)
