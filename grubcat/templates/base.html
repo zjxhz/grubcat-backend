@@ -53,7 +53,7 @@
                                     {{ user.get_profile.name }} {% else %}{{ user.username }}{% endif %} </span>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-                                <li><a  href="{% url user_detail request.user.id %}">个人主页</a></li>
+                                <li><a  href="{% url user_detail user.get_profile.id %}">个人主页</a></li>
                                 <li><a  href="{% url edit_basic_profile %}">修改资料</a></li>
                                 <li class="divider"></li>
                                 <li><a  href="#">我的饭局</a></li>
