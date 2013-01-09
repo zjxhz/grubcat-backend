@@ -395,10 +395,10 @@ class TaggedUser(GenericTaggedItemBase):
 
 class Gender:
     MALE=0
-    FEMAL=1
+    FEMALE=1
 GENDER_CHOICE=(
     (Gender.MALE, u'男'),
-    (Gender.FEMAL, u'女'),
+    (Gender.FEMALE, u'女'),
 )
 
 class UserProfile(models.Model):
