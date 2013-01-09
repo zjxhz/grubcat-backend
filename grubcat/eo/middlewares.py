@@ -62,7 +62,7 @@ class WeiboAuthenticationBackend(object):
                 if user_to_authenticate:
                     user_to_authenticate.delete()
                 logger.exception("failed to auth %s " % user_to_authenticate)
-                raise Exception(u'微博接口异常',e)
+                raise e
             
         return user_to_authenticate
         
