@@ -300,7 +300,7 @@ class UserResource(ModelResource):
         
         me = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'POST':
-            user_to_be_followed = User.objects.get(id=request.POST.get('user_id'))
+            user_to_be_followed = UserProfile.objects.get(id=request.POST.get('user_id'))
             relationship = Relationship(from_person=me, to_person=user_to_be_followed.get_profile())
             relationship.save()
             return createGeneralResponse('OK', 'You are now following %s' % user_to_be_followed)
