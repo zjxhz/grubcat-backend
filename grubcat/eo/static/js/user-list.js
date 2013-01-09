@@ -1,7 +1,11 @@
 $(function () {
 
     var $container = $('#user-container');
-
+    $(".tags li").each(function () {
+        if ($.inArray($(this).html(), tags) > -1) {
+            $(this).addClass('common');
+        }
+    })
     $container.imagesLoaded(function () {
         $container.masonry({
             itemSelector:'.box',
@@ -14,7 +18,7 @@ $(function () {
         });
     });
 
-    var ajaxLoaderImageId=$("#ajax-load-image-id").attr('href');
+    var ajaxLoaderImageId = $("#ajax-load-image-id").attr('href');
     $container.infinitescroll({
             navSelector:'#page-nav', // selector for the paged navigation
             nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
@@ -39,6 +43,11 @@ $(function () {
                 $newElems.animate({ opacity:1 });
                 $container.masonry('appended', $newElems, true);
             });
+            $(newElements).find(".tags li").each(function () {
+                if ($.inArray($(this).html(), tags) > -1) {
+                    $(this).addClass('common');
+                }
+            })
         }
     );
 

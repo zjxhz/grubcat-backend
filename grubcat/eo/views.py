@@ -292,15 +292,21 @@ class RegisterView(CreateView):
 
 
 class UserListView(ListView):
-    queryset = User.objects.all()
+    queryset = UserProfile.objects.filter(user__is_active=True).select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
-    paginate_by = 2
+    paginate_by = 16
+
+    def get_queryset(self):
+        if self.request.GET.get('show')and self.request.user.is_authenticated():
+            return self.request.user.get_profile().tags.similar_objects();
+        else:
+            return UserProfile.objects.filter(user__is_active=True).select_related('tags')
 
 
 class UserDetailView(DetailView):
-    model = User
-    context_object_name = "user_obj"
+    model = UserProfile
+    context_object_name = "profile"
     template_name = "user/user_detail.html"
 
 
