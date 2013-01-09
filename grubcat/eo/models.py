@@ -459,7 +459,7 @@ class UserProfile(models.Model):
                 'quality':100,
 #                'crop': True,
                 'detail': True,
-                })
+                }).url
         else:
             thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
         return thumbnail_url
