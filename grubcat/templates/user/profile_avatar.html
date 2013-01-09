@@ -3,7 +3,7 @@
          height="220">
 
     <div  >
-        <a id="upload-avatar-link" class="btn fl " href="{% url upload_avatar %}?action=upload">上传头像</a>
+        <a id="upload-avatar-link" class="btn btn-primary fl " href="{% url upload_avatar %}?action=upload">上传头像</a>
         <a id="crop-avatar-link" class="btn fl {% if not user.get_profile.avatar %}hide{% endif %} "
            href="{% url upload_avatar %}">裁剪头像</a>
     </div>

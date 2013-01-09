@@ -10,8 +10,6 @@ bootstrap_css = Bundle(
     'less/bootstrap/bootstrap.less', 'less/bootstrap/responsive.less', filters='less,cssmin',
     output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
 )
-#form_css = Bundle('less/form.less',filters='less',output='gen/form.css')
-form_css = Bundle('css/form.css', filters='cssmin', output='gen/form.%(version)s.css')
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
 common_css = Bundle(dropkick_css, 'less/common.less',filters='less,cssmin', output='gen/common.%(version)s.css')
 responsive_css = Bundle( 'less/responsive.less',filters='less,cssmin', output='gen/responsive.%(version)s.css')
@@ -104,7 +102,6 @@ image_cropping_js = Bundle( 'js/jquery.Jcrop.js', 'js/image_cropping.js', filter
 
 register('common_css', common_css)
 register('base_css', base_css)
-register('form_css', form_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)
 register('meal_css', meal_css)

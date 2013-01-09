@@ -8,11 +8,15 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row"> <div class="span3">
-        <img src="{{ profile.big_avatar }}" alt="{{ profile.name }}" class="img-polaroid"/>
-        <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
+    {% with profile=user_obj.get_profile %}
+    <div class="row">
+        <div class="span3">
+            <img src="{{ profile.big_avatar }}" alt="{{ profile.name }}" class="img-polaroid"/>
+
+            <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
+        </div>
     </div>
-    </div>
+    {% endwith %}
 {% endblock %}
 
 
