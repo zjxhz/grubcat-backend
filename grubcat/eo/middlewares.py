@@ -57,11 +57,11 @@ class WeiboAuthenticationBackend(object):
                     user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_profile.save()
                     return user_to_authenticate
-            except Exception as e:
+            except Exception:
                 if user_to_authenticate:
                     user_to_authenticate.delete()
                 logger.exception("failed to auth %s " % user_to_authenticate)
-                raise e
+                return None
             
         return user_to_authenticate
         

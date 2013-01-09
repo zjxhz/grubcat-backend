@@ -838,8 +838,11 @@ def weibo_user_login(request):
             # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
             post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
             user_to_authenticate = auth.authenticate(**post_dict)
-            auth.login(request, user_to_authenticate)
-            return createLoggedInResponse(user_to_authenticate)
+            if user_to_authenticate:
+                auth.login(request, user_to_authenticate)
+                return createLoggedInResponse(user_to_authenticate)
+            else:
+                return createGeneralResponse('NOK', "Login failed")
     else:
         raise # not used by mobile client   
        
