@@ -60,6 +60,7 @@ class XMPPClientWrapper(object):
         soc.connect(('localhost',self.PORT)) 
         soc.send(json.dumps(dic))
         logger.debug("sync profile finished with response: %s " % soc.recv(1024))
+        soc.close()
 
 def escape_xmpp_username(username):
     username = username.strip()
