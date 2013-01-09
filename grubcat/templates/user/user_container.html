@@ -1,11 +1,9 @@
-
-{% load thumbnail %}
 <div id="user-container" class="transitions-enabled infinite-scroll clearfix">
     {% for user in user_list %}
         <div class="box ">
             <div class="user-img">
                 <a href="{% url user_detail user.id %}" title="{{ user.name|default:'' }}"><img class="shadow-small"
-                                                                                                src="{% thumbnail user.avatar 220x220  %}"
+                                                                                                src="{{ user.big_avatar_no_crop }}"
                                                                                                 alt="{{ user.name|default:'' }}"
                                                                                                 width="220"
                                                                                                 height="220"></a>
