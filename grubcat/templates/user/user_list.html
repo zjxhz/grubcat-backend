@@ -8,9 +8,11 @@
 {% endblock %}
 
 {% block content %}
+    {% if 'show' not in request.GET %}
+        <a href="{% url user_list %}?show=common" class="fr">寻找志同道合的朋友</a>
+    {% endif %}
     {% include "user/user_container.html" %}
     <a id="ajax-load-image-id" style="display: none" href="{% static 'img/ajax-loader.gif' %}"></a>
-    <div id='data' user-tags='' style="display: none"></div>
 {% endblock %}
 
 {% block page_js %}
