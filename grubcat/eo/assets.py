@@ -38,7 +38,7 @@ account_css = Bundle(
 )
 
 user_list_css = Bundle(
-    common_css, 'css/user-list.css',responsive_css,  filters='less, cssmin', output='gen/user-list.%(version)s.css'
+    common_css, 'less/user-list.less',responsive_css,  filters='less, cssmin', output='gen/user-list.%(version)s.css'
 )
 
 user_css = Bundle(
