@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "user_list_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    <div class="row"> <div class="span3">
+        <img src="{{ profile.big_avatar }}" alt="{{ profile.name }}" class="img-polaroid"/>
+        <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
+    </div>
+    </div>
+{% endblock %}
+
+
+{% block active-nav-id %}nav-user{% endblock %}

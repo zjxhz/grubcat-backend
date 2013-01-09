@@ -1,0 +1,73 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {% assets "base_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <link rel="stylesheet" href="{% static 'css/ui/smoothness/jquery-ui-1.8.21.custom.css' %}">
+    {% assets "base_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>
+    {% assets "jquery_ajax_bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript" src="{% static 'js/ajaxfileupload.js' %}"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="well span12" id="well">Test</div>
+    </div>
+    <div class="row">
+        <div class="span6">
+            <form action="" id="id_upload_form" method="post" enctype="multipart/form-data" class="span10">
+                <div class="row">
+                    <div id="cropping-area" class="span5">
+
+                        {{ form.avatar }}
+
+                        {{ form.cropping }}
+
+                        <input type="hidden" name="action" id="id_action" value="crop"/>
+                    </div>
+                    <div id="preview_area" class="span5">
+                        <div id="cropping-tip">
+                            您上传的头像会生成不同尺寸的缩略图，<br/>请注意不同大小尺寸的头像是否清晰
+                        </div>
+                    <div class="buttons">
+                        <button id="id_choose_avatar" type="button" data-loading-text="上传中..." class="btn">选择头像</button>
+                        <button type="submit" data-toggle="button"   class="btn btn-primary" >保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#myModal').modal({
+            keyboard:false,
+            remote:'/profile',
+            show:false
+        }).on('shown', function () {
+                    $(this).find(".modal-body").html($(this).find("#basic-profile-form"))
+         })
+        $("#link").click(function () {
+                    $('#myModal').modal('show')
+                }
+        )
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% load static from staticfiles %}
+<div id="choose-menu" class="row">
+    <div id="choose-restaurant" class="fl">
+        <div id="restaurant-list">
+        {% if menu_list %}
+            <ul>
+                {% for menu in menu_list %}
+                    <li class="restaurant-item" menu-id="{{ menu.id }}">
+                        <img alt="8人套餐 25元/人" src="{% static "img/menu-cover.png" %}">
+                        <span class="rest-price">{{ menu.average_price }}元/人</span>
+                        <span class="rest-address">{{ menu.restaurant.name }}</span>
+{#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-menu-info">对不起，目前没有适合的餐厅，您可以改变就餐人数或者就餐时间，查看是否有合适的餐厅。</div>
+        {% endif %}
+        </div>
+    </div>
+    <div id="choose-restaurant-info" class="fl span4">
+
+    </div>
+    <div id="menu-info-wrapper" class="fl">
+        {% for menu in menu_list %}
+            <div id="menu-{{ menu.id }}" class="hide menu-info">
+                <div class="title">
+                    <div class="rest-address">{{ menu.restaurant.address }}
+                        <a href="#" class="map" original-title="">地图</a>
+                    </div>
+                    <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>
+                </div>
+
+                <dl class="menu-items">
+                    {% for item in menu.items %}
+                        {% if item.num %}
+                            <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
+                                <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
+                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
+                                        class="num">{{ item.num }}</span></span>
+                            </dd>
+                        {% else %}
+                            <dt class="category">{{ item.category.name }}  </dt>
+                        {% endif %}
+                    {% endfor %}
+                </dl>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+   
