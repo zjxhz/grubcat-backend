@@ -29,7 +29,7 @@ $(function () {
 //            debug:true,
             loading:{
                 msgText:'加载中...',
-                finishedMsg:'已经是最后一页了',
+                finishedMsg:'没有了！',
                 img:ajaxLoaderImageId
             }
         },

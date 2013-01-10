@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-    {% if 'show' not in request.GET %}
+    {% if 'show' not in request.GET and user.is_authenticated and user.is_active%}
         <a href="{% url user_list %}?show=common" class="fr">寻找志同道合的朋友</a>
     {% endif %}
     {% include "user/user_container.html" %}
