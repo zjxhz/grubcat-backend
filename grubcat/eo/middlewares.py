@@ -49,7 +49,8 @@ class WeiboAuthenticationBackend(object):
                     user_profile.weibo_id = weibo_id
                     user_profile.weibo_access_token = access_token
                     user_profile.name = user_data.get('name')
-                    user_profile.motto = user_data.get('description') 
+                    user_profile.motto = user_data.get('description')
+                    self.fetch_tags_from_weibo(weibo_client, user_profile, weibo_id)
                     if user_data.get('gender') == "m":
                         user_profile.gender = Gender.MALE
                     elif user_data.get('gender') == "f":
@@ -72,3 +73,15 @@ class WeiboAuthenticationBackend(object):
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
             return None
+
+
+    def fetch_tags_from_weibo(self, weibo_client, user_profile, weibo_id):
+        try:
+            weibo_tags  = weibo_client.tags.get(uid = weibo_id)
+            tags=[]
+            for tag in weibo_tags:
+                tags.extend(([tag[k] for k in tag.keys() if k != 'weight']))
+            if tags:
+                user_profile.tags.set(*tags)
+        except Exception:
+            logger.exception(u'获取用户标签列表异常')

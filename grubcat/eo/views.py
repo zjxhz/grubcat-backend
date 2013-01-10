@@ -488,7 +488,7 @@ def weibo_login(request):
     errorcode = request.GET.get('error_code')
     next = request.GET.get('state','/')
     if not code and not errorcode:
-#        #go to weibo site to auth
+        #go to weibo site to auth
         kw ={'state':request.GET.get('next','/')}
         return HttpResponseRedirect( weibo_client.get_authorize_url(**kw))
     elif not code and errorcode:
@@ -501,13 +501,16 @@ def weibo_login(request):
             data = weibo_client.request_access_token(code)
         except:
             raise Exception(u'微博接口异常')
-#        data = {'access_token':'2.00xQDpnBG_tW8E0de8255b9eL_rstB'} #for local debug
+#        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
-        auth.login(request, user_to_authenticate)
-        if not request.user.is_active:
-            return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
+        if user_to_authenticate:
+            auth.login(request, user_to_authenticate)
+            if not request.user.is_active:
+                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
+            else:
+                return HttpResponseRedirect(next)
         else:
-            return HttpResponseRedirect(next)
+            raise Exception(u'微博接口异常')
 
 class BindProfileView(UpdateView):
     form_class = BindProfileForm
