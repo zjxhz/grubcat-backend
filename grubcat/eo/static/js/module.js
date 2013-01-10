@@ -183,8 +183,8 @@
 })(jQuery);
 
 function showPreview(coords) {
-    var rxBig = 220 / coords.w;
-    var ryBig = 220 / coords.h;
+    var rxBig = 180 / coords.w;
+    var ryBig = 180 / coords.h;
     var rxMiddle = 80 / coords.w;
     var ryMiddle = 80 / coords.h;
     var originalWidth = jQuery("#id_avatar").data('org-width');
