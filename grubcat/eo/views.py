@@ -298,7 +298,7 @@ class UserListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        if self.request.GET.get('show')and self.request.user.is_authenticated():
+        if self.request.GET.get('show') and self.request.user.is_authenticated() and self.request.user.is_active:
             return self.request.user.get_profile().tags.similar_objects();
         else:
             return UserProfile.objects.filter(user__is_active=True).select_related('tags')
