@@ -401,23 +401,86 @@ GENDER_CHOICE=(
     (Gender.FEMALE, u'女'),
 )
 
+BUSINESS_CHOICE=(
+    ( 1, u'在校学生'),
+    ( 2, u'自由职业者'),
+    ( 3, u'互联网'),
+    ( 4, u'IT电子'),
+    ( 5, u'设计'),
+    ( 6, u'创意'),
+    ( 7, u'文学'),
+    ( 8, u'传媒'),
+    ( 9, u'影视'),
+    ( 10, u'餐饮'),
+    ( 11, u'旅游'),
+    ( 12, u'法律'),
+    ( 13, u'医生'),
+    ( 14, u'教师'),
+    ( 15, u'通信技术'),
+    ( 16, u'销售'),
+    ( 17, u'市场拓展'),
+    ( 18, u'公关'),
+    ( 19, u'采购'),
+    ( 20, u'贸易'),
+    ( 21, u'客户服务'),
+    ( 22, u'技术支持'),
+    ( 23, u'人力资源'),
+    ( 24, u'行政'),
+    ( 25, u'后勤'),
+    ( 26, u'技工'),
+    ( 27, u'体育工作者'),
+    ( 28, u'警察'),
+    ( 29, u'公务员'),
+    ( 30, u'国家干部'),
+    ( 31, u'金融'),
+    ( 32, u'证券'),
+    ( 33, u'投资'),
+    ( 34, u'保险'),
+    ( 35, u'翻译'),
+    ( 36, u'私营业主'),
+    ( 37, u'房地产'),
+    ( 38, u'装修'),
+    ( 39, u'物流'),
+    ( 40, u'仓储'),
+    ( 41, u'物流'),
+    ( 42, u'航空'),
+    ( 43, u'教育'),
+    ( 44, u'培训'),
+    ( 45, u'咨询'),
+    ( 46, u'顾问'),
+    ( 47, u'学术'),
+    ( 48, u'科研'),
+    ( 49, u'能源'),
+    ( 50, u'地质勘查'),
+    ( 51, u'保健'),
+    ( 52, u'美容'),
+    ( 53, u'生物'),
+    ( 54, u'制药'),
+    ( 55, u'医疗器械'),
+    ( 56, u'农林牧渔'),
+    ( 57, u'交通'),
+    ( 58, u'运输'),
+    ( 59, u'其他'),
+)
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    name = models.CharField(max_length=30, null=True,blank=False)
+    name = models.CharField(u'昵称', max_length=30, null=True,blank=False)
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",  blank=True,
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",blank=True,null=True)
-    gender = models.IntegerField(blank=False, null=True,choices=GENDER_CHOICE)
-    avatar = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
+    gender = models.IntegerField(u'性别', blank=False, null=True,choices=GENDER_CHOICE)
+    avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True,blank=True)
-    constellation = models.IntegerField(blank=True, null=True, default=-1)
-    birthday = models.DateField(null=True,blank=False)
-    college = models.CharField(max_length=64, null=True,blank=True)
-    work_for = models.CharField(max_length=64, null=True,blank=True)
-    occupation = models.CharField(max_length=64, null=True,blank=True)
-    motto = models.CharField(max_length=140, null=True, blank=True)
+    constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
+    birthday = models.DateField(u'生日', null=True,blank=False)
+    college = models.CharField(u'学校', max_length=64, null=True,blank=True)
+    business = models.SmallIntegerField(u'行业', null=True,blank=True, choices= BUSINESS_CHOICE)
+    work_for = models.CharField(u'公司', max_length=64, null=True,blank=True)
+    occupation = models.CharField(u'职位', max_length=64, null=True,blank=True)
+    motto = models.CharField(u'签名', max_length=140, null=True, blank=True)
     weibo_id = models.CharField(max_length=20, null=True,blank=True)
     weibo_access_token = models.CharField(max_length=128, null=True,blank=True)
     tags = TaggableManager(through=TaggedUser)
