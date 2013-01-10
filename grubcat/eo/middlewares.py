@@ -55,8 +55,10 @@ class WeiboAuthenticationBackend(object):
                         user_profile.gender = Gender.MALE
                     elif user_data.get('gender') == "f":
                         user_profile.gender = Gender.FEMALE
-                    avatar_url = user_data.get('avatar_large') 
-                    user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
+                    avatar_url = user_data.get('avatar_large')
+                    if avatar_url.find('/male_180.png') < 0  and avatar_url.find('/female_180.png') < 0:
+                        #don't save default empty avatar
+                        user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_profile.save()
                     return user_to_authenticate
             except Exception:
