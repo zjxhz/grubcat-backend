@@ -71,8 +71,12 @@ base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.
 module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version)s.js")
 auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
 
+water_fall_js = Bundle(
+    'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
+    output='gen/water-fall.%(version)s.js'
+)
 user_list_js = Bundle(
-    'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
+    water_fall_js, 'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
 )
 
 restaurant_admin_js = Bundle(
@@ -83,10 +87,7 @@ restaurant_admin_js = Bundle(
 #    'js/DD_belatedPNG_0.0.8a.js', filters='jsmin', output='gen/DD_belatedPNG_0.0.8a.js'
 #)
 
-water_fall_js = Bundle(
-    'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
-    output='gen/water-fall.%(version)s.js'
-)
+
 jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
 
 jquery_ajax_bootstrap_js = Bundle(
