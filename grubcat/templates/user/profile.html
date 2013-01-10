@@ -22,7 +22,7 @@
                     <label class="control-label" for="id_motto">* 昵称：</label>
 
                     <div class="controls">
-                        <input id="id_nickname" class="input-small" type="text"
+                        <input id="id_nickname" class="input-xlarge" type="text"
                                name="name" value="{{ form.name.value|default:"" }}"/>
                         {{ form.name.errors }}
                     </div>
@@ -62,8 +62,8 @@
                     <label class="control-label" for="id_motto">签名：</label>
 
                     <div class="controls">
-                        <input id="id_motto" class="input-xlarge" type="text" name="motto"
-                               value="{{ form.motto.value|default:'' }}"/>
+                        <textarea id="id_motto" class="input-xlarge" type="text" name="motto" rows="2"
+                               >{{ form.motto.value|default:'' }}</textarea>
                     </div>
                 </div>
 
