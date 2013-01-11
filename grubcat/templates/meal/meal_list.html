@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="meal-img-wrapper span5">
                             <a href="{{ meal.get_absolute_url }}">
-                                {% if forloop.counter0 < 3 %}
+                                {% if forloop.counter0 < 1 %}
                                     <img width="360" height="240" class="img-polaroid"
                                          src="{{ meal.get_small_cover_url }}">
                                 {% else %}

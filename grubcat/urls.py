@@ -15,6 +15,7 @@ from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
     get_recommended_following, messages,\
     meal_participants, view_or_send_meal_invitations,\
     accept_or_reject_meal_invitations, upload_app
+from eo.views_common import list_tags
 from grubcat.eo.views import *
 from django.conf import settings
 
@@ -67,6 +68,7 @@ urlpatterns = patterns('',
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
     url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
     url(r'^meal/add/$',active_login_required(MealCreateView.as_view()), name='create_meal'),
+    url(r'^meal/mine/$', MealListView.as_view(), name="my_meals"),
 
     #menu
     url(r'^menu/$',active_login_required(MenuListView.as_view()), name="menu_list"),

@@ -691,22 +691,6 @@ class ProfileUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('edit_basic_profile')
 
-def list_tags(request):
-    query = request.GET.get('q', '')
-    page = int(request.GET.get('page', 1))
-    if query:
-        tag_name_qs = Tag.objects.filter(name__icontains=query).values_list('name')
-    else:
-        tag_name_qs = UserProfile.tags.most_common().values_list('name','num_times' )
-        if len(tag_name_qs) < 10:
-            tag_name_qs=[(u'读书',),(u'运动',),(u'K歌',),(u'登山',),(u'骑行',),(u'公益',)]
-
-    paginator = Paginator(tag_name_qs, 10)
-    if paginator.num_pages >= page:
-        data = [{'value': tag[0]} for tag in paginator.page(page).object_list]
-    else:
-        data = []
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def handle_uploaded_app(file):
     destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
