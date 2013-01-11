@@ -1,3 +1,4 @@
+import django
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -24,6 +25,8 @@ def restaurant_login_required(function=None, redirect_field_name=REDIRECT_FIELD_
     Decorator for views that checks that the user is logged in, redirecting
     to the log-in page if necessary.
     """
+    if not login_url:
+        login_url = django.conf.settings.RESTAURANT_LOGIN_URL
     actual_decorator = user_passes_test(
         test_restaurant_user,
         login_url=login_url,

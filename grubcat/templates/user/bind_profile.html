@@ -25,7 +25,7 @@
         <hr/>
     </div>
         {% include 'user/profile_avatar.html' %}
-        <form id="basic-profile-form" action="" method="post" class="form-horizontal span8 ">
+        <form id="basic-profile-form" action="" method="post" class="form-horizontal span9 ">
             <fieldset>
                 <div class="control-group nickname">
 
@@ -56,29 +56,8 @@
                             {{ form.gender.errors }}
                         </div>
                     </div>
-                {% comment %}<div class="control-group birthday ">
 
-                    <label class="control-label"> * 生日：</label>
-
-                    <div class="controls">
-
-                        {{ form.birthday }}
-                        {{ form.birthday.errors }}
-
-                    </div>
-                </div>
-                <div class="control-group ">
-
-                    <label class="control-label" for="id_motto">签名：</label>
-
-                    <div class="controls">
-                        <input id="id_motto" class="input-xlarge" type="text" name="motto"
-                               value="{{ form.motto.value|default:'' }}"/>
-                    </div>
-                </div>
-                {% endcomment %}
-
-                <div class="control-group interest-tags">
+                <div class="control-group interest-tags" id="interst-tags-wrapper">
 
                     <label class="control-label" for="as-values-tags"> * 兴趣：</label>
 
@@ -86,6 +65,10 @@
                         {{ form.tags }}
                         {{ form.tags.errors }}
                     </div>
+
+                    <ul  class="hot-tags hide  as-selections">
+                        <span class="fl" >你可能感兴趣的：</span> <a id="change_hot_tags" href="{% url tag_list %}" page="1" class="fr">换一换</a>
+                    </ul>
                 </div>
 
 

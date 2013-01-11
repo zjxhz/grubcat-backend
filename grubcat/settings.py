@@ -249,6 +249,7 @@ LOGGING = {
 #account
 LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
+RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
 SHOW_EXCEPTION_DETAIL = False
 
