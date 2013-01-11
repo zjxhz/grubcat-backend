@@ -514,20 +514,6 @@ class UserProfile(models.Model):
         return thumbnail_url
 
     @property
-    def big_avatar_no_crop(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = get_thumbnailer(self.avatar).get_thumbnail({
-                'size': settings.BIG_AVATAR_SIZE,
-                'box': self.cropping,
-                'quality':100,
-#                'crop': True,
-                'detail': True,
-                }).url
-        else:
-            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
-        return thumbnail_url
-
-    @property
     def normal_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.NORMAL_AVATAR_SIZE).url
