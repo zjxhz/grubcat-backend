@@ -77,7 +77,7 @@
                     $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value +"</li>"))
                 }
                 if (tags.length == 0){
-                    $("ul.hot-tags").append('<div class="no-more-tags">没有了，您自己输入吧！</div>')
+                    $("#change_hot_tags").attr('page',1).click()
                 }
             })
 
