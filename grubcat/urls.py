@@ -46,14 +46,11 @@ urlpatterns = patterns('',
     ('^search/restaurant/$', query_restaurant_from_google),
 
     #social
-    #    ('^user/(\d+)/$', get_user_profile),
     ('^user/(\d+)/following/$', get_following),
     ('^user/(\d+)/following/remove/$', remove_following),
     ('^user/(\d+)/followers/$', followers),
     ('^user/(\d+)/following/recommendations/$', get_recommended_following),
     ('^user/(\d+)/messages/$', messages),
-    #    ('^meal/$', get_meals),
-    #   ('^meal/(\d+)/$', get_meal),
     ('^meal/(\d+)/participants/$', meal_participants),
     ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
     ('^user/(\d+)/invitation/(\d+)/$', accept_or_reject_meal_invitations),
@@ -95,7 +92,7 @@ urlpatterns = patterns('',
     # order
 #    url(r'^meal/(?P<meal_id>\d+)/order/$',active_login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$',active_login_required(OrderDetailView.as_view()), name='order_detail'),
-    url(r'^order/mine/$', MyOrderListView.as_view(), name="my_orders"),
+    url(r'^order/mine/$', active_login_required(MyOrderListView.as_view()), name="my_orders"),
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
     url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
