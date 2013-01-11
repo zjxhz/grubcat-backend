@@ -137,16 +137,6 @@
 						}
 
 					}
-                    /*if(opts.showResultList){
-                        if(opts.selectionLimit && $("li.as-selection-item", selections_holder).length >= opts.selectionLimit){
-                            results_ul.html('<li class="as-message">'+opts.limitText+'</li>');
-                            results_holder.show();
-                        } else {
-                            if (timeout){ clearTimeout(timeout); }
-                            lastKeyPressCode=188;//tab
-                            timeout = setTimeout(function(){ keyChange(); }, opts.keyDelay);
-                        }
-                    }*/
 					input_focus = true;
 					return true;
 				}).blur(function(){

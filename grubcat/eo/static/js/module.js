@@ -43,6 +43,47 @@
             $("#as-values-tags").attr('name', 'tags');
         });
 
+        $(".interest-tags").click(function(){
+            $(".hot-tags").show()
+        })
+
+        $(".hot-tags li").live('click', function () {
+            var $input = $("#tags");
+            var valueToAdd = $(this).text().replace('+ ', '');
+            var $tagsValues = $("#as-values-tags")
+            if (("," + $tagsValues.val().replace(/\s+/g, '')).indexOf(',' + valueToAdd + ',') < 0) {
+                $tagsValues.val($tagsValues.val() + valueToAdd + ',');
+                var $item = $('<li class="as-selection-item"></li>').click(function () {
+                    $(this).addClass("selected");
+                })
+                var $close = $('<a class="as-close">&times;</a>').click(function () {
+                    $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ","));
+                    $input.focus();
+                    return false;
+                });
+                $("#as-original-tags").before($item.html(valueToAdd).prepend($close));
+            }
+            $(this).remove();
+        })
+
+        $("#change_hot_tags").click(function(){
+            var url = $(this).attr('href') + "?page=" + $(this).attr('page')
+            $(this).attr('page', parseInt($(this).attr('page'))+1)
+
+            $.get(url, function(tags){
+                $("ul.hot-tags li").remove()
+                var tag;
+                for (var i=0; i< tags.length; i++){
+                    $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value +"</li>"))
+                }
+                if (tags.length == 0){
+                    $("ul.hot-tags").append('<div class="no-more-tags">没有了，您自己输入吧！</div>')
+                }
+            })
+
+            return false;
+        }).click()
+
         //upload avatar
         $("#id_avatar_for_upload").change(function () {
             var options = {
@@ -67,16 +108,16 @@
             return false;
         })
 
-        $("#crop-avatar-link").click(function(){
+        $("#crop-avatar-link").click(function () {
 
-            $("#crop_avatar_wrapper").load($('#crop-avatar-link').attr('href'), function(){
+            $("#crop_avatar_wrapper").load($('#crop-avatar-link').attr('href'), function () {
                 submit_crop_form();
                 $("#crop_avatar_modal").modal();
             })
             return false;
         })
 
-        function submit_crop_form(){
+        function submit_crop_form() {
             $("#crop_submit").click(function () {
                 $("#id_crop_form").ajaxSubmit({
                     success:function (data) {

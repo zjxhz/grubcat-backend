@@ -14,7 +14,7 @@
         {% include 'user/profile_avatar.html' %}
 
 
-        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span7">
+        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span9">
             <fieldset>
                 {#                    <legend>基本资料</legend>#}
                 <div class="control-group nickname">
@@ -61,13 +61,16 @@
                 </div>
 
 
-                <div class="control-group interest-tags">
+                <div class="control-group interest-tags"  id="interst-tags-wrapper">
 
                     <label class="control-label" for="as-values-tags"> * 兴趣：</label>
 
                     <div class="controls">
                         {{ form.tags }}{{ form.tags.errors }}
                     </div>
+                    <ul  class="hot-tags hide  as-selections">
+                        <span class="fl" >你可能感兴趣的：</span> <a id="change_hot_tags" href="{% url tag_list %}" page="1" class="fr">换一换</a>
+                    </ul>
                 </div>
 
                 <div class="control-group ">
