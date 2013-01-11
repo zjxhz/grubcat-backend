@@ -702,9 +702,10 @@ def list_tags(request):
             tag_name_qs=[(u'读书',),(u'运动',),(u'K歌',),(u'登山',),(u'骑行',),(u'公益',)]
 
     paginator = Paginator(tag_name_qs, 10)
-    if paginator.num_pages < page:
-        page = 1
-    data = [{'value': tag[0]} for tag in paginator.page(page).object_list]
+    if paginator.num_pages >= page:
+        data = [{'value': tag[0]} for tag in paginator.page(page).object_list]
+    else:
+        data = []
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def handle_uploaded_app(file):
