@@ -325,7 +325,7 @@ class OrderCreateView(CreateView):
         order.meal_id = form.cleaned_data['meal_id']
         order.status = OrderStatus.PAYIED #TODO if alipay is used, here should be created status
         order.total_price = order.meal.list_price * order.num_persons
-#        TODO some checks
+        #        TODO some checks
         response = super(OrderCreateView, self).form_valid(form)
         meal = order.meal
         if order.customer == meal.host:
@@ -337,17 +337,20 @@ class OrderCreateView(CreateView):
         order.meal.join(order)
         return response
 
-class MealDetailView( OrderCreateView):
+
+class MealDetailView(OrderCreateView):
     form_class = OrderCreateForm
     template_name = "meal/meal_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super(MealDetailView, self).get_context_data(**kwargs)
-        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(pk=self.kwargs.get('meal_id'))
+        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(
+            pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
-        context['avaliable_seats']=range(meal.left_persons)
+        context['avaliable_seats'] = range(meal.left_persons)
         if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
-            orders = Order.objects.filter(meal=meal, customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
+            orders = Order.objects.filter(meal=meal,
+                customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
             if orders.exists():
                 context['order'] = orders[0]
         return context
@@ -371,8 +374,20 @@ class MyOrderListView(ListView):
     context_object_name = "my_order_list"
 
     def get_queryset(self):
-        return Order.objects.filter(customer=self.request.user.get_profile()).select_related('meal')
+        return Order.objects.filter(customer=self.request.user.get_profile()).exclude(
+            status=OrderStatus.CANCELED).order_by("meal__start_date", "meal__start_time").select_related('meal')
 
+    def get_context_data(self, **kwargs):
+        context = super(MyOrderListView, self).get_context_data(**kwargs)
+        context['upcomming_orders'] = self.get_queryset().filter(
+            Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
+                meal__start_time__gt=datetime.now().time()))
+
+        context['passed_orders'] = self.get_queryset().filter(
+            Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
+                meal__start_time__lt=datetime.now().time()))
+
+        return context
 
 # get distance in meter, code from google maps
 def getDistance( lng1, lat1, lng2, lat2):
@@ -480,30 +495,30 @@ def get_restaurant_list_by_geo(request):
 
 
 def weibo_login(request):
-    weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
-
+    weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
+        redirect_uri=settings.WEIBO_REDIRECT_URL)
 
     if request.user.is_authenticated() and not request.user.is_active:
         return HttpResponseRedirect(reverse_lazy('bind'))
 
     code = request.GET.get('code')
     errorcode = request.GET.get('error_code')
-    next = request.GET.get('state','/')
+    next = request.GET.get('state', '/')
     if not code and not errorcode:
         #go to weibo site to auth
-        kw ={'state':request.GET.get('next','/')}
-        return HttpResponseRedirect( weibo_client.get_authorize_url(**kw))
+        kw = {'state': request.GET.get('next', '/')}
+        return HttpResponseRedirect(weibo_client.get_authorize_url(**kw))
     elif not code and errorcode:
         # when weibo auth, user cancel auth
         #TODO inform user to auth again
         return HttpResponseRedirect("/")
     else:
-#        after weibo auth
+    #        after weibo auth
         try:
             data = weibo_client.request_access_token(code)
         except:
             raise Exception(u'微博接口异常')
-#        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
+            #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
             auth.login(request, user_to_authenticate)
@@ -514,6 +529,7 @@ def weibo_login(request):
         else:
             raise Exception(u'微博接口异常')
 
+
 class BindProfileView(UpdateView):
     form_class = BindProfileForm
     model = UserProfile
@@ -523,7 +539,7 @@ class BindProfileView(UpdateView):
         return self.request.user.get_profile()
 
     def get_success_url(self):
-        success_url = self.request.GET.get('next',reverse('index'))
+        success_url = self.request.GET.get('next', reverse('index'))
         return success_url
 
     def form_valid(self, form):
@@ -531,6 +547,7 @@ class BindProfileView(UpdateView):
         profile.user.is_active = True
         profile.user.save()
         return super(BindProfileView, self).form_valid(form)
+
 
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
@@ -678,9 +695,10 @@ class UploadAvatarView(UpdateView):
         super(UploadAvatarView, self).form_valid(form)
         if self.request.GET.get('action') == 'upload':
             return HttpResponseRedirect(reverse('upload_avatar'))
-        else :
-            data = {'big_avatar_url':self.object.big_avatar}
+        else:
+            data = {'big_avatar_url': self.object.big_avatar}
             return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
@@ -765,22 +783,6 @@ def messages(request, user_id):
         return createGeneralResponse('OK', 'Message sent to %s' % user)
     else:
         raise
-
-
-def get_user_profile(request, user_id):
-    return getJsonResponse([User.objects.get(id=user_id).get_profile()],
-        {'user': {'fields': ('username',)},
-         'location': {'fields': ('lat', 'lng', 'updated_at')}})
-
-
-def get_meals(request):
-    return getJsonResponse(Meal.objects.filter(time__gte=datetime.now()), ('restaurant', 'host', 'participants'))
-
-
-def get_meal(request, meal_id):
-    if request.method == 'GET':
-        meal = Meal.objects.get(id=meal_id)
-        return getJsonResponse([meal], ('restaurant', 'host', 'participants'))
 
 
 def meal_participants(request, meal_id):

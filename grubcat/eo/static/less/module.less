@@ -85,7 +85,7 @@
   color: white;
   background: black;
   padding: 3px 0 3px 0;
-  .opacity(80);
+  .opacity(70);
   .border-radius(3px);
   .box-shadow(0 0 10px #000);
 }
@@ -167,12 +167,12 @@
   margin-left: 20px;
   margin-top: 10px;
 
-  .sidebar-box{
+  .sidebar-box {
     border: 1px solid #ccc;
 
     margin-bottom: 20px;
 
-    .sidebar-box-title{
+    .sidebar-box-title {
       font-weight: bold;
       border-bottom: 1px solid #ccc;
       padding: 6px 10px 6px 14px;
@@ -181,7 +181,7 @@
       font-size: 15px;
       margin-bottom: 10px;
     }
-    .sidebar-box-content{
+    .sidebar-box-content {
       padding: 0 14px;
       color: #666;
     }
@@ -245,7 +245,7 @@ a.user-img-wrapper {
   }
 }
 
-img.seat-placeholder, a.user-img-wrapper{
+img.seat-placeholder, a.user-img-wrapper {
   margin: 0 7.5px 7.5px 0;
   display: block;
   float: left;
@@ -280,7 +280,7 @@ img.seat-placeholder, a.user-img-wrapper{
   }
 }
 
-#menu{
+#menu {
 }
 
 #menu-popup.ui-widget-content {
@@ -443,7 +443,6 @@ dd.dish {
     width: 250px;
     margin: 0 0 10px 0;
   }
-
 
   #create_meal_form fieldset {
     background: white;
@@ -701,3 +700,53 @@ dd.dish {
   }
 }
 
+#my-meals-page {
+  
+  .pass-meals-info{
+    border-top: 1px solid #ddd;
+    margin-top: 0;
+    padding-top: 18px;
+  }
+  
+  .meal-cell {
+    border-bottom: none;
+    padding-bottom: 0px;
+    .meal-img-wrapper img {
+      height: 190px;
+    }
+  }
+  .meal-topic {
+    float: left;
+
+    font-size: 20px;
+    line-height: 30px;
+    width: 220px;
+    height: 30px;
+    overflow: hidden;
+    a {
+    }
+  }
+  .order-detail-link {
+    margin: 15px 4px 15px 0;
+    display: block;
+    float: right;
+  }
+  .date-wrapper {
+    width: 60px;
+
+    span {
+      font-size: 12px;
+    }
+    .month {
+      padding-top: 3px;
+    }
+
+    .day-num {
+      font-size: 170%;
+    }
+  }
+  .time {
+    width: 60px;
+    font-size: 14px;
+  }
+}

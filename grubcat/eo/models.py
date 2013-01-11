@@ -248,15 +248,15 @@ class Group(models.Model):
     @property
     def recent_meals(self):
         return Meal.objects.filter(group=self).filter(
-            Q(start_date__gt=datetime.today()) | Q(start_date=datetime.today(),
-                start_time__gt=datetime.now())).order_by("start_date",
+            Q(start_date__gt=date.today()) | Q(start_date=date.today(),
+                start_time__gt=datetime.now().time())).order_by("start_date",
             "start_time")
 
     @property
     def passed_meals(self):
         return Meal.objects.filter(group=self).filter(
-            Q(start_date__lt=datetime.today()) | Q(start_date=datetime.today(),
-                start_time__lte=datetime.now())).order_by("start_date",
+            Q(start_date__lt=date.today()) | Q(start_date=date.today(),
+                start_time__lte=datetime.now().time())).order_by("start_date",
             "start_time")
 
     @property
@@ -798,6 +798,11 @@ class Meal(models.Model):
 
     def is_reservable(self):
         return True
+
+
+    @property
+    def is_passed(self):
+        return self.start_date < date.today() or (self.start_date == date.today() and self.start_time < datetime.now().time())
 
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist

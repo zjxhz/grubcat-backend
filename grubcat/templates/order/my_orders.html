@@ -6,7 +6,8 @@
 {% block page_css %}
     {{ block.super }}
     {% assets "module_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css"
+              xmlns="http://www.w3.org/1999/html">
     {% endassets %}
 {% endblock %}
 {% block base_js %}
@@ -20,42 +21,22 @@
 {% block page_js %}
 {% endblock %}
 {% block content %}
-    <div class="row" id="meal-list-page">
+    <div class="row" id="my-meals-page">
         <div id="meal-list" class="">
-            {% for order in my_order_list %}
-                {% with meal=order.meal %}
-                    <div class="meal-cell span4 fl">
-                        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
-
-                        <div class="meal-img-wrapper ">
-                            <a href="{{ meal.get_absolute_url }}">
-                                <img width="285" height="" src="{% static 'img/meal-placeholder.png' %}"
-                                     class="lazy img-polaroid"
-                                     data-original="{{ meal.get_small_cover_url }}">
-                            </a>
-
-                            <div class="date-wrapper">
-                                <span class="month">{{ meal.start_date|date:"n" }}月</span>
-                                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
-                                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
-                            </div>
-                            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
-                        </div>
-                        <div class="meal-info ">
-                            <p class="introduction">
-                                {{ meal.introduction|truncatechars:"110" }}
-                            </p>
-                            {#                            {{ if meal. }}#}
-                            {#                            <a class="btn btn-primary btn-block btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>#}
-                        </div>
-                        <div class="order-info ">
-                            单价：35<br/>单价：35<br/>单价：35<br/>单价：35<br/>单价：35<br/>
-
-                        </div>
-                    </div>
-                {% endwith %}
+            {% for upcommming_order in upcomming_orders %}
+                {% include 'order/my_orders_frag.html' with order=upcommming_order %}
             {% endfor %}
-    </div>
+            {% if passed_orders %}
+                <h3 class="pass-meals-info span12">已结束的饭局</h3>
+                {% for passed_order in passed_orders %}
+                    {% include 'order/my_orders_frag.html' with order=passed_order %}
+                {% endfor %}
+            {% endif %}
+
+            {% if not upcomming_order and not passed_orders %}
+                您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
+            {% endif %}
+        </div>
 
     </div>
 {% endblock %}
