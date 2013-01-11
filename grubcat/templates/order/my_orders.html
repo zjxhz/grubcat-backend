@@ -21,22 +21,17 @@
 {% endblock %}
 {% block content %}
     <div class="row" id="meal-list-page">
-        <div id="meal-list" class="span9">
-            {% for meal in meal_list %}
-                <div class="meal-cell">
-                    <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+        <div id="meal-list" class="">
+            {% for order in my_order_list %}
+                {% with meal=order.meal %}
+                    <div class="meal-cell span4 fl">
+                        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
 
-                    <div class="row">
-                        <div class="meal-img-wrapper span5">
+                        <div class="meal-img-wrapper ">
                             <a href="{{ meal.get_absolute_url }}">
-                                {% if forloop.counter0 < 1 %}
-                                    <img width="360" height="240" class="img-polaroid"
-                                         src="{{ meal.get_small_cover_url }}">
-                                {% else %}
-                                    <img width="360" height="240" src="{% static 'img/meal-placeholder.png' %}"
-                                         class="lazy img-polaroid"
-                                         data-original="{{ meal.get_small_cover_url }}">
-                                {% endif %}
+                                <img width="285" height="" src="{% static 'img/meal-placeholder.png' %}"
+                                     class="lazy img-polaroid"
+                                     data-original="{{ meal.get_small_cover_url }}">
                             </a>
 
                             <div class="date-wrapper">
@@ -46,21 +41,21 @@
                             </div>
                             <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                         </div>
-                        <div class="meal-info span4">
+                        <div class="meal-info ">
                             <p class="introduction">
                                 {{ meal.introduction|truncatechars:"110" }}
                             </p>
-                            <a class="btn btn-primary btn-block btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>
+                            {#                            {{ if meal. }}#}
+                            {#                            <a class="btn btn-primary btn-block btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>#}
+                        </div>
+                        <div class="order-info ">
+                            单价：35<br/>单价：35<br/>单价：35<br/>单价：35<br/>单价：35<br/>
+
                         </div>
                     </div>
-                </div>
+                {% endwith %}
             {% endfor %}
-        </div>
+    </div>
 
-        <div class="sidebar span3 visible-desktop">
-            {% include "support/faq_sidebar.html" %}
-        </div>
     </div>
 {% endblock %}
-
-{% block active-nav-id %}nav-meal{% endblock %}

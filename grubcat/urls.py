@@ -68,7 +68,6 @@ urlpatterns = patterns('',
     url(r'^meal/$', MealListView.as_view(), name="meal_list"),
     url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
     url(r'^meal/add/$',active_login_required(MealCreateView.as_view()), name='create_meal'),
-    url(r'^meal/mine/$', MealListView.as_view(), name="my_meals"),
 
     #menu
     url(r'^menu/$',active_login_required(MenuListView.as_view()), name="menu_list"),
@@ -96,7 +95,7 @@ urlpatterns = patterns('',
     # order
 #    url(r'^meal/(?P<meal_id>\d+)/order/$',active_login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$',active_login_required(OrderDetailView.as_view()), name='order_detail'),
-
+    url(r'^order/mine/$', MyOrderListView.as_view(), name="my_orders"),
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
     url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
