@@ -99,13 +99,6 @@ class MealListView(ListView):
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
-    def get_context_data(self, **kwargs):
-        context = super(MealListView, self).get_context_data(**kwargs)
-        context['hot_users'] = UserProfile.objects.exclude(avatar="").select_related("user")[:12]
-        return context
-
-
-
 ### group related views ###
 class GroupListView(ListView):
 #    TODO order by member num
@@ -371,6 +364,15 @@ class OrderDetailView(DetailView):
         if order.customer != self.request.user.get_profile():
             print "user see other's order" #TODO raise an exception
         return order
+
+
+class MyOrderListView(ListView):
+    template_name = "order/my_orders.html"
+    context_object_name = "my_order_list"
+
+    def get_queryset(self):
+        return Order.objects.filter(customer=self.request.user.get_profile()).select_related('meal')
+
 
 # get distance in meter, code from google maps
 def getDistance( lng1, lat1, lng2, lat2):

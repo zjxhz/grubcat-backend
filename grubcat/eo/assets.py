@@ -16,8 +16,8 @@ responsive_css = Bundle( 'less/responsive.less',filters='less,cssmin', output='g
 
 base_css = Bundle(bootstrap_css, filters='cssmin', output='gen/base.%(version)s.css')
 
-meal_css = Bundle(
-    common_css, 'less/meal.less', responsive_css, filters='less,cssmin', output='gen/meal.%(version)s.css'
+module_css = Bundle(
+    common_css, 'less/module.less', responsive_css, filters='less,cssmin', output='gen/meal.%(version)s.css'
 )
 
 error_css = Bundle(
@@ -105,7 +105,7 @@ register('common_css', common_css)
 register('base_css', base_css)
 register('bootstrap_css', bootstrap_css)
 register('dropkick_css', dropkick_css)
-register('meal_css', meal_css)
+register('module_css', module_css)
 #register('group_list_css', group_list_css)
 #register('group_detail_css', group_detail_css)
 
