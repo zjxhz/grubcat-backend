@@ -27,6 +27,7 @@
                 {% include 'order/my_orders_frag.html' with order=upcommming_order %}
             {% endfor %}
             {% if passed_orders %}
+                {% if upcomming_orders %}<hr class="span12">{% endif %}
                 <h3 class="pass-meals-info span12">已结束的饭局</h3>
                 {% for passed_order in passed_orders %}
                     {% include 'order/my_orders_frag.html' with order=passed_order %}
@@ -34,7 +35,7 @@
             {% endif %}
 
             {% if not upcomming_order and not passed_orders %}
-                您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
+                <h3 class="span12">您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a></h3>
             {% endif %}
         </div>
 

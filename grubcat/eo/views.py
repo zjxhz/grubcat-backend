@@ -385,7 +385,7 @@ class MyOrderListView(ListView):
 
         context['passed_orders'] = self.get_queryset().filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
-                meal__start_time__lt=datetime.now().time()))
+                meal__start_time__lt=datetime.now().time())).order_by("-meal__start_date", "-meal__start_time")
 
         return context
 
