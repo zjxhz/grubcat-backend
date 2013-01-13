@@ -294,7 +294,7 @@ class UserListView(ListView):
         if self.request.GET.get('show') and self.request.user.is_authenticated() and self.request.user.is_active:
             return self.request.user.get_profile().tags.similar_objects();
         else:
-            return UserProfile.objects.filter(user__is_active=True).select_related('tags')
+            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").select_related('tags').order_by('-id')
 
 
 class UserDetailView(DetailView):
