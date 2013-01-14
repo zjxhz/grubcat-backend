@@ -40,7 +40,7 @@ def use_order(request):
         order.completed_time = now()
         order.status = OrderStatus.USED
         order.save()
-        return createSucessJsonResponse('使用订单成功')
+        return create_sucess_json_response('使用订单成功')
 
 
 def add_dish_category(request):
@@ -52,7 +52,7 @@ def add_dish_category(request):
         if created:
             category.restaurant_id = request.user.restaurant.id
             category.save()
-        return createSucessJsonResponse('成功', {'id': category.id, 'name': category.name, 'created': created})
+        return create_sucess_json_response('成功', {'id': category.id, 'name': category.name, 'created': created})
 
 
 class DishListView(ListView):
@@ -147,7 +147,7 @@ def add_edit_menu(request, pk=None):
                 dish_category = DishCategory(id=item['id'])
                 category_item = DishCategoryItem(menu=menu, category=dish_category, order_no=order_no+1 )
                 category_item.save()
-        return createSucessJsonResponse(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
+        return create_sucess_json_response(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
         categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
 
@@ -192,4 +192,4 @@ def del_menu(request, pk):
             menu.save()
         except ObjectDoesNotExist:
             pass
-    return createSucessJsonResponse(extra_dict={'url': reverse('restaurant_menu_list'), })
+    return create_sucess_json_response(extra_dict={'url': reverse('restaurant_menu_list'), })

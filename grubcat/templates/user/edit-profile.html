@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block title %}修改个人资料{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "profile_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+
+{% block content %}
+    <div id="edit-profile" class="row">
+        {% include 'user/profile_avatar.html' %}
+
+
+        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span9">
+            <fieldset>
+                {#                    <legend>基本资料</legend>#}
+                <div class="control-group nickname">
+
+                    <label class="control-label" for="id_name">* 昵称：</label>
+
+                    <div class="controls">
+                        {{ form.name }}
+{#                        <input id="id_nickname" class="" type="text"#}
+{#                               name="name" value="{{ form.name.value|default:"" }}"/>#}
+                        {{ form.name.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group gender">
+
+                    <label class="control-label" > * 性别：</label>
+
+                    <div class="controls">
+                        <label class="radio inline" for="id_gender_1"><input
+                                {% if form.gender.value == '0' or  form.gender.value == 0 %}checked="checked"{% endif %}
+                                type="radio"
+                                id="id_gender_1"
+                                value="0" name="gender"> 男</label>
+                        <label class="radio inline" for="id_gender_2"><input
+                                {% if form.gender.value == '1' or form.gender.value == 1 %}checked="checked"{% endif %}
+                                type="radio"
+                                id="id_gender_2"
+                                value="1" name="gender"> 女</label>
+                        {{ form.gender.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group birthday ">
+
+                    <label class="control-label" for="id_birthday_year"> * 生日：</label>
+
+                    <div class="controls">
+
+                        {{ form.birthday }}
+                        {{ form.birthday.errors }}
+
+                    </div>
+                </div>
+
+
+                <div class="control-group interest-tags"  id="interst-tags-wrapper">
+
+                    <label class="control-label" for="as-values-tags"> * 兴趣：</label>
+
+                    <div class="controls">
+                        {{ form.tags }}{{ form.tags.errors }}
+                    </div>
+                    <ul  class="hot-tags hide  as-selections">
+                        <span class="fl" >你可能感兴趣的：</span> <a id="change_hot_tags" href="{% url tag_list %}" page="1" class="fr">换一换</a>
+                    </ul>
+                </div>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_motto">签名：</label>
+
+                    <div class="controls">
+                        <textarea id="id_motto" class="input-xlarge" type="text" name="motto" rows="2"
+                                >{{ form.motto.value|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_college"> 学校：</label>
+
+                    <div class="controls">
+
+                        {{ form.college }}
+                        {{ form.college.errors }}
+
+                    </div>
+                </div>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_business"> 行业：</label>
+
+                    <div class="controls">
+
+                        {{ form.business }}
+                        {{ form.business.errors }}
+
+                    </div>
+                </div>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_work_for"> 公司：</label>
+
+                    <div class="controls">
+
+                        {{ form.work_for }}
+                        {{ form.work_for.errors }}
+
+                    </div>
+                </div>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_occupation"> 职位：</label>
+
+                    <div class="controls">
+
+                        {{ form.occupation }}
+                        {{ form.occupation.errors }}
+
+                    </div>
+                </div>
+
+
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary btn-large">保存</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+
+    </div>
+
+    <div id="data" style="display: none" list-tags-url='{% url tag_list %}' ></div>
+
+{% endblock %}
+
+{% block page_js %}
+    {{ block.super }}
+    {% assets "auto_suggest_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
+{% endblock %}

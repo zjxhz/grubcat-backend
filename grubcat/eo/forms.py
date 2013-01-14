@@ -115,10 +115,9 @@ class ImgTestForm(ModelForm):
 
 #User related
 class UploadAvatarForm(ModelForm):
-    action = forms.CharField(required=False)
     class Meta:
         model = UserProfile
-        fields=('avatar','cropping','action')
+        fields=('avatar','cropping')
         widgets = {
             'avatar': ImageCropWidget,
             }
@@ -141,6 +140,13 @@ class BindProfileForm(ModelForm):
             'gender' : RadioSelect(choices=GENDER_CHOICE,),
 #            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
         }
+
+class PhotoForm(ModelForm):
+    class Meta:
+        model = UserPhoto
+        fields=('photo',)
+
+
 #restaurant admin related
 class OrderCheckInForm(forms.Form):
     code = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))

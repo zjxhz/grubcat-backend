@@ -393,15 +393,17 @@ class TaggedUser(GenericTaggedItemBase):
     class Meta:
         db_table = u'tagged_user'
 
+
 class Gender:
-    MALE=0
-    FEMALE=1
-GENDER_CHOICE=(
+    MALE = 0
+    FEMALE = 1
+
+GENDER_CHOICE = (
     (Gender.MALE, u'男'),
     (Gender.FEMALE, u'女'),
-)
+    )
 
-BUSINESS_CHOICE=(
+BUSINESS_CHOICE = (
     ( 1, u'在校学生'),
     ( 2, u'自由职业者'),
     ( 3, u'互联网'),
@@ -461,31 +463,32 @@ BUSINESS_CHOICE=(
     ( 57, u'交通'),
     ( 58, u'运输'),
     ( 59, u'其他'),
-)
+    )
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    name = models.CharField(u'昵称', max_length=30, null=True,blank=False)
-    favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants",  blank=True,
+    name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
+    favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
-    recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",blank=True,null=True)
-    gender = models.IntegerField(u'性别', blank=False, null=True,choices=GENDER_CHOICE)
+    recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
+        blank=True, null=True)
+    gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
     avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
-    location = models.ForeignKey(UserLocation, unique=True, null=True,blank=True)
+    location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)
     constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
-    birthday = models.DateField(u'生日', null=True,blank=False)
-    college = models.CharField(u'学校', max_length=64, null=True,blank=True)
-    business = models.SmallIntegerField(u'行业', null=True,blank=True, choices= BUSINESS_CHOICE)
-    work_for = models.CharField(u'公司', max_length=64, null=True,blank=True)
-    occupation = models.CharField(u'职位', max_length=64, null=True,blank=True)
+    birthday = models.DateField(u'生日', null=True, blank=False)
+    college = models.CharField(u'学校', max_length=64, null=True, blank=True)
+    business = models.SmallIntegerField(u'行业', null=True, blank=True, choices=BUSINESS_CHOICE)
+    work_for = models.CharField(u'公司', max_length=64, null=True, blank=True)
+    occupation = models.CharField(u'职位', max_length=64, null=True, blank=True)
     motto = models.CharField(u'签名', max_length=140, null=True, blank=True)
-    weibo_id = models.CharField(max_length=20, null=True,blank=True)
-    weibo_access_token = models.CharField(max_length=128, null=True,blank=True)
+    weibo_id = models.CharField(max_length=20, null=True, blank=True)
+    weibo_access_token = models.CharField(max_length=128, null=True, blank=True)
     tags = TaggableManager(through=TaggedUser)
     apns_token = models.CharField(max_length=255, blank=True)
-    
+
     def avatar_thumbnail(self, width, height):
         if self.avatar:
             return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height),
@@ -500,11 +503,11 @@ class UserProfile(models.Model):
         return get_thumbnailer(self.avatar).get_thumbnail({
             'size': avatar_size,
             'box': self.cropping,
-            'quality':100,
+            'quality': 100,
             'crop': True,
             'detail': True,
         })
-        
+
     @property
     def big_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
@@ -528,7 +531,7 @@ class UserProfile(models.Model):
         else:
             thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
         return thumbnail_url
-    
+
     @property
     def small_avatar_path(self):
         if self.avatar and os.path.exists(self.avatar.path):
@@ -625,22 +628,22 @@ class UserProfile(models.Model):
             location.lng = 120.148
             location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60 * 24 * 30))
             self.location = location
-    
+
             return location
-    
+
     @property
     def messages(self):
         return UserMessage.objects.filter(Q(from_person=self) | Q(to_person=self))
-    
+
     @property
     def received_comments(self):
         return UserMessage.objects.filter(to_person=self).filter(type=1)
-    
+
     @property
     def latest_messages_by_user(self):
         dic = {}
         for message in self.messages.filter(type=0): #TODO order by time
-            other_person = message.from_person 
+            other_person = message.from_person
             if other_person == self:
                 other_person = message.to_person
             temp = dic.get(other_person)
@@ -649,39 +652,42 @@ class UserProfile(models.Model):
             else:
                 dic[other_person] = message
         return dic.values()
-    
+
     def chat_history_with_user(self, other_user, limit=20):
-        return self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user) ).order_by('timestamp')[:limit]
-    
+        return\
+        self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user)).order_by('timestamp')[
+        :limit]
+
     def new_messages(self, last_message_id):
         last_message = UserMessage.objects.get(pk=last_message_id)
-        return UserMessage.objects.filter(from_person=last_message.from_person).filter(timestamp__gt=last_message.timestamp).filter(type=0).order_by('timestamp')
+        return UserMessage.objects.filter(from_person=last_message.from_person).filter(
+            timestamp__gt=last_message.timestamp).filter(type=0).order_by('timestamp')
 
-#    def talk_to(self, another, message):
-#        r = redis.StrictRedis(host='localhost', port=6379, db=0)
-#        mid = r.incr("global.message.id")
-#        r.set("mid:%d:message" % mid, message)
-#        r.set("mid:%d:from" % mid, self.id)
-#        r.set("mid:%d:to" % mid, another.id)
-#        r.set("mid:%d:time" % mid, datetime.now())
-#        r.sadd("uid:%d:contacts" %  self.id, another.id)
-#        r.sadd("uid:%d:contacts" %  another.id, self.id)
-#        r.lpush("uid:%d:chat:%d" %  (self.id, another.id), mid)
-#        r.lpush("uid:%d:chat:%d" %  (another.id, self.id), mid)
-#    
-#    def contacts(self):
-#        r = redis.StrictRedis(host='localhost', port=6379, db=0)
-#        response = []
-#        for uid in r.smembers("uid:%d:contacts" % self.id):
-#            message = {}
-#            mid = int(r.lrange("uid:%d:chat:%s" % (self.id, uid), 0, 1)[0])
-#            message["from_person"] = r.get("mid:%d:from" % mid)
-#            message["to_person"] = r.get("mid:%d:to" % mid)
-#            message["time"] = r.get("mid:%d:time" % mid)
-#            message["message"] = r.get("mid:%d:message" % mid)
-#            response.append(message)
-#        print response
-                             
+    #    def talk_to(self, another, message):
+    #        r = redis.StrictRedis(host='localhost', port=6379, db=0)
+    #        mid = r.incr("global.message.id")
+    #        r.set("mid:%d:message" % mid, message)
+    #        r.set("mid:%d:from" % mid, self.id)
+    #        r.set("mid:%d:to" % mid, another.id)
+    #        r.set("mid:%d:time" % mid, datetime.now())
+    #        r.sadd("uid:%d:contacts" %  self.id, another.id)
+    #        r.sadd("uid:%d:contacts" %  another.id, self.id)
+    #        r.lpush("uid:%d:chat:%d" %  (self.id, another.id), mid)
+    #        r.lpush("uid:%d:chat:%d" %  (another.id, self.id), mid)
+    #
+    #    def contacts(self):
+    #        r = redis.StrictRedis(host='localhost', port=6379, db=0)
+    #        response = []
+    #        for uid in r.smembers("uid:%d:contacts" % self.id):
+    #            message = {}
+    #            mid = int(r.lrange("uid:%d:chat:%s" % (self.id, uid), 0, 1)[0])
+    #            message["from_person"] = r.get("mid:%d:from" % mid)
+    #            message["to_person"] = r.get("mid:%d:to" % mid)
+    #            message["time"] = r.get("mid:%d:time" % mid)
+    #            message["message"] = r.get("mid:%d:message" % mid)
+    #            response.append(message)
+    #        print response
+
     def __unicode__(self):
         return self.user.username
 
@@ -694,6 +700,27 @@ class UserProfile(models.Model):
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
+
+    def __unicode__(self):
+        return str(self.id)
+
+    @property
+    def photo_thumbnail(self):
+        return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
+                                                          'crop': True,
+                                                          'detail': True
+        }).url
+
+    @property
+    def large_photo(self):
+        return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 700),
+                                                          'crop': False,
+                                                          'detail': True
+        }).url
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'photo_detail', [str(self.id)]
 
     class Meta:
         db_table = u'user_photo'
@@ -708,7 +735,7 @@ class UserMessage(models.Model):
 
     class Meta:
         db_table = u'user_message'
-    
+
     def __unicode__(self):
         return "%s -> %s(%s): %s" % (self.from_person, self.to_person, self.timestamp, self.message)
 
@@ -802,7 +829,8 @@ class Meal(models.Model):
 
     @property
     def is_passed(self):
-        return self.start_date < date.today() or (self.start_date == date.today() and self.start_time < datetime.now().time())
+        return self.start_date < date.today() or (
+            self.start_date == date.today() and self.start_time < datetime.now().time())
 
     def is_participant(self, user_profile):
         for participant in self.participants.all(): #TODO query the user by id to see the if the user exist
@@ -827,11 +855,11 @@ class Meal(models.Model):
     def get_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
-                'size':(420,280),
+                'size': (420, 280),
                 'crop': True,
-#                'quality':85,
+                #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
             url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url
@@ -839,11 +867,11 @@ class Meal(models.Model):
     def get_small_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
-                'size':(360,240),
+                'size': (360, 240),
                 'crop': True,
                 #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
             url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url

@@ -45,8 +45,8 @@ user_css = Bundle(
     common_css, responsive_css,  filters='cssmin', output='gen/user.%(version)s.css'
 )
 
-edit_profile_css = Bundle(
-    'css/jquery.Jcrop.css','css/autoSuggest.css',common_css ,'less/edit-profile.less', responsive_css, filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
+profile_css = Bundle(
+    'css/jquery.Jcrop.css','css/autoSuggest.css',common_css ,'less/profile.less', responsive_css, filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 #order_css = Bundle(
@@ -112,7 +112,7 @@ register('module_css', module_css)
 register('error_css', error_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
-register('edit_profile_css', edit_profile_css)
+register('profile_css', profile_css)
 #register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 

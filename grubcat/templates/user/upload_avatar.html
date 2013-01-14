@@ -11,10 +11,7 @@
         <form action="{% url upload_avatar %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
             <div id="cropping-area" class="">
                 {{ form.avatar }}
-
                 {{ form.cropping }}
-
-                <input type="hidden" name="action" id="id_action" value="crop"/>
             </div>
             <div id="preview_area" class="">
                 {% comment %} <div id="cropping-tip">

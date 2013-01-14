@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "profile_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    <div class="row" id="profile-page">
+        <div class="span3" id="profile-sidebar">
+            <a href="">
+                <img src="{{ profile.big_avatar }}" alt="{{ profile.name }}" width="180" height="180"
+                     class="img-polaroid avatar"/>
+            </a>
+
+            <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
+        </div>
+
+        <div class="span9">
+            <ul id="profile-nav" class="nav nav-pills">
+                <li><a href="">TA的资料</a></li>
+                <li><a href="">TA的饭局</a></li>
+                <li class="active"><a href="{% url photo_list profile.id %}">Ta的照片</a></li>
+
+            </ul>
+
+            {% block profile-main %} {% endblock %}
+
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block page_js %}
+    {{ block.super }}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
+
+{% endblock %}

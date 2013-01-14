@@ -1,5 +1,59 @@
+// Core variables and mixins
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
 #main-container {
   margin-top: 40px;
+}
+
+.actions{
+  font-size:15px;
+  .clearfix();
+  margin-bottom: 10px;
+}
+
+#profile-sidebar { // border-right: 1px solid #e5e5e5;
+//  width:218px;
+  min-height: 600px;
+
+  img.avatar {
+    display: block;
+    margin: auto;
+  }
+
+}
+
+#profile-nav {
+  font-size: 16px;
+  li {
+    margin: 10px;
+  }
+}
+
+#photo-list {
+  .photo {
+    width: 210px;
+    height: 210px;
+  }
+}
+
+#photo-wrapper {
+  width: 700px;
+  margin-top: 20px;
+  position: relative;
+  a {
+    display: block;
+  }
+  & .next-photo {
+    cursor: url('../img/right.cur'), auto
+  }
+  & .pre-photo {
+    cursor: url('../img/left.cur'), auto
+  }
+  #photo {
+    margin: auto;
+    display: block;
+  }
 }
 
 .avatar {
@@ -26,6 +80,72 @@
   }
 }
 
+#photo-detail {
+  font-size: 15px;
+  clear: both;
+  .del-photo-link .icon-remove {
+    background-position: -312px 2px;
+  }
+}
+
+.photo-direction{
+  background: url("../img/direction.png") no-repeat;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 26px;
+  height: 50px;
+  .opacity(0);
+  .transition(opacity .5s);
+  cursor: pointer;
+}
+
+.photo-direction-active {
+  .photo-direction{
+    .opacity(40);
+  }
+  .photo-next.highlight, .photo-prev.highlight{
+    .opacity(100);
+  }
+}
+
+.photo-next{
+  background-position: -28px -1px;
+  right: 10px;
+}
+
+.photo-prev{
+  background-position: -83px -1px;
+  left: 10px;
+}
+
+
+
+.upload-photo {
+  #id_upload_photo_form {
+    position: relative;
+    width: 92px;
+    overflow: hidden;
+    z-index: 100001;
+  }
+  #id_photo {
+    font-size: 25px;
+    right: 8px;
+    top: -3px;
+    position: absolute;
+    width: 87px;
+    cursor: pointer;
+    .opacity(0);
+  }
+
+  .loading {
+    background: url("../img/loader.gif") no-repeat scroll right center transparent;
+    margin: 4px 0 0 21px;
+    float: left;
+    padding-right: 25px;
+  }
+}
+
 #id_name, #id_college, #id_business, #id_work_for, #id_occupation {
   width: 270px;
 }
@@ -42,7 +162,7 @@
   display: none;
 }
 
- #tags {
+#tags {
 
 }
 
@@ -57,13 +177,13 @@
   margin-top: 0px;
 }
 
-#interst-tags-wrapper{
+#interst-tags-wrapper {
   position: relative;
 }
 
 div.control-group.interest-tags {
 
-  .controls{
+  .controls {
     width: 286px;
     margin-left: 100px;
   }
@@ -72,20 +192,20 @@ div.control-group.interest-tags {
     width: 274px;
   }
 
-  ul.hot-tags{
-    span{
+  ul.hot-tags {
+    span {
       margin: 7px;
       color: #777;
       font-size: 13px;
     }
-    a{
+    a {
       float: left;
       margin-left: 90px;
       margin: 7px 5px 7px 90px;
     }
-    .no-more-tags{
+    .no-more-tags {
       margin-left: 10px;
-      float :left;
+      float: left;
     }
   }
 }
@@ -183,8 +303,8 @@ div.control-group.interest-tags {
   width: 274px;
   min-height: 65px;
   margin-left: 100px;
-  li{
-    color:#777;
+  li {
+    color: #777;
   }
 
 }
