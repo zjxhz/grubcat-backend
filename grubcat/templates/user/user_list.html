@@ -22,7 +22,6 @@
     <script type="text/javascript">
         var tags =    [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}',{% endif %}   {% endfor %}];
     </script>
-
 {% endblock %}
 
 {% block active-nav-id %}nav-user{% endblock %}

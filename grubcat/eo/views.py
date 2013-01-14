@@ -8,15 +8,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.serializers import json
-from django.core.urlresolvers import reverse_lazy, reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.template.response import TemplateResponse
-from django.utils.timezone import now
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -31,6 +27,73 @@ from grubcat.eo.forms import *
 import simplejson
 import sys
 from django.conf import settings
+
+###Photo related views ###
+class PhotoCreateView(CreateView):
+    form_class = PhotoForm
+    template_name = 'photo/upload_photo.html'
+
+    def form_valid(self, form):
+        photo = form.save(False)
+        photo.user = self.request.user.get_profile()
+        super(PhotoCreateView, self).form_valid(form)
+        data = {'status': SUCESS,'redirect_url':reverse('photo_detail',kwargs={'pk':photo.id})}
+        return HttpResponse(simplejson.dumps(data),) #text/html hack for IE ajax upload file
+
+    def get_context_data(self, **kwargs):
+        context = super(PhotoCreateView, self).get_context_data(**kwargs)
+        context['profile'] = self.request.user.get_profile()
+        return context
+
+
+class PhotoDetailView(DetailView):
+    model = UserPhoto
+    context_object_name = 'photo'
+    template_name = 'photo/photo_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PhotoDetailView, self).get_context_data(**kwargs)
+        context['profile'] = self.object.user
+        try:
+            pre_photo = UserPhoto.objects.filter(user=self.object.user, id__lt=self.object.id).order_by('-id')[0]
+        except IndexError:
+            pre_photo = UserPhoto.objects.filter(user=self.object.user).order_by('-id')[0]
+        try:
+            next_photo = UserPhoto.objects.filter(user=self.object.user, id__gt=self.object.id).order_by('id')[0]
+        except IndexError:
+            next_photo = UserPhoto.objects.filter(user=self.object.user).order_by('id')[0]
+        context['pre_photo'] = pre_photo
+        context['next_photo'] = next_photo
+        context['is_mine'] = self.object.user == self.request.user.get_profile()
+        return context
+
+
+class PhotoListView(ListView):
+    model = UserPhoto
+    context_object_name = 'photo_list'
+    template_name = 'photo/photo_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PhotoListView, self).get_context_data(**kwargs)
+        context['profile'] = UserProfile.objects.get(pk=self.kwargs['user_id'])
+        return context
+
+    def get_queryset(self):
+        return UserPhoto.objects.filter(user__id=self.kwargs.get('user_id'))
+
+def del_photo(request, pk):
+    if request.method == 'POST':
+        photo = UserPhoto.objects.get(pk=pk)
+        if photo.user == request.user.get_profile():
+            photo.delete()
+            return create_sucess_json_response(u'成功删除照片！', {'redirect_url': reverse('photo_list',kwargs={'user_id':request.user.get_profile().id})})
+        else:
+            return create_no_right_response(u'对不起，只有照片的所有者才能删除该照片')
+    elif request.method == 'GET':
+        return HttpResponseRedirect( reverse('photo_detail', kwargs={'pk':pk}))
+
+
+
 
 ###Menu related views ###
 class MenuListView(ListView):
@@ -53,15 +116,12 @@ class MealCreateView(CreateView):
     form_class = MealForm
     template_name = 'meal/create_meal.html'
 
-    def get_initial(self):
-        return {'request': self.request}
-
-    def get_context_data(self, **kwargs):
-        context = super(MealCreateView, self).get_context_data(**kwargs)
-        context.update({
-            "my_groups": self.request.user.interest_groups.all()
-        })
-        return context
+    #    def get_context_data(self, **kwargs):
+    #        context = super(MealCreateView, self).get_context_data(**kwargs)
+    #        context.update({
+    #            "my_groups": self.request.user.interest_groups.all()
+    #        })
+    #        return context
 
     def get_success_url(self):
         if self.object.status == MealStatus.PUBLISHED:
@@ -208,9 +268,9 @@ def join_group(request, pk):
         if group.privacy == GroupPrivacy.PUBLIC:
             if request.user not in group.members.all():
                 group.members.add(request.user)
-                return createSucessJsonResponse(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
+                return create_sucess_json_response(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
             else:
-                return createFailureJsonResponse(u'对不起您已经加入该圈子，无需再次加入！')
+                return create_failure_json_response(u'对不起您已经加入该圈子，无需再次加入！')
         else:
         #            need to handle invitation
             return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
@@ -223,9 +283,9 @@ def leave_group(request, pk):
         group = Group.objects.get(pk=pk)
         if request.user in group.members.all():
             group.members.remove(request.user)
-            return createSucessJsonResponse(u'已经成功离开该圈子！')
+            return create_sucess_json_response(u'已经成功离开该圈子！')
         else:
-            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+            return create_failure_json_response(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
@@ -238,9 +298,9 @@ def create_group_comment(request):
             comment = form.save()
             t = render_to_response('group/single_comment.html', {'comment': comment},
                 context_instance=RequestContext(request))
-            return createSucessJsonResponse(u'已经成功创建评论！', {'comment_html': t.content})
+            return create_sucess_json_response(u'已经成功创建评论！', {'comment_html': t.content})
         else:
-            return createFailureJsonResponse(u'对不起您还未加入该圈子！')
+            return create_failure_json_response(u'对不起您还未加入该圈子！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
@@ -252,7 +312,7 @@ def del_group_comment(request, pk):
         #TODO some checks
         if len(comment) == 1:
             comment[0].delete()
-        return createSucessJsonResponse(u'已经成功删除评论！')
+        return create_sucess_json_response(u'已经成功删除评论！')
     elif request.method == 'GET':
         return HttpResponse(u'不支持该操作')
 
@@ -294,13 +354,14 @@ class UserListView(ListView):
         if self.request.GET.get('show') and self.request.user.is_authenticated() and self.request.user.is_active:
             return self.request.user.get_profile().tags.similar_objects();
         else:
-            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").select_related('tags').order_by('-id')
+            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").select_related('tags').order_by(
+                '-id')
 
 
 class UserDetailView(DetailView):
     model = UserProfile
     context_object_name = "profile"
-    template_name = "user/user_detail.html"
+    template_name = "user/profile.html"
 
 
 ### Order related views ###
@@ -703,7 +764,7 @@ class UploadAvatarView(UpdateView):
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
     model = UserProfile
-    template_name = 'user/profile.html'
+    template_name = 'user/edit-profile.html'
 
     def get_object(self, queryset=None):
         return self.request.user.get_profile()

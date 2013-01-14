@@ -66,6 +66,13 @@ urlpatterns = patterns('',
     url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
     url(r'^meal/add/$',active_login_required(MealCreateView.as_view()), name='create_meal'),
 
+
+    #photo
+    url(r'^photo/u/(?P<user_id>\d+)/$',active_login_required(PhotoListView.as_view()), name='photo_list'),
+    url(r'^photo/upload/$',active_login_required(PhotoCreateView.as_view()), name='upload_photo'),
+    url(r'^photo/(?P<pk>\d+)/$',active_login_required(PhotoDetailView.as_view()), name='photo_detail'),
+    url(r'^photo/del/(?P<pk>\d+)/$',active_login_required(del_photo), name='del_photo'),
+
     #menu
     url(r'^menu/$',active_login_required(MenuListView.as_view()), name="menu_list"),
 

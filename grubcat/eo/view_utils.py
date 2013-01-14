@@ -36,9 +36,10 @@ def creatJsonResponse(status, message, extra_dict=None):
 # Create a general response with status and message)
 # Create a general response with status and message)
 
-def createSucessJsonResponse(message=u"成功", extra_dict=None):
+def create_sucess_json_response(message=u"成功", extra_dict=None):
     return creatJsonResponse(SUCESS, message, extra_dict)
-def createFailureJsonResponse(message=u"操作失败", extra_dict=None):
+
+def create_failure_json_response(message=u"操作失败", extra_dict=None):
     return creatJsonResponse(ERROR, message, extra_dict)
 
 def create_no_right_response():
