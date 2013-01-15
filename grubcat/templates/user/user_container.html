@@ -13,7 +13,9 @@
 {#                    <div class="speech-arrow"></div>#}
                     <div class="speech-inner">
                         <p> {% if user.motto %}" {{ user.motto }} "{% else %}{% comment %}IT/诺基亚西门子/设计师 {% endcomment %}{% endif %}</p>
+                    <p>common num: {{ user.similar_tags }}</p>
                         <ul class="tags">
+
                             {% for tag in user.tags.all %}
                                 <li>{{ tag.name }}</li>
                             {% endfor %}
