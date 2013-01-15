@@ -133,7 +133,7 @@ class BasicProfileForm(ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('name', 'motto', 'birthday', 'gender', 'college', 'business', 'work_for', 'occupation', 'tags')
+        fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
             'birthday': SelectDateWidget(required=False, years=range(1916, 1996), attrs={'class': "input-small"}, )
