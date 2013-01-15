@@ -1,5 +1,6 @@
 #coding=utf-8
 from ajax_select.admin import AjaxSelectAdmin
+import datetime
 from django.contrib import admin
 from image_cropping.admin import ImageCroppingMixin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
@@ -33,8 +34,15 @@ class OrderAdmin(admin.ModelAdmin):
 
 class MealAdmin(admin.ModelAdmin):
     list_display = ('topic', 'menu','host', 'list_price',)
-    list_filter = ('menu',)
+    list_filter = ('start_date',)
     ordering = ('menu', )
+    actions = ['postpone_meal']
+    def postpone_meal(self, request, queryset):
+        for meal in queryset:
+            meal.start_date += datetime.timedelta(days=31)
+            meal.save()
+        self.message_user(request, "延期成功!")
+    postpone_meal.short_description = u"延期1个月"
 
 class DishItemInline(admin.StackedInline):
     model = DishItem
