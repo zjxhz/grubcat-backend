@@ -101,9 +101,9 @@
             $("#as-values-tags").attr('name', 'tags');
         });
 
-        $(".interest-tags").click(function () {
+       /* $(".interest-tags").click(function () {
             $(".hot-tags").show()
-        })
+        })*/
 
         $(".hot-tags li").live('click', function () {
             var $input = $("#tags");
