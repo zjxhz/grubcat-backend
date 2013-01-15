@@ -31,7 +31,8 @@
                     <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>
                 </div>
 
-                <dl class="menu-items">
+                {% include 'meal/menu_frag.html' %}
+                {% comment %}<dl class="menu-items">
                     {% for item in menu.items %}
                         {% if item.num %}
                             <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
@@ -43,7 +44,7 @@
                             <dt class="category">{{ item.category.name }}  </dt>
                         {% endif %}
                     {% endfor %}
-                </dl>
+                </dl>{% endcomment %}
             </div>
         {% endfor %}
     </div>

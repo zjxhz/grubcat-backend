@@ -17,7 +17,7 @@ responsive_css = Bundle( 'less/responsive.less',filters='less,cssmin', output='g
 base_css = Bundle(bootstrap_css, filters='cssmin', output='gen/base.%(version)s.css')
 
 module_css = Bundle(
-    common_css, 'less/module.less', responsive_css, filters='less,cssmin', output='gen/meal.%(version)s.css'
+    common_css, 'less/module.less', responsive_css, filters='less,cssmin', output='gen/module.%(version)s.css'
 )
 
 error_css = Bundle(

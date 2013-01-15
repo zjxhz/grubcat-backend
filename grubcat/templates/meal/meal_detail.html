@@ -125,20 +125,7 @@
                 <div class="sidebar-box-title">
                     菜单 {% comment %}{{ meal.menu.name|default:"8人套餐 40元/人" }}{% endcomment %}</div>
                 <div class="sidebar-box-content">
-                    <dl class="menu-items">
-                        {% for item in meal.menu.items %}
-                            {% if item.num %}
-                                <dd class="dish">
-                                    <span class="dish-name">{{ item.dish.name }}</span>
-                                     <span class="dish-info">¥ <span class="dish-price">{{ item.dish.price }}</span>{% comment %}  <span
-                                        class="unit"> /{{ item.dish.unit }} </span> &times;<span
-                                        class="num">{{ item.num }}</span> {% endcomment %}</span>
-                                </dd>
-                            {% else %}
-                                <dt class="category">{{ item.category.name }}  </dt>
-                            {% endif %}
-                        {% endfor %}
-                    </dl>
+                    {% include 'meal/menu_frag.html' with menu=meal.menu %}
                 </div>
             </div>
         </div>
