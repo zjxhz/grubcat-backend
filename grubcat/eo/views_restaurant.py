@@ -20,16 +20,23 @@ class OrderCheckInView(FormView):
     def form_valid(self, form):
         code = form.cleaned_data['code']
         order = Order.objects.filter(code=code)
-
+        order.select_related('meal')
         #TODO uncomment this below
         if order:
             order = order[0]
-            #        if order and order[0].meal.restaurant == self.request.user.restaurant:
-        #            order = order[0]
-        #        else:
-        #            order = None
-        return render_to_response("restaurant/checkin_result.html", {'order': order})
+        return render_to_response("restaurant/checkin_result.html", get_order_info(order))
 
+def get_order_info(order):
+    is_today = order.meal.start_date == date.today()
+    all_persons = checked_persons = 0
+    useful_orders = Order.objects.filter(status__in=(OrderStatus.CREATED, OrderStatus.PAYIED, OrderStatus.USED),meal=order.meal)
+    #TODO remove created orders after alipay is implemented
+    for o in useful_orders :
+        all_persons += o.num_persons
+        if o.status == OrderStatus.USED:
+            checked_persons += o.num_persons
+    return {'order': order, 'is_today': is_today, 'all_persons': all_persons, 'checked_persons': checked_persons,
+         'unchecked_persons': all_persons - checked_persons}
 
 def use_order(request):
     '''用户就餐时，餐厅管理员标记订单为已使用'''
@@ -40,7 +47,7 @@ def use_order(request):
         order.completed_time = now()
         order.status = OrderStatus.USED
         order.save()
-        return create_sucess_json_response('使用订单成功')
+        return render_to_response("restaurant/checkin_result.html", get_order_info(order))
 
 
 def add_dish_category(request):
@@ -140,12 +147,12 @@ def add_edit_menu(request, pk=None):
             if 'num' in item:
                 #dish
                 dish = Dish(id=item['id'])
-                dish_item = DishItem(menu=menu, dish=dish, num=item['num'],order_no=order_no+1 ) #start from 1
+                dish_item = DishItem(menu=menu, dish=dish, num=item['num'], order_no=order_no + 1) #start from 1
                 dish_item.save()
             else:
                 #category
                 dish_category = DishCategory(id=item['id'])
-                category_item = DishCategoryItem(menu=menu, category=dish_category, order_no=order_no+1 )
+                category_item = DishCategoryItem(menu=menu, category=dish_category, order_no=order_no + 1)
                 category_item.save()
         return create_sucess_json_response(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
@@ -170,10 +177,10 @@ def add_edit_menu(request, pk=None):
         menu_form = MenuForm(instance=menu)
         category_form = DishCategoryForm()
     return render_to_response("restaurant/add_edit_menu.html",
-            {'request': request, 'categories': categories, 'category_form': category_form,
-             'dishes_with_no_category': dishes_with_no_category,
-             'categories_with_no_dish': categories_with_no_dish,
-             'menu': menu, 'menu_form': menu_form})
+        {'request': request, 'categories': categories, 'category_form': category_form,
+         'dishes_with_no_category': dishes_with_no_category,
+         'categories_with_no_dish': categories_with_no_dish,
+         'menu': menu, 'menu_form': menu_form})
 
 
 def add_menu(request):
