@@ -11,20 +11,20 @@ from grubcat.eo.models import *
 class MealForm(ModelForm):
     menu_id = forms.CharField(widget=HiddenInput, required=False)
 
-#    def __init__(self, *args, **kwargs  ):
-#        super(MealForm, self).__init__(*args, **kwargs)
-#        interest_groups = kwargs.get('initial').get('request').user.interest_groups.all()
-#        if interest_groups:
-#            self.fields['group'].queryset = interest_groups
-#        else:
-#            del self.fields['group']
+    #    def __init__(self, *args, **kwargs  ):
+    #        super(MealForm, self).__init__(*args, **kwargs)
+    #        interest_groups = kwargs.get('initial').get('request').user.interest_groups.all()
+    #        if interest_groups:
+    #            self.fields['group'].queryset = interest_groups
+    #        else:
+    #            del self.fields['group']
 
 
     class Meta:
         model = Meal
         fields = (
-        'topic', 'introduction', 'start_date', 'start_time', 'region', 'min_persons', 'list_price',
-         )
+            'topic', 'introduction', 'start_date', 'start_time', 'region', 'min_persons', 'list_price',
+            )
         widgets = {
             'introduction': Textarea({'rows': 5}),
             'extra_requests': Textarea({'rows': 5}),
@@ -117,34 +117,50 @@ class ImgTestForm(ModelForm):
 class UploadAvatarForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields=('avatar','cropping')
+        fields = ('avatar', 'cropping')
         widgets = {
             'avatar': ImageCropWidget,
-            }
+        }
+
 
 class BasicProfileForm(ModelForm):
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        if len(tags) < 3:
+            raise forms.ValidationError(u"请至少输入3个兴趣标签吧，这样会让别人更加了解你哦！")
+        return tags
+
+
     class Meta:
         model = UserProfile
-        fields=('name','motto','birthday','gender','college','business','work_for','occupation', 'tags')
+        fields = ('name', 'motto', 'birthday', 'gender', 'college', 'business', 'work_for', 'occupation', 'tags')
         widgets = {
-            'gender' : RadioSelect(choices=GENDER_CHOICE,),
-            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
+            'gender': RadioSelect(choices=GENDER_CHOICE, ),
+            'birthday': SelectDateWidget(required=False, years=range(1916, 1996), attrs={'class': "input-small"}, )
 
         }
+
 
 class BindProfileForm(ModelForm):
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        if len(tags) < 3:
+            raise forms.ValidationError(u"请至少输入3个兴趣标签吧，这样会让别人更加了解你哦！")
+        return tags
+
     class Meta:
         model = UserProfile
-        fields=('name','gender','tags')
+        fields = ('name', 'gender', 'tags')
         widgets = {
-            'gender' : RadioSelect(choices=GENDER_CHOICE,),
-#            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
+            'gender': RadioSelect(choices=GENDER_CHOICE, ),
+            #            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
         }
+
 
 class PhotoForm(ModelForm):
     class Meta:
         model = UserPhoto
-        fields=('photo',)
+        fields = ('photo',)
 
 
 #restaurant admin related
