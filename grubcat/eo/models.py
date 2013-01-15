@@ -478,7 +478,7 @@ class UserProfile(models.Model):
     cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)
     constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
-    birthday = models.DateField(u'生日', null=True, blank=False)
+    birthday = models.DateField(u'生日', null=True, blank=True)
     college = models.CharField(u'学校', max_length=64, null=True, blank=True)
     business = models.SmallIntegerField(u'行业', null=True, blank=True, choices=BUSINESS_CHOICE)
     work_for = models.CharField(u'公司', max_length=64, null=True, blank=True)
