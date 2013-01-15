@@ -15,23 +15,17 @@
     <script type="text/javascript">
         $(function () {
             {% if order.meal.menu %}
-                $('#map').gmap3(
-                        {
-                            marker:{
-                                values:{
-                                    address:"{{ order.meal.menu.restaurant.address }}"
-                                }
-
-                            },
-                            map:{
-                                options:{
-                                    zoom:15,
-                                    center
-
-                                }
-                            }
+                $('#map').gmap3({
+                    marker:{
+                        {#                        address:"{{ order.meal.menu.restaurant.address }}"#}
+                                                latLng: [{{ order.meal.menu.restaurant.latitude }}, {{ order.meal.menu.restaurant.longitude }}]
+                    },
+                    map:{
+                        options:{
+                            zoom:15
                         }
-                );
+                    }
+                });
             {% endif %}
         })
     </script>

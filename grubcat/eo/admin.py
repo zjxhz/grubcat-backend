@@ -42,6 +42,9 @@ class DishItemInline(admin.StackedInline):
 class DishCategoryItemInline(admin.StackedInline):
     model = DishCategoryItem
 
+class RestaurantAdmin(admin.ModelAdmin):
+    list_display = ('name','latitude','longitude','address')
+
 class MenuAdmin(admin.ModelAdmin):
     list_display = ('restaurant','status','id','num_persons','average_price',)
     list_filter = ('restaurant','status')
@@ -64,10 +67,10 @@ class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
 #admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Restaurant)
 admin.site.register(Dish, DishAdmin)
 admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu,MenuAdmin)
+admin.site.register(Restaurant,RestaurantAdmin)
 admin.site.register(UserTag)
 admin.site.register(UserProfile,UserProfileAdmin)
 admin.site.register(GroupCategory)
