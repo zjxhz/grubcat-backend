@@ -48,18 +48,6 @@
                     </div>
                 </div>
 
-                <div class="control-group birthday ">
-
-                    <label class="control-label" for="id_birthday_year"> * 生日：</label>
-
-                    <div class="controls">
-
-                        {{ form.birthday }}
-                        {{ form.birthday.errors }}
-
-                    </div>
-                </div>
-
 
                 <div class="control-group interest-tags"  id="interst-tags-wrapper">
 
@@ -80,6 +68,18 @@
                     <div class="controls">
                         <textarea id="id_motto" class="input-xlarge" type="text" name="motto" rows="2"
                                 >{{ form.motto.value|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="control-group birthday ">
+
+                    <label class="control-label" for="id_birthday_year"> 生日：</label>
+
+                    <div class="controls">
+
+                        {{ form.birthday }}
+                        {{ form.birthday.errors }}
+
                     </div>
                 </div>
 
