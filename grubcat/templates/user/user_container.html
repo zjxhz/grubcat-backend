@@ -13,7 +13,6 @@
 {#                    <div class="speech-arrow"></div>#}
                     <div class="speech-inner">
                         <p> {% if user.motto %}" {{ user.motto }} "{% else %}{% comment %}IT/诺基亚西门子/设计师 {% endcomment %}{% endif %}</p>
-                    <p>common num: {{ user.similar_tags }}</p>
                         <ul class="tags">
 
                             {% for tag in user.tags.all %}
@@ -28,6 +27,6 @@
 </div>
 
 <div id="page-nav">
-    <a href="{% url more_user page_obj.next_page_number %}"></a>
+    <a href="{% url more_user page_obj.next_page_number %}{% if 'show' in request.GET  %}?show=common{% endif %}"></a>
 </div>
 
