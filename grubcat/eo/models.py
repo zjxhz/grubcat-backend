@@ -713,7 +713,7 @@ class UserPhoto(models.Model):
 
     @property
     def large_photo(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 700),
+        return get_thumbnailer(self.photo).get_thumbnail({'size': (700,1400 ),
                                                           'crop': False,
                                                           'detail': True
         }).url

@@ -6,10 +6,15 @@
   margin-top: 40px;
 }
 
-.actions{
-  font-size:15px;
+.actions {
+  font-size: 15px;
   .clearfix();
   margin-bottom: 10px;
+  .upload-photo-link {
+    background: url("../img/upload-photo.png") no-repeat scroll -24px 1px transparent;
+    padding-left: 24px;
+    margin-left: 10px;
+  }
 }
 
 #profile-sidebar { // border-right: 1px solid #e5e5e5;
@@ -82,7 +87,7 @@
   }
 }
 
-.photo-direction{
+.photo-direction {
   background: url("../img/direction.png") no-repeat;
   position: absolute;
   right: 10px;
@@ -95,25 +100,23 @@
 }
 
 .photo-direction-active {
-  .photo-direction{
+  .photo-direction {
     .opacity(40);
   }
-  .photo-next.highlight, .photo-prev.highlight{
+  .photo-next.highlight, .photo-prev.highlight {
     .opacity(100);
   }
 }
 
-.photo-next{
+.photo-next {
   background-position: -28px -1px;
   right: 10px;
 }
 
-.photo-prev{
+.photo-prev {
   background-position: -83px -1px;
   left: 10px;
 }
-
-
 
 .upload-photo {
   #id_upload_photo_form {
@@ -309,6 +312,21 @@ div.control-group.interest-tags {
   }
   .controls {
     margin-left: 100px;
+  }
+}
+
+#upload_avatar_form{
+  overflow: hidden;
+  position: relative;
+  #id_avatar_for_upload {
+    font-size: 27px;
+    position: absolute;
+    cursor: pointer;
+    height: auto;
+    right: 134px;
+    top: 14px;
+    .opacity(0);
+    z-index: 100001;
   }
 }
 

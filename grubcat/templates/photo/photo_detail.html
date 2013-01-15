@@ -11,11 +11,12 @@
                 <
                 <返回相册
             </a>
-            {% if is_mine %}<a class="del-photo-link fr" href="{% url del_photo photo.id %}"><i
-                    class="icon-remove"></i>删除照片</a> {% endif %}
+            {% if is_mine %}<a class="upload-photo-link fr" href="{% url upload_photo %}">上传照片</a>
+                <a class="del-photo-link fr" href="{% url del_photo photo.id %}"><i
+                        class="icon-remove"></i>删除照片</a> {% endif %}
         </div>
-        <div id="photo-wrapper" >
-            <a href="#">
+        <div id="photo-wrapper">
+            <a href="{% url photo_detail photo.id %}">
                 <img id="photo" src="{{ photo.large_photo }}">
             </a>
             <span class="photo-direction photo-prev " url='{% url photo_detail pre_photo.id %}' title="上一张"></span>

@@ -758,7 +758,7 @@ class UploadAvatarView(UpdateView):
             return HttpResponseRedirect(reverse('upload_avatar'))
         else:
             data = {'big_avatar_url': self.object.big_avatar}
-            return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+            return HttpResponse(simplejson.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
 
 class ProfileUpdateView(UpdateView):
