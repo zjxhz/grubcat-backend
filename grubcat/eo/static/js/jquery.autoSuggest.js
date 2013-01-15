@@ -127,7 +127,7 @@
 				
 				// Handle input field events
 				input.focus(function(){
-					if($(this).val() == opts.startText && values_input.val() == ""){
+					if($(this).val() == opts.startText){
 						$(this).val("");
 					} else if(input_focus){
 						$("li.as-selection-item", selections_holder).removeClass("blur");
