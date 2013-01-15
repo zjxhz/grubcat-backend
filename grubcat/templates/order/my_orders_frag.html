@@ -1,11 +1,11 @@
 {% load static from staticfiles %}
 {% with meal=order.meal %}
     <div class="meal-cell span4 fl">
-        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
-        <a href="{% url order_detail meal.id order.id %}" class="order-detail-link">订单详情</a>
+        <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}" target="_blank">{{ meal.topic }}</a></h2>
+        <a href="{% url order_detail meal.id order.id %}" target="_blank" class="order-detail-link">订单详情</a>
 
         <div class="meal-img-wrapper ">
-            <a href="{{ meal.get_absolute_url }}">
+            <a href="{{ meal.get_absolute_url }}" target="_blank">
                 <img width="285" height="190" src="{% static 'img/meal-placeholder.png' %}"
                      class="lazy img-polaroid"
                      data-original="{{ meal.get_small_cover_url }}">

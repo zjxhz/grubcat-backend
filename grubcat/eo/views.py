@@ -37,8 +37,8 @@ class PhotoCreateView(CreateView):
         photo = form.save(False)
         photo.user = self.request.user.get_profile()
         super(PhotoCreateView, self).form_valid(form)
-        data = {'status': SUCESS,'redirect_url':reverse('photo_detail',kwargs={'pk':photo.id})}
-        return HttpResponse(simplejson.dumps(data),) #text/html hack for IE ajax upload file
+        data = {'status': SUCESS, 'redirect_url': reverse('photo_detail', kwargs={'pk': photo.id})}
+        return HttpResponse(simplejson.dumps(data), ) #text/html hack for IE ajax upload file
 
     def get_context_data(self, **kwargs):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
@@ -81,18 +81,18 @@ class PhotoListView(ListView):
     def get_queryset(self):
         return UserPhoto.objects.filter(user__id=self.kwargs.get('user_id'))
 
+
 def del_photo(request, pk):
     if request.method == 'POST':
         photo = UserPhoto.objects.get(pk=pk)
         if photo.user == request.user.get_profile():
             photo.delete()
-            return create_sucess_json_response(u'成功删除照片！', {'redirect_url': reverse('photo_list',kwargs={'user_id':request.user.get_profile().id})})
+            return create_sucess_json_response(u'成功删除照片！',
+                {'redirect_url': reverse('photo_list', kwargs={'user_id': request.user.get_profile().id})})
         else:
             return create_no_right_response(u'对不起，只有照片的所有者才能删除该照片')
     elif request.method == 'GET':
-        return HttpResponseRedirect( reverse('photo_detail', kwargs={'pk':pk}))
-
-
+        return HttpResponseRedirect(reverse('photo_detail', kwargs={'pk': pk}))
 
 
 ###Menu related views ###
@@ -153,13 +153,15 @@ class MealCreateView(CreateView):
 
 
 class MealListView(ListView):
-    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date",
+    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
+        Q(start_date__gt=date.today()) | Q(start_date=date.today(),
+            start_time__gt=datetime.now().time())).order_by("start_date",
         "start_time")
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
-### group related views ###
+    ### group related views ###
 class GroupListView(ListView):
 #    TODO order by member num
     queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
@@ -354,7 +356,8 @@ class UserListView(ListView):
         if self.request.GET.get('show') and self.request.user.is_authenticated() and self.request.user.is_active:
             return self.request.user.get_profile().tags.similar_objects();
         else:
-            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").exclude(user__restaurant__isnull=False).select_related('tags').order_by(
+            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").exclude(
+                user__restaurant__isnull=False).select_related('tags').order_by(
                 '-id')
 
 
