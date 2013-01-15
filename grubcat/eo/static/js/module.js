@@ -121,10 +121,11 @@
                 var $close = $('<a class="as-close">&times;</a>').click(function () {
                     $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ","));
                     $(this).parent('li').remove();
-                    $input.focus();
+                    $input.click();
                     return false;
                 });
                 $("#as-original-tags").before($item.html(valueToAdd).prepend($close));
+                $input.focus();
             }
             if ($(this).siblings('li').length == 0) {
                 $("#change_hot_tags").click();
