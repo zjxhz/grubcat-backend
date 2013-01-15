@@ -8,9 +8,25 @@
 {% endblock %}
 
 {% block content %}
-    {% if 'show' not in request.GET and user.is_authenticated and user.is_active%}
-        <a href="{% url user_list %}?show=common" class="fr">寻找志同道合的朋友</a>
+
+    {% if not user_list %}
+        <div class="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            请完善你的兴趣爱好吧，这样便可以找到那些和你有着共同喜好的朋友了！<a href="{% url edit_basic_profile %}">修改资料</a>
+        </div>
+    {%elif not user.get_profile.avatar %}
+        <div class="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            你还没有上传头像，其他朋友无法在这里看到你哦！赶快去 <a href="{% url edit_basic_profile %}">上传头像</a> 吧！
+        </div>
     {% endif %}
+
+    {% if 'show' not in request.GET and user.is_authenticated and user.is_active%}
+        <div class="show-users-actions clearfix">
+            <a href="{% url user_list %}?show=common" class="fr">寻找志同道合的朋友</a>
+        </div>
+    {% endif %}
+
     {% include "user/user_container.html" %}
     <a id="ajax-load-image-id" style="display: none" href="{% static 'img/ajax-loader.gif' %}"></a>
 {% endblock %}
