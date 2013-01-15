@@ -21,22 +21,27 @@ class OrderCheckInView(FormView):
         code = form.cleaned_data['code']
         order = Order.objects.filter(code=code)
         order.select_related('meal')
+        data = {}
         #TODO uncomment this below
         if order:
             order = order[0]
-        return render_to_response("restaurant/checkin_result.html", get_order_info(order))
+            data = get_order_info(order)
+        return render_to_response("restaurant/checkin_result.html", data)
+
 
 def get_order_info(order):
     is_today = order.meal.start_date == date.today()
     all_persons = checked_persons = 0
-    useful_orders = Order.objects.filter(status__in=(OrderStatus.CREATED, OrderStatus.PAYIED, OrderStatus.USED),meal=order.meal)
+    useful_orders = Order.objects.filter(status__in=(OrderStatus.CREATED, OrderStatus.PAYIED, OrderStatus.USED),
+        meal=order.meal)
     #TODO remove created orders after alipay is implemented
-    for o in useful_orders :
+    for o in useful_orders:
         all_persons += o.num_persons
         if o.status == OrderStatus.USED:
             checked_persons += o.num_persons
     return {'order': order, 'is_today': is_today, 'all_persons': all_persons, 'checked_persons': checked_persons,
-         'unchecked_persons': all_persons - checked_persons}
+            'unchecked_persons': all_persons - checked_persons}
+
 
 def use_order(request):
     '''用户就餐时，餐厅管理员标记订单为已使用'''

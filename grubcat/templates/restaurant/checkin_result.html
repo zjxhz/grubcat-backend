@@ -31,10 +31,6 @@
                     {{ order.meal.start_date|date:"D" }}{% endif %}
                     {{ order.meal.start_time|date:"G:i " }}</td>
             </tr>
-            {% comment %} <tr>
-                <th>就餐桌号</th>
-                <td><strong>16</strong></td>
-            </tr>{% endcomment %}
             <tr>
                 <th>供几人使用</th>
                 <td>{{ order.num_persons }}</td>
@@ -45,12 +41,19 @@
             </tr>
             </tbody>
         </table>
+    <div id="menu">
+        <h4>菜单 {{ order.meal.menu.name }}</h4><hr/>
+        {% include 'meal/menu_frag.html' with menu=order.meal.menu %}
+    </div>
     </div>
 
     <div class="span5">
         <a href="{% url meal_detail order.meal.id %}" target="_blank">
             <img alt="饭局主题5" id="meal-photo" src="{{ order.meal.get_cover_url }}" width="360"
                  height="240" class="img-polaroid fr"></a>
+    </div>
+    <div class="span5">
+
     </div>
 {% else %}
     <div class="span10"><h3 class="alert alert-error">订单不存在！</h3></div>
