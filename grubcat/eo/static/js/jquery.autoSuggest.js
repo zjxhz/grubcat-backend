@@ -24,7 +24,7 @@
 		var defaults = {
 			asHtmlID: false,
 			startText: "Enter Name Here",
-			emptyText: "按Tab键添加",
+			emptyText: "按空格键添加",
 			preFill: {},
 			limitText: "No More Selections Are Allowed",
 			selectedItemProp: "value", //name of object property
@@ -181,7 +181,7 @@
 								timeout = setTimeout(function(){ keyChange(); }, opts.keyDelay);
 							}
 							break;
-						case 9: case 188:  // tab or comma
+						case 9:case 188: case 32:  // tab or comma or space
 							tab_press = true;
 							var i_input = input.val().replace(/(,)/g, "");
 							if(i_input != "" && (","+values_input.val()).replace(/\s*,\s*/g,',').search(","+i_input+",") < 0 && i_input.length >= opts.minChars){
@@ -192,7 +192,9 @@
 								var lis = $("li", selections_holder).length;
 								add_selected_item(n_data, "00"+(lis+1));
 								input.val("");
+                                results_holder.hide();
 							}
+
                             return false;
 						case 13: // return
 							tab_press = false;
