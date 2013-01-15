@@ -30,7 +30,21 @@
     var $nextPhoto = $(".photo-next");
     var $prevPhoto = $(".photo-prev");
 //    if($photo.find('a').attr('href') != $nextPhoto.attr('url')){
-        $photo.click(function (e) {
+    $photo.click(function (e) {
+        if (e.clientX - $(this).offset().left < $(this).width() / 2) {
+            $prevPhoto.addClass('highlight');
+            $nextPhoto.removeClass('highlight');
+        } else if (e.clientX - $(this).offset().left <= $(this).width()) {
+            $nextPhoto.addClass('highlight');
+            $prevPhoto.removeClass('highlight');
+        }
+        window.location = $(".highlight").attr('url')
+        return false;
+    }).hover(function () {
+            $photo.addClass('photo-direction-active')
+        },function () {
+            $photo.removeClass('photo-direction-active')
+        }).mousemove(function (e) {
             if (e.clientX - $(this).offset().left < $(this).width() / 2) {
                 $prevPhoto.addClass('highlight');
                 $nextPhoto.removeClass('highlight');
@@ -38,21 +52,7 @@
                 $nextPhoto.addClass('highlight');
                 $prevPhoto.removeClass('highlight');
             }
-            window.location = $(".highlight").attr('url')
-            return false;
-        }).hover(function () {
-                $photo.addClass('photo-direction-active')
-            },function () {
-                $photo.removeClass('photo-direction-active')
-            }).mousemove(function (e) {
-                if (e.clientX - $(this).offset().left < $(this).width() / 2) {
-                    $prevPhoto.addClass('highlight');
-                    $nextPhoto.removeClass('highlight');
-                } else if (e.clientX - $(this).offset().left <= $(this).width()) {
-                    $nextPhoto.addClass('highlight');
-                    $prevPhoto.removeClass('highlight');
-                }
-            })
+        })
 //    } else{
 //        $photo.click(function (e) {return false;}).style.cursor  ='none'
 //    }
@@ -93,17 +93,21 @@
         $("#id_tags").autoSuggest($("#data").attr('list-tags-url'), {
             asHtmlID:'tags',
             preFill:user_tags,
+            keyDelay:100,
             neverSubmit:true,
             startText:'请输入你的兴趣爱好，这样别人会更好地了解你，系统也会优先展示和你有共同兴趣的朋友'
         })
         $('#tags').parents().find('form').submit(function () {
+            var e = jQuery.Event("keydown");//模拟一个键盘事件
+            e.keyCode = 32;//keyCode=32 空格
+            $('#tags').trigger(e)
             $("#tags").remove();
             $("#as-values-tags").attr('name', 'tags');
         });
 
-       /* $(".interest-tags").click(function () {
-            $(".hot-tags").show()
-        })*/
+        /* $(".interest-tags").click(function () {
+         $(".hot-tags").show()
+         })*/
 
         $(".hot-tags li").live('click', function () {
             var $input = $("#tags");
