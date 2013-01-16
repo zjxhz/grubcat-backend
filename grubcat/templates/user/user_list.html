@@ -9,19 +9,20 @@
 
 {% block content %}
 
-    {% if not user_list %}
+    {% if need_edit_tags %}
         <div class="alert">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            请完善你的兴趣爱好吧，这样便可以找到那些和你有着共同喜好的朋友了！<a href="{% url edit_basic_profile %}">修改资料</a>
+            请完善你的兴趣爱好吧，这样便可以找到那些和你有着共同喜好的朋友了！去<a href="{% url edit_basic_profile %}">完善兴趣爱好</a>吧！
         </div>
-    {%elif not user.get_profile.avatar %}
+    {% endif %}
+    {% if need_upload_avatar %}
         <div class="alert">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             你还没有上传头像，其他朋友无法在这里看到你哦！赶快去 <a href="{% url edit_basic_profile %}">上传头像</a> 吧！
         </div>
     {% endif %}
 
-    {% if 'show' not in request.GET and user.is_authenticated and user.is_active%}
+    {% if show_common_tags_link %}
         <div class="show-users-actions clearfix">
             <a href="{% url user_list %}?show=common" class="fr">寻找志同道合的朋友</a>
         </div>
@@ -36,7 +37,7 @@
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
-        var tags =    [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}',{% endif %}   {% endfor %}];
+        var tags = [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
     </script>
 {% endblock %}
 

@@ -24,9 +24,12 @@ $(function () {
             nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
             itemSelector:'.box', // selector for all items you'll retrieve
             animate:false,
-
-//            speed:100,
-//            debug:true,
+            /*finished:function(){
+              alert('aa')
+            },*/
+            extendFinished: function(responseText){
+                $("#main-container").append($(responseText).siblings("div.alert"))
+            },
             loading:{
                 msgText:'加载中...',
                 finishedMsg:'没有了！',
@@ -48,6 +51,8 @@ $(function () {
                     $(this).addClass('common');
                 }
             })
+            if($(newElements).find("div.alert")[0]) alert('true')
+//            $("#user-container").append($(newElements).find("div.alert"));
         }
     );
 

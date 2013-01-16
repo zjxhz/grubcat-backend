@@ -72,7 +72,7 @@ module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version
 auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
 
 water_fall_js = Bundle(
-    'js/jquery.infinitescroll.min.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',
+    'js/jquery.infinitescroll.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',filters='jsmin',
     output='gen/water-fall.%(version)s.js'
 )
 user_list_js = Bundle(

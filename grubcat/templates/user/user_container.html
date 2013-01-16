@@ -3,16 +3,17 @@
         <div class="box ">
             <div class="user-img">
                 <a href="{% url user_detail user.id %}" title="{{ user.name|default:'' }}" target="_blank">
-                    <img   src="{{ user.big_avatar }}"  alt="{{ user.name|default:'' }}" width="176px" height="176px">
+                    <img src="{{ user.big_avatar }}" alt="{{ user.name|default:'' }}" width="176px" height="176px">
                 </a>
             </div>
 
-{#            TODO to remove none check#}
+            {#            TODO to remove none check#}
             {% if user.motto or user.tags.all %}
                 <div class="speech-outer">
-{#                    <div class="speech-arrow"></div>#}
+                    {#                    <div class="speech-arrow"></div>#}
                     <div class="speech-inner">
-                        <p> {% if user.motto %}" {{ user.motto }} "{% else %}{% comment %}IT/诺基亚西门子/设计师 {% endcomment %}{% endif %}</p>
+                        <p> {% if user.motto %}" {{ user.motto }} "{% else %}
+                            {% comment %}IT/诺基亚西门子/设计师 {% endcomment %}{% endif %}</p>
                         <ul class="tags">
 
                             {% for tag in user.tags.all %}
@@ -25,8 +26,13 @@
         </div>
     {% endfor %}
 </div>
-
+{% if need_edit_tags_again %}
+    <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        怎么这么少？不会吧！再去完善下你的兴趣爱好，这样才能找到更多和你有共同喜好的朋友哦~ 再去<a href="{% url edit_basic_profile %}">完善下兴趣爱好</a>吧！
+    </div>
+{% endif %}
 <div id="page-nav">
-    <a href="{% url more_user page_obj.next_page_number %}{% if 'show' in request.GET  %}?show=common{% endif %}"></a>
+    <a href="{% url more_user page_obj.next_page_number %}{% if 'show' in request.GET %}?show=common{% endif %}"></a>
 </div>
 
