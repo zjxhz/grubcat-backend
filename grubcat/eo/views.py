@@ -353,12 +353,28 @@ class UserListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        if self.request.GET.get('show') and self.request.user.is_authenticated() and self.request.user.is_active:
+        if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.get_profile().tags.similar_objects();
         else:
             return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").exclude(
                 user__restaurant__isnull=False).select_related('tags').order_by(
                 '-id')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_authenticated():
+            if not user.get_profile().tags.all():
+                context['need_edit_tags'] = True
+            if not user.get_profile().avatar:
+                context['need_upload_avatar'] = True
+            print context['page_obj'].has_next()
+            print context['page_obj'].number
+            if self.request.GET.get('show') != 'common':
+                context['show_common_tags_link'] = True
+            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
+                context['need_edit_tags_again'] = True
+        return context
 
 
 class UserDetailView(DetailView):

@@ -130,7 +130,7 @@
             if ($(this).siblings('li').length == 0) {
                 $("#change_hot_tags").click();
             }
-            $(this).remove();
+//            $(this).remove();
         })
 
         $("#change_hot_tags").click(function () {

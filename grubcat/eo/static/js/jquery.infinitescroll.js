@@ -498,7 +498,8 @@
 	                        instance._debug('Using HTML via .load() method');
 	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
 	                            instance._loadcallback(box, responseText);
-	                        });
+                                if(opts.extendFinished) opts.extendFinished.call(this, responseText)
+                            });
 
 	                        break;
 

@@ -9,6 +9,9 @@
         <a id="crop-avatar-link" class="btn fl {% if not user.get_profile.avatar %}hide{% endif %} "
            href="{% url upload_avatar %}">裁剪头像</a>
     </form>
+   {% if not user.get_profile.avatar  %}
+        <div class="alert" id="avatar_alert">你还没有上传头像，其他朋友无法寻找到你哦！</div>
+   {% endif %}
     <div class="loading hide">上传中</div>
 </div>
 
