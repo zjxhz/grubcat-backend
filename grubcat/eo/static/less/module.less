@@ -394,11 +394,33 @@ img.seat-placeholder, a.user-img-wrapper {
   }
 
 }
-
+#map {
+  width: 540px;
+  height: 384px;
+  border: 1px solid #333;
+  img{
+    max-width: none;
+  }
+}
 /*create meal page*/
 #create-meal-page {
   .min_persons .errorlist, .region .errorlist, .list-price .errorlist {
     float: left;
+  }
+
+  #show_map_modal.modal{
+    width:1024px;
+    min-height: 600px;
+    height: 700px;
+    margin-left: -512px;
+    .modal-body{
+      max-height: 100%;
+    }
+  }
+
+  #map{
+    height: 100%;
+    width: 100%;
   }
   #restaurant-list {
     height: 377px;
@@ -635,7 +657,7 @@ img.seat-placeholder, a.user-img-wrapper {
     margin-left: 15px;
   }
 
-  a.map {
+  a.map-link {
     text-decoration: none;
     .border-radius(3px);
     color: #333;
