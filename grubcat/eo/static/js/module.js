@@ -282,6 +282,23 @@
             $("#menu-" + $(this).attr("menu-id")).show();
             $("#id_menu_id").val($(this).attr("menu-id"));
         })
+        $(".map-link").live("click", function () {
+            var $mapLink = $(this);
+            $("#show_map_modal").modal().on('shown', function () {
+                $('#map').gmap3({
+                    marker:{
+                        latLng:[$mapLink.attr('lat'), $mapLink.attr("long")]
+                    },
+                    map:{
+                        options:{
+                            zoom:15
+                        }
+                    }
+                })
+//                $("#map").gmap3({trigger:"resize"})
+            })
+            return false;
+        })
     }
 })
     (jQuery);
@@ -306,3 +323,4 @@ function showPreview(coords) {
         marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
     });
 }
+
