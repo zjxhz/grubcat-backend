@@ -89,7 +89,7 @@ restaurant_admin_js = Bundle(
 
 
 jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
-
+validate_js =  Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
 jquery_ajax_bootstrap_js = Bundle(
     'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
     output='gen/jquery.ajax.bootstrap.%(version)s.js'
@@ -127,6 +127,7 @@ register('user_list_js', user_list_js)
 #register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
+register('validate_js', validate_js)
 register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
 register('jquery_ui_js', jquery_ui_js)
 register('image_cropping_js', image_cropping_js)

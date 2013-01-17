@@ -77,6 +77,8 @@
 
     if ($("#meal-detail")[0]) {
 //    $("select").dropkick({width:30, startSpeed:0})
+        var leftPersons = $("#left_persons_tip").data('leftPersons');
+        $("#id_num_persons option:gt(" + (leftPersons-1) + ")").remove()
         $("#id_num_persons").change(function () {
             $("#total_price").html($("#meal_price").html() * $(this).val());
         })
@@ -89,37 +91,58 @@
 
     if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
         $("#profile-nav-info").addClass("active");
+
         var user_tags = $("#id_tags").val();
         $("#id_tags").autoSuggest($("#data").attr('list-tags-url'), {
             asHtmlID:'tags',
             preFill:user_tags,
             keyDelay:100,
             neverSubmit:true,
-            startText:'请输入你的兴趣爱好，这样别人会更好地了解你，系统也会优先展示和你有共同兴趣的朋友'
+            startText:''
         })
+
+        $("#as-values-tags").attr('required', '').attr('data-validation-required-message',
+            '请至少输入3个兴趣标签，这样会让别人更加了解你哦！')
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+
         $('#tags').parents().find('form').submit(function () {
+
             var e = jQuery.Event("keydown");//模拟一个键盘事件
             e.keyCode = 32;//keyCode=32 空格
             $('#tags').trigger(e)
-            $("#tags").remove();
-            $("#as-values-tags").attr('name', 'tags');
+
+
+            var tagsValue = $("#as-values-tags").val().replace(/^,|,$/g, '').split(',');
+            if (tagsValue.length < 3 && tagsValue.length > 0) { //tags num >1 and <3
+                $("<ul><li>请至少输入3个兴趣标签，这样会让别人更加了解你哦！</li></ul>").appendTo(".interest-tags .help-block");
+                $(".control-group.interest-tags").addClass("error")
+                return false;
+            }
+
+
+            if (!$("input,select,textarea").not("[type=submit]").jqBootstrapValidation("hasErrors")) {
+                $("#tags").remove();
+                $("#as-values-tags").attr('name', 'tags');
+            }
+
         });
 
-        /* $(".interest-tags").click(function () {
-         $(".hot-tags").show()
-         })*/
 
         $(".hot-tags li").live('click', function () {
             var $input = $("#tags");
             var valueToAdd = $(this).text().replace('+ ', '');
             var $tagsValues = $("#as-values-tags")
             if (("," + $tagsValues.val().replace(/\s+/g, '')).indexOf(',' + valueToAdd + ',') < 0) {
-                $tagsValues.val($tagsValues.val() + valueToAdd + ',');
+                $tagsValues.val(("," + $tagsValues.val() + valueToAdd + ',').replace(",,", ","));
                 var $item = $('<li class="as-selection-item"></li>').click(function () {
                     $(this).addClass("selected");
                 })
                 var $close = $('<a class="as-close">&times;</a>').click(function () {
-                    $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ","));
+                    if ($tagsValues.val().replace(/^,|,$/g, '').indexOf(',') < 0) {
+                        $tagsValues.val($tagsValues.val().replace(valueToAdd + ",", ""));
+                    } else {
+                        $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ",").replace(',,', ''));
+                    }
                     $(this).parent('li').remove();
                     $input.click();
                     return false;
@@ -134,6 +157,7 @@
         })
 
         $("#change_hot_tags").click(function () {
+            $(".hot-tags").show()
             var url = $(this).attr('href') + "?page=" + $(this).attr('page')
             $(this).attr('page', parseInt($(this).attr('page')) + 1)
 
@@ -153,6 +177,7 @@
 
         //upload avatar
         $("#id_avatar_for_upload").change(function () {
+            $("#avatar_alert").remove();
             var options = {
                 target:'#crop_avatar_wrapper', // target element(s) to be updated with server response
                 beforeSubmit:function () {
@@ -161,7 +186,7 @@
                 success:function (html) {
                     $(".avatar .loading").hide()
                     $("#avatar-wrapper img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'))
-                    $('#crop-avatar-link').show();
+                   $('#crop-avatar-link').show();
                     submit_crop_form();
                     $("#crop_avatar_modal").modal();
                     return false;
@@ -198,6 +223,15 @@
 
     }
     if ($("#create-meal-page")[0]) {
+
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+        id_menu_id
+        $("#create_meal_form").submit(function(){
+            if(!$("#id_menu_id").val()){
+                $("#choose-restaurant-msg").append('<ul class="errorlist"><li>请您在左边选择一个套餐</li></ul>');
+                return false;
+            }
+        })
         function getMenuList(numPersons, menuIdToSelect, if_let_fanjoin_choose) {
             $("#choose-menu-wrapper").css('visibility', 'hidden');
             $ajax_loader = $('#loading-menus');
@@ -323,4 +357,3 @@ function showPreview(coords) {
         marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
     });
 }
-

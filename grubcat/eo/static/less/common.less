@@ -1,5 +1,6 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
+
 .navbar {
   margin-bottom: 15px;
   font-size: 16px;
@@ -16,24 +17,23 @@
   list-style: none;
 }
 
-.error {
+.error-page {
   margin: auto auto;
   width: 800px;
   padding: 40px;
-}
-
-.error h3 {
-  text-align: center;
-  font-weight: normal;
-  font-size: 16px;
+  h3 {
+    text-align: center;
+    font-weight: normal;
+    font-size: 16px;
+  }
 }
 
 ul.dropdown-menu {
   min-width: 120px;
-  li{
+  li {
     height: 30px;
   }
-  li.divider{
+  li.divider {
     margin: 5px 1px;
   }
 }
@@ -47,9 +47,8 @@ option {
   padding-left: 10px;
 }
 
-ul.as-selections{
-  display: inline-block;
-//  height: @baseLineHeight;
+ul.as-selections {
+  display: inline-block; //  height: @baseLineHeight;
   padding: 4px 4px;
   margin-bottom: @baseLineHeight / 2;
   font-size: @baseFontSize;
@@ -60,24 +59,45 @@ ul.as-selections{
   background-color: @inputBackground;
   border: 1px solid @inputBorder;
   .box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  .transition(~"border linear .2s, box-shadow linear .2s");
-
-// Focus state
+  .transition(~"border linear .2s, box-shadow linear .2s"); // Focus state
   &:focus {
-    border-color: rgba(82,168,236,.8);
+    border-color: rgba(82, 168, 236, .8);
     outline: 0;
-    outline: thin dotted \9; /* IE6-9 */
+    outline: thin dotted   \9; /* IE6-9 */
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
   }
 }
 
-#login_link{
+#login_link {
   padding-left: 40px;
   background: url("../img/auth-weibo-big.png") no-repeat scroll 10px 14px transparent;
 }
 
-#upload_photo_modal.modal{
-  width:400px;
-  top:30%;
+#upload_photo_modal.modal {
+  width: 400px;
+  top: 30%;
   margin-left: -200px;
+}
+
+.control-group {
+  &.error, &.warning {
+    #tags {
+      border: none;
+      box-shadow: none;
+    }
+
+    .help-block {
+      width: 280px;
+      margin-top: 0px;
+
+      ul {
+        list-style: none;
+        margin: 0;
+        li {
+          padding-top: 4px;
+          line-height: 25px;
+        }
+      }
+    }
+  }
 }

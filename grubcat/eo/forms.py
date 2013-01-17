@@ -127,7 +127,7 @@ class BasicProfileForm(ModelForm):
     def clean_tags(self):
         tags = self.cleaned_data['tags']
         if len(tags) < 3:
-            raise forms.ValidationError(u"请至少输入3个兴趣标签吧，这样会让别人更加了解你哦！")
+            raise forms.ValidationError(u"请至少输入3个兴趣标签，这样会让别人更加了解你哦！")
         return tags
 
 
