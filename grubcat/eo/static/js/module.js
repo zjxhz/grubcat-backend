@@ -224,11 +224,10 @@
     }
     if ($("#create-meal-page")[0]) {
 
-        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
-        id_menu_id
+        $("#id_topic, #id_introduction").jqBootstrapValidation();
         $("#create_meal_form").submit(function(){
             if(!$("#id_menu_id").val()){
-                $("#choose-restaurant-msg").append('<ul class="errorlist"><li>请您在左边选择一个套餐</li></ul>');
+                $("#choose-restaurant-msg").html('<ul class="errorlist"><li>请您在左边选择一个套餐</li></ul>');
                 return false;
             }
         })
