@@ -93,9 +93,9 @@
             <div id="users" class="">
                 {% if meal.actual_persons %}
                     {% if meal.left_persons <= 0 %}
-                        <h3>没有空位了！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="0">没有空位了！</h3>
                     {% else %}
-                        <h3>还剩{{ meal.left_persons }}个空位，快来预定吧！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">还剩{{ meal.left_persons }}个空位，快来预定吧！</h3>
                     {% endif %}
                 {% else %}
                     <h3>现在还没有人参加饭局，赶快预定吧！</h3>

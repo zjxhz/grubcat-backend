@@ -22,6 +22,9 @@
     {% assets "jquery_dropkick_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    {% assets "validate_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
     <script type="text/javascript" src="http://maps.google.com.hk/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="{% static_asset 'js/gmap3.v5.0b.min.js' %}"></script>
     {% assets "module_js" %}
@@ -77,85 +80,94 @@
 
 {% block content %}
     <div id="create-meal-page">
-        <div class="form-wrapper span10 offset1">
-            <form id="create_meal_form" action="{% url create_meal %}" method="post"
-                  class="form form-horizontal"> {% csrf_token %}
-                <fieldset>
+    <div class="form-wrapper span10 offset1">
+        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+              class="form form-horizontal"> {% csrf_token %}
+            <fieldset>
 
-                    <legend>发起一个饭局</legend>
+                <legend>发起一个饭局</legend>
 
-                    <div class="control-group ">
+                <div class="control-group ">
 
-                        <label class="control-label" for="id_topic">饭局主题</label>
+                    <label class="control-label" for="id_topic">饭局主题</label>
 
-                        <div class="controls">
-                            {{ form.topic }} {{ form.topic.errors }}
-                        </div>
+                    <div class="controls">
+                        <input id="id_topic" type="text" maxlength="64" name="topic"
+                               required data-validation-required-message="请输入饭局主题"
+                               value="{{ form.topic.value|default_if_none:'' }}">
+                        {{ form.topic.errors }}
                     </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="id_introduction">饭局简介</label>
-
-                        <div class="controls">
-                            {{ form.introduction }} {{ form.introduction.errors }}
-                        </div>
-                    </div>
-
-
-                    {#            </fieldset>#}
-
-                    {#            <fieldset class="full">#}
-
-                    {#                <legend>2、餐厅信息</legend>#}
-                    <div class="control-group start_time">
-                        <label class="control-label" for="id_privacy">就餐时间</label>
-
-                        <div class="controls">
-                            {{ form.start_date }} {{ form.start_time }}
-                            {{ form.start_date.errors }} {{ form.start_time.errors }}
-                        </div>
-                    </div>
-                    <div class="control-group min_persons">
-                        <label class="control-label" for="id_min_persons">就餐人数</label>
-
-                        <div class="controls">
-                            {{ form.min_persons }} {{ form.min_persons.errors }}
-                        </div>
-                    </div>
-                    <div id="choose-menu-container">
-                        <div id="loading-menus" class="hide"><img alt="载入菜单"
-                                                                  src="{% static_asset "img/loading-menus.gif" %}"/>
-                        </div>
-                        <div id="choose-menu-wrapper"></div>
-                    </div>
-                </fieldset>
-                {{ form.menu_id }}
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary btn-create-meal">确定</button>
                 </div>
-            </form>
-        </div>
 
-        <div id="choose-restaurant-msg" style="display: none">
+                <div class="control-group">
+                    <label class="control-label" for="id_introduction">饭局简介</label>
 
-            {% if form.menu_id.errors %}
-                {{ form.menu_id.errors }}
-            {% else %}
-                左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
-            {% endif %}
-        </div>
-        <div id="data" menu-list-link="{% url menu_list %}"></div>
+                    <div class="controls">
 
-        <div id="show_map_modal" class="modal fade" tabindex="-1" role="dialog" style="display: none"
-             aria-hidden="true">
-{#            <div class="modal-header">#}
-{#                <a href=""></a>#}
-{#            </div>#}
-{#            <div class="modal-body">#}
-{#                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>#}
-                <div id="map"></div>
-{#            </div>#}
-{#        </div>#}
+                        <textarea name="introduction" cols="40" rows="5" id="id_introduction"
+                                  required data-validation-required-message="请输入饭局简介">{{ form.introduction.value|default_if_none:"" }}</textarea>
+
+
+                        {{ form.introduction.errors }}
+                    </div>
+                </div>
+
+
+                {#            </fieldset>#}
+
+                {#            <fieldset class="full">#}
+
+                {#                <legend>2、餐厅信息</legend>#}
+                <div class="control-group start_time">
+                    <label class="control-label" for="id_privacy">就餐时间</label>
+
+                    <div class="controls">
+                        {{ form.start_date }} {{ form.start_time }}
+                        {{ form.start_date.errors }} {{ form.start_time.errors }}
+                    </div>
+                </div>
+                <div class="control-group min_persons">
+                    <label class="control-label" for="id_min_persons">就餐人数</label>
+
+                    <div class="controls">
+                        {{ form.min_persons }} {{ form.min_persons.errors }}
+                    </div>
+                </div>
+                <div id="choose-menu-container">
+                    <div id="loading-menus" class="hide"><img alt="载入菜单"
+                                                              src="{% static_asset "img/loading-menus.gif" %}"/>
+                    </div>
+                    <div id="choose-menu-wrapper"></div>
+                </div>
+                {{ form.menu_id }}
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-create-meal">确定</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="choose-restaurant-msg" style="display: none">
+
+        {% if form.menu_id.errors %}
+            {{ form.menu_id.errors }}
+        {% else %}
+            左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
+        {% endif %}
+    </div>
+    <div id="data" menu-list-link="{% url menu_list %}"></div>
+
+    <div id="show_map_modal" class="modal fade" tabindex="-1" role="dialog" style="display: none"
+         aria-hidden="true">
+        {#            <div class="modal-header">#}
+        {#                <a href=""></a>#}
+        {#            </div>#}
+        {#            <div class="modal-body">#}
+        {#                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>#}
+        <div id="map"></div>
+        {#            </div>#}
+        {#        </div>#}
 
     </div>
 {% endblock %}
