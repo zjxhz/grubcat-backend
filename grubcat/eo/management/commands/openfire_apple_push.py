@@ -15,6 +15,7 @@ class Command(BaseCommand):
         sender = args[0]
         receiver = args[1]
         message = args[2]  
+        unread_count = int(args[3])
         if len(message) > 160:
             message = message[0:160] + " ... "
   
@@ -23,7 +24,6 @@ class Command(BaseCommand):
         logger.info("%s->%s: %s" % (fromUser, toUser, message)) 
         
         if toUser.apns_token:
-            logger.debug("pushing message to %s from %s" % (toUser.name, fromUser.name))
-            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message), 1 ) #TODO now badge is always 1. should be recorded somewhere    
+            logger.debug("pushing message to %s from %s(%d unread)" % (toUser.name, fromUser.name, unread_count))
+            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message), unread_count )     
         return ""   
- 
