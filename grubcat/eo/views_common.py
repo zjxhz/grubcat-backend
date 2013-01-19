@@ -45,8 +45,8 @@ def list_tags(request):
 
     paginator = Paginator(tag_name_qs, 10)
     if paginator.num_pages >= page:
-        data = [{'value': tag[0]} for tag in paginator.page(page).object_list]
+        data = {"tags":[{'value': tag[0]} for tag in paginator.page(page).object_list]}
     else:
-        data = []
+        data = {"tags":[]}
     return create_json_response(extra_dict=data)
 

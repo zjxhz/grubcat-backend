@@ -175,9 +175,9 @@
             var url = $(this).attr('href') + "?page=" + $(this).attr('page')
             $(this).attr('page', parseInt($(this).attr('page')) + 1)
 
-            $.get(url, function (tags) {
+            $.get(url, function (data) {
                 $("ul.hot-tags li").remove()
-                var tag;
+                var tags = data.tags;
                 for (var i = 0; i < tags.length; i++) {
                     $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value + "</li>"))
                 }
