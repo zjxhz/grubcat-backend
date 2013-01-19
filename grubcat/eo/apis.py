@@ -325,8 +325,8 @@ class UserResource(ModelResource):
         del(kwargs['following_user_id'])
         me = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))        
         if request.method == 'DELETE':
-            user_to_be_not_followed = User.objects.get(id=to_person_id)
-            relationship = Relationship.objects.get(from_person=me, to_person=user_to_be_not_followed.get_profile()) 
+            user_to_be_not_followed = UserProfile.objects.get(id=to_person_id)
+            relationship = Relationship.objects.get(from_person=me, to_person=user_to_be_not_followed) 
             relationship.delete()
             return createGeneralResponse('OK', 'You are not following %s anymore' % user_to_be_not_followed)
         else:
