@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
-from idios.views import ProfileUpdateView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
 from eo.db import  updateLatLng
 from eo.decorators import restaurant_login_required, active_login_required
