@@ -25,5 +25,5 @@ class Command(BaseCommand):
         
         if toUser.apns_token:
             logger.debug("pushing message to %s from %s(%d unread)" % (toUser.name, fromUser.name, unread_count))
-            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message), unread_count )     
+            pyapns_wrapper.notify(toUser.apns_token, "%s: %s" % (fromUser.name, message.decode("utf-8")), unread_count )     
         return ""   
