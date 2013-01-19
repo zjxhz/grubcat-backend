@@ -16,13 +16,24 @@
             </a>
 
             <h3 class="tc">{% if profile.name %}{{ profile.name }} {% else %}{{ profile.user.username }}{% endif %}</h3>
+
+            {% if profile != user.get_profile %}
+                {% if profile not in user.get_profile.following.all %}
+                    <a href="{% url follow  profile.id %}" class="btn btn-follow">关注</a>
+                {% else %}
+                    <a href="{% url un_follow  profile.id %}" class="btn btn-unfollow">取消关注</a>
+                {% endif %}
+            {% endif %}
         </div>
 
         <div class="span9">
             <ul id="profile-nav" class="nav nav-pills">
-                <li><a href="">TA的资料</a></li>
-                <li><a href="">TA的饭局</a></li>
-                <li class="active"><a href="{% url photo_list profile.id %}">Ta的照片</a></li>
+                <li><a href="">资料</a></li>
+                <li><a href="">饭局</a></li>
+                <li class="active"><a href="{% url photo_list profile.id %}">相册</a></li>
+                {% if profile == user.get_profile %}
+                    <li class=""><a href="{% url following_list %}">关注/粉丝</a></li>
+                {% endif %}
 
             </ul>
 

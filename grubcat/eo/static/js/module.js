@@ -78,7 +78,7 @@
     if ($("#meal-detail")[0]) {
 //    $("select").dropkick({width:30, startSpeed:0})
         var leftPersons = $("#left_persons_tip").data('leftPersons');
-        $("#id_num_persons option:gt(" + (leftPersons-1) + ")").remove()
+        $("#id_num_persons option:gt(" + (leftPersons - 1) + ")").remove()
         $("#id_num_persons").change(function () {
             $("#total_price").html($("#meal_price").html() * $(this).val());
         })
@@ -87,6 +87,20 @@
             return false;
         })
 
+    }
+
+    if ($("#profile-page")[0]) {
+        $(".btn-follow, .btn-unfollow").live('click', function () {
+            var $btn = $(this);
+            $.post($(this).attr('href'), function (data) {
+                if (data.status == "OK") {
+                    $btn.replaceWith(data.html)
+                } else {
+                    setTimeout(function() { self.location.reload(); }, 1000);
+                }
+            })
+            return false;
+        })
     }
 
     if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
@@ -186,7 +200,7 @@
                 success:function (html) {
                     $(".avatar .loading").hide()
                     $("#avatar-wrapper img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'))
-                   $('#crop-avatar-link').show();
+                    $('#crop-avatar-link').show();
                     submit_crop_form();
                     $("#crop_avatar_modal").modal();
                     return false;
@@ -225,8 +239,8 @@
     if ($("#create-meal-page")[0]) {
 
         $("#id_topic, #id_introduction").jqBootstrapValidation();
-        $("#create_meal_form").submit(function(){
-            if(!$("#id_menu_id").val()){
+        $("#create_meal_form").submit(function () {
+            if (!$("#id_menu_id").val()) {
                 $("#choose-restaurant-msg").html('<ul class="errorlist"><li>请您在左边选择一个套餐</li></ul>');
                 return false;
             }

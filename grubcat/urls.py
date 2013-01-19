@@ -5,16 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
-from eo.db import query_restaurant_from_google, updateLatLng
+from eo.db import  updateLatLng
 from eo.decorators import restaurant_login_required, active_login_required
-from eo.views import  get_restaurant_list_by_geo, get_restaurant,\
-    get_recommended_dishes, restaurant_rating, get_restaurant_tags,\
-    get_restaurants_with_tag, get_regions, get_restaurants_in_region, restaurantList,\
-    favorite_restaurant, favorite_restaurants,\
-    get_following, remove_following, followers,\
-    get_recommended_following, messages,\
-    meal_participants, view_or_send_meal_invitations,\
-    accept_or_reject_meal_invitations, upload_app
+from eo.views import  upload_app
 from eo.views_common import list_tags
 from grubcat.eo.views import *
 from django.conf import settings
@@ -25,39 +18,37 @@ admin.autodiscover()
 urlpatterns = patterns('',
     #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
-    ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
-    ('^restaurant/(\d+)/$', get_restaurant),
-    ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
-    ('^restaurant/(\d+)/rating/$', restaurant_rating),
-    ('^restaurant_tag/$', get_restaurant_tags),
-    ('^restaurant_tag/(\d+)/restaurant/$', get_restaurants_with_tag),
-    ('^region/$', get_regions),
-    ('^region/(\d+)/restaurant/$', get_restaurants_in_region),
-    ('^search_restaurant_list/$', restaurantList),
+#    ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
+#    ('^restaurant/(\d+)/$', get_restaurant),
+#    ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
+#    ('^restaurant/(\d+)/rating/$', restaurant_rating),
+#    ('^restaurant_tag/$', get_restaurant_tags),
+#    ('^restaurant_tag/(\d+)/restaurant/$', get_restaurants_with_tag),
+#    ('^region/$', get_regions),
+#    ('^region/(\d+)/restaurant/$', get_restaurants_in_region),
+#    ('^search_restaurant_list/$', restaurantList),
     ('^api/v1/login/$', mobile_user_login),
     ('^api/v1/logout/$', mobile_user_logout),
     ('^api/v1/weibo_user_login/$', weibo_user_login),
     ('^api/v1/checkemail/$', checkemail),
     ('^api/v1/register/$', mobile_user_register),
-    ('^order/$', get_orders),
-#    ('^profile/$', get_user_profile),
-    ('^profile/favorite/restaurant/(\d+)/$', favorite_restaurant),
-    ('^profile/favorite/restaurant/$', favorite_restaurants),
-    ('^search/restaurant/$', query_restaurant_from_google),
+#    ('^order/$', get_orders),
+    #    ('^profile/$', get_user_profile),
+#    ('^profile/favorite/restaurant/(\d+)/$', favorite_restaurant),
+#    ('^profile/favorite/restaurant/$', favorite_restaurants),
+#    ('^search/restaurant/$', query_restaurant_from_google),
 
     #social
-    ('^user/(\d+)/following/$', get_following),
-    ('^user/(\d+)/following/remove/$', remove_following),
-    ('^user/(\d+)/followers/$', followers),
-    ('^user/(\d+)/following/recommendations/$', get_recommended_following),
-    ('^user/(\d+)/messages/$', messages),
-    ('^meal/(\d+)/participants/$', meal_participants),
-    ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
-    ('^user/(\d+)/invitation/(\d+)/$', accept_or_reject_meal_invitations),
+#    ('^user/(\d+)/following/$', get_following),
+#    ('^user/(\d+)/following/remove/$', remove_following),
+#    ('^user/(\d+)/followers/$', followers),
+#    ('^user/(\d+)/following/recommendations/$', get_recommended_following),
+#    ('^user/(\d+)/messages/$', messages),
+#    ('^meal/(\d+)/participants/$', meal_participants),
+#    ('^user/(\d+)/invitation/$', view_or_send_meal_invitations),
+#    ('^user/(\d+)/invitation/(\d+)/$', accept_or_reject_meal_invitations),
 
-    # developer interfaces...
-    ('^updateLatLng/$', updateLatLng),
-    ('^upload_app/$', upload_app),
+
 
     ######################below is used for website urls
     # meal
@@ -82,22 +73,22 @@ urlpatterns = patterns('',
     #comment
 
     #group
-#    url(r'^group/$', GroupListView.as_view(), name="group_list"),
-#    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
-#    url(r'^group/add/$',active_login_required(GroupCreateView.as_view()), name='create_group'),
-#    url(r'^group/edit/(?P<pk>\d+)/$',active_login_required(GroupUpdateView.as_view()), name='edit_group'),
-#    url(r'^group/logo/edit/(?P<pk>\d+)/$',active_login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
-#    url(r'^group/(?P<pk>\d+)/join/$',active_login_required(join_group), name='join_group'),
-#    url(r'^group/(?P<pk>\d+)/leave/$',active_login_required(leave_group), name='leave_group'),
-#    url(r'^group/comment/add/$',active_login_required(create_group_comment), name='create_group_comment'),
-#    url(r'^group/comment/(?P<pk>\d+)/del/$',active_login_required(del_group_comment), name='del_group_comment'),
-#    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(),
-#        name='group_comment_list'),
-#    url(r'^group/(?P<group_id>\d+)/member/$', GroupMemberListView.as_view(), name='group_member_list'),
-#    url(r'^group/(?P<group_id>\d +)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
+    #    url(r'^group/$', GroupListView.as_view(), name="group_list"),
+    #    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), name='group_detail'),
+    #    url(r'^group/add/$',active_login_required(GroupCreateView.as_view()), name='create_group'),
+    #    url(r'^group/edit/(?P<pk>\d+)/$',active_login_required(GroupUpdateView.as_view()), name='edit_group'),
+    #    url(r'^group/logo/edit/(?P<pk>\d+)/$',active_login_required(GroupLogoUpdateView.as_view()), name='edit_group_logo'),
+    #    url(r'^group/(?P<pk>\d+)/join/$',active_login_required(join_group), name='join_group'),
+    #    url(r'^group/(?P<pk>\d+)/leave/$',active_login_required(leave_group), name='leave_group'),
+    #    url(r'^group/comment/add/$',active_login_required(create_group_comment), name='create_group_comment'),
+    #    url(r'^group/comment/(?P<pk>\d+)/del/$',active_login_required(del_group_comment), name='del_group_comment'),
+    #    url(r'^group/(?P<group_id>\d+)/comment/p/(?P<page>[0-9]+)/$', GroupCommentListView.as_view(),
+    #        name='group_comment_list'),
+    #    url(r'^group/(?P<group_id>\d+)/member/$', GroupMemberListView.as_view(), name='group_member_list'),
+    #    url(r'^group/(?P<group_id>\d +)/member/p/(?P<page>[0-9]+)/$', GroupMemberListView.as_view(template_name="group/member_container.html"), name='more_group_member_list'),
 
     # order
-#    url(r'^meal/(?P<meal_id>\d+)/order/$',active_login_required(OrderCreateView.as_view()), name='create_order'),
+    #    url(r'^meal/(?P<meal_id>\d+)/order/$',active_login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$',active_login_required(OrderDetailView.as_view()), name='order_detail'),
     url(r'^order/mine/$', active_login_required(MyOrderListView.as_view()), name="my_orders"),
 
@@ -108,13 +99,19 @@ urlpatterns = patterns('',
 
 
     #account
-#    url(r'^user/register/$', RegisterView.as_view(), name='register'),
+    #    url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-     url(r'^user/(?P<pk>\d+)/$',active_login_required(UserDetailView.as_view()), name='user_detail'),
+    url(r'^user/(?P<pk>\d+)/$',active_login_required(UserDetailView.as_view()), name='user_detail'),
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
     url(r'^profile/$',login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
     url(r'profile/upload_avatar/$',login_required(UploadAvatarView.as_view()), name='upload_avatar'),
+
+
+    url(r'^follow/(?P<user_id>\d+)/$',login_required(follow), name='follow'),
+    url(r'^unfollow/(?P<user_id>\d+)$',login_required(un_follow), name='un_follow'),
+    url(r'^follows/$',active_login_required(FollowsView.as_view()), name='following_list'),
+
 
     url(r'^tag/$',login_required(list_tags), name='tag_list'),
 
@@ -143,11 +140,15 @@ urlpatterns = patterns('',
     url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(rest.del_menu), name="del_menu"),
     url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.edit_menu), name="edit_menu"),
 
-    (r'^test/$', TemplateView.as_view(template_name="test.html")),
+
 
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),
+    (r'^test/$', TemplateView.as_view(template_name="test.html")),
 
+    # developer interfaces...
+    ('^updateLatLng/$', updateLatLng),
+    ('^upload_app/$', upload_app),
 )
 
 if settings.DEBUG:
