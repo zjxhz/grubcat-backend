@@ -55,7 +55,11 @@ class XMPPClientWrapper(object):
         
     def syncProfile(self, user_profile):
         logger.debug("sync avatar of %s " % user_profile)
-        dic = {'task':"syncprofile",'username':self.escape_node(user_profile.user.username), "password":user_profile.user.password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
+        if user_profile.weibo_access_token:
+            password = user_profile.weibo_access_token
+        else:
+            password = user_profile.user.password
+        dic = {'task':"syncprofile",'username':self.escape_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         soc.connect(('localhost',self.PORT)) 
         soc.send(json.dumps(dic))
