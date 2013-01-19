@@ -1,0 +1,12 @@
+{% extends "user/profile_base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}TA的照片{% endblock %}
+{% block profile-main %}
+    <div id="following-list">
+    {% for following in user.get_profile.following.all %}
+        <a href="{% url user_detail following.id %}" class=""><img src="{{ following.normal_avatar }}" title="{{ following.name }}"></a>
+    {% endfor %}
+    </div>
+
+{% endblock %}
