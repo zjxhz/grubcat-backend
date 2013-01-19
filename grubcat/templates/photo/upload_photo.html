@@ -1,0 +1,16 @@
+{% extends 'user/profile_base.html' %}
+
+{% block profile-main %}
+
+    <h4>上传照片</h4>
+    <div id="upload-photo-wrapper" class="upload-photo">
+        <p class="tip">你可以上传JPG，JPEG，GIF，PNG或BMP文件，每个文件不超过3M。</p>
+        <form action="{% url upload_photo %}" id="id_upload_photo_form" method="post" enctype="multipart/form-data">
+            {{ form.photo }}
+            <a id="btn-upload-photo" class="btn btn-primary fl" href="#">浏览文件</a>
+            <div class="loading hide ">上传中</div>
+        </form>
+
+
+    </div>
+{% endblock %}
