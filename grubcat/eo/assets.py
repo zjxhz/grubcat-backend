@@ -11,8 +11,8 @@ bootstrap_css = Bundle(
     output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
 )
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
-common_css = Bundle(dropkick_css, 'less/common.less',filters='less,cssmin', output='gen/common.%(version)s.css')
-responsive_css = Bundle( 'less/responsive.less',filters='less,cssmin', output='gen/responsive.%(version)s.css')
+common_css = Bundle(dropkick_css, 'less/common.less', filters='less,cssmin', output='gen/common.%(version)s.css')
+responsive_css = Bundle('less/responsive.less', filters='less,cssmin', output='gen/responsive.%(version)s.css')
 
 base_css = Bundle(bootstrap_css, filters='cssmin', output='gen/base.%(version)s.css')
 
@@ -34,19 +34,20 @@ error_css = Bundle(
 
 #user related
 account_css = Bundle(
-    common_css, 'css/account.css',responsive_css,  filters='cssmin', output='gen/account.%(version)s.css'
+    common_css, 'css/account.css', responsive_css, filters='cssmin', output='gen/account.%(version)s.css'
 )
 
 user_list_css = Bundle(
-    common_css, 'less/user-list.less',responsive_css,  filters='less, cssmin', output='gen/user-list.%(version)s.css'
+    common_css, 'less/user-list.less', responsive_css, filters='less, cssmin', output='gen/user-list.%(version)s.css'
 )
 
 user_css = Bundle(
-    common_css, responsive_css,  filters='cssmin', output='gen/user.%(version)s.css'
+    common_css, responsive_css, filters='cssmin', output='gen/user.%(version)s.css'
 )
 
 profile_css = Bundle(
-    'css/jquery.Jcrop.css','css/autoSuggest.css',common_css ,'less/profile.less', responsive_css, filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
+    'css/jquery.Jcrop.css', 'css/autoSuggest.css', common_css, 'less/profile.less', responsive_css,
+    filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
 )
 
 #order_css = Bundle(
@@ -54,7 +55,7 @@ profile_css = Bundle(
 #)
 
 restaurant_admin_css = Bundle(
-    'less/restaurant-admin.less',responsive_css,  filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
+    'less/restaurant-admin.less', responsive_css, filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below
@@ -62,7 +63,12 @@ jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)
 
 jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='jsmin')
 
-base_js = Bundle(jquery_js, 'js/bootstrap.min.js',
+
+noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
+    'js/noty/layouts/center.js', 'js/noty/thems/default.js',
+    output='gen/jquery-noty.%(version)s.js', filters='jsmin')
+
+base_js = Bundle(jquery_js, 'js/bootstrap.min.js',noty_js,
     output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
@@ -72,7 +78,7 @@ module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version
 auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
 
 water_fall_js = Bundle(
-    'js/jquery.infinitescroll.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js',filters='jsmin',
+    'js/jquery.infinitescroll.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js', filters='jsmin',
     output='gen/water-fall.%(version)s.js'
 )
 user_list_js = Bundle(
@@ -89,7 +95,7 @@ restaurant_admin_js = Bundle(
 
 
 jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
-validate_js =  Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
+validate_js = Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
 jquery_ajax_bootstrap_js = Bundle(
     'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
     output='gen/jquery.ajax.bootstrap.%(version)s.js'
@@ -98,7 +104,7 @@ jquery_ajax_bootstrap_js = Bundle(
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin',
     output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
 
-image_cropping_js = Bundle( 'js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
+image_cropping_js = Bundle('js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
     output='gen/iamge-cropping.%(version)s.js')
 
 register('common_css', common_css)
@@ -118,6 +124,7 @@ register('restaurant_admin_css', restaurant_admin_css)
 
 register('jquery_js', jquery_js)
 register('jquery_dropkick_js', jquery_dropkick_js)
+register('noty_js', noty_js)
 register('base_js', base_js)
 register('base_main_js', base_main_js)
 register('module_js', module_js)

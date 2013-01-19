@@ -9,10 +9,11 @@ from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteVi
 from django.views.generic.list import ListView
 from eo.models import Dish, Order
 from eo.forms import *
-from eo.view_utils import *
 import simplejson
 
 #restaurant admin related views
+from eo.views_common import create_sucess_json_response, create_failure_json_response
+
 class OrderCheckInView(FormView):
     template_name = "restaurant/checkin.html"
     form_class = OrderCheckInForm
@@ -116,7 +117,7 @@ class DishDeleteView(DeleteView):
     template_name = "restaurant/dish_confirm_delete.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
-    def get_object(self):
+    def get_object(self,  queryset=None):
         dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
             restaurant=self.request.user.restaurant)
         return dish
@@ -143,7 +144,8 @@ def add_edit_menu(request, pk=None):
         average_price = menu_json['average_price']
         menu_form = MenuForm({'num_persons': num_persons, 'average_price': average_price})
         if not menu_form.is_valid():
-            return createGeneralResponse(ERROR, menu_form.errors, extra_dict={'url': reverse('restaurant_menu_list'), })
+            #TODO check
+            return create_failure_json_response(menu_form.errors, extra_dict={'url': reverse('restaurant_menu_list'), })
         menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price)
         menu.save()
 

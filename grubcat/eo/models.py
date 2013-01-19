@@ -4,11 +4,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
-from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError
+from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError, BusinessException
 from image_cropping.fields import ImageRatioField, ImageCropField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
@@ -430,7 +430,7 @@ class UserProfile(models.Model):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
         related_name="user_favorite")
-    following = models.ManyToManyField('self', related_name="related_to", symmetrical=False, through="RelationShip")
+    following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
         blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
@@ -448,6 +448,17 @@ class UserProfile(models.Model):
     weibo_access_token = models.CharField(max_length=128, null=True, blank=True)
     tags = TaggableManager(through=TaggedUser)
     apns_token = models.CharField(max_length=255, blank=True)
+
+
+    def follow(self, followee):
+        if self == followee:
+            raise BusinessException(u'你不可以自己关注自己！')
+        try:
+            relationship = Relationship(from_person=self, to_person=followee)
+            relationship.save()
+        except IntegrityError:
+            raise BusinessException(u'你已经关注了对方！')
+
 
     def avatar_thumbnail(self, width, height):
         if self.avatar:
@@ -500,7 +511,7 @@ class UserProfile(models.Model):
             thumbnail_url = None
         return thumbnail_url
 
-    #    To Be Deleted
+    #    To Be Deleted, checked in group pages
     @property
     def avatar_default_if_none(self):
         if self.avatar:
@@ -510,7 +521,7 @@ class UserProfile(models.Model):
 
     @property
     def followers(self):
-        return self.related_to.all()
+        return self.followers.all()
 
     @property
     def meals(self):
