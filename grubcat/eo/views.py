@@ -1,6 +1,7 @@
 #coding=utf-8
 # Create your views here.
 from datetime import datetime
+import logging
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -20,10 +21,12 @@ from grubcat.eo.forms import *
 import simplejson
 from django.conf import settings
 
+
+logger = logging.getLogger()
 ###Photo related views ###
 class PhotoCreateView(CreateView):
     form_class = PhotoForm
-    template_name = 'photo/upload_photo.html'
+    template_name = 'profile/photo/upload_photo.html'
 
     def form_valid(self, form):
         photo = form.save(False)
@@ -35,13 +38,14 @@ class PhotoCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
+        context['is_mine'] = True
         return context
 
 
 class PhotoDetailView(DetailView):
     model = UserPhoto
     context_object_name = 'photo'
-    template_name = 'photo/photo_detail.html'
+    template_name = 'profile/photo/photo_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(PhotoDetailView, self).get_context_data(**kwargs)
@@ -56,6 +60,7 @@ class PhotoDetailView(DetailView):
             next_photo = UserPhoto.objects.filter(user=self.object.user).order_by('id')[0]
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
+        context['profile'] = self.object.user
         context['is_mine'] = self.object.user == self.request.user.get_profile()
         return context
 
@@ -63,11 +68,12 @@ class PhotoDetailView(DetailView):
 class PhotoListView(ListView):
     model = UserPhoto
     context_object_name = 'photo_list'
-    template_name = 'photo/photo_list.html'
+    template_name = 'profile/photo/photo_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(PhotoListView, self).get_context_data(**kwargs)
         context['profile'] = UserProfile.objects.get(pk=self.kwargs['user_id'])
+        context['is_mine'] = context['profile'] == self.request.user.get_profile()
         return context
 
     def get_queryset(self):
@@ -154,6 +160,8 @@ class MealListView(ListView):
     #TODO add filter to queyset
 
     ### group related views ###
+
+
 class GroupListView(ListView):
 #    TODO order by member num
     queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
@@ -345,6 +353,16 @@ class ProfileUpdateView(UpdateView):
         return reverse('edit_basic_profile')
 
 
+class ProfileDetailView(DetailView):
+    model = UserProfile
+    context_object_name = 'profile'
+    template_name = 'profile/basic_info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileDetailView, self).get_context_data(**kwargs)
+        context['is_mine'] = self.object == self.request.user.get_profile()
+        return context
+
 # not used for now
 #class RegisterView(CreateView):
 #    form_class = UserCreationForm
@@ -399,15 +417,10 @@ class UserListView(ListView):
             print context['page_obj'].number
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
+            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context[
+                                                                                          'page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
         return context
-
-
-class UserDetailView(DetailView):
-    model = UserProfile
-    context_object_name = "profile"
-    template_name = "user/profile.html"
 
 
 ### Order related views ###
@@ -476,27 +489,25 @@ class OrderDetailView(DetailView):
         return order
 
 
-class MyOrderListView(ListView):
-    template_name = "order/my_orders.html"
-    context_object_name = "my_order_list"
-
-    def get_queryset(self):
-        return Order.objects.filter(customer=self.request.user.get_profile()).exclude(
-            status=OrderStatus.CANCELED).order_by("meal__start_date", "meal__start_time").select_related('meal')
+class UserMealListView(TemplateView):
+    template_name = "profile/meals.html"
 
     def get_context_data(self, **kwargs):
-        context = super(MyOrderListView, self).get_context_data(**kwargs)
-        context['upcomming_orders'] = self.get_queryset().filter(
+        context = super(UserMealListView, self).get_context_data(**kwargs)
+        user = UserProfile.objects.get(pk=self.kwargs['user_id'])
+        orders = user.orders.exclude(
+            status=OrderStatus.CANCELED).order_by("meal__start_date", "meal__start_time").select_related('meal')
+        context['upcomming_orders'] = orders.filter(
             Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
                 meal__start_time__gt=datetime.now().time()))
 
-        context['passed_orders'] = self.get_queryset().filter(
+        context['passed_orders'] = orders.filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
                 meal__start_time__lt=datetime.now().time())).order_by("-meal__start_date", "-meal__start_time")
 
+        context['profile'] = user
+        context['is_mine'] = user == self.request.user.get_profile()
         return context
-
-
 
 
 def weibo_login(request):
@@ -560,26 +571,30 @@ def follow(request, user_id):
         followee = UserProfile.objects.get(id=user_id)
         try:
             follower.follow(followee)
-            html = '<a class="btn btn-unfollow" href="%s">取消关注</a>' % (reverse('un_follow',kwargs={'user_id':followee.id}))
+            html = '<a class="btn btn-unfollow" href="%s">取消关注</a>' % (
+                reverse('un_follow', kwargs={'user_id': followee.id}))
             return create_sucess_json_response(extra_dict={'html': html})
         except BusinessException as e:
             return create_failure_json_response(e.message)
+
 
 def un_follow(request, user_id):
     if request.method == 'POST':
         user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
         relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
         relationship.delete()
-        html = '<a class="btn btn-follow" href="%s">关注</a>' % (reverse('follow',kwargs={'user_id':user_to_be_unfollowed.id}))
+        html = '<a class="btn btn-follow" href="%s">关注</a>' % (
+            reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
         return create_sucess_json_response(extra_dict={'html': html})
 
 
 class FollowsView(TemplateView):
-    template_name='user/follow_list.html'
+    template_name = 'profile/follow_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(FollowsView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
+        context['is_mine'] = True
         return context
 
 #others

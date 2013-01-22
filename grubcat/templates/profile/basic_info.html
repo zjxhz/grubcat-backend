@@ -1,0 +1,19 @@
+{% extends "profile/base.html" %}
+{% block title %}
+个人资料
+{% endblock %}
+{% block profile-main %}
+    <div class="span3 hidden-phone">
+        <img alt="{{ profile.name }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="180"
+             height="180">
+        {% if not is_mine %}
+            {% if profile not in user.get_profile.following.all %}
+                <a href="{% url  follow profile.id %}" class="btn btn-follow">关注</a>
+            {% else %}
+                <a href="{% url  un_follow profile.id %}" class="btn btn-unfollow">取消关注</a>
+            {% endif %}
+            <button class="btn">聊天</button>
+        {% endif %}
+    </div>
+    <div id="data" style="display: none" data-active-nav-id="profile_basic_info"></div>
+{% endblock %}

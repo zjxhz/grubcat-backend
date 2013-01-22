@@ -47,7 +47,7 @@ user_css = Bundle(
 
 profile_css = Bundle(
     'css/jquery.Jcrop.css', 'css/autoSuggest.css', common_css, 'less/profile.less', responsive_css,
-    filters='less,cssmin', output='gen/edit-profile.%(version)s.css'
+    filters='less,cssmin', output='gen/profile.%(version)s.css'
 )
 
 #order_css = Bundle(
