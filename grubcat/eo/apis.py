@@ -754,7 +754,7 @@ class MealResource(ModelResource):
             raise
     
     class Meta:
-        queryset = Meal.objects.all()
+        queryset = Meal.get_default_upcomming_meals()
         filtering = {'type': ALL,'start_date':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
