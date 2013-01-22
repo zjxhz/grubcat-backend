@@ -74,7 +74,7 @@ STATIC_URL = 'http://fanju.dn.qbox.me/'
 
 WEIBO_APP_KEY="4071331500"
 WEIBO_APP_SECERT="5cf4910b217617cee72b2889a8e394eb"
-WEIBO_REDIRECT_URL="http://42.121.34.164/login/weibo/"
+WEIBO_REDIRECT_URL="http://www.fanjoin.com/login/weibo/"
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
 
@@ -180,7 +180,7 @@ ASSETS_AUTO_BUILD = False
 
 RAVEN_CONFIG = {
     'register_signals': True,
-    'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@42.121.34.164:9000/2',
+    'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
     }
 
 LOGGING_ROOT = "/home/fanju/logs/user/"
@@ -223,7 +223,7 @@ LOGGING = {
             'propagate': False,
         },
         'raven': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': ['default'],
             'propagate': False,
         },
