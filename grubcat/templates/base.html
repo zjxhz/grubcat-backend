@@ -31,7 +31,6 @@
                     <li id="nav-meal"><a href="{% url meal_list %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url create_meal %}" class="hidden-phone">发起饭局</a></li>
-                    <li id="nav-upload-photo"><a href="{% url upload_photo %}" class="hidden-phone upload-photo-link">上传照片</a></li>
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}
@@ -53,11 +52,12 @@
                                 <span class="hidden-phone">{% if user.get_profile.name %}
                                     {{ user.get_profile.name }} {% else %}{{ user.username }}{% endif %} </span>
                                 <b class="caret"></b></a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                            <ul class="dropdown-menu" role="menu" >
                                 <li><a  href="{% url user_detail user.get_profile.id %}">我的主页</a></li>
                                 <li><a  href="{% url edit_basic_profile %}">修改资料</a></li>
+                                <li id="nav-upload-photo"><a href="{% url upload_photo %}" class="hidden-phone upload-photo-link">上传照片</a></li>
                                 <li class="divider"></li>
-                                <li><a  href="{% url my_orders %}">我的饭局</a></li>
+                                <li><a  href="{% url user_meal_list user.get_profile.id %}">我的饭局</a></li>
                                 <li class="divider"></li>
 {#                                <li><a  href="{% url edit_basic_profile %}">账号设置</a></li>#}
                                 <li><a  href="{% url logout %}">退出</a></li>

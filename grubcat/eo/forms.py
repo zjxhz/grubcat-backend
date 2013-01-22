@@ -2,7 +2,6 @@
 from django import forms
 from django.forms import ModelForm
 from django.forms.extras import SelectDateWidget
-from django.forms.util import to_current_timezone
 from django.forms.widgets import *
 from image_cropping import ImageCropWidget
 from grubcat.eo.models import *
@@ -136,7 +135,7 @@ class BasicProfileForm(ModelForm):
         fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
-            'birthday': SelectDateWidget(required=False, years=range(1916, 1996), attrs={'class': "input-small"}, )
+            'birthday': SelectDateWidget(required=False, years=reversed(range( 1966, 1996)), attrs={'class': "input-small"}, )
 
         }
 
@@ -153,7 +152,6 @@ class BindProfileForm(ModelForm):
         fields = ('name', 'gender', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
-            #            'birthday' : SelectDateWidget(required=False, years=range(1916,1996), attrs={'class':"input-small"},)
         }
 
 
