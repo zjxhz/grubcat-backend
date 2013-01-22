@@ -151,10 +151,7 @@ class MealCreateView(CreateView):
 
 
 class MealListView(ListView):
-    queryset = Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
-        Q(start_date__gt=date.today()) | Q(start_date=date.today(),
-            start_time__gt=datetime.now().time())).order_by("start_date",
-        "start_time")
+    queryset = Meal.get_default_upcomming_meals()
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
@@ -576,16 +573,24 @@ def follow(request, user_id):
             return create_sucess_json_response(extra_dict={'html': html})
         except BusinessException as e:
             return create_failure_json_response(e.message)
+    else:
+        raise Exception("不支持该方法")
+
 
 
 def un_follow(request, user_id):
     if request.method == 'POST':
-        user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
-        relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
-        relationship.delete()
-        html = '<a class="btn btn-follow" href="%s">关注</a>' % (
-            reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
-        return create_sucess_json_response(extra_dict={'html': html})
+        try:
+            user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
+            relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
+            relationship.delete()
+            html = '<a class="btn btn-follow" href="%s">关注</a>' % (
+                reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
+            return create_sucess_json_response(extra_dict={'html': html})
+        except Exception:
+            return create_failure_json_response("你没有关注TA")
+    else:
+        raise Exception("不支持该方法")
 
 
 class FollowsView(TemplateView):

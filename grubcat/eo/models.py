@@ -784,6 +784,13 @@ class Meal(models.Model):
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
+    @classmethod
+    def get_default_upcomming_meals(cls):
+        return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
+            Q(start_date__gt=date.today()) | Q(start_date=date.today(),
+                start_time__gt=datetime.now().time())).order_by("start_date",
+            "start_time")
+
     def join(self, order):
         if self.actual_persons + order.num_persons > self.max_persons:
             raise NoAvailableSeatsError
