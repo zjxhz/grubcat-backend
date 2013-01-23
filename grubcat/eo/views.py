@@ -39,6 +39,7 @@ class PhotoCreateView(CreateView):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
         context['is_mine'] = True
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
         return context
 
 
@@ -61,7 +62,8 @@ class PhotoDetailView(DetailView):
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
         context['profile'] = self.object.user
-        context['is_mine'] = self.object.user == self.request.user.get_profile()
+        context['is_mine'] = context['profile'] == self.request.user.get_profile()
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
         return context
 
 
@@ -74,6 +76,7 @@ class PhotoListView(ListView):
         context = super(PhotoListView, self).get_context_data(**kwargs)
         context['profile'] = UserProfile.objects.get(pk=self.kwargs['user_id'])
         context['is_mine'] = context['profile'] == self.request.user.get_profile()
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
         return context
 
     def get_queryset(self):
@@ -358,6 +361,17 @@ class ProfileDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         context['is_mine'] = self.object == self.request.user.get_profile()
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        if self.object.industry:
+            for industry_value, industry_label in INDUSTRY_CHOICE:
+                if self.object.industry == industry_value:
+                    context['industry_label'] = industry_label
+                    break
+        if self.object.gender is not None:
+            for value, label in GENDER_CHOICE:
+                if self.object.gender == value:
+                    context['gender_label'] = label
+                    break
         return context
 
 # not used for now
@@ -504,6 +518,7 @@ class UserMealListView(TemplateView):
 
         context['profile'] = user
         context['is_mine'] = user == self.request.user.get_profile()
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
         return context
 
 
@@ -584,7 +599,7 @@ def un_follow(request, user_id):
             user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
             relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
             relationship.delete()
-            html = '<a class="btn btn-follow" href="%s">关注</a>' % (
+            html = '<a class="btn btn-follow" href="%s"><i class="icon-star"></i> 关注</a>' % (
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
             return create_sucess_json_response(extra_dict={'html': html})
         except Exception:
@@ -600,6 +615,7 @@ class FollowsView(TemplateView):
         context = super(FollowsView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
         context['is_mine'] = True
+        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
         return context
 
 #others
