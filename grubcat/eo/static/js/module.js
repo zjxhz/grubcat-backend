@@ -408,8 +408,13 @@
             $container.masonry({
                 itemSelector:'.box',
                 isAnimated:!Modernizr.csstransitions
+            }, function () {
+                if ($(document).height() <= $(window).height()) {
+                    $(window).scroll();
+                }
             });
         });
+
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
@@ -417,9 +422,15 @@
                 nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
                 itemSelector:'.box', // selector for all items you'll retrieve
                 animate:false,
-                /*finished:function(){
-                 alert('aa')
-                 },*/
+                errorCallback:function () {
+
+                var $need_edit_tags_again_tip = $("#need_edit_tags_again_tip");
+                    if ($need_edit_tags_again_tip[0]) {
+                        $need_edit_tags_again_tip.show();
+                        var scrollTo = $(window).scrollTop() + $need_edit_tags_again_tip.height() + 100 + 'px';
+                        $('html,body').animate({ scrollTop:scrollTo }, 800);
+                    }
+                },
                 extendFinished:function (responseText) {
                     $("#main-container").append($(responseText).siblings("div.alert"))
                 },
@@ -437,7 +448,11 @@
                 $newElems.imagesLoaded(function () {
                     // show elems now they're ready
                     $newElems.animate({ opacity:1 });
-                    $container.masonry('appended', $newElems, true);
+                    $container.masonry('appended', $newElems, true, function () {
+//                        if($(document).height() <= $(window).height()){
+//                        $(window).scroll();
+//                        }
+                    });
                 });
                 $(newElements).find(".tags li").each(function () {
                     if ($.inArray($(this).html(), myTags) > -1) {

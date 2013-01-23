@@ -14,6 +14,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
+from eo.exceptions import NoRightException
 from eo.models import   Order,\
     Relationship, Meal
 from eo.views_common import  create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS
@@ -423,12 +424,9 @@ class UserListView(ListView):
                 context['need_edit_tags'] = True
             if not user.get_profile().avatar:
                 context['need_upload_avatar'] = True
-            print context['page_obj'].has_next()
-            print context['page_obj'].number
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context[
-                                                                                          'page_obj'].number < 4:
+            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
         return context
 
@@ -483,8 +481,8 @@ class MealDetailView(OrderCreateView):
                 customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
             if orders.exists():
                 context['order'] = orders[0]
-        if self.request.user.get_profile() == meal.host:
-            context['is_host'] = True
+        if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU:
+            context['just_created'] = True
         return context
 
 
@@ -497,7 +495,7 @@ class OrderDetailView(DetailView):
     def get_object(self, queryset=None):
         order = super(OrderDetailView, self).get_object()
         if order.customer != self.request.user.get_profile():
-            print "user see other's order" #TODO raise an exception
+            raise NoRightException
         return order
 
 

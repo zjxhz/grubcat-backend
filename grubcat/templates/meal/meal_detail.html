@@ -12,7 +12,7 @@
 {% block content %}
     <div class="row" id="meal-detail-page">
         <div id="meal-detail" class="span9">
-            {% if is_host and not order %}
+            {% if just_created %}
                 <div class="alert" id="create_meal_alert">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     只差一步，就创建完成了！支付成功后，其他的朋友便可以参加了哦！</div>
@@ -37,7 +37,7 @@
                 <div id="meal-grub">
                     {% if not order and meal.left_persons > 0 %}
                         {% if user.is_authenticated %}
-                            {% if is_host %}
+                            {% if just_created %}
                                 <a href="#"
                                    class="btn btn-primary btn-book btn-book-now fr">
                                     去支付
