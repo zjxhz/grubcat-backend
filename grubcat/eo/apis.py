@@ -54,22 +54,6 @@ class Base64FileField(FileField):
         "content_type": "image/png" # on hydrate optional
     }
     """
-#    def dehydrate(self, bundle):
-#        if not bundle.data.has_key(self.instance_name) and hasattr(bundle.obj, self.instance_name):
-#            file_field = getattr(bundle.obj, self.instance_name)
-#            if file_field:
-#                try:
-#                    content_type, encoding = mimetypes.guess_type(file_field.file.name)
-#                    b64 = open(file_field.file.name, "rb").read().encode("base64")
-#                    ret = {
-#                        "name": os.path.basename(file_field.file.name),
-#                        "file": b64,
-#                        "content-type": content_type or "application/octet-stream"
-#                    }
-#                    return ret
-#                except:
-#                    pass
-#        return None
 
     def hydrate(self, obj):
         logger.debug('processing Base64FileField')
