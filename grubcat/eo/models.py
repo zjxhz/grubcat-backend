@@ -480,6 +480,13 @@ class UserProfile(models.Model):
         })
 
     @property
+    def age(self):
+        if self.birthday:
+            return date.today().year - self.birthday.year
+        else:
+            return None
+
+    @property
     def big_avatar(self):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.BIG_AVATAR_SIZE).url

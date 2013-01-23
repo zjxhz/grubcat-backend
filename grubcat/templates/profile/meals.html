@@ -21,13 +21,13 @@
         {% endfor %}
     {% endif %}
     {% if not upcomming_orders and not passed_orders %}
-        <h3 class="">
+        <div class="no-results span12">
             {% if is_mine %}
                 您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
             {% else %}
                 TA还没有参加任何饭局！
             {% endif %}
-        </h3>
+        </div>
     {% endif %}
 
     <div id="data" style="display: none" data-active-nav-id="profile_meal"></div>
