@@ -352,6 +352,9 @@ class ProfileUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('edit_basic_profile')
 
+    def form_valid(self, form):
+        return self.render_to_response(self.get_context_data(form=form, status="OK"))
+
 
 class ProfileDetailView(DetailView):
     model = UserProfile

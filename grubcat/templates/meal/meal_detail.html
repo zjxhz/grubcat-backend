@@ -27,7 +27,7 @@
                 <div class="meal-img-wrapper">
                     <img alt="{{ meal.topic }}" class="img-polaroid"
                          src="{{ meal.get_cover_url }}"
-                         width="420" height="250">
+                         width="420" height="280">
                 </div>
                 <div id="meal-grub">
                     {% if not order and meal.left_persons > 0 %}
@@ -101,7 +101,7 @@
                     <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加饭局，赶快预定吧！</h3>
                 {% endif %}
                 {% for user in meal.participants.all %}
-                    <a href="{% url user_detail user.id %}" class=" user-img-wrapper"
+                    <a href="{% url user_detail user.id %}" class="user-img-wrapper"
                        title="{{ user.name }}">
                         <img alt="{{ user.name }}" width="80"
                              height="80"

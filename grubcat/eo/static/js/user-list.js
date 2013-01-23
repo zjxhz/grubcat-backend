@@ -5,7 +5,7 @@ $(function () {
         if ($.inArray($(this).html(), tags) > -1) {
             $(this).addClass('common');
         }
-    })
+    });
     $container.imagesLoaded(function () {
         $container.masonry({
             itemSelector:'.box',
@@ -50,10 +50,10 @@ $(function () {
                 if ($.inArray($(this).html(), tags) > -1) {
                     $(this).addClass('common');
                 }
-            })
-            if($(newElements).find("div.alert")[0]) alert('true')
-//            $("#user-container").append($(newElements).find("div.alert"));
+            });
         }
     );
+
+//    $(".user-img a").tooltip({"placement":'bottom'});
 
 });

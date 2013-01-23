@@ -146,7 +146,6 @@ urlpatterns = patterns('',
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
-    (r'^google18a5c2f5487d3add\.html/$', TemplateView.as_view(template_name="google18a5c2f5487d3add.html")),
 
     # developer interfaces...
     ('^updateLatLng/$', updateLatLng),

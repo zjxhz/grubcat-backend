@@ -85,7 +85,9 @@
         $(".btn-book-now").click(function () {
             $("#order_info_form").submit();
             return false;
-        })
+        });
+
+        $(".user-img-wrapper").tooltip({'placement':'bottom'});
 
     }
 
@@ -369,6 +371,11 @@
             });
             return false;
         })
+    }
+
+    var notyMsg = $data.data("notyMsg");
+    if( notyMsg ){
+        noty({'text':notyMsg})
     }
 })
     (jQuery);

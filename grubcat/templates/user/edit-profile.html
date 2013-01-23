@@ -103,7 +103,7 @@
 
     </div>
 
-    <div id="data" style="display: none" list-tags-url='{% url tag_list %}'></div>
+    <div id="data" style="display: none" {% if status %}data-noty-msg="资料修改成功"{% endif %} list-tags-url='{% url tag_list %}'></div>
 
 {% endblock %}
 
