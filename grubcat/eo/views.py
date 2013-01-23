@@ -487,6 +487,8 @@ class MealDetailView(OrderCreateView):
                 customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
             if orders.exists():
                 context['order'] = orders[0]
+        if self.request.user.get_profile() == meal.host:
+            context['is_host'] = True
         return context
 
 

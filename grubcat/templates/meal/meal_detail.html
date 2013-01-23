@@ -12,6 +12,11 @@
 {% block content %}
     <div class="row" id="meal-detail-page">
         <div id="meal-detail" class="span9">
+            {% if is_host and not order %}
+                <div class="alert" id="create_meal_alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    只差一步，就创建完成了！支付成功后，其他的朋友便可以参加了哦！</div>
+            {% endif %}
             <div class="meal-simple-info box-seperator clearfix">
 
                 <h1>{{ meal.topic }}</h1>
@@ -31,11 +36,18 @@
                 </div>
                 <div id="meal-grub">
                     {% if not order and meal.left_persons > 0 %}
-                        {% if user.is_authenticated and user.is_active%}
-                            <a href="#"
-                               class="btn btn-primary btn-book btn-book-now fr">
-                                马上预定
-                            </a>
+                        {% if user.is_authenticated %}
+                            {% if is_host %}
+                                <a href="#"
+                                   class="btn btn-primary btn-book btn-book-now fr">
+                                    去支付
+                                </a>
+                            {% else %}
+                                <a href="#"
+                                   class="btn btn-primary btn-book btn-book-now fr">
+                                    马上预定
+                                </a>
+                            {% endif %}
                         {% else %}
                             <a href="{% url weibo_login %}?next={% url meal_detail meal.id %}"
                                class="btn btn-primary btn-book fr">
