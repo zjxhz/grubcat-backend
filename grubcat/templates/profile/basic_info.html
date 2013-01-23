@@ -80,5 +80,5 @@
         </div>
 
     </div>
-    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}" data-active-nav-id="profile_basic_info"></div>
+    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}" {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
 {% endblock %}

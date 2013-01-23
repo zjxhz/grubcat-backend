@@ -373,24 +373,33 @@
         })
     }
     var $container = $('#user-container');
+    var $tagItems = $(".tags li");
+    if (($container[0] || $profile_basic_info_page[0])) {
+        if (!$data.data("isMine")) {
 
-    if($container[0] || $profile_basic_info_page[0]){
-        $(".tags li[class!=common]").live("mouseenter",function () {
-            $(this).attr("title", "点击复制到我的兴趣");
-        }).live("click", function () {
-                var $item = $(this);
-                $.post($data.data("add-tag-url"), {'tag':$(this).text()}, function () {
-                    noty({text: $(this).text() + "已经复制到我的兴趣", timeout:500});
-                    $item.addClass("common");
-                });
-                $item.parents("ul").focus();
+            $(".tags li.common").live('click', function () {
                 return false;
             });
+            $(".tags li[class!=common]").live("mouseenter",function () {
+                $(this).attr("title", "点击复制到我的兴趣");
+            }).live("click", function () {
+                    var $item = $(this);
+                    $.post($data.data("add-tag-url"), {'tag':$(this).text()}, function () {
+                        noty({text:$item.text() + " 已经复制到我的兴趣", timeout:500});
+                        $(".tags li:contains(" + $item.text() + ")").addClass("common").removeAttr("title");
+                    });
+                    return false;
+                });
+        } else {
+            $tagItems.click(function () {
+                return false;
+            });
+        }
     }
 
     if ($container[0]) {
-        var tagItems = $(".tags li");
-        tagItems.each(function () {
+
+        $tagItems.each(function () {
             if ($.inArray($(this).html(), myTags) > -1) {
                 $(this).addClass('common');
             }
