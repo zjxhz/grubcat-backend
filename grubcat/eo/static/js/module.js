@@ -93,7 +93,10 @@
 
         $("#profile-nav").find("li.active").removeClass("active");
         $("#" + $data.data("activeNavId")).addClass("active");
+    }
 
+    var $profile_basic_info_page = $("#profile_basic_info_page");
+    if($profile_basic_info_page[0]){
         $(".btn-follow, .btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function (data) {
@@ -104,6 +107,16 @@
                         self.location.reload();
                     }, 1000);
                 }
+            });
+            return false;
+        });
+    }
+    var $followingList = $("#following-list");
+    if($followingList[0]){
+        $followingList.find(".btn-unfollow").live('click', function () {
+            var $btn = $(this);
+            $.post($(this).attr('href'), function (data) {
+                $btn.parents(".following-cell").remove();
             });
             return false;
         })
@@ -185,9 +198,8 @@
             var url = $(this).attr('href') + "?page=" + $(this).attr('page');
             $(this).attr('page', parseInt($(this).attr('page')) + 1);
 
-            $.get(url, function (data) {
+            $.get(url, function (tags) {
                 $("ul.hot-tags li").remove();
-                var tags = data.tags;
                 for (var i = 0; i < tags.length; i++) {
                     $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value + "</li>"))
                 }
@@ -247,7 +259,7 @@
     }
     if ($("#create-meal-page")[0]) {
 
-        var $minPersons =  $("#id_min_persons");
+        var $minPersons = $("#id_min_persons");
 
         $("#id_topic, #id_introduction").jqBootstrapValidation();
         $("#create_meal_form").submit(function () {
