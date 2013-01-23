@@ -21,7 +21,7 @@
         {% endfor %}
     {% endif %}
     {% if not upcomming_orders and not passed_orders %}
-        <h3 class="">
+        <h3 class="span12">
             {% if is_mine %}
                 您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
             {% else %}
