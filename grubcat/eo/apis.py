@@ -134,6 +134,7 @@ class DjangoUserResource(ModelResource):
         excludes = ['password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get']
         include_resource_uri = False
+        filtering = {'username': ALL}
 
 class UserLocationResource(ModelResource):
     class Meta:
@@ -509,7 +510,7 @@ class UserResource(ModelResource):
         authorization = Authorization()
         queryset = UserProfile.objects.all()
         resource_name = 'user'
-        filtering = {'from_user':ALL,'gender': ALL}
+        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS}
         allowed_methods = ['get', 'post', 'put', 'patch']
 
 
