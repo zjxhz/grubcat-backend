@@ -60,11 +60,11 @@
 
 
   // our "Widget" object constructor
-  $.Mason = function( options, element ){
+  $.Mason = function( options, element, callback ){
     this.element = $( element );
 
     this._create( options );
-    this._init();
+    this._init(callback);
   };
 
   $.Mason.settings = {
@@ -461,7 +461,7 @@
   // A bit from jcarousel 
   //   https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
 
-  $.fn.masonry = function( options ) {
+  $.fn.masonry = function( options, callback ) {
     if ( typeof options === 'string' ) {
       // call method
       var args = Array.prototype.slice.call( arguments, 1 );
@@ -486,10 +486,10 @@
         if ( instance ) {
           // apply options & init
           instance.option( options || {} );
-          instance._init();
+          instance._init(callback);
         } else {
           // initialize new instance
-          $.data( this, 'masonry', new $.Mason( options, this ) );
+          $.data( this, 'masonry', new $.Mason( options, this, callback ) );
         }
       });
     }

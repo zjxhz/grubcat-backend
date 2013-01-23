@@ -12,6 +12,8 @@ class NoAvailableSeatsError(BusinessException):
 
 class AlreadyJoinedError(BusinessException):
     message = u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！"
+class NoRightException(BusinessException):
+    message = u"对不起，您没有权限执行此操作！"
 
 class ProcessExceptionMiddleware(object):
     def process_exception(self, request, exception):

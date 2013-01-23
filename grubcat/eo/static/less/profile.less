@@ -10,7 +10,6 @@
   font-size: 15px;
   .clearfix();
   margin-bottom: 10px;
-  margin-top: 10px;
   .upload-photo-link {
     background: url("../img/upload-photo.png") no-repeat scroll -24px 1px transparent;
     padding-left: 24px;
@@ -31,6 +30,8 @@
 
 #profile-nav {
   font-size: 16px;
+  margin-bottom: 30px;
+  float: none;
 
   #profile_actions {
     float: left; //    padding-left: 360px;
@@ -415,6 +416,7 @@ div.control-group.interest-tags {
     margin: 12px 4px 12px 0;
     display: block;
     float: right;
+    font-size: 15px;
   }
   .date-wrapper {
     width: 60px;
@@ -463,6 +465,8 @@ div.control-group.interest-tags {
 
 #profile_basic_info_page {
 
+  .clearfix();
+
   .base-info{
     text-align: center;
     width: 190px;
@@ -483,7 +487,7 @@ div.control-group.interest-tags {
 
   .info-item {
     .clearfix();
-    margin: 10px 37px;
+    margin:0 24px 10px 24px;
     line-height: 30px;
     .info-label {
       color: #888;
@@ -493,13 +497,10 @@ div.control-group.interest-tags {
     }
     .info-value {
       float: left;
-      width: 507px;
-      margin-left: 20px;
+      width: 495px;
+      margin-left: 12px;
     }
     &.info-tags {
-
-      margin-top: 10px;
-
     }
   }
 

@@ -4,9 +4,11 @@
 {% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
 {% block profile-main %}
     <div id="photo-list" class="span12">
-        <div class="actions ">
-            <a class="upload-photo-link fr" href="{% url upload_photo %}">上传照片</a>
-        </div>
+        {% if is_mine %}
+            <div class="actions ">
+                <a class="upload-photo-link fr" href="{% url upload_photo %}">上传照片</a>
+            </div>
+        {% endif %}
         {% if photo_list %}
             <ul class="thumbnails">
                 {% for photo in photo_list %}
