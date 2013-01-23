@@ -98,7 +98,7 @@
     }
 
     var $profile_basic_info_page = $("#profile_basic_info_page");
-    if($profile_basic_info_page[0]){
+    if ($profile_basic_info_page[0]) {
         $(".btn-follow, .btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function (data) {
@@ -114,10 +114,10 @@
         });
     }
     var $followingList = $("#following-list");
-    if($followingList[0]){
+    if ($followingList[0]) {
         $followingList.find(".btn-unfollow").live('click', function () {
             var $btn = $(this);
-            $.post($(this).attr('href'), function (data) {
+            $.post($(this).attr('href'), function () {
                 $btn.parents(".following-cell").remove();
             });
             return false;
@@ -372,10 +372,76 @@
             return false;
         })
     }
+    var $container = $('#user-container');
+
+    if($container[0] || $profile_basic_info_page[0]){
+        $(".tags li[class!=common]").live("mouseenter",function () {
+            $(this).attr("title", "点击复制到我的兴趣");
+        }).live("click", function () {
+                var $item = $(this);
+                $.post($data.data("add-tag-url"), {'tag':$(this).text()}, function () {
+                    noty({text: $(this).text() + "已经复制到我的兴趣", timeout:500});
+                    $item.addClass("common");
+                });
+                $item.parents("ul").focus();
+                return false;
+            });
+    }
+
+    if ($container[0]) {
+        var tagItems = $(".tags li");
+        tagItems.each(function () {
+            if ($.inArray($(this).html(), myTags) > -1) {
+                $(this).addClass('common');
+            }
+        });
+        $container.imagesLoaded(function () {
+            $container.masonry({
+                itemSelector:'.box',
+                isAnimated:!Modernizr.csstransitions
+            });
+        });
+
+        var ajaxLoaderImageId = $data.data("ajax-load-image-id");
+        $container.infinitescroll({
+                navSelector:'#page-nav', // selector for the paged navigation
+                nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
+                itemSelector:'.box', // selector for all items you'll retrieve
+                animate:false,
+                /*finished:function(){
+                 alert('aa')
+                 },*/
+                extendFinished:function (responseText) {
+                    $("#main-container").append($(responseText).siblings("div.alert"))
+                },
+                loading:{
+                    msgText:'加载中...',
+                    finishedMsg:'没有了！',
+                    img:ajaxLoaderImageId
+                }
+            },
+            // trigger Masonry as a callback
+            function (newElements) {
+                // hide new items while they are loading
+                var $newElems = $(newElements).css({ opacity:0 });
+                // ensure that images load before adding to masonry layout
+                $newElems.imagesLoaded(function () {
+                    // show elems now they're ready
+                    $newElems.animate({ opacity:1 });
+                    $container.masonry('appended', $newElems, true);
+                });
+                $(newElements).find(".tags li").each(function () {
+                    if ($.inArray($(this).html(), myTags) > -1) {
+                        $(this).addClass('common');
+                    }
+                });
+            }
+        );
+    }
 
     var notyMsg = $data.data("notyMsg");
-    if( notyMsg ){
-        noty({'text':notyMsg})
+    if (notyMsg) {
+        noty({text:notyMsg})
     }
 })
     (jQuery);

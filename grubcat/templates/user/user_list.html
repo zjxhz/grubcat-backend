@@ -29,16 +29,20 @@
     {% endif %}
 
     {% include "user/user_container.html" %}
-    <a id="ajax-load-image-id" style="display: none" href="{% static 'img/ajax-loader.gif' %}"></a>
+    <div id="data" data-ajax-load-image-id="{% static 'img/ajax-loader.gif' %}" data-add-tag-url="{% url add_tag %}" style="display: none"></div>
 {% endblock %}
 
 {% block page_js %}
-    {% assets "user_list_js" %}
+    <script type="text/javascript">
+        var myTags = [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
+    </script>
+    {% assets "water_fall_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    <script type="text/javascript">
-        var tags = [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
-    </script>
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
 {% endblock %}
 
 {% block active-nav-id %}nav-user{% endblock %}

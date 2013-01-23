@@ -1,6 +1,6 @@
 #coding=utf-8
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 from django.forms.extras import SelectDateWidget
 from django.forms.widgets import *
 from image_cropping import ImageCropWidget

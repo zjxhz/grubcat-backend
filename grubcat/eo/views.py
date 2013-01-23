@@ -353,6 +353,7 @@ class ProfileUpdateView(UpdateView):
         return reverse('edit_basic_profile')
 
     def form_valid(self, form):
+        super(ProfileUpdateView, self).form_valid(form)
         return self.render_to_response(self.get_context_data(form=form, status="OK"))
 
 
@@ -409,7 +410,7 @@ class UserListView(ListView):
     queryset = UserProfile.objects.filter(user__is_active=True).select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():

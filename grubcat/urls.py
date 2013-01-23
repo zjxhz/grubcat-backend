@@ -8,7 +8,7 @@ from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_r
 from eo.db import  updateLatLng
 from eo.decorators import restaurant_login_required, active_login_required
 from eo.views import  upload_app
-from eo.views_common import list_tags
+from eo.views_common import list_tags, add_tag
 from grubcat.eo.views import *
 from django.conf import settings
 
@@ -115,6 +115,7 @@ urlpatterns = patterns('',
     url(r'^photo/del/(?P<pk>\d+)/$', active_login_required(del_photo), name='del_photo'),
 
     url(r'^tag/$', login_required(list_tags), name='tag_list'),
+    url(r'^tag/add/$', login_required(add_tag), name='add_tag'),
 
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),
