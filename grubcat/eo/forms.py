@@ -135,7 +135,7 @@ class BasicProfileForm(ModelForm):
         fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
-            'birthday': SelectDateWidget(required=False, years=reversed(range( 1966, 1996)), attrs={'class': "input-small"}, )
+            'birthday': SelectDateWidget(required=False, years=range( 1976, 1996), attrs={'class': "input-small"}, )
 
         }
 

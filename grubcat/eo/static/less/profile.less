@@ -438,9 +438,127 @@ div.control-group.interest-tags {
 
 #following-list {
 
-  .following-cell {
+  .following-cell, .follower-cell {
     margin-bottom: 20px;
+    border: 1px solid #e6e6e6;
+    padding: 4px;
+    width: 210px;
+    .name {
+      float: left;
+      clear: right;
+      padding: 6px 1px;
+      text-align: center;
+      width: 123px;
+      height: 16px;
+      overflow: hidden;
+      font-size: 16px;
+      margin-top: 10px;
+      color: #333;
+    }
+    .btn-unfollow {
+      margin: 12px 0 0 27px;
+    }
   }
 }
 
+#profile_basic_info_page {
+
+  .base-info{
+    text-align: center;
+    width: 190px;
+    .name-age{
+      margin-top: 10px;
+      .name{
+//        font-size: 15px;
+        color: #444;
+//        font-weight: bold;
+      }
+    }
+
+  }
+  
+  .profile-actions {
+    margin-bottom: 15px;
+  }
+
+  .info-item {
+    .clearfix();
+    margin: 10px 37px;
+    line-height: 30px;
+    .info-label {
+      color: #888;
+      float: left;
+      font-size: 14px;
+      width: 50px;
+    }
+    .info-value {
+      float: left;
+      width: 507px;
+      margin-left: 20px;
+    }
+    &.info-tags {
+
+      margin-top: 10px;
+
+    }
+  }
+
+  .tags {
+    border: none;
+    margin-bottom: 0px;
+    padding: 4px 0;
+    .box-shadow(none);
+    li {
+      border: 1px solid #DDDDDD;
+      border-radius: 12px 12px 12px 12px;
+      color: #777777;
+      float: left;
+      margin: 0 6px 6px 0;
+      padding: 2px 9px;
+      background: none repeat scroll 0 0 #F7F7F7;
+
+      &.common {
+        background: none repeat scroll 0 0 #588A00;
+        border-color: #588A00;
+        color: #FFFFFF;
+      }
+    }
+  }
+
+
+  .speech-outer {
+    margin-top: 13px;
+    position: relative;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px 5px 5px 5px;
+    width: 100%;
+  }
+
+  .speech-arrow {
+    width: 15px;
+    height: 15px;
+    background: none repeat scroll 0 0 #f1f1f1;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    left: 45px;
+    top: -5px;
+  }
+
+  .speech-inner {
+    padding: 10px;
+    .border-radius(5px);
+    position: relative;
+    background: none repeat scroll 0 0 #f1f1f1;
+    text-align: left;
+//    font-size: 120%;
+//    line-height: 130%;
+    overflow: hidden;
+  }
+
+}
 

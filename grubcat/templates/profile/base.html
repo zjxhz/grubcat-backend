@@ -15,14 +15,14 @@
         <ul id="profile-nav" class="nav nav-tabs span12 ">
             <li id="profile_actions">
                 <div class="btn-group">
-                    {% comment %}{% if not is_mine %}
+                    {% if not is_mine %}
                         {% if profile not in user.get_profile.following.all %}
-                            <a href="{% url  follow profile.id %}" class="btn btn-follow">关注</a>
+                            <a href="{% url  follow profile.id %}" class="btn btn-follow"><i class="icon-star"></i> 关注</a>
                         {% else %}
                             <a href="{% url  un_follow profile.id %}" class="btn btn-unfollow">取消关注</a>
                         {% endif %}
-                        <button class="btn">聊天</button>
-                    {% endif %}{% endcomment %}
+                        <button class="btn"><i class="icon-comment"></i> 聊天</button>
+                    {% endif %}
                 </div>
             </li>
 
