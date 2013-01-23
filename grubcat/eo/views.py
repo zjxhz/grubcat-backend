@@ -350,12 +350,7 @@ class ProfileUpdateView(UpdateView):
         return self.request.user.get_profile()
 
     def get_success_url(self):
-        return reverse('edit_basic_profile')
-
-    def form_valid(self, form):
-        super(ProfileUpdateView, self).form_valid(form)
-        return self.render_to_response(self.get_context_data(form=form, status="OK"))
-
+        return reverse('user_detail', kwargs={'pk':self.object.id})
 
 class ProfileDetailView(DetailView):
     model = UserProfile
