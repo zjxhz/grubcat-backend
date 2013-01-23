@@ -29,7 +29,7 @@
             {% if is_mine %}
                 <li id="profile_follow" class=""><a href="{% url following_list profile.id %}">关注/粉丝</a></li>
             {% endif %}
-            <li id="profile_meal"><a href="{% url user_meal_list profile.id %}">饭局({{ profile.meals.count }})</a>
+            <li id="profile_meal"><a href="{% url user_meal_list profile.id %}">饭局({{ orders.count }})</a>
             </li>
             <li id="profile_photo"><a href="{% url photo_list profile.id %}">照片({{ profile.photos.count }})</a></li>
             <li id="profile_basic_info" class="active"><a href="{% url user_detail profile.id %}">资料</a></li>
