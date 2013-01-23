@@ -358,6 +358,16 @@ class ProfileDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         context['is_mine'] = self.object == self.request.user.get_profile()
+        if self.object.industry:
+            for industry_value, industry_label in INDUSTRY_CHOICE:
+                if self.object.industry == industry_value:
+                    context['industry_label'] = industry_label
+                    break
+        if self.object.gender is not None:
+            for value, label in GENDER_CHOICE:
+                if self.object.gender == value:
+                    context['gender_label'] = label
+                    break
         return context
 
 # not used for now
@@ -584,7 +594,7 @@ def un_follow(request, user_id):
             user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
             relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
             relationship.delete()
-            html = '<a class="btn btn-follow" href="%s">关注</a>' % (
+            html = '<a class="btn btn-follow" href="%s"><i class="icon-star"></i> 关注</a>' % (
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
             return create_sucess_json_response(extra_dict={'html': html})
         except Exception:
