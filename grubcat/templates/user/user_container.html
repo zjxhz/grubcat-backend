@@ -17,7 +17,7 @@
                         <ul class="tags">
 
                             {% for tag in user.tags.all %}
-                                <li>{{ tag.name }}</li>
+                                <a href=""><li>{{ tag.name }}</li></a>
                             {% endfor %}
                         </ul>
                     </div>

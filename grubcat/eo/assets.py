@@ -81,9 +81,6 @@ water_fall_js = Bundle(
     'js/jquery.infinitescroll.js', 'js/jquery.masonry.min.js', 'js/modernizr-transitions.js', filters='jsmin',
     output='gen/water-fall.%(version)s.js'
 )
-user_list_js = Bundle(
-    water_fall_js, 'js/user-list.js', filters='jsmin', output='gen/user-list.%(version)s.js'
-)
 
 restaurant_admin_js = Bundle(
     'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
@@ -130,7 +127,6 @@ register('base_main_js', base_main_js)
 register('module_js', module_js)
 register('auto_suggest_js', auto_suggest_js)
 register('restaurant_admin_js', restaurant_admin_js)
-register('user_list_js', user_list_js)
 #register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)

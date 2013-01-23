@@ -50,3 +50,8 @@ def list_tags(request):
         data = []
     return HttpResponse(simplejson.dumps(data), content_type='application/json', )
 
+def add_tag(request):
+    if request.method == 'POST':
+        tag = request.POST.get('tag')
+        request.user.get_profile().tags.add(tag)
+        return create_sucess_json_response()
