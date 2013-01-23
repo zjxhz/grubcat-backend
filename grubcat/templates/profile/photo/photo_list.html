@@ -1,0 +1,29 @@
+{% extends "profile/base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
+{% block profile-main %}
+    <div id="photo-list" class="span12">
+        <div class="actions ">
+            <a class="upload-photo-link fr" href="{% url upload_photo %}">上传照片</a>
+        </div>
+        {% if photo_list %}
+            <ul class="thumbnails">
+                {% for photo in photo_list %}
+                    <li class="span3">
+                        <a href="{% url photo_detail photo.id %}" class="thumbnail"> <img
+                                src="{{ photo.photo_thumbnail }}"
+                                class="photo"
+                                alt="photo"></a>
+                    </li>
+
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-results">
+                TA还没上传照片，邀请TA上传吧。
+            </div>
+        {% endif %}
+    </div>
+    <div id="data" style="display: none" data-active-nav-id="profile_photo"></div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+{% block title %}预定{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "order_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+{% block content %}
+    <div class="create-order clearfix">
+        <div class="meal-info ">
+
+            <table class="table table-bordered">
+                <caption>饭局信息</caption>
+                <tbody>
+                    <tr>
+                        <th>主题</th>
+                        <td>{{ meal.topic }}</td>
+                    </tr>
+                    <tr>
+                        <th>时间</th>
+                        <td>{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"d" }}日  {{ meal.start_time|date:"G:i "  }}</td>
+                    </tr>
+                    {% if meal.restaurant %}
+                    <tr>
+                        <th>地点</th>
+                        <td> <span class="rest-name">{{ meal.restaurant.name }}</span>  <span class="rest-address">{{ meal.restaurant.address }}</span></td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>人数</th>
+                        <td>{{ meal.min_persons }}</td>
+                    </tr>
+                    {% comment %}{% if meal.group %}
+                    <tr>
+                        <th>圈子</th>
+                        <td>{{ meal.group.name }}</td>
+                    </tr>
+                    {% endif %}{% endcomment %}
+                    <tr>
+                        <th>类型</th>
+                        <td>{% if meal.privacy %} 私密饭局，仅被邀请的人可以参加 {% else %} 公开饭局（所有人都可以参加） {% endif %} </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {% comment %} <h3>{{ meal.topic }}</h3>
+            <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
+            </p>
+            <div class="meal-img-wrapper">
+                <img width="376px" height="210px" src="{{ meal.get_cover_url }}">
+
+                <div class="date-wrapper">
+                    <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                    <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                    <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                </div>
+                <div class="time">{{ meal.start_time|date:"G:i " }}</div>
+            </div>{% endcomment %}
+
+        </div>
+
+        <div class="order-info ">
+            <form id="order_info_form" action="" method="post" class="form-horizontal"> {% csrf_token %}
+                <legend>订单信息</legend>
+                <fieldset>
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div class="control-group num_persons">
+                        <label class="control-label" for="id_num_persons">为几人付款:</label>
+
+                        <div class="controls">
+                            {{ form.num_persons }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">价钱:</label>
+
+                        <div class="controls">
+                            <label><span id="meal_price">{{ meal.list_price }}</span> 元/人</label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">总价钱:</label>
+
+                        <div class="controls">
+                            <label><span id="total_price" class="bl">{{ meal.list_price }}</span> 元</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-actions">
+                    <input type="submit" class="btn btn-primary btn-large span2" value="买单"/>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('#id_num_persons').dropkick({width:20, startSpeed:100,change:function(){
+            $("#total_price").html($("#meal_price").html() * $(this).val());
+        }});
+    })
+    </script>
+{% endblock %}

@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+build/*
+*.pyc
+.idea/*
+grubcat/settings_dev.py
+grubcat/eo/static/gen/*
+grubcat/eo/static/.webassets*
+*.orig
