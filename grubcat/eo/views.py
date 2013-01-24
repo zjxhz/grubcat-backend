@@ -406,7 +406,7 @@ class UserListView(ListView):
     queryset = UserProfile.objects.filter(user__is_active=True).select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
