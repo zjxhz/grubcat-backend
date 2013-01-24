@@ -404,7 +404,7 @@
                 $(this).addClass('common');
             }
         });
-        $container.imagesLoaded(function () {
+//        $container.imagesLoaded(function () {
             $container.masonry({
                 itemSelector:'.box',
                 isAnimated:!Modernizr.csstransitions
@@ -413,9 +413,9 @@
                     $(window).scroll();
                 }
             });
-        });
+//        });
 
-        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+//        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
@@ -449,7 +449,7 @@
                 $newElems.imagesLoaded(function () {
                     // show elems now they're ready
                     $newElems.animate({ opacity:1 });
-                $(newElements).find("img.lazy").lazyload({ threshold:400, effect:'fadeIn' });
+//                $(newElements).find("img.lazy").lazyload({ threshold:400, effect:'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
 //                        if($(document).height() <= $(window).height()){
 //                        $(window).scroll();
