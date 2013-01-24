@@ -474,7 +474,7 @@ class UserProfile(models.Model):
         return get_thumbnailer(self.avatar).get_thumbnail({
             'size': avatar_size,
             'box': self.cropping,
-            'quality': 100,
+            'quality': 90,
             'crop': True,
             'detail': True,
         })
