@@ -9,7 +9,7 @@
                  height="180">
 
             <div class="name-age">
-                <span class="name">{{ profile.name }}</span>{% if gender_label %}，{{ gender_label }}{% endif %}{% if profile.age %}，{{ profile.age }}岁{% endif %}
+                <span class="name">{{ profile.name }}</span>
             </div>
             {% comment %}{% if profile.motto %}
                 <div class="speech-outer">
@@ -28,7 +28,8 @@
         </div>
         <div class="span9 fr">
             {% if is_mine %}
-                <div class="fr profile-actions"><a href="{% url edit_basic_profile %}" class="btn btn-primary fr">编辑</a></div>
+                <div class="fr profile-actions"><a href="{% url edit_basic_profile %}" class="btn btn-primary fr">编辑</a>
+                </div>
             {% endif %}
 
             {% with tags=profile.tags.all %}
@@ -39,7 +40,9 @@
                             <ul class="tags  as-selections">
                                 {% with my_tags=user.get_profile.tags.all %}
                                     {% for tag in tags %}
-                                        <a href=""><li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag.name }}</li></a>
+                                        <a href="">
+                                            <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag.name }}</li>
+                                        </a>
                                     {% endfor %}
                                 {% endwith %}
                             </ul>
@@ -51,10 +54,21 @@
                 <div class="info-label">签名：</div>
                 <div class="info-value">{{ profile.motto|default:"未填写" }}</div>
             </div>
+            {% if gender_label %}
+                <div class="info-item">
+                    <div class="info-label">性别：</div>
+                    <div class="info-value">{{ gender_label }}</div>
+                </div>
+            {% endif %}
             {% if is_mine %}
                 <div class="info-item">
-                    <div class="info-label">生日</div>
+                    <div class="info-label">生日：</div>
                     <div class="info-value">{{ profile.birthday|date:"Y/n/j"|default:"未填写" }}</div>
+                </div>
+            {% else %}
+                <div class="info-item">
+                    <div class="info-label">年龄：</div>
+                    <div class="info-value">{{ profile.age|default:"保密" }}</div>
                 </div>
             {% endif %}
             {#            {% if profile.college %}#}
@@ -84,5 +98,6 @@
         </div>
 
     </div>
-    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}" {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
+    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}"
+         {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
 {% endblock %}
