@@ -27,6 +27,8 @@ class OrderCheckInView(FormView):
         if order:
             order = order[0]
             data = get_order_info(order)
+            data['is_passed'] = order.meal.start_date + timedelta(days=1) <= date.today()
+            data['is_upcomming'] = order.meal.start_date - timedelta(days=1) >= date.today()
         return render_to_response("restaurant/checkin_result.html", data)
 
 
