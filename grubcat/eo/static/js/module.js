@@ -404,7 +404,7 @@
                 $(this).addClass('common');
             }
         });
-//        $container.imagesLoaded(function () {
+        $container.imagesLoaded(function () {
             $container.masonry({
                 itemSelector:'.box',
                 isAnimated:!Modernizr.csstransitions
@@ -413,7 +413,7 @@
                     $(window).scroll();
                 }
             });
-//        });
+        });
 
         $("img.lazy").lazyload({ threshold:200});
 
