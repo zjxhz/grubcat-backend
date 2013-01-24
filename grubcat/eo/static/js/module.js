@@ -415,7 +415,7 @@
             });
 //        });
 
-        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+        $("img.lazy").lazyload({ threshold:200});
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
