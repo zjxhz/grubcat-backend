@@ -375,7 +375,7 @@
     var $container = $('#user-container');
     var $tagItems = $(".tags li");
     if (($container[0] || $profile_basic_info_page[0])) {
-        if (!$data.data("isMine")) {
+        if ($data.data("isLogin") && !$data.data("isMine")) {
 
             $(".tags li.common").live('click', function () {
                 return false;
@@ -386,7 +386,11 @@
                     var $item = $(this);
                     $.post($data.data("add-tag-url"), {'tag':$(this).text()}, function () {
                         noty({text:$item.text() + " 已经复制到我的兴趣", timeout:500});
-                        $(".tags li:contains(" + $item.text() + ")").addClass("common").removeAttr("title");
+                        $(".tags li:contains(" + $item.text() + ")").each(function(){
+                            if($(this).text() == $item.text() ){
+                                $(this).addClass("common").removeAttr("title");
+                            }
+                        })
                     });
                     return false;
                 });
@@ -404,7 +408,7 @@
                 $(this).addClass('common');
             }
         });
-//        $container.imagesLoaded(function () {
+        $container.imagesLoaded(function () {
             $container.masonry({
                 itemSelector:'.box',
                 isAnimated:!Modernizr.csstransitions
@@ -413,7 +417,7 @@
                     $(window).scroll();
                 }
             });
-//        });
+        });
 
         $("img.lazy").lazyload({ threshold:200});
 

@@ -98,6 +98,6 @@
         </div>
 
     </div>
-    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}"
+    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}" {% if user.is_authenticated %}data-is-login="true"{% endif %}
          {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
 {% endblock %}

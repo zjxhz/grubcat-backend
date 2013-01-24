@@ -29,7 +29,7 @@
     {% endif %}
 
     {% include "user/user_container.html" %}
-    <div id="data" data-ajax-load-image-id="{% static 'img/ajax-loader.gif' %}" data-add-tag-url="{% url add_tag %}" style="display: none"></div>
+    <div id="data" data-ajax-load-image-id="{% static 'img/ajax-loader.gif' %}" {% if user.is_authenticated %}data-is-login="true"{% endif %} data-add-tag-url="{% url add_tag %}" style="display: none"></div>
 {% endblock %}
 
 {% block page_js %}
