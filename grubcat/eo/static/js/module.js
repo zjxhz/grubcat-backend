@@ -404,7 +404,7 @@
                 $(this).addClass('common');
             }
         });
-//        $container.imagesLoaded(function () {
+        $container.imagesLoaded(function () {
             $container.masonry({
                 itemSelector:'.box',
                 isAnimated:!Modernizr.csstransitions
@@ -413,7 +413,7 @@
                     $(window).scroll();
                 }
             });
-//        });
+        });
 
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
@@ -445,7 +445,7 @@
                 // hide new items while they are loading
                 var $newElems = $(newElements).css({ opacity:0 });
                 // ensure that images load before adding to masonry layout
-//                $newElems.imagesLoaded(function () {
+                $newElems.imagesLoaded(function () {
                     // show elems now they're ready
                     $newElems.animate({ opacity:1 });
                     $container.masonry('appended', $newElems, true, function () {
@@ -453,7 +453,7 @@
 //                        $(window).scroll();
 //                        }
                     });
-//                });
+                });
                 $(newElements).find(".tags li").each(function () {
                     if ($.inArray($(this).html(), myTags) > -1) {
                         $(this).addClass('common');
