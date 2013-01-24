@@ -416,6 +416,7 @@
                 if ($(document).height() <= $(window).height()) {
                     $(window).scroll();
                 }
+                $("#need_edit_tags_again_tip").show();
             });
         });
 
@@ -437,7 +438,8 @@
                     }
                 },
                 extendFinished:function (responseText) {
-                    $("#main-container").append($(responseText).siblings("div.alert"))
+//                    $("#main-container").append($(responseText).siblings("div.alert"));
+                    $("#need_edit_tags_again_tip").show();
                 },
                 loading:{
                     msgText:'加载中...',
