@@ -415,7 +415,7 @@
             });
 //        });
 
-//        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
@@ -446,16 +446,16 @@
                 // hide new items while they are loading
                 var $newElems = $(newElements).css({ opacity:0 });
                 // ensure that images load before adding to masonry layout
-                $newElems.imagesLoaded(function () {
+//                $newElems.imagesLoaded(function () {
                     // show elems now they're ready
                     $newElems.animate({ opacity:1 });
-//                $(newElements).find("img.lazy").lazyload({ threshold:400, effect:'fadeIn' });
+                $(newElements).find("img.lazy").lazyload({ threshold:400, effect:'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
 //                        if($(document).height() <= $(window).height()){
 //                        $(window).scroll();
 //                        }
                     });
-                });
+//                });
                 $(newElements).find(".tags li").each(function () {
                     if ($.inArray($(this).html(), myTags) > -1) {
                         $(this).addClass('common');
