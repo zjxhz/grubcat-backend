@@ -26,24 +26,24 @@ class OrderCheckInView(FormView):
         #TODO uncomment this below
         if order:
             order = order[0]
-            data = get_order_info(order)
+            data = get_meal_info(order.meal)
+            data['order'] = order
             data['is_passed'] = order.meal.start_date + timedelta(days=1) <= date.today()
             data['is_upcomming'] = order.meal.start_date - timedelta(days=1) >= date.today()
         return render_to_response("restaurant/checkin_result.html", data)
 
 
-def get_order_info(order):
-    is_today = order.meal.start_date == date.today()
-    all_persons = checked_persons = 0
+def get_meal_info(meal):
+    is_today = meal.start_date == date.today()
+    checked_persons = 0
     useful_orders = Order.objects.filter(status__in=(OrderStatus.CREATED, OrderStatus.PAYIED, OrderStatus.USED),
-        meal=order.meal)
+        meal=meal)
     #TODO remove created orders after alipay is implemented
     for o in useful_orders:
-        all_persons += o.num_persons
         if o.status == OrderStatus.USED:
             checked_persons += o.num_persons
-    return {'order': order, 'is_today': is_today, 'all_persons': all_persons, 'checked_persons': checked_persons,
-            'unchecked_persons': all_persons - checked_persons}
+    return {'is_today': is_today, 'checked_persons': checked_persons,
+            'unchecked_persons': meal.actual_persons - checked_persons}
 
 
 def use_order(request):
@@ -55,8 +55,31 @@ def use_order(request):
         order.completed_time = now()
         order.status = OrderStatus.USED
         order.save()
-        return render_to_response("restaurant/checkin_result.html", get_order_info(order))
+        data = get_meal_info(order.meal)
+        data['order'] = order
+        return render_to_response("restaurant/checkin_result.html", data)
 
+
+class TodayMealListView(ListView):
+    template_name = 'restaurant/today_meal_list.html'
+    context_object_name = 'meal_list'
+
+    def get_queryset(self):
+        return Meal.objects.filter(restaurant=self.request.user.restaurant,start_date=date.today()).order_by('start_time')
+
+    def get_context_data(self, **kwargs):
+        for meal in self.object_list:
+            checked_persons = 0
+            useful_orders = Order.objects.filter(status__in=(OrderStatus.CREATED, OrderStatus.PAYIED, OrderStatus.USED),
+                meal=meal)
+            #TODO remove created orders after alipay is implemented
+            for o in useful_orders:
+                if o.status == OrderStatus.USED:
+                    checked_persons += o.num_persons
+            meal.checked_persons = checked_persons
+            meal.unchecked_persons = meal.actual_persons - meal.checked_persons
+            meal.total_price = meal.list_price * meal.actual_persons
+        return super(TodayMealListView, self).get_context_data(**kwargs)
 
 def add_dish_category(request):
     if request.method == 'POST':

@@ -62,6 +62,7 @@ urlpatterns = patterns('',
 
     #menu
     url(r'^menu/$', active_login_required(MenuListView.as_view()), name="menu_list"),
+    url(r'^menu/(?P<pk>\d+)/$', active_login_required(MenuDetailView.as_view()), name="menu_detail"),
 
     #ajax get menus
     #    url(r'^menu/$',active_login_required(get_menu), name='get_menu'),
@@ -123,6 +124,9 @@ urlpatterns = patterns('',
     url(r'^restaurant/chekin/$', restaurant_login_required(rest.OrderCheckInView.as_view()),
         name="restaurant_checkin"),
     url(r'^restaurant/order/use/$', restaurant_login_required(rest.use_order), name="restaurant_use_order"),
+
+    url(r'^restaurant/order/today/$', restaurant_login_required(rest.TodayMealListView.as_view()), name="restaurant_today_meals"),
+
 
     url(r'^restaurant/dish/$', restaurant_login_required(rest.DishListView.as_view()), name="restaurant_dish_list"),
     url(r'^restaurant/dish/add/$', restaurant_login_required(rest.DishCreateView.as_view()),

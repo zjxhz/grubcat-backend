@@ -99,7 +99,7 @@ def del_photo(request, pk):
 
 ###Menu related views ###
 class MenuListView(ListView):
-    template_name = "meal/get_menu.html"
+    template_name = "meal/get_menus.html"
     context_object_name = "menu_list"
 
     def get_queryset(self):
@@ -112,6 +112,10 @@ class MenuListView(ListView):
                 num_persons=num_persons).select_related('restaurant', )
         return qs
 
+class MenuDetailView(DetailView):
+    model = Menu
+    context_object_name = 'menu'
+    template_name = 'meal/menu_detail.html'
 
 ### Meal related views ###
 class MealCreateView(CreateView):

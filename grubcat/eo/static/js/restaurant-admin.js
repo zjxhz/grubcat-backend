@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $("#restaurant-nav li").removeClass("active");
-    $("#" + $("#nav-active-id").html()).addClass("active");
+    $("#" + $("#data").data("nav-active-id")).addClass("active");
     // bind form using 'ajaxForm'
     $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
         var code = $("#id_code").val();
@@ -227,6 +227,18 @@ $(document).ready(function () {
             return false;
         })
 
+    }
+
+
+    //for today meal list
+    if ($("#today-meal-list")[0]) {
+        $(".menu-detail-link").click(function () {
+
+            $("#menu-detail-modal-wrapper").load($(this).attr("href"), function (html) {
+                $("#menu-detail-modal").modal()
+            });
+            return false;
+        })
     }
 
 })
