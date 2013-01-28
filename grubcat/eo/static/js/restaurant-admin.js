@@ -235,10 +235,10 @@ jQuery(function ($) {
             var options = {
 //                target:'#crop_menu_cover_wrapper', // target element(s) to be updated with server response
                 beforeSubmit:function () {
-                    $(".loading").show();
+                    $menuCoverWrapper.find(".loading").show();
                 }, // pre-submit callback
                 success:function (data) {
-                    $(".loading").hide();
+                    $menuCoverWrapper.find(".loading").hide();
                     //noinspection JSUnresolvedVariable
                     $menuCoverWrapper.find("img").attr('src', data.normal_cover_url);
                     $menuCoverWrapper.addClass("has-cover");
