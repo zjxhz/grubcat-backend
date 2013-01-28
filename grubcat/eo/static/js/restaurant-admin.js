@@ -169,7 +169,7 @@ jQuery(function ($) {
                 alert("请拖拽左边的分类或者菜到邮编的套餐栏中")
                 return false;
             }
-            $("#save-menu-btn").addClass("disabled").attr("disabled",true)
+            $("#save-menu-btn").addClass("disabled").attr("disabled", true)
             var postData = {};
             var $menuItems = $("#menu-items").children();
             var items = $menuItems.map(function (i, elem) {
@@ -187,7 +187,7 @@ jQuery(function ($) {
                 if (data.status == 'OK') {
                     window.location.href = data.url
                 } else {
-                    alert( data.message)
+                    alert(data.message)
                     $("#save-menu-btn").removeClass("disabled").removeAttr("disabled")
                 }
 
@@ -208,9 +208,9 @@ jQuery(function ($) {
             gutterWidth:30
 
         });
-        $(".menu-cover-wrapper.has-cover").hover(function(){
+        $(".menu-cover-wrapper.has-cover").hover(function () {
             $(this).find(".upload-actions, .upload-actions-bg").show();
-        }, function(){
+        }, function () {
             $(this).find(".upload-actions, .upload-actions-bg").hide();
         })
         $(".btn-crop-cover").click(function () {
@@ -229,7 +229,6 @@ jQuery(function ($) {
             })
         })
 
-
         //upload menu cover
         $(".upload-cover-input").change(function () {
             var $menuCoverWrapper = $(this).parents(".menu-cover-wrapper");
@@ -245,6 +244,11 @@ jQuery(function ($) {
                     $menuCoverWrapper.addClass("has-cover");
                     $menuCoverWrapper.find(".btn-upload-cover").removeClass("btn-danger").addClass("btn-primary");
                     $menuCoverWrapper.find(".upload-actions, .upload-actions-bg").show();
+                    $menuCoverWrapper.hover(function () {
+                        $(this).find(".upload-actions, .upload-actions-bg").show();
+                    }, function () {
+                        $(this).find(".upload-actions, .upload-actions-bg").hide();
+                    })
                     $menuCoverWrapper.find(".btn-crop-cover").click();
                     return false;
                 }
@@ -261,7 +265,12 @@ jQuery(function ($) {
                 $.post(delUrl, function () {
                     $delMenuModal.modal("hide");
                     $menuContainer.fadeOut(1000).remove();
-                    $container.masonry('reload');
+                    noty({text:"套餐删除成功"});
+                    if ($(".menu-container").length) {
+                        $container.masonry('reload');
+                    } else {
+                        window.location.reload();
+                    }
                 })
             })
             $delMenuModal.modal();

@@ -116,14 +116,14 @@
                     <a href="{% url user_detail user.id %}" class="user-img-wrapper"
                        title="{{ user.name }}">
                         <img alt="{{ user.name }}" width="80"
-                             height="80" class="img-circle img-polaroid"
+                             height="80" class=""
                              src="{{ user.normal_avatar }}">
                     </a>
                 {% endfor %}
 
                 {% for empty_user in avaliable_seats %}
                     <div class="empty-user-wrapper">
-                    <img class="seat-placeholder img-circle img-polaroid" width="80"
+                    <img class="seat-placeholder " width="80"
                          height="80"
                          src="{% static 'img/default/seat-placeholder.png' %}">
                     </div>
