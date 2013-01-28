@@ -207,14 +207,14 @@ def add_edit_menu(request, pk=None, is_copy=False):
             menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price, name=name,)
             if pk:
                 old_menu = Menu.objects.get(pk=pk)
+                menu.created_time=old_menu.created_time
                 if not is_copy:
                     old_menu.status = MenuStatus.DELETED
-                    old_menu.name = "%s%s" % (menu.name, menu.id)
+                    old_menu.name = "%s%s" % (old_menu.name, old_menu.id)
+                    print old_menu.name
                     old_menu.save()
-
-                menu.photo=old_menu.photo
-                menu.cropping=old_menu.cropping
-                menu.created_time=old_menu.created_time
+                    menu.photo=old_menu.photo
+                    menu.cropping=old_menu.cropping
             menu.save()
 
         except IntegrityError:

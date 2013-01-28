@@ -30,6 +30,7 @@
                 <div class="menu-container" data-crop-cover-url="{% url edit_menu_cover  menu.id %}">
                     <div class="menu-cover-wrapper {% if menu.photo %}has-cover{% endif %}">
                         <div class="upload-actions-bg"></div>
+                        <div class="loading hide">上传中</div>
                         <div class="upload-actions">
                             <form class="upload_menu_cover_form"
                                   action="{% url edit_menu_cover menu.id %}?action=upload"
