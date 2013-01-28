@@ -6,8 +6,8 @@ from image_cropping.admin import ImageCroppingMixin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
 from models import Group, GroupCategory, UserProfile, ImageTest
 
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('id','name','weibo_id','avatar')
+class UserProfileAdmin(ImageCroppingMixin, admin.ModelAdmin):
+    list_display = ('id','name','weibo_id','avatar','cropping')
     list_editable = ('name','avatar',)
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
@@ -53,7 +53,7 @@ class DishCategoryItemInline(admin.StackedInline):
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ('name','latitude','longitude','address')
 
-class MenuAdmin(admin.ModelAdmin):
+class MenuAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('restaurant','status','id','num_persons','average_price',)
     list_filter = ('restaurant','status')
     inlines = [DishItemInline,DishCategoryItemInline]
@@ -72,7 +72,6 @@ class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
     pass
 
 
-#admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Dish, DishAdmin)

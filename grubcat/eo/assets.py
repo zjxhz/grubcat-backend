@@ -55,7 +55,7 @@ profile_css = Bundle(
 #)
 
 restaurant_admin_css = Bundle(
-    'less/restaurant-admin.less', responsive_css, filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
+    'css/jquery.Jcrop.css','less/restaurant-admin.less', responsive_css, filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below

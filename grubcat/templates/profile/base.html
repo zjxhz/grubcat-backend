@@ -32,7 +32,7 @@
             <li id="profile_meal"><a href="{% url user_meal_list profile.id %}">饭局({{ orders.count }})</a>
             </li>
             <li id="profile_photo"><a href="{% url photo_list profile.id %}">照片({{ profile.photos.count }})</a></li>
-            <li id="profile_basic_info" class="active"><a href="{% url user_detail profile.id %}">资料</a></li>
+            <li id="profile_basic_info"><a href="{% url user_detail profile.id %}">资料</a></li>
         </ul>
         {% block profile-main %}
         {% endblock %}

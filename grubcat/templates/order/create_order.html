@@ -51,7 +51,7 @@
             <p class="meal-location">在 <strong>{{ meal.menu.restaurant.name }}</strong> &nbsp;{{ meal.menu.restaurant.address }}
             </p>
             <div class="meal-img-wrapper">
-                <img width="376px" height="210px" src="{{ meal.get_cover_url }}">
+                <img width="376px" height="210px" src="{{ meal.big_cover_url }}">
 
                 <div class="date-wrapper">
                     <span class="month">{{ meal.start_date|date:"n" }}月</span>

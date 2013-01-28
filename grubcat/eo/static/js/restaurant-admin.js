@@ -1,4 +1,4 @@
-$(document).ready(function () {
+jQuery(function ($) {
 
     $("#restaurant-nav li").removeClass("active");
     $("#" + $("#data").data("nav-active-id")).addClass("active");
@@ -41,11 +41,11 @@ $(document).ready(function () {
             return false;
         });
 
-
     }
 
 //    for add menu page
     if ($("#dish-container")[0]) {
+
 
         $("#add-menu-help-link").click(function () {
             $("#add-menu-help-dialog").dialog({
@@ -145,6 +145,9 @@ $(document).ready(function () {
             return false;
         })
 
+        $("#save-menu-btn").click(function () {
+            $("#save-menu-form").submit();
+        })
         $("#save-menu-form").submit(function () {
 
             if (!$("#id_num_persons").val()) {
@@ -157,15 +160,20 @@ $(document).ready(function () {
                 return false;
             }
 
+            if (!$("#id_name").val()) {
+                alert("请输入套餐名")
+                return false;
+            }
+
             if ($("#menu-items").children().length == 0) {
                 alert("请拖拽左边的分类或者菜到邮编的套餐栏中")
                 return false;
             }
-            $("#save-menu-btn").addClass("disabled")
+            $("#save-menu-btn").addClass("disabled").attr("disabled",true)
             var postData = {};
             var $menuItems = $("#menu-items").children();
             var items = $menuItems.map(function (i, elem) {
-                $item = $(elem);
+                var $item = $(elem);
                 if ($item.is(".dish")) {
                     return  { id:$item.attr('dish-id'), num:$item.find(" .num").text() };
                 } else {
@@ -173,22 +181,19 @@ $(document).ready(function () {
                 }
 
             }).get();
-            postData = {num_persons:$("#id_num_persons").val(), average_price:$("#id_average_price").val(), items:items}
+            postData = {num_persons:$("#id_num_persons").val(), average_price:$("#id_average_price").val(), name:$("#id_name").val(), items:items}
 
             $.post($(this).attr("href"), JSON.stringify(postData), function (data) {
                 if (data.status == 'OK') {
                     window.location.href = data.url
                 } else {
-                    var error = data.info;
-                    alert("您的输入有误，请重新输入")
-                    $("#save-menu-btn").removeClass("disabled")
+                    alert( data.message)
+                    $("#save-menu-btn").removeClass("disabled").removeAttr("disabled")
                 }
 
             }, "json")
             return false;
         })
-
-
     }
 //end of add menu page
 
@@ -199,31 +204,67 @@ $(document).ready(function () {
         $container.masonry({
             itemSelector:'.menu-container',
             columns:2,
-//            columnWidth:340,
-            gutterWidth:15
+//            columnWidth:360
+            gutterWidth:30
 
         });
-        $(".dellink").click(function (e) {
-            var delUrl = $(this).attr('href');
-            $("<div>确定要删除套餐吗？</div>").dialog({
-                autoOpen:true,
-                dialogClass:"confirm",
-                modal:true,
-                width:200,
-                height:110,
-                resizable:false,
-                position:'center',
-                buttons:{
-                    确定:function () {
-                        $.post(delUrl, function (data) {
-                            window.location.href = data.url
-                        }, 'json')
-                    },
-                    取消:function () {
-                        $(this).dialog("close");
-                    }
+        $(".menu-cover-wrapper.has-cover").hover(function(){
+            $(this).find(".upload-actions, .upload-actions-bg").show();
+        }, function(){
+            $(this).find(".upload-actions, .upload-actions-bg").hide();
+        })
+        $(".btn-crop-cover").click(function () {
+            var $menuContainer = $(this).parents(".menu-container");
+            $("#crop_menu_cover_wrapper").load($menuContainer.data("crop-cover-url"), function () {
+                $("#crop_cover_modal").modal();
+                $("#crop_submit").click(function () {
+                    $("#id_crop_form").ajaxSubmit({
+                        success:function (data) {
+                            //noinspection JSUnresolvedVariable
+                            $menuContainer.find(".menu-cover-wrapper img").attr("src", data.normal_cover_url);
+                            $("#crop_cover_modal").modal('hide')
+                        }
+                    })
+                })
+            })
+        })
+
+
+        //upload menu cover
+        $(".upload-cover-input").change(function () {
+            var $menuCoverWrapper = $(this).parents(".menu-cover-wrapper");
+            var options = {
+//                target:'#crop_menu_cover_wrapper', // target element(s) to be updated with server response
+                beforeSubmit:function () {
+                    $(".loading").show();
+                }, // pre-submit callback
+                success:function (data) {
+                    $(".loading").hide();
+                    //noinspection JSUnresolvedVariable
+                    $menuCoverWrapper.find("img").attr('src', data.normal_cover_url);
+                    $menuCoverWrapper.addClass("has-cover");
+                    $menuCoverWrapper.find(".btn-upload-cover").removeClass("btn-danger").addClass("btn-primary");
+                    $menuCoverWrapper.find(".upload-actions, .upload-actions-bg").show();
+                    $menuCoverWrapper.find(".btn-crop-cover").click();
+                    return false;
                 }
-            });
+            };
+            $menuCoverWrapper.find("form.upload_menu_cover_form").ajaxSubmit(options);
+
+        });
+
+        $(".dellink").click(function (e) {
+            var $menuContainer = $(this).parents(".menu-container");
+            var delUrl = $(this).attr('href');
+            var $delMenuModal = $("#del-menu-modal");
+            $("#btn-del").unbind("click").click(function () {
+                $.post(delUrl, function () {
+                    $delMenuModal.modal("hide");
+                    $menuContainer.fadeOut(1000).remove();
+                    $container.masonry('reload');
+                })
+            })
+            $delMenuModal.modal();
             return false;
         })
 
@@ -241,8 +282,7 @@ $(document).ready(function () {
         })
     }
 
-})
-;
+});
 
 function helperMasker() {
     return $(this).clone().addClass("helper").css("width", $(this).width())
@@ -254,4 +294,8 @@ function hideDishes(dishId) {
 
 function showDishes(dishId) {
     $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
+}
+
+function showPreview() {
+
 }

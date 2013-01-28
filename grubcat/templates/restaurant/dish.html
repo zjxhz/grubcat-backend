@@ -18,45 +18,49 @@
     {% endassets %}
     {{ block.super }}
     <script type="text/javascript">
-     $(function(){
-         $(document).controls();
-     })
+        $(function () {
+            $(document).controls();
+        })
     </script>
 {% endblock %}
 {% block content %}
-    <a href="{% url restaurant_dish_add %}" class="open-dialog addlink" title="添加一道菜" rel="modal-dialog">添加一道菜</a>
-    <table id="dish-list" class="table table-striped table-bordered table-condensed">
-        <thead>
-        <tr>
-            <th class="tc" >菜名</th>
-            <th class="tc" >价钱(元)</th>
-            <th class="tc" >单位</th>
-            <th class="tc span2">分类</th>
-            <th class="span2 tc">是否可供</th>
-            <th class="span2 tc">操作</th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for dish in dish_list %}
+    <div id="dish-list-page" class="content span10">
+        <a href="{% url restaurant_dish_add %}" class="open-dialog addlink" title="添加一道菜" rel="modal-dialog">添加一道菜</a>
+        <table id="dish-list" class="table table-striped table-bordered table-condensed">
+            <thead>
             <tr>
-                <td>{{ dish.name }}</td>
-                <td class="tr">{{ dish.price }}</td>
-                <td class="tc" >{{ dish.unit }}</td>
-                <td>{% for cat in dish.categories.all %}{{ cat.name}}&nbsp;{% endfor %}</td>
-
-                <td class="tc" >
-                    {% if dish.available %}
-                    <img src="{% static 'img/icon-yes.gif'%}" alt="目前可以供应">&nbsp;可供
-                {% else %}
-                        <img src="{% static 'img/icon-no.gif'%}" alt="目前不可以供应">&nbsp;不可供
-                {% endif %}
-
-                <td class="tc" ><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink" title="编辑" rel="modal-dialog">编辑</a><a href="{% url restaurant_dish_del dish.id %}" class="dellink" data-dialog-class="span2">删除</a></td>
+                <th class="tc">菜名</th>
+                <th class="tc">价钱(元)</th>
+                <th class="tc">单位</th>
+                <th class="tc span2">分类</th>
+                <th class="span2 tc">是否可供</th>
+                <th class="span2 tc">操作</th>
             </tr>
+            </thead>
+            <tbody>
+            {% for dish in dish_list %}
+                <tr>
+                    <td>{{ dish.name }}</td>
+                    <td class="tr">{{ dish.price }}</td>
+                    <td class="tc">{{ dish.unit }}</td>
+                    <td>{% for cat in dish.categories.all %}{{ cat.name }}&nbsp;{% endfor %}</td>
+
+                    <td class="tc">
+                        {% if dish.available %}
+                            <img src="{% static 'img/icon-yes.gif' %}" alt="目前可以供应">&nbsp;可供
+                        {% else %}
+                            <img src="{% static 'img/icon-no.gif' %}" alt="目前不可以供应">&nbsp;不可供
+                        {% endif %}
+
+                    <td class="tc"><a href="{% url restaurant_dish_edit dish.id %}" class="open-dialog changelink"
+                                      title="编辑" rel="modal-dialog">编辑</a><a
+                            href="{% url restaurant_dish_del dish.id %}" class="dellink"
+                            data-dialog-class="span2">删除</a></td>
+                </tr>
             {% endfor %}
-        </tbody>
-    </table>
-{#    some helper div#}
+            </tbody>
+        </table>
+    </div>
     <div id="data" data-nav-active-id="nav-dish" style="display: none"></div>
 {% endblock %}
 

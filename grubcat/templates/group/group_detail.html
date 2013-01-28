@@ -81,7 +81,7 @@
                 <a href="{% url meal_detail meal.id %} "></a>
 
                 <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
-                     src="{{ meal.get_cover_url }}">
+                     src="{{ meal.big_cover_url }}">
 
                 <div class="price-seat">
                     {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位
@@ -114,7 +114,7 @@
                     <a href="{% url meal_detail meal.id %} "></a>
 
                     <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
-                         src="{{ meal.get_cover_url }}">
+                         src="{{ meal.big_cover_url }}">
 
                     {% comment %}<div class="price-seat">
                     {{ meal.list_price }}元/位 - 还有{{ meal.left_persons }}个空位

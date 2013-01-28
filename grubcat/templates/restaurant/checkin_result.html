@@ -34,7 +34,7 @@
                 <th>用户名</th>
                 <td>{{ order.customer.name }}</td>
                 <td rowspan="6" class="meal-img">  <a href="{% url meal_detail order.meal.id %}" target="_blank">
-                    <img alt="{{ order.meal.topic }}" id="meal-photo" src="{{ order.meal.get_cover_url }}" width="360"
+                    <img alt="{{ order.meal.topic }}" id="meal-photo" src="{{ order.meal.big_cover_url }}" width="360"
                          height="240" ></a></td>
             </tr>
             <tr>
@@ -62,15 +62,12 @@
             </tr>
             </tbody>
         </table>
-        <div id="menu" class="span4">
-            <h4>菜单 {{ order.meal.menu.name }}</h4>
-            <hr/>
-            {% include 'meal/menu_frag.html' with menu=order.meal.menu %}
-        </div>
     </div>
 
-    <div class="span5">
-
+    <div id="menu" class="span5">
+        <h4>菜单:  {{ order.meal.menu.name }}</h4>
+        <hr/>
+        {% include 'meal/menu_frag.html' with menu=order.meal.menu %}
     </div>
 {% else %}
     <div class="span10"><h3 class="alert alert-error">订单不存在！</h3></div>

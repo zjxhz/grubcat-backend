@@ -48,9 +48,7 @@
                 订单历史</a></li>{% endcomment %}
             <li id="nav-logout"><a href="{% url logout %}"><i class="icon-off"></i> 系统退出</a></li>
         </ul>
-        <div id="content" class="span10">
-            {% block content %} {% endblock %}
-        </div>
+        {% block content %} {% endblock %}
     </div>
 </div>
 </body>

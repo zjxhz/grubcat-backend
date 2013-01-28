@@ -6,9 +6,8 @@
   #faq-what-is-fanju, #faq-what-is-fanju + p {
     display: block;
   }
-  .meal-img-wrapper
-  {
-    img{
+  .meal-img-wrapper {
+    img {
       height: 240px;
     }
   }
@@ -20,7 +19,7 @@
   }
 }
 
-h3{
+h3 {
   color: #444;
 }
 
@@ -154,13 +153,12 @@ h3{
       }
     }
   }
-  .meal-img-wrapper
-  {
-    img{
+  .meal-img-wrapper {
+    img {
       height: 280px;
     }
   }
-  #create_meal_alert{
+  #create_meal_alert {
     margin-top: 10px;
   }
 
@@ -257,17 +255,13 @@ h3{
   font-size: 16px;
 }
 
-a.user-img-wrapper {
-
-  img {
-    .square(80px);
-  }
-}
-
-img.seat-placeholder, a.user-img-wrapper {
-  margin: 0 7.5px 7.5px 0;
+a.user-img-wrapper, div.empty-user-wrapper {
+  margin: 0 7px 7px 0;
   display: block;
   float: left;
+  img {
+    .square(70px);
+  }
 }
 
 .what-is-fanju {
@@ -413,31 +407,33 @@ img.seat-placeholder, a.user-img-wrapper {
   }
 
 }
+
 #map {
   width: 540px;
   height: 384px;
   border: 1px solid #333;
-  img{
+  img {
     max-width: none;
   }
 }
+
 /*create meal page*/
 #create-meal-page {
   .min_persons .errorlist, .region .errorlist, .list-price .errorlist {
     float: left;
   }
 
-  #show_map_modal.modal{
-    width:80%;
+  #show_map_modal.modal {
+    width: 80%;
     min-height: 400px;
     height: 80%;
     margin-left: -40%;
-    .modal-body{
+    .modal-body {
       max-height: 100%;
     }
   }
 
-  #map{
+  #map {
     height: 100%;
     width: 100%;
   }
