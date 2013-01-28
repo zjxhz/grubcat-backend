@@ -1,15 +1,8 @@
-{% extends "restaurant/base.html" %}
-{#not be used#}
-{% load bootstrap_tags %}
-{% block title %}菜单管理{% endblock %}
-
-{% block content %}
-    <h3 class="confirm-del">确定要删除 <span>{{ dish.name }}</span> 这道菜吗？</h3>
-    <form id="add_dish_form" action="" method="post" class="form-horizontal "> {% csrf_token %}
-        <div  class="form-actions">
-            <input type="submit" class="btn btn-primary" value="确定"/>
-            <a href="{% url restaurant_dish_list %}" class="btn">取消</a>
-        </div>
-    </form>
-    <div id="data" data-nav-active-id="nav-dish" style="display: none"></div>
-{% endblock %}
+<h3 class="">确定要删除 <span>{{ dish.name }}</span> 这道菜吗？</h3>
+<form id="add_dish_form" action="" method="post" class="form-horizontal "> {% csrf_token %}
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="确定"/>
+        <a href="{% url restaurant_dish_list %}" class="btn">取消</a>
+    </div>
+</form>
+<div id="data" data-nav-active-id="nav-dish" style="display: none"></div>

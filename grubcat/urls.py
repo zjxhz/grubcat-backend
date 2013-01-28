@@ -146,6 +146,8 @@ urlpatterns = patterns('',
     url(r'^restaurant/menu/add/$', restaurant_login_required(rest.add_menu), name="add_menu"),
     url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(rest.del_menu), name="del_menu"),
     url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.edit_menu), name="edit_menu"),
+    url(r'^restaurant/menu/copy/(?P<pk>\d+)/$', restaurant_login_required(rest.copy_menu), name="copy_menu"),
+    url(r'^restaurant/menu/cover/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.EditMenuCoverView.as_view()), name="edit_menu_cover"),
 
 
     #support

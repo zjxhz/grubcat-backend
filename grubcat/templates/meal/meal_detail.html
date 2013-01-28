@@ -31,7 +31,7 @@
             <div id="meal-container" class="clearfix box-seperator">
                 <div class="meal-img-wrapper">
                     <img alt="{{ meal.topic }}" class="img-polaroid"
-                         src="{{ meal.get_cover_url }}"
+                         src="{{ meal.big_cover_url }}"
                          width="420" height="280">
                 </div>
                 <div id="meal-grub">
@@ -116,15 +116,17 @@
                     <a href="{% url user_detail user.id %}" class="user-img-wrapper"
                        title="{{ user.name }}">
                         <img alt="{{ user.name }}" width="80"
-                             height="80"
+                             height="80" class="img-circle img-polaroid"
                              src="{{ user.normal_avatar }}">
                     </a>
                 {% endfor %}
 
                 {% for empty_user in avaliable_seats %}
-                    <img class="seat-placeholder" width="80"
+                    <div class="empty-user-wrapper">
+                    <img class="seat-placeholder img-circle img-polaroid" width="80"
                          height="80"
                          src="{% static 'img/default/seat-placeholder.png' %}">
+                    </div>
                 {% endfor %}
 
             </div>

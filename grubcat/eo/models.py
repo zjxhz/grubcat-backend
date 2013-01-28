@@ -170,10 +170,12 @@ LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0,
 
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant)
-    photo = models.FileField(u'图片', null=True, upload_to='uploaded_images/%Y/%m/%d')
+    name = models.CharField(u'套餐名称', max_length=40, blank=False, null=False)
+    photo = models.ImageField(u'套餐封面', null=True, upload_to='uploaded_images/rest/%Y/%m/%d')
+    cropping = ImageRatioField('photo', '420x280', adapt_rotation=False)
     num_persons = models.SmallIntegerField(u'就餐人数')
     average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(default=datetime.now())
     status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
     dish_items = models.ManyToManyField(Dish, through='DishItem')
     dish_category_items = models.ManyToManyField(DishCategory, through='DishCategoryItem')
@@ -186,10 +188,40 @@ class Menu(models.Model):
         items.sort(key=lambda item: item.order_no)
         return items
 
+    @property
+    def big_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size': (420, 280),
+                'crop': True,
+                'box': self.cropping,
+                #                'quality':85,
+                'detail': True,
+                }).url
+        else:
+            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+        return url
+
+    @property
+    def normal_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size': (360, 240),
+                'crop': True,
+                'box': self.cropping,
+                #                'quality':85,
+                'detail': True,
+                }).url
+        else:
+            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+        return url
+
+
     def __unicode__(self):
         return u'套餐%s' % self.id
 
     class Meta:
+        unique_together = (('restaurant','status', 'name'),)
         db_table = u'menu'
         verbose_name = u'套餐'
         verbose_name_plural = u'套餐'
@@ -435,7 +467,7 @@ class UserProfile(models.Model):
         blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
     avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256) # photo
-    cropping = ImageRatioField('avatar', '640x640', adapt_rotation=True)
+    cropping = ImageRatioField('avatar', '180x180', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)
     constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
     birthday = models.DateField(u'生日', null=True, blank=True)
@@ -837,28 +869,31 @@ class Meal(models.Model):
     def left_persons(self):
         return self.max_persons - self.actual_persons
 
-    def get_cover_url(self):
+    @property
+    def big_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (420, 280),
                 'crop': True,
                 #                'quality':85,
                 'detail': True,
-            }).url
+                }).url
         else:
-            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+            url = url = self.menu.big_cover_url
         return url
 
-    def get_small_cover_url(self):
+    @property
+    def normal_cover_url(self):
         if self.photo:
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (360, 240),
                 'crop': True,
+#                'box': self.cropping,
                 #                'quality':85,
                 'detail': True,
-            }).url
+                }).url
         else:
-            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+            url = self.menu.normal_cover_url
         return url
 
     @models.permalink

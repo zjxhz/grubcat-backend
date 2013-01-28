@@ -1,3 +1,8 @@
+// Core variables and mixins
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
+/*style for pad*/
 @media (min-width: 768px) and (max-width: 979px) {
   #restaurant-container {
     #restaurant-nav {
@@ -7,7 +12,7 @@
       }
     }
 
-    #restaurant-nav, #content, #check-in-title {
+    #restaurant-nav, .content, #check-in-title {
       width: 700px;
     }
 
@@ -29,245 +34,406 @@
   }
 }
 
-.confirm .ui-dialog-titlebar {
-  display: none;
-}
+/**common for restaurant pages**/
 
-.confirm .ui-dialog-content {
-  margin-top: 15px;
-}
-
-.confirm .ui-widget-header {
-  display: none;
-}
-
-#use-order-form {
-  padding: 0;
-  margin: 0;
-}
-
-.addlink, .changelink, .dellink {
-  padding-left: 12px;
-}
 
 .addlink {
+  padding-left: 12px;
   background: url(../img/icon_addlink.gif) 0 5px no-repeat;
   float: right;
   margin-bottom: 10px;
 }
 
-.changelink {
-  background: url(../img/icon_changelink.gif) 0 5px no-repeat;
-  margin-right: 10px;
-}
+/** end for common **/
 
-.dellink {
-  background: url(../img/icon_deletelink.gif) 0 5px no-repeat;
-}
-
-#dish-list td {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-#dish-list .tc {
-  text-align: center;
-}
-
-#dish-list .tr {
-  text-align: right;
-}
-
-.confirm-del {
-  font-weight: normal;
-}
-
-.confirm-del span {
-  font-weight: bold;
-}
-
-.btn-use {
-  margin-top: 7px;
-  margin-left: 57px;
-}
-
-.check-in-title {
-}
-
-/*添加套餐*/
-#add-menu-help-link {
-  padding: 5px 20px;
-  background: url(../img/help.png) 2px 5px no-repeat;
-  background-size: 18px 18px;
-}
-
-#dish-container, #menu-container {
-  margin-left: 18px;
-  border: 1px solid #DDD;
-  min-height: 500px;
-}
-
-dt, dd {
-  height: 18px;
-}
-
-dt {
-  margin-top: 10px;
-}
-
-#menu-items {
-  min-height: 500px;
-}
-
-.helper {
-  border: 1px solid #000000;
-  padding: 2px;
-}
-
-.tag {
-  background-color: #94BF17;
-  color: white;
-  border-radius: 3px;
-  padding: 2px 4px;
-  cursor: default;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 5px 6px 5px 20px;
-}
-
-#menu-container .tag {
-  display: block;
-}
-
-dt.tag {
-  display: block;
-  margin-left: 1px;
-  color: #666;
-  background: #e4ff4e;
-  border: 1px solid #DDD;
-}
-
-#dish-container dt {
-  width: 180px;
-}
-
-#menu-container dt {
-  width: 277px;
-  margin: 5px auto;
-}
-
-#menu-container dd {
-  margin: 5px 26px;
-}
-
-.dish-info {
-  float: right;
-  a {
-    color: #ffffff;
+#dish-list-page {
+  .changelink, .dellink {
+    padding-left: 12px;
   }
-}
+  .changelink {
+    background: url(../img/icon_changelink.gif) 0 5px no-repeat;
+    margin-right: 10px;
+  }
 
-#dish-container .dish-info {
-  float: none;
-}
-
-#dish-container .close {
-  display: none;
-}
-
-#dish-container .unit, #dish-container .num {
-  display: none;
-}
-
-#dish-container .price {
-  float: right;
-}
-
-.help-title {
-  margin: 5px 2px;
-  float: right;
-}
-
-.help-content {
-  color: #555;
-  margin: 5px 2px;
-
-}
-
-dl.menu-items {
-  margin-bottom: 20px;
-  dd.dish {
-    font-size: 14px;
-    padding: 0 0 5px 7px;
-    .dish-info {
-      float: right;
+  .dellink {
+    background: url(../img/icon_deletelink.gif) 0 5px no-repeat;
+  }
+  #dish-list {
+    td {
+      padding-left: 10px;
+      padding-right: 10px;
     }
   }
-  dt.category {
-    margin-bottom: 6px;
-    margin-top: 10px;
-  }
-}
-
-.hide-link {
-  margin-left: 20px;
-}
-
-.add-category {
-  background: url(../img/icon_addlink.gif) 0px 5px no-repeat;
-  padding-left: 15px;
-}
-
-#add-category-dialog {
-  margin-top: 20px;
-}
-
-#save-menu-btn {
-  margin: 0 5px 0 185px;
 }
 
 /*menu list */
+#TODO refactor
+.confirm {
+  .ui-dialog-titlebar {
+    display: none;
+  }
+  .ui-dialog-content {
+    margin-top: 15px;
+  }
+  .ui-widget-header {
+    display: none;
+  }
+}
 
-#menu-list {
-  padding: 0px;
+#menu-list-page {
+  padding: 0;
   position: relative;
-  margin-top: 30px;
+
+  .actions {
+    position: absolute;
+    right: 3px;
+    top: 10px;
+  }
+
+  span.num-persons, span.average-price {
+    color: #333333;
+  }
+
+  .menu-info {
+    margin-left: 5px;
+    padding: 15px 10px 0 4px;
+    color: #666;
+    line-height: 25px;
+    width: 75%;
+    .name {
+      color: #333;
+      font-size: 16px;
+      word-wrap: break-word;
+    }
+  }
+  .menu-container {
+    margin-bottom: 25px;
+    width: 370px;
+    margin-left: 5px;
+    ul.dropdown-menu{
+      min-width: 77px;
+    }
+  }
+  .menu-info-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: none;
+    min-height: 400px;
+    position: relative;
+  }
+
+  dl.menu-items {
+    color: #666666;
+    margin-bottom: 20px;
+    padding-left: 5px;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+
+    .tag {
+      background-color: white;
+      color: #666;
+      margin: 5px 7px 7px 20px;
+      font-size: 14px;
+    }
+
+    dd.dish {
+      .dish-info {
+        float: right;
+      }
+    }
+    dt.category {
+      border: none;
+      margin-left: 5px;
+    }
+  }
+
+  .menu-cover-wrapper {
+    height: 248px;
+    border: 1px dashed #aaa;
+    position: relative;
+    margin: auto;
+
+    img {
+      width: 360px;
+      height: 240px;
+    }
+    .upload-actions {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      bottom: 20px;
+      height: 30px;
+      form {
+        position: absolute;
+        width: 84px;
+        height: 30px;
+        overflow: hidden;
+        margin: 0 auto;
+        left: 128px;
+        right: 143px;
+      }
+      .file {
+        position: absolute;
+        font-size: 64px;
+        right: 0px;
+        height: 38px;
+        top: -7px;
+        z-index: 1000;
+        cursor: pointer;
+        opacity: 0;
+        overflow: hidden;
+        .opacity(0);
+      }
+      .btn-wrapper {
+        width: 83px;
+        position: relative;
+        margin: auto;
+      }
+      .btn-crop-cover {
+        display: none;
+      }
+    }
+
+    &.has-cover {
+      .upload-actions, .upload-actions-bg{
+        display: none;
+      }
+      border: none;
+      background-color: #fff;
+      .upload-actions-bg {
+      //        display: none;
+        background-color: #000000;
+        bottom: 18px;
+        height: 34px;
+        left: 5px;
+        opacity: 0.4;
+        position: absolute;
+        width: 360px;
+      }
+
+      form{
+        left:27px;
+      }
+      .btn-wrapper{
+        width: 200px;
+      }
+      .btn-crop-cover, img {
+        display: inline-block;
+      }
+
+    }
+  }
+
+  #crop_menu_cover_wrapper{
+    .jcrop-image{
+      margin: auto;
+    }
+    #crop_cover_modal{
+      width: 630px;
+      margin-left: -315px;
+    }
+    form{
+      margin-bottom: 0;
+    }
+    #cropping-area img{
+      max-width: none;
+    }
+    .file-upload, #id_cropping{
+      display: none;
+    }
+  }
+  #del-menu-modal{
+    margin-left: -200px;
+    top: 20%;
+    width: 400px;
+    .modal-body p{
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  }
+
 }
 
-.menu-container {
-  margin-bottom: 25px;
-  border: 1px solid #DDD;
-  padding-top: 10px;
-  width: 375px;
+/*添加套餐*/
+#add-edit-menu-page {
+  margin-top: 10px;
+
+  #left-column {
+    width: 430px;
+  }
+
+  #right-column {
+
+    width: 330px;
+  }
+
+  #save-menu-form {
+    height: 137px;
+    padding-top: 5px;
+  }
+
+  #save-menu-btn {
+    margin: 11px 0 20px 91px;
+  }
+
+  .control-label {
+    width: 70px;
+  }
+  .controls {
+    margin-left: 90px;
+    #id_num_persons {
+      width: 80px;
+    }
+    #id_name {
+      width: 230px;
+    }
+  }
+  input[type="text"], input[type="password"], textarea {
+    color: #555;
+  }
+  #add-menu-help-link {
+    padding: 5px 20px;
+    background: url(../img/help.png) 2px 5px no-repeat;
+    background-size: 18px 18px;
+  }
+
+  #dish-container, #menu-container { //  border: 1px solid #DDD;
+    min-height: 100px;
+    border: 1px solid #ddd;
+    .border-radius(4px);
+  }
+
+  dt, dd {
+    height: 20px;
+    line-height: 20px;
+  }
+
+  dt {
+    margin-top: 10px;
+  }
+
+  #menu-items {
+  }
+
+  .helper {
+    border: 1px solid #000000;
+    padding: 2px;
+  }
+
+  .tag {
+    background-color: #94BF17;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 5px 0 5px;
+    cursor: default;
+    overflow: hidden;
+    display: inline-block;
+    margin: 0 15px 5px 0;
+  }
+
+  #menu-container .tag {
+    display: block;
+  }
+
+  dt.tag {
+    display: block;
+    color: #666;
+    background: #e4ff4e;
+    border: 1px solid #DDD;
+  }
+
+  #menu-container dt {
+    width: 290px;
+    margin: 5px 0 5px 5px;
+  }
+
+  #menu-container dd {
+    margin: 5px 0 5px 30px;
+  }
+
+  .dish-info {
+    float: right;
+    a {
+      color: #ffffff;
+    }
+  }
+  .menu-items dd.dish {
+    width: 240px;
+  }
+
+  #dish-container {
+
+    padding: 10px 0 10px 10px;
+    #dish-list {
+      margin-top: 0;
+    }
+    dt {
+      width: 180px;
+    }
+    .dish-info {
+      float: none;
+    }
+    .close {
+      display: none;
+    }
+    .unit, .num {
+      display: none;
+    }
+    .price {
+      float: right;
+    }
+  }
+  .menu-container {
+    margin-bottom: 25px;
+    width: 378px;
+  }
+  .help-title {
+    margin: 5px 2px;
+    float: right;
+  }
+
+  .help-content {
+    color: #555;
+    margin: 5px 2px;
+
+  }
+
+  dl.menu-items {
+    margin-bottom: 0;
+    min-height: 300px;
+    dd.dish {
+      font-size: 14px;
+      padding: 0 0 5px 7px;
+      .dish-info {
+        float: right;
+      }
+    }
+    dt.category {
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+  }
+
+  .hide-link {
+    margin-left: 20px;
+  }
+
+  .add-category {
+    background: url(../img/icon_addlink.gif) 0px 5px no-repeat;
+    padding-left: 15px;
+  }
+
+  #add-category-dialog {
+    margin-top: 20px;
+  }
+
+  #save-menu-btn {
+  }
+
 }
 
-.menu-items {
-  margin-left: 5px;
-}
-
-.menu-items dd.dish {
-  width: 240px;
-}
-
-.actions {
-  margin-top: 3px;
-}
-
-.menu-info {
-  margin-left: 8px;
-  background-color: yellow;
-  color: #555;
-}
-
-span.num-persons, span.average-price {
-  font-weight: bold;
-}
-
-#result, #today-meal-list {
+#check-in-page, #today-meal-list {
   table {
-    margin-top: 2px;
+    margin-bottom: 20px;
   }
   td, th {
     line-height: 30px;
@@ -289,7 +455,17 @@ span.num-persons, span.average-price {
   }
 }
 
-#result {
+/** 今日就餐 **/
+#check-in-page {
+
+  #use-order-form {
+    padding: 0;
+    margin: 0;
+  }
+  .btn-use {
+    margin-top: 7px;
+    margin-left: 57px;
+  }
   .alert {
     margin-bottom: 30px;
   }
@@ -298,31 +474,33 @@ span.num-persons, span.average-price {
   }
 
   #menu {
-    margin-top: 30px;
     hr {
       margin: 10px 0;
     }
   }
 }
 
+/*今日饭局*/
 #today-meal-list {
+  #menu-detail-modal {
+    width: 400px;
+    top: 20%;
+    margin-left: -200px;
+  }
   .meal-cell {
     margin-bottom: 10px;
   }
-  
-  #no-meal-tip{
+
+  #no-meal-tip {
     margin-top: 11px;
     font-size: 16px;
     padding: 20px;
   }
-  .menu-detail-link{
+  .menu-detail-link {
     font-size: 14px;
   }
 
 }
 
-#menu-detail-modal{
-  width: 300px;
-  margin-left: -150px;
-  top: 20%;
-}
+
+

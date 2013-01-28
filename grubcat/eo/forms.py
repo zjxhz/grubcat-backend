@@ -3,8 +3,8 @@ from django import forms
 from django.forms import ModelForm, Form
 from django.forms.extras import SelectDateWidget
 from django.forms.widgets import *
-from image_cropping import ImageCropWidget
 from grubcat.eo.models import *
+from grubcat.eo import widgets
 
 
 class MealForm(ModelForm):
@@ -94,10 +94,19 @@ class GroupCommentForm(ModelForm):
 class MenuForm(ModelForm):
     class Meta:
         model = Menu
-        fields = ('num_persons', 'average_price') # TODO 'photo'
+        fields = ('num_persons', 'average_price','name',)
         widgets = {
             'average_price': Select(attrs={'class': 'input-small'})
         }
+
+class MenuCoverForm(ModelForm):
+    class Meta:
+        model = Menu
+        fields = ('photo', 'cropping',)
+        widgets = {
+            'photo': widgets.ImageCropWidget(thumbnail_size=(600, 400)),
+            }
+
 
 
 class UploadFileForm(forms.Form):
@@ -109,7 +118,7 @@ class ImgTestForm(ModelForm):
     class Meta:
         model = ImageTest
         widgets = {
-            'image': ImageCropWidget,
+            'image': widgets.ImageCropWidget,
         }
 
 #User related
@@ -118,7 +127,7 @@ class UploadAvatarForm(ModelForm):
         model = UserProfile
         fields = ('avatar', 'cropping')
         widgets = {
-            'avatar': ImageCropWidget,
+            'avatar': widgets.ImageCropWidget,
         }
 
 

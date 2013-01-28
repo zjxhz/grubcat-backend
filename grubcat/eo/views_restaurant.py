@@ -2,7 +2,7 @@
 # Create your views here.
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
@@ -49,6 +49,7 @@ def get_meal_info(meal):
 def use_order(request):
     '''用户就餐时，餐厅管理员标记订单为已使用'''
     if request.method == 'POST':
+        #TODO check is mine
         code = request.POST.get('code')
         order_id = request.POST.get('id')
         order = Order.objects.get(id=order_id, code=code)
@@ -65,7 +66,8 @@ class TodayMealListView(ListView):
     context_object_name = 'meal_list'
 
     def get_queryset(self):
-        return Meal.objects.filter(restaurant=self.request.user.restaurant,start_date=date.today()).order_by('start_time')
+        return Meal.objects.filter(restaurant=self.request.user.restaurant, start_date=date.today()).order_by(
+            'start_time').select_related("menu")
 
     def get_context_data(self, **kwargs):
         for meal in self.object_list:
@@ -80,6 +82,7 @@ class TodayMealListView(ListView):
             meal.unchecked_persons = meal.actual_persons - meal.checked_persons
             meal.total_price = meal.list_price * meal.actual_persons
         return super(TodayMealListView, self).get_context_data(**kwargs)
+
 
 def add_dish_category(request):
     if request.method == 'POST':
@@ -142,7 +145,7 @@ class DishDeleteView(DeleteView):
     template_name = "restaurant/dish_confirm_delete.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
-    def get_object(self,  queryset=None):
+    def get_object(self, queryset=None):
         dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
             restaurant=self.request.user.restaurant)
         return dish
@@ -158,21 +161,64 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED)
+        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED).order_by("created_time")
+
+    def get_context_data(self, **kwargs):
+        context = super(MenuListView,self).get_context_data( **kwargs)
+        for menu in self.object_list:
+            if not menu.photo:
+                context['need_upload_cover'] = True
+                break
+        return context
 
 
-def add_edit_menu(request, pk=None):
+class EditMenuCoverView(UpdateView):
+    form_class = MenuCoverForm
+    model = Menu
+    context_object_name = "menu"
+    template_name = "restaurant/crop_menu_cover.html"
+
+    def get_success_url(self):
+        return "/"
+
+    def form_valid(self, form):
+#        TODO check if mine
+        super(EditMenuCoverView, self).form_valid(form)
+        if self.request.GET.get('action') == 'upload':
+            data = {'normal_cover_url': self.object.normal_cover_url}
+        else:
+            data = {'normal_cover_url': self.object.normal_cover_url}
+        return create_sucess_json_response(extra_dict=data) #return text/html type, not json, hack for IE ajax upload file
+
+
+def add_edit_menu(request, pk=None, is_copy=False):
     '''添加或者删除一个套餐，如果传入pk则是编辑，否则是添加'''
     if request.method == 'POST':
         menu_json = simplejson.loads(request.raw_post_data)
         num_persons = menu_json['num_persons']
         average_price = menu_json['average_price']
-        menu_form = MenuForm({'num_persons': num_persons, 'average_price': average_price})
+        name = menu_json['name']
+        menu_form = MenuForm({'num_persons': num_persons, 'average_price': average_price, 'name': name})
         if not menu_form.is_valid():
             #TODO check
             return create_failure_json_response(menu_form.errors, extra_dict={'url': reverse('restaurant_menu_list'), })
-        menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price)
-        menu.save()
+        #TODO check if mine
+        try:
+            menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price, name=name,)
+            if pk:
+                old_menu = Menu.objects.get(pk=pk)
+                if not is_copy:
+                    old_menu.status = MenuStatus.DELETED
+                    old_menu.name = "%s%s" % (menu.name, menu.id)
+                    old_menu.save()
+
+                menu.photo=old_menu.photo
+                menu.cropping=old_menu.cropping
+                menu.created_time=old_menu.created_time
+            menu.save()
+
+        except IntegrityError:
+            return create_failure_json_response(u'套餐名称已经存在，请重新输入一个',)
 
         items = menu_json['items']
         for order_no, item in enumerate(items):
@@ -203,6 +249,8 @@ def add_edit_menu(request, pk=None):
             #edit menu
             try:
                 menu = Menu.objects.get(pk=pk, restaurant=request.user.restaurant)
+                if is_copy:
+                    menu.name = ""
             except ObjectDoesNotExist:
                 pass
 
@@ -216,19 +264,22 @@ def add_edit_menu(request, pk=None):
 
 
 def add_menu(request):
-    return add_edit_menu(request, None)
+    return add_edit_menu(request, None,is_copy=False)
 
 
 def edit_menu(request, pk):
     return add_edit_menu(request, pk)
 
+def copy_menu(request, pk):
+    return add_edit_menu(request, pk, is_copy=True)
 
 def del_menu(request, pk):
     if request.method == 'POST':
         try:
             menu = Menu.objects.get(pk=pk)
             menu.status = MenuStatus.DELETED
+            menu.name = "%s%s" % (menu.name, menu.id)
             menu.save()
         except ObjectDoesNotExist:
             pass
-    return create_sucess_json_response(extra_dict={'url': reverse('restaurant_menu_list'), })
+    return create_sucess_json_response()

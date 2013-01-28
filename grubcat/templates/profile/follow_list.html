@@ -10,10 +10,10 @@
                 <div class="row">
                     {% for following in followings %}
                         <div class="span3 following-cell">
-                            <a href="{% url user_detail following.id %}" class="fl">
+                            <a href="{% url user_detail following.id %}" class="fl" target="_blank">
                                 <img src="{{ following.normal_avatar }}" title="{{ following.name|default:'' }}">
                             </a>
-                            <a class="name" href="{% url user_detail following.id %}">{{ following.name }}</a>
+                            <a class="name" href="{% url user_detail following.id %}" target="_blank">{{ following.name }}</a>
 
                             <a href="{% url un_follow following.id %}" class="btn btn-unfollow">取消关注</a>
                         </div>
@@ -26,10 +26,10 @@
                 <div class="row">
                     {% for follower in followers %}
                         <div class="span3 follower-cell">
-                            <a href="{% url user_detail follower.id %}" class="fl">
+                            <a href="{% url user_detail follower.id %}" class="fl" target="_blank">
                                 <img src="{{ follower.normal_avatar }}" title="{{ follower.name|default:'' }}">
                             </a>
-                            <a class="name" href="{% url user_detail follower.id %}">{{ follower.name }}</a>
+                            <a class="name" href="{% url user_detail follower.id %}" target="_blank">{{ follower.name }}</a>
                         </div>
 
                     {% endfor %}
