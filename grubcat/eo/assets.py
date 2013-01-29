@@ -55,7 +55,8 @@ profile_css = Bundle(
 #)
 
 restaurant_admin_css = Bundle(
-    'css/jquery.Jcrop.css','less/restaurant-admin.less', responsive_css, filters='less,cssmin', output='gen/restaurant-admin.%(version)s.css'
+    'css/jquery.Jcrop.css', 'less/restaurant-admin.less', responsive_css, filters='less,cssmin',
+    output='gen/restaurant-admin.%(version)s.css'
 )
 
 #js below
@@ -63,12 +64,11 @@ jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)
 
 jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='jsmin')
 
-
 noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
     'js/noty/layouts/center.js', 'js/noty/thems/default.js',
     output='gen/jquery-noty.%(version)s.js', filters='jsmin')
 
-base_js = Bundle(jquery_js, 'js/bootstrap.min.js',noty_js,
+base_js = Bundle(jquery_js, 'js/bootstrap.min.js', noty_js,
     output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
@@ -81,18 +81,15 @@ water_fall_js = Bundle(
     'js/jquery.infinitescroll.js', 'js/jquery.masonry.js', 'js/modernizr-transitions.js', filters='jsmin',
     output='gen/water-fall.%(version)s.js'
 )
-
+jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
+validate_js = Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
 restaurant_admin_js = Bundle(
     'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
 )
-
-#fix_ie6_png_js = Bundle(
-#    'js/DD_belatedPNG_0.0.8a.js', filters='jsmin', output='gen/DD_belatedPNG_0.0.8a.js'
-#)
+create_meal_js = Bundle('js/bootstrap/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
+    validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='jsmin', output="gen/create-meal.%(version)s.js")
 
 
-jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
-validate_js = Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
 jquery_ajax_bootstrap_js = Bundle(
     'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
     output='gen/jquery.ajax.bootstrap.%(version)s.js'
@@ -125,9 +122,9 @@ register('noty_js', noty_js)
 register('base_js', base_js)
 register('base_main_js', base_main_js)
 register('module_js', module_js)
+register('create_meal_js', create_meal_js)
 register('auto_suggest_js', auto_suggest_js)
 register('restaurant_admin_js', restaurant_admin_js)
-#register('fix_ie6_png_js', fix_ie6_png_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
 register('validate_js', validate_js)

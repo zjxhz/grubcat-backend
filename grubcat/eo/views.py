@@ -120,6 +120,7 @@ class MenuDetailView(DetailView):
 ### Meal related views ###
 class MealCreateView(CreateView):
     form_class = MealForm
+    initial = {'start_date':date.today() + timedelta(days=4)}
     template_name = 'meal/create_meal.html'
 
     #    def get_context_data(self, **kwargs):
