@@ -273,6 +273,7 @@ def join_group(request, pk):
     if request.method == 'POST':
         group = Group.objects.get(pk=pk)
         if group.privacy == GroupPrivacy.PUBLIC:
+            #TODO refactor
             if request.user not in group.members.all():
                 group.members.add(request.user)
                 return create_sucess_json_response(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})

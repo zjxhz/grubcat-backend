@@ -80,55 +80,12 @@
   }
 }
 
-#menu-list-page {
-  padding: 0;
-  position: relative;
-
-  .actions {
-    position: absolute;
-    right: 3px;
-    top: 10px;
-  }
-
-  span.num-persons, span.average-price {
-    color: #333333;
-  }
-
-  .menu-info {
-    margin-left: 5px;
-    padding: 15px 10px 0 4px;
-    color: #666;
-    line-height: 25px;
-    width: 75%;
-    .name {
-      color: #333;
-      font-size: 16px;
-      word-wrap: break-word;
-    }
-  }
-  .menu-container {
-    margin-bottom: 25px;
-    width: 370px;
-    margin-left: 5px;
-    ul.dropdown-menu{
-      min-width: 77px;
-    }
-  }
-  .menu-info-wrapper {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-top: none;
-    min-height: 400px;
-    position: relative;
-  }
-
+#check-in-page, #menu-list-page{
   dl.menu-items {
     color: #666666;
-    margin-bottom: 20px;
     padding-left: 5px;
-    border-top: 1px dashed #ccc;
-    padding-top: 10px;
 
-    .tag {
+    dd,dt {
       background-color: white;
       color: #666;
       margin: 5px 7px 7px 20px;
@@ -144,6 +101,58 @@
       border: none;
       margin-left: 5px;
     }
+  }
+}
+
+#menu-list-page {
+  padding: 0;
+  position: relative;
+
+  .actions {
+    position: absolute;
+    right: 3px;
+    top: 10px;
+  }
+
+  span.num-persons, span.average-price {
+    color: #333333;
+  }
+
+  .menu-info {
+    padding: 15px 10px 0 8px;
+    color: #666;
+    line-height: 25px;
+    border-bottom: 1px dashed #CCCCCC;
+    p.name-wrapper{
+      width: 274px;
+      .clearfix;
+    }
+    .name-label{
+      display: block;
+      float: left;
+    }
+    .name {
+      display: block;
+      float: left;
+      color: #333;
+      font-size: 16px;
+      word-wrap: break-word;
+      width: 210px;
+    }
+  }
+  .menu-container {
+    margin-bottom: 25px;
+    width: 370px;
+    margin-left: 5px;
+    ul.dropdown-menu{
+      min-width: 77px;
+    }
+  }
+  .menu-info-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: none;
+    min-height: 400px;
+    position: relative;
   }
 
   .menu-cover-wrapper {

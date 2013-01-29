@@ -1,8 +1,7 @@
 #coding=utf-8
-# Create your views here.
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
@@ -161,10 +160,11 @@ class MenuListView(ListView):
     context_object_name = "menu_list"
 
     def get_queryset(self):
-        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED).order_by("created_time")
+        return Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED).order_by(
+            "-id")
 
     def get_context_data(self, **kwargs):
-        context = super(MenuListView,self).get_context_data( **kwargs)
+        context = super(MenuListView, self).get_context_data(**kwargs)
         for menu in self.object_list:
             if not menu.photo:
                 context['need_upload_cover'] = True
@@ -182,13 +182,14 @@ class EditMenuCoverView(UpdateView):
         return "/"
 
     def form_valid(self, form):
-#        TODO check if mine
+    #        TODO check if mine
         super(EditMenuCoverView, self).form_valid(form)
         if self.request.GET.get('action') == 'upload':
             data = {'normal_cover_url': self.object.normal_cover_url}
         else:
             data = {'normal_cover_url': self.object.normal_cover_url}
-        return create_sucess_json_response(extra_dict=data) #return text/html type, not json, hack for IE ajax upload file
+        return create_sucess_json_response(
+            extra_dict=data) #return text/html type, not json, hack for IE ajax upload file
 
 
 def add_edit_menu(request, pk=None, is_copy=False):
@@ -202,23 +203,30 @@ def add_edit_menu(request, pk=None, is_copy=False):
         if not menu_form.is_valid():
             #TODO check
             return create_failure_json_response(menu_form.errors, extra_dict={'url': reverse('restaurant_menu_list'), })
-        #TODO check if mine
+            #TODO check if mine
         try:
-            menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price, name=name,)
-            if pk:
+            menu = Menu(restaurant=request.user.restaurant, num_persons=num_persons, average_price=average_price,
+                name=name, )
+            if pk: #edit/copy
                 old_menu = Menu.objects.get(pk=pk)
-                menu.created_time=old_menu.created_time
-                if not is_copy:
+                if is_copy:
+                    menu.photo = old_menu.photo
+                    menu.cropping = old_menu.cropping
+                    #menu.created_time = old_menu.created_time
+                    menu.save()
+                else:
                     old_menu.status = MenuStatus.DELETED
                     old_menu.name = "%s%s" % (old_menu.name, old_menu.id)
-                    print old_menu.name
                     old_menu.save()
-                    menu.photo=old_menu.photo
-                    menu.cropping=old_menu.cropping
-            menu.save()
+                    menu.photo = old_menu.photo
+                    menu.cropping = old_menu.cropping
+                    menu.created_time = old_menu.created_time
+                    menu.save()
+            else: #add
+                menu.save()
 
         except IntegrityError:
-            return create_failure_json_response(u'套餐名称已经存在，请重新输入一个',)
+            return create_failure_json_response(u'套餐名称已经存在，请重新输入一个', )
 
         items = menu_json['items']
         for order_no, item in enumerate(items):
@@ -256,22 +264,24 @@ def add_edit_menu(request, pk=None, is_copy=False):
 
         menu_form = MenuForm(instance=menu)
         category_form = DishCategoryForm()
-    return render_to_response("restaurant/add_edit_menu.html",
-        {'request': request, 'categories': categories, 'category_form': category_form,
-         'dishes_with_no_category': dishes_with_no_category,
-         'categories_with_no_dish': categories_with_no_dish,
-         'menu': menu, 'menu_form': menu_form})
+        return render_to_response("restaurant/add_edit_menu.html",
+            {'request': request, 'categories': categories, 'category_form': category_form,
+             'dishes_with_no_category': dishes_with_no_category,
+             'categories_with_no_dish': categories_with_no_dish,
+             'menu': menu, 'menu_form': menu_form})
 
 
 def add_menu(request):
-    return add_edit_menu(request, None,is_copy=False)
+    return add_edit_menu(request, None, is_copy=False)
 
 
 def edit_menu(request, pk):
     return add_edit_menu(request, pk)
 
+
 def copy_menu(request, pk):
     return add_edit_menu(request, pk, is_copy=True)
+
 
 def del_menu(request, pk):
     if request.method == 'POST':
