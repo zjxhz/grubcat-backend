@@ -508,7 +508,7 @@ class UserResource(ModelResource):
                
     class Meta:
         authorization = Authorization()
-        queryset = UserProfile.objects.all()
+        queryset = UserProfile.objects.exclude(user__restaurant__isnull=False)
         resource_name = 'user'
         filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS}
         allowed_methods = ['get', 'post', 'put', 'patch']
