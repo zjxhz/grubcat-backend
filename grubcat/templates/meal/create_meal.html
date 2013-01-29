@@ -5,8 +5,6 @@
 {% block title %}发起饭局{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    {#    TODO don't use juqery ui#}
-    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
     {% assets "module_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
@@ -14,20 +12,8 @@
 {% endblock %}
 
 {% block page_js %}
-    <script type="text/javascript" src="{% static_asset "js/jquery.lionbars.0.3.js" %}"></script>
-    {% assets "jquery_ui_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-    {{ block.super }}
-    {% assets "jquery_dropkick_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-    {% assets "validate_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
     <script type="text/javascript" src="http://maps.google.com.hk/maps/api/js?sensor=false"></script>
-    <script type="text/javascript" src="{% static_asset 'js/gmap3.v5.0b.min.js' %}"></script>
-    {% assets "module_js" %}
+    {% assets "create_meal_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     <script type="text/javascript">
@@ -156,19 +142,11 @@
             左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
         {% endif %}
     </div>
-    <div id="data" menu-list-link="{% url menu_list %}"></div>
+    <div id="data" data-menu-list-link="{% url menu_list %}"></div>
 
     <div id="show_map_modal" class="modal fade" tabindex="-1" role="dialog" style="display: none"
          aria-hidden="true">
-        {#            <div class="modal-header">#}
-        {#                <a href=""></a>#}
-        {#            </div>#}
-        {#            <div class="modal-body">#}
-        {#                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>#}
         <div id="map"></div>
-        {#            </div>#}
-        {#        </div>#}
-
     </div>
 {% endblock %}
 {% block active-nav-id %}nav-create-meal{% endblock %}
