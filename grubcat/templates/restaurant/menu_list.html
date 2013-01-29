@@ -62,15 +62,16 @@
                             </ul>
                         </div>
                         <div class="menu-info">
-                            <span class="">套餐名：</span><span class="name">{{ menu.name }}</span>
-
+                            <p class="name-wrapper">
+                            <span class="name-label">套餐名：</span><span class="name">{{ menu.name }}</span>
+                            </p>
                             <p>就餐人数：<span class="num-persons">{{ menu.num_persons }}</span> 人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;均价：<span
                                     class="average-price">{{ menu.average_price }}</span> 元 /人</p>
                         </div>
                         <dl class="menu-items">
                             {% for item in menu.items %}
                                 {% if item.num %}
-                                    <dd class="tag dish" dish-id="{{ item.dish.id }}"><span
+                                    <dd class="dish" dish-id="{{ item.dish.id }}"><span
                                             class="dish-name">{{ item.dish.name }}</span>
 
                                 <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
@@ -78,7 +79,7 @@
                                         class="num">{{ item.num }}</span>&nbsp;&nbsp; </span>
                                     </dd>
                                 {% else %}
-                                    <dt class="category tag"
+                                    <dt class="category"
                                         category-id="{{ item.category.id }}">{{ item.category.name }}
                                     </dt>
                                 {% endif %}
