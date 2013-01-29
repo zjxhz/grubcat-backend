@@ -409,7 +409,7 @@ class ProfileDetailView(DetailView):
 
 
 class UserListView(ListView):
-    queryset = UserProfile.objects.filter(user__is_active=True).select_related('tags')
+#    queryset = UserProfile.objects.all().select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
     paginate_by = 20
@@ -418,7 +418,7 @@ class UserListView(ListView):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.get_profile().tags.similar_objects()
         else:
-            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").exclude(
+            return UserProfile.objects.exclude(avatar="").exclude(
                 user__restaurant__isnull=False).select_related('tags').order_by(
                 '-id')
 
@@ -531,8 +531,8 @@ def weibo_login(request):
     weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
         redirect_uri=settings.WEIBO_REDIRECT_URL)
 
-    if request.user.is_authenticated() and not request.user.is_active:
-        return HttpResponseRedirect(reverse_lazy('bind'))
+#    if request.user.is_authenticated() and not request.user.is_active:
+#        return HttpResponseRedirect(reverse_lazy('bind'))
 
     code = request.GET.get('code')
     errorcode = request.GET.get('error_code')
@@ -555,31 +555,31 @@ def weibo_login(request):
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
             auth.login(request, user_to_authenticate)
-            if not request.user.is_active:
-                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
-            else:
-                return HttpResponseRedirect(next)
+#            if not request.user.is_active:
+#                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
+#            else:
+            return HttpResponseRedirect(next)
         else:
             raise Exception(u'微博接口异常')
 
 
-class BindProfileView(UpdateView):
-    form_class = BindProfileForm
-    model = UserProfile
-    template_name = 'user/bind_profile.html'
-
-    def get_object(self, queryset=None):
-        return self.request.user.get_profile()
-
-    def get_success_url(self):
-        success_url = self.request.GET.get('next', reverse('index'))
-        return success_url
-
-    def form_valid(self, form):
-        profile = form.save(False)
-        profile.user.is_active = True
-        profile.user.save()
-        return super(BindProfileView, self).form_valid(form)
+#class BindProfileView(UpdateView):
+#    form_class = BindProfileForm
+#    model = UserProfile
+#    template_name = 'user/bind_profile.html'
+#
+#    def get_object(self, queryset=None):
+#        return self.request.user.get_profile()
+#
+#    def get_success_url(self):
+#        success_url = self.request.GET.get('next', reverse('index'))
+#        return success_url
+#
+#    def form_valid(self, form):
+#        profile = form.save(False)
+#        profile.user.is_active = True
+#        profile.user.save()
+#        return super(BindProfileView, self).form_valid(form)
 
 
 def follow(request, user_id):
