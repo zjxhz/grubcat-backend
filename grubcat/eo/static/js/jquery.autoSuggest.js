@@ -124,7 +124,7 @@
 				var prev = "";
 				var totalSelections = 0;
 				var tab_press = false;
-				
+
 				// Handle input field events
 				input.focus(function(){
 					if($(this).val() == opts.startText){
@@ -336,7 +336,7 @@
 							$(this).addClass("selected");
 						}).mousedown(function(){ input_focus = false; });
 					var close = $('<a class="as-close">&times;</a>').click(function(){
-							values_input.val(values_input.val().replace(","+data[opts.selectedValuesProp]+",",","));
+							values_input.val(("," + values_input.val().replace(/\s+/g, '') + ",").replace(/,+/g, ",").replace(',' + data[opts.selectedValuesProp].replace(/\s+/g, '') + ',', ',').replace(/,+/g, ","))
 							opts.selectionRemoved.call(this, item);
 							input_focus = true;
 							input.focus();

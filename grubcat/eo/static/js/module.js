@@ -130,15 +130,29 @@
 
         var $originalTagInput = $("#id_tags");
         var user_tags = $originalTagInput.val();
+        function selectionRemoved($item){
+            $item.find("a").remove();
+            var tagValue;
+            $(".hot-tags li").each(function(i,tag){
+                tagValue = $(this).text().replace('+ ', '');
+                if(tagValue == $item.text().replace(/\s+/g, "")){
+                    $(tag).removeClass("selected");
+                }
+
+            })
+            $item.remove();
+        }
         $originalTagInput.autoSuggest($data.attr('list-tags-url'), {
             asHtmlID:'tags',
             preFill:user_tags,
             keyDelay:100,
             neverSubmit:true,
-            startText:''
+            startText:'',
+            selectionRemoved:selectionRemoved
         });
 
-        $("#as-values-tags").attr('required', '').attr('data-validation-required-message',
+        var $tagsValues = $("#as-values-tags");
+        $tagsValues.attr('required', '').attr('data-validation-required-message',
             '请至少输入3个兴趣标签，这样会让别人更加了解你哦！');
         $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
 
@@ -165,52 +179,73 @@
             return true;
         });
 
+        function hasTag(tag) {
+            tag = tag.replace(/\s+/g, '')
+            return ("," + $tagsValues.val().replace(/\s+/g, '') + ",").indexOf(',' + tag+ ',') >= 0;
+        }
+
+        function addTagValue(tag) {
+            tag = tag.replace(/\s+/g, '')
+            $tagsValues.val(($tagsValues.val() + ',' + tag + ',').replace(/,+/g, ','))
+        }
+
+        function removeTagValue(tag) {
+            tag = tag.replace(/\s+/g, '')
+            $tagsValues.val(("," + $tagsValues.val().replace(/\s+/g, '') + ",").replace(',' + tag + ',', ',').replace(/,+/g, ','))
+        }
 
         $(".hot-tags li").live('click', function () {
             var $input = $("#tags");
-            var valueToAdd = $(this).text().replace('+ ', '');
-            var $tagsValues = $("#as-values-tags");
-            if (("," + $tagsValues.val().replace(/\s+/g, '')).indexOf(',' + valueToAdd + ',') < 0) {
-                $tagsValues.val(("," + $tagsValues.val() + valueToAdd + ',').replace(",,", ","));
+            var tagValue = $(this).text().replace('+ ', '');
+
+            if (!hasTag(tagValue)) {
+                addTagValue(tagValue)
                 var $item = $('<li class="as-selection-item"></li>').click(function () {
                     $(this).addClass("selected");
                 });
                 var $close = $('<a class="as-close">&times;</a>').click(function () {
-                    if ($tagsValues.val().replace(/^,|,$/g, '').indexOf(',') < 0) {
-                        $tagsValues.val($tagsValues.val().replace(valueToAdd + ",", ""));
-                    } else {
-                        $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ",").replace(',,', ''));
-                    }
+                    removeTagValue(tagValue)
                     $(this).parent('li').remove();
+                    selectionRemoved($item);
                     $input.click();
                     return false;
                 });
-                $("#as-original-tags").before($item.html(valueToAdd).prepend($close));
+                $("#as-original-tags").before($item.html(tagValue).prepend($close));
                 $input.focus();
             }
-            if ($(this).siblings('li').length == 0) {
-                $("#change_hot_tags").click();
-            }
-//            $(this).remove();
+            $(this).addClass("selected");
         });
 
         $("#change_hot_tags").click(function () {
-            $(".hot-tags").show();
-            var url = $(this).attr('href') + "?page=" + $(this).attr('page');
-            $(this).attr('page', parseInt($(this).attr('page')) + 1);
-
-            $.get(url, function (tags) {
-                $("ul.hot-tags li").remove();
-                for (var i = 0; i < tags.length; i++) {
-                    $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value + "</li>"))
+//            $(".hot-tags").show();
+                var page = $(this).attr('page');
+                var url = $(this).attr('href') + "?page=" + page;
+                var $hotTagsWrapper = $("ul.hot-tags");
+                $(this).attr('page', parseInt(page) + 1);
+                //fetch from cache
+                var $tagsForPage = $hotTagsWrapper.find("li.p" + page);
+                if ($tagsForPage.length) {
+                    $hotTagsWrapper.find("li:visible").hide();
+                    $tagsForPage.show();
+                } else {
+                    $.get(url, function (tags) {
+                        if (tags.length == 0) {
+                            $("#change_hot_tags").attr('page', 1).click()
+                        } else {
+                            $hotTagsWrapper.find("li:visible").hide()
+                            for (var i = 0; i < tags.length; i++) {
+                                var $newTag = $("<li class='as-selection-item p" + page + "'><em class='add-icon'>+ </em>" + tags[i].value + "</li>");
+                                if (hasTag(tags[i].value)) {
+                                    $newTag.addClass("selected");
+                                }
+                                $hotTagsWrapper.append($newTag)
+                            }
+                        }
+                    });
                 }
-                if (tags.length == 0) {
-                    $("#change_hot_tags").attr('page', 1).click()
-                }
-            });
-
-            return false;
-        }).click();
+                return false;
+            }
+        ).click();
 
         //upload avatar
         $("#id_avatar_for_upload").change(function () {
@@ -300,8 +335,8 @@
 
         var $startDateInput = $("#id_start_date");
         $startDateInput.css('visibility', 'visible').datepicker({
-            format: 'yyyy-mm-dd',
-            todayHighlight: true,
+            format:'yyyy-mm-dd',
+            todayHighlight:true,
             startDate:$startDateInput.data('startDate'),
             endDate:$startDateInput.data('endDate')
         });
