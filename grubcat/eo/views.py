@@ -112,6 +112,7 @@ class MenuListView(ListView):
                 num_persons=num_persons).select_related('restaurant', )
         return qs
 
+
 class MenuDetailView(DetailView):
     model = Menu
     context_object_name = 'menu'
@@ -120,6 +121,7 @@ class MenuDetailView(DetailView):
 ### Meal related views ###
 class MealCreateView(CreateView):
     form_class = MealForm
+    initial = {'start_date': date.today() + timedelta(days=4)}
     template_name = 'meal/create_meal.html'
 
     #    def get_context_data(self, **kwargs):
@@ -356,7 +358,8 @@ class ProfileUpdateView(UpdateView):
         return self.request.user.get_profile()
 
     def get_success_url(self):
-        return reverse('user_detail', kwargs={'pk':self.object.id})
+        return reverse('user_detail', kwargs={'pk': self.object.id})
+
 
 class ProfileDetailView(DetailView):
     model = UserProfile
@@ -408,7 +411,7 @@ class ProfileDetailView(DetailView):
 
 
 class UserListView(ListView):
-    queryset = UserProfile.objects.filter(user__is_active=True).select_related('tags')
+#    queryset = UserProfile.objects.all().select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
     paginate_by = 20
@@ -417,7 +420,7 @@ class UserListView(ListView):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.get_profile().tags.similar_objects()
         else:
-            return UserProfile.objects.filter(user__is_active=True).exclude(avatar="").exclude(
+            return UserProfile.objects.exclude(avatar="").exclude(
                 user__restaurant__isnull=False).select_related('tags').order_by(
                 '-id')
 
@@ -431,7 +434,8 @@ class UserListView(ListView):
                 context['need_upload_avatar'] = True
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
+            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context[
+                                                                                          'page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
         return context
 
@@ -443,6 +447,13 @@ class OrderCreateView(CreateView):
 
     def get_initial(self):
         return {'meal_id': self.kwargs['meal_id']}
+
+    def get_success_url(self):
+        url = super(OrderCreateView, self).get_success_url()
+        if not self.request.user.get_profile().avatar:
+            url += "?check=avatar"
+        return url
+
 
     def get_context_data(self, **kwargs):
         context = super(OrderCreateView, self).get_context_data(**kwargs)
@@ -503,6 +514,12 @@ class OrderDetailView(DetailView):
             raise NoRightException
         return order
 
+    def get_context_data(self, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(**kwargs)
+        if self.request.GET.get('check') == 'avatar' and not self.request.user.get_profile().avatar:
+            context['avatar_tip'] = True
+        return context
+
 
 class UserMealListView(TemplateView):
     template_name = "profile/meals.html"
@@ -530,8 +547,8 @@ def weibo_login(request):
     weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
         redirect_uri=settings.WEIBO_REDIRECT_URL)
 
-    if request.user.is_authenticated() and not request.user.is_active:
-        return HttpResponseRedirect(reverse_lazy('bind'))
+    #    if request.user.is_authenticated() and not request.user.is_active:
+    #        return HttpResponseRedirect(reverse_lazy('bind'))
 
     code = request.GET.get('code')
     errorcode = request.GET.get('error_code')
@@ -554,31 +571,31 @@ def weibo_login(request):
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
             auth.login(request, user_to_authenticate)
-            if not request.user.is_active:
-                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
-            else:
-                return HttpResponseRedirect(next)
+            #            if not request.user.is_active:
+            #                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
+            #            else:
+            return HttpResponseRedirect(next)
         else:
             raise Exception(u'微博接口异常')
 
 
-class BindProfileView(UpdateView):
-    form_class = BindProfileForm
-    model = UserProfile
-    template_name = 'user/bind_profile.html'
-
-    def get_object(self, queryset=None):
-        return self.request.user.get_profile()
-
-    def get_success_url(self):
-        success_url = self.request.GET.get('next', reverse('index'))
-        return success_url
-
-    def form_valid(self, form):
-        profile = form.save(False)
-        profile.user.is_active = True
-        profile.user.save()
-        return super(BindProfileView, self).form_valid(form)
+#class BindProfileView(UpdateView):
+#    form_class = BindProfileForm
+#    model = UserProfile
+#    template_name = 'user/bind_profile.html'
+#
+#    def get_object(self, queryset=None):
+#        return self.request.user.get_profile()
+#
+#    def get_success_url(self):
+#        success_url = self.request.GET.get('next', reverse('index'))
+#        return success_url
+#
+#    def form_valid(self, form):
+#        profile = form.save(False)
+#        profile.user.is_active = True
+#        profile.user.save()
+#        return super(BindProfileView, self).form_valid(form)
 
 
 def follow(request, user_id):
@@ -596,12 +613,12 @@ def follow(request, user_id):
         raise Exception("不支持该方法")
 
 
-
 def un_follow(request, user_id):
     if request.method == 'POST':
         try:
             user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
-            relationship = Relationship.objects.get(from_person=request.user.get_profile(), to_person=user_to_be_unfollowed)
+            relationship = Relationship.objects.get(from_person=request.user.get_profile(),
+                to_person=user_to_be_unfollowed)
             relationship.delete()
             html = '<a class="btn btn-follow" href="%s"><i class="icon-star"></i> 关注</a>' % (
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))

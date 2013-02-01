@@ -11,20 +11,9 @@
             <div class="name-age">
                 <span class="name">{{ profile.name }}</span>
             </div>
-            {% comment %}{% if profile.motto %}
-                <div class="speech-outer">
-                    <div class="speech-arrow"></div>
-                    <div class="speech-inner">{{ profile.motto }}</div>
-                </div>
-            {% endif %}{% endcomment %}
-            {% comment %}{% if not is_mine %}
-                {% if profile not in user.get_profile.following.all %}
-                    <a href="{% url  follow profile.id %}" class="btn btn-follow">关注</a>
-                {% else %}
-                    <a href="{% url  un_follow profile.id %}" class="btn btn-unfollow">取消关注</a>
-                {% endif %}
-                <button class="btn">聊天</button>
-            {% endif %}{% endcomment %}
+            {% if is_mine and not profile.avatar %}
+                <div class="alert" id="avatar_alert">你还没有上传头像，其他朋友无法寻找到你哦！</div>
+            {% endif %}
         </div>
         <div class="span9 fr">
             {% if is_mine %}
@@ -48,56 +37,103 @@
                             </ul>
                         </div>
                     </div>
+                {% elif is_mine %}
+                    <div class="info-item info-tags">
+                        <div class="info-label">兴趣：</div>
+                        <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                    </div>
                 {% endif %}
             {% endwith %}
-            <div class="info-item">
-                <div class="info-label">签名：</div>
-                <div class="info-value">{{ profile.motto|default:"未填写" }}</div>
-            </div>
+
+            {% if profile.motto %}
+                <div class="info-item">
+                    <div class="info-label">签名：</div>
+                    <div class="info-value">{{ profile.motto }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">签名：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
+            {% endif %}
             {% if gender_label %}
                 <div class="info-item">
                     <div class="info-label">性别：</div>
                     <div class="info-value">{{ gender_label }}</div>
                 </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">性别：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
             {% endif %}
-            {% if is_mine %}
+
+            {% if  profile.birthday %}
+                {% if is_mine %}
+                    <div class="info-item">
+                        <div class="info-label">生日：</div>
+                        <div class="info-value">{{ profile.birthday|date:"Y/n/j" }}</div>
+                    </div>
+                {% else %}
+                    <div class="info-item">
+                        <div class="info-label">年龄：</div>
+                        <div class="info-value">{{ profile.age }}</div>
+                    </div>
+                {% endif %}
+            {% elif is_mine %}
                 <div class="info-item">
                     <div class="info-label">生日：</div>
-                    <div class="info-value">{{ profile.birthday|date:"Y/n/j"|default:"未填写" }}</div>
-                </div>
-            {% else %}
-                <div class="info-item">
-                    <div class="info-label">年龄：</div>
-                    <div class="info-value">{{ profile.age|default:"保密" }}</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
                 </div>
             {% endif %}
-            {#            {% if profile.college %}#}
-            <div class="info-item">
-                <div class="info-label">学校：</div>
-                <div class="info-value">{{ profile.college|default:"未填写" }}</div>
-            </div>
-            {#            {% endif %}#}
-            {#            {% if profile.industry %}#}
-            <div class="info-item">
-                <div class="info-label">行业：</div>
-                <div class="info-value">{{ industry_label|default:"未填写" }}</div>
-            </div>
-            {#            {% endif %}#}
-            {#            {% if profile.work_for %}#}
-            <div class="info-item">
-                <div class="info-label">公司：</div>
-                <div class="info-value">{{ profile.work_for|default:"未填写" }}</div>
-            </div>
-            {#            {% endif %}#}
-            {#            {% if  profile.occupation %}#}
-            <div class="info-item">
-                <div class="info-label">职位：</div>
-                <div class="info-value">{{ profile.occupation|default:"未填写" }}</div>
-            </div>
-            {#            {% endif %}#}
+            {% if profile.college %}
+                <div class="info-item">
+                    <div class="info-label">学校：</div>
+                    <div class="info-value">{{ profile.college }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">学校：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if profile.industry %}
+                <div class="info-item">
+                    <div class="info-label">行业：</div>
+                    <div class="info-value">{{ industry_label|default:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">行业：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if profile.work_for %}
+                <div class="info-item">
+                    <div class="info-label">公司：</div>
+                    <div class="info-value">{{ profile.work_for|default:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">公司：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if  profile.occupation %}
+                <div class="info-item">
+                    <div class="info-label">职位：</div>
+                    <div class="info-value">{{ profile.occupation|default:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">职位：</div>
+                    <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
+                </div>
+            {% endif %}
         </div>
 
     </div>
-    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}" {% if user.is_authenticated %}data-is-login="true"{% endif %}
+    <div id="data" style="display: none" data-add-tag-url="{% url add_tag %}"
+         {% if user.is_authenticated %}data-is-login="true"{% endif %}
          {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
 {% endblock %}

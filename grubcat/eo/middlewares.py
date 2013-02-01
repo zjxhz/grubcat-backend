@@ -42,8 +42,8 @@ class WeiboAuthenticationBackend(object):
                     logger.debug("Probably a new weibo user, create a new user for it")
                     username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password)
-                    user_to_authenticate.is_active = False #set unactive before complete some profile
-                    user_to_authenticate.save()
+#                    user_to_authenticate.is_active = False #set unactive before complete some profile
+#                    user_to_authenticate.save()
                     user_profile = user_to_authenticate.get_profile()
                     user_data = weibo_client.users.show.get(uid=weibo_id)
                     user_profile.weibo_id = weibo_id

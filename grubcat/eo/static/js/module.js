@@ -130,15 +130,29 @@
 
         var $originalTagInput = $("#id_tags");
         var user_tags = $originalTagInput.val();
+        function selectionRemoved($item){
+            $item.find("a").remove();
+            var tagValue;
+            $(".hot-tags li").each(function(i,tag){
+                tagValue = $(this).text().replace('+ ', '');
+                if(tagValue == $item.text().replace(/\s+/g, "")){
+                    $(tag).removeClass("selected");
+                }
+
+            })
+            $item.remove();
+        }
         $originalTagInput.autoSuggest($data.attr('list-tags-url'), {
             asHtmlID:'tags',
             preFill:user_tags,
             keyDelay:100,
             neverSubmit:true,
-            startText:''
+            startText:'',
+            selectionRemoved:selectionRemoved
         });
 
-        $("#as-values-tags").attr('required', '').attr('data-validation-required-message',
+        var $tagsValues = $("#as-values-tags");
+        $tagsValues.attr('required', '').attr('data-validation-required-message',
             '请至少输入3个兴趣标签，这样会让别人更加了解你哦！');
         $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
 
@@ -165,52 +179,73 @@
             return true;
         });
 
+        function hasTag(tag) {
+            tag = tag.replace(/\s+/g, '')
+            return ("," + $tagsValues.val().replace(/\s+/g, '') + ",").indexOf(',' + tag+ ',') >= 0;
+        }
+
+        function addTagValue(tag) {
+            tag = tag.replace(/\s+/g, '')
+            $tagsValues.val(($tagsValues.val() + ',' + tag + ',').replace(/,+/g, ','))
+        }
+
+        function removeTagValue(tag) {
+            tag = tag.replace(/\s+/g, '')
+            $tagsValues.val(("," + $tagsValues.val().replace(/\s+/g, '') + ",").replace(',' + tag + ',', ',').replace(/,+/g, ','))
+        }
 
         $(".hot-tags li").live('click', function () {
             var $input = $("#tags");
-            var valueToAdd = $(this).text().replace('+ ', '');
-            var $tagsValues = $("#as-values-tags");
-            if (("," + $tagsValues.val().replace(/\s+/g, '')).indexOf(',' + valueToAdd + ',') < 0) {
-                $tagsValues.val(("," + $tagsValues.val() + valueToAdd + ',').replace(",,", ","));
+            var tagValue = $(this).text().replace('+ ', '');
+
+            if (!hasTag(tagValue)) {
+                addTagValue(tagValue)
                 var $item = $('<li class="as-selection-item"></li>').click(function () {
                     $(this).addClass("selected");
                 });
                 var $close = $('<a class="as-close">&times;</a>').click(function () {
-                    if ($tagsValues.val().replace(/^,|,$/g, '').indexOf(',') < 0) {
-                        $tagsValues.val($tagsValues.val().replace(valueToAdd + ",", ""));
-                    } else {
-                        $tagsValues.val($tagsValues.val().replace("," + valueToAdd + ",", ",").replace(',,', ''));
-                    }
+                    removeTagValue(tagValue)
                     $(this).parent('li').remove();
+                    selectionRemoved($item);
                     $input.click();
                     return false;
                 });
-                $("#as-original-tags").before($item.html(valueToAdd).prepend($close));
+                $("#as-original-tags").before($item.html(tagValue).prepend($close));
                 $input.focus();
             }
-            if ($(this).siblings('li').length == 0) {
-                $("#change_hot_tags").click();
-            }
-//            $(this).remove();
+            $(this).addClass("selected");
         });
 
         $("#change_hot_tags").click(function () {
-            $(".hot-tags").show();
-            var url = $(this).attr('href') + "?page=" + $(this).attr('page');
-            $(this).attr('page', parseInt($(this).attr('page')) + 1);
-
-            $.get(url, function (tags) {
-                $("ul.hot-tags li").remove();
-                for (var i = 0; i < tags.length; i++) {
-                    $("ul.hot-tags").append($("<li class='as-selection-item'><em class='add-icon'>+ </em>" + tags[i].value + "</li>"))
+//            $(".hot-tags").show();
+                var page = $(this).attr('page');
+                var url = $(this).attr('href') + "?page=" + page;
+                var $hotTagsWrapper = $("ul.hot-tags");
+                $(this).attr('page', parseInt(page) + 1);
+                //fetch from cache
+                var $tagsForPage = $hotTagsWrapper.find("li.p" + page);
+                if ($tagsForPage.length) {
+                    $hotTagsWrapper.find("li:visible").hide();
+                    $tagsForPage.show();
+                } else {
+                    $.get(url, function (tags) {
+                        if (tags.length == 0) {
+                            $("#change_hot_tags").attr('page', 1).click()
+                        } else {
+                            $hotTagsWrapper.find("li:visible").hide()
+                            for (var i = 0; i < tags.length; i++) {
+                                var $newTag = $("<li class='as-selection-item p" + page + "'><em class='add-icon'>+ </em>" + tags[i].value + "</li>");
+                                if (hasTag(tags[i].value)) {
+                                    $newTag.addClass("selected");
+                                }
+                                $hotTagsWrapper.append($newTag)
+                            }
+                        }
+                    });
                 }
-                if (tags.length == 0) {
-                    $("#change_hot_tags").attr('page', 1).click()
-                }
-            });
-
-            return false;
-        }).click();
+                return false;
+            }
+        ).click();
 
         //upload avatar
         $("#id_avatar_for_upload").change(function () {
@@ -275,7 +310,7 @@
             $("#choose-menu-wrapper").css('visibility', 'hidden');
             var $ajax_loader = $('#loading-menus');
             $ajax_loader.show(1, function () {
-                $.get($("#data").attr('menu-list-link'), {num_persons:numPersons}, function (data) {
+                $.get($("#data").data('menu-list-link'), {num_persons:numPersons}, function (data) {
                     $ajax_loader.hide();
                     $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
                     $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
@@ -298,37 +333,12 @@
 
         $("#id_privacy").dropkick({width:313, startSpeed:0});
 
-        $.datepicker.regional['zh-CN'] =
-        {
-            clearText:'清除', clearStatus:'清除已选日期',
-            closeText:'关闭', closeStatus:'不改变当前选择',
-            prevText:'&lt;上月', prevStatus:'显示上月',
-            nextText:'下月&gt;', nextStatus:'显示下月',
-            currentText:'今天', currentStatus:'显示本月',
-            monthNames:['一月', '二月', '三月', '四月', '五月', '六月',
-                '七月', '八月', '九月', '十月', '十一月', '十二月'],
-            monthNamesShort:['一', '二', '三', '四', '五', '六',
-                '七', '八', '九', '十', '十一', '十二'],
-            monthStatus:'选择月份', yearStatus:'选择年份',
-            weekHeader:'周', weekStatus:'年内周次',
-            dayNames:['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-            dayNamesShort:['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
-            dayNamesMin:['日', '一', '二', '三', '四', '五', '六'],
-            dayStatus:'设置 DD 为一周起始', dateStatus:'选择 m月 d日, DD',
-            dateFormat:'yy-mm-dd', firstDay:1,
-            initStatus:'请选择日期', isRTL:false
-        };
-
-        $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
-
-        $("#id_start_date").css('visibility', 'visible').datepicker({
-            onSelect:function (dateText, inst) {
-                $(inst.input).change().focusout();
-            },
-            defaultDate:"2012-8-17",
-            numberOfMonths:1,
-            minDate:'+4D',
-            maxDate:'+1M'
+        var $startDateInput = $("#id_start_date");
+        $startDateInput.css('visibility', 'visible').datepicker({
+            format:'yyyy-mm-dd',
+            todayHighlight:true,
+            startDate:$startDateInput.data('startDate'),
+            endDate:$startDateInput.data('endDate')
         });
 
 
@@ -372,6 +382,7 @@
             return false;
         })
     }
+
     var $container = $('#user-container');
     var $profile_basic_info_page = $("#profile_basic_info_page");
     var $tagItems = $(".tags li");
