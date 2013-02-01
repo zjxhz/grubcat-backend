@@ -25,6 +25,8 @@ class MealForm(ModelForm):
             'topic', 'introduction', 'start_date', 'start_time', 'region', 'min_persons', 'list_price',
             )
         widgets = {
+            'start_date': TextInput(attrs={ 'data-start-date': date.today() + timedelta(days=4),
+                                           'data-end-date': date.today() + timedelta(days=30)}),
             'introduction': Textarea({'rows': 5}),
             'extra_requests': Textarea({'rows': 5}),
         }
@@ -94,10 +96,11 @@ class GroupCommentForm(ModelForm):
 class MenuForm(ModelForm):
     class Meta:
         model = Menu
-        fields = ('num_persons', 'average_price','name',)
+        fields = ('num_persons', 'average_price', 'name',)
         widgets = {
             'average_price': Select(attrs={'class': 'input-small'})
         }
+
 
 class MenuCoverForm(ModelForm):
     class Meta:
@@ -105,8 +108,7 @@ class MenuCoverForm(ModelForm):
         fields = ('photo', 'cropping',)
         widgets = {
             'photo': widgets.ImageCropWidget(thumbnail_size=(600, 400)),
-            }
-
+        }
 
 
 class UploadFileForm(forms.Form):
@@ -144,7 +146,7 @@ class BasicProfileForm(ModelForm):
         fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
-            'birthday': SelectDateWidget(required=False, years=range( 1976, 1996), attrs={'class': "input-small"}, )
+            'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
 
         }
 
