@@ -695,6 +695,8 @@ class MealResource(ModelResource):
         bundle.data['actual_persons']=1
         if not bundle.data.get('max_persons'):
             bundle.data['max_persons'] = bundle.data['min_persons']
+        if not bundle.data.get("photo"):
+            bundle.data["photo"] = bundle.data["menu"].data.get("photo")
         return bundle
     
     def override_urls(self):
