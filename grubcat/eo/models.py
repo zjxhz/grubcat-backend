@@ -586,14 +586,7 @@ class UserProfile(models.Model):
         who don't have same interests will be listed as well, users that this user has been already following will
         be excluded
         """
-        recommended_list = self.tags.similar_objects()
-        recommended_not_following = [u for u in recommended_list if u not in self.following.all()]
-
-        recommended_list_ids = [user.id for user in recommended_list]
-        other_users = self.non_restaurant_usres.exclude(pk__in=recommended_list_ids).exclude(pk=self.id)
-        other_users_not_following = other_users.exclude(pk__in=self.following.values('id'))
-
-        return recommended_not_following + list(other_users_not_following)
+        return self.tags.similar_objects()
 
     # return a list of values with the order how keys are sorted for a given dict
     def sortedDictValues(self, some_dict):
