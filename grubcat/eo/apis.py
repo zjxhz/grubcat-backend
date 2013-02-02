@@ -695,8 +695,10 @@ class MealResource(ModelResource):
         bundle.data['actual_persons']=1
         if not bundle.data.get('max_persons'):
             bundle.data['max_persons'] = bundle.data['min_persons']
+        
+    def dehydrate(self, bundle):
         bundle.data["photo"] = bundle.obj.big_cover_url.path
-    
+        
     def override_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/comments%s$" % (self._meta.resource_name, trailing_slash()),
