@@ -698,6 +698,7 @@ class MealResource(ModelResource):
         
     def dehydrate(self, bundle):
         bundle.data["photo"] = bundle.obj.big_cover_url.path
+        return bundle
         
     def override_urls(self):
         return [
