@@ -1,0 +1,34 @@
+{% extends "profile/base.html" %}
+{% block title %}
+    {% if is_mine %}
+        我的饭局
+    {% else %}
+        TA的饭局
+    {% endif %}
+{% endblock %}
+{% block profile-main %}
+
+    {% for upcommming_order in upcomming_orders %}
+        {% include 'profile/profile_meal_frag.html' with order=upcommming_order %}
+    {% endfor %}
+    {% if passed_orders %}
+        {% if upcomming_orders %}
+            <hr class="span12">
+        {% endif %}
+        <h3 class="pass-meals-info span12 ">已结束的饭局</h3>
+        {% for passed_order in passed_orders %}
+            {% include 'profile/profile_meal_frag.html' with order=passed_order %}
+        {% endfor %}
+    {% endif %}
+    {% if not upcomming_orders and not passed_orders %}
+        <div class="no-results span12">
+            {% if is_mine %}
+                您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
+            {% else %}
+                TA还没有参加任何饭局！
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div id="data" style="display: none" data-active-nav-id="profile_meal"></div>
+{% endblock %}

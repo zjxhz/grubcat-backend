@@ -1,0 +1,4 @@
+#!/bin/sh
+python grubcat/manage.py syncdb --noinput
+mkdir -p /home/dotcloud/data/media /home/dotcloud/data/static
+python grubcat/manage.py collectstatic --noinput

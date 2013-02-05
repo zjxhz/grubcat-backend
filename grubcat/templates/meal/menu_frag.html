@@ -1,0 +1,14 @@
+<dl class="menu-items">
+    {% for item in menu.items %}
+        {% if item.num %}
+            <dd class="dish">
+                <span class="dish-name">{{ item.dish.name }}</span>
+                                     <span class="dish-info">¥ <span class="dish-price">{{ item.dish.price }}</span>{% comment %}  <span
+                                        class="unit"> /{{ item.dish.unit }} </span> &times;<span
+                                        class="num">{{ item.num }}</span> {% endcomment %}</span>
+            </dd>
+        {% else %}
+            <dt class="category">{{ item.category.name }}  </dt>
+        {% endif %}
+    {% endfor %}
+</dl>
