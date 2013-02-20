@@ -15,7 +15,8 @@
             {% if just_created %}
                 <div class="alert" id="create_meal_alert">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    只差一步，就创建完成了！支付成功后，其他的朋友便可以参加了哦！</div>
+                    只差一步，就创建完成了！支付成功后，其他的朋友便可以参加了哦！
+                </div>
             {% endif %}
             <div class="meal-simple-info box-seperator clearfix">
 
@@ -35,7 +36,17 @@
                          width="420" height="280">
                 </div>
                 <div id="meal-grub">
-                    {% if not order and meal.left_persons > 0 %}
+                    {% if order %}
+                        <a href="{% url order_detail meal.id order.id %}"
+                           class="btn btn-primary btn-book btn-booked fr">
+                            已预订 查看订单
+                        </a>
+                    {% elif meal.is_passed %}
+                        <a href="#"
+                           class="btn btn-passed btn-book fr">
+                            已结束
+                        </a>
+                    {% elif meal.left_persons > 0 %}
                         {% if user.is_authenticated %}
                             {% if just_created %}
                                 <a href="#"
@@ -54,7 +65,8 @@
                                 马上预定
                             </a>
                         {% endif %}
-                        <form id="order_info_form" method="post" class="form-horizontal"> {% csrf_token %}
+                        <form id="order_info_form" method="post" target="_blank"
+                              class="form-horizontal"> {% csrf_token %}
                             <fieldset>
                                 {% for hidden in form.hidden_fields %}
                                     {{ hidden }}
@@ -84,17 +96,11 @@
                                 </div>
                             </fieldset>
                         </form>
-
-                    {% elif not order and meal.left_persons <= 0 %}
+                    {% elif meal.left_persons <= 0 %}
                         <a href=""
-                           class="btn btn-book btn-sold-out fr">
+                           class="btn btn-book btn-sold-out btn-danger fr">
                             卖光了
                             {#                        <span class="mt5">{{ meal.list_price }}RMB/人</span>#}
-                        </a>
-                    {% else %}
-                        <a href="{% url order_detail meal.id order.id %}"
-                           class="btn btn-primary btn-book btn-booked fr">
-                            已预订 查看订单
                         </a>
                     {% endif %}
 
@@ -123,9 +129,9 @@
 
                 {% for empty_user in avaliable_seats %}
                     <div class="empty-user-wrapper">
-                    <img class="seat-placeholder " width="80"
-                         height="80"
-                         src="{% static 'img/default/seat-placeholder.png' %}">
+                        <img class="seat-placeholder " width="80"
+                             height="80"
+                             src="{% static 'img/default/seat-placeholder.png' %}">
                     </div>
                 {% endfor %}
 
@@ -143,7 +149,18 @@
                 </div>
             </div>
         </div>
+{% comment %}        <div id="pay_result_dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4>支付</h4>
+            </div>
+            <div class="modal-body">
+                <a id="btn-pay-fail" class="btn" href="">支付遇到问题</a>
+                <a id="btn-pay-sucess" class="btn btn-primary btn-large" href="">支付成功</a>
+            </div>
+        </div>{% endcomment %}
     </div>
+    <div id="data" style="display: none" data-check-order-status-link="{% url check_order_status meal.id%}"></div>
 {% endblock %}
 
 {% block page_js %}

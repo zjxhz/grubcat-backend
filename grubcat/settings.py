@@ -9,6 +9,7 @@ ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
     )
 
+
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -59,8 +60,6 @@ MEDIA_URL = '/media/'
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/home/fanju/webapps/static/'
-ASSETS_ROOT=r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
-
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 
 # URL prefix for static files.
@@ -169,12 +168,31 @@ BIG_AVATAR_SIZE = (220, 220)
 NORMAL_AVATAR_SIZE = (80, 80)
 SMALL_AVATAR_SIZE = (50, 50)
 IMAGE_CROPPING_THUMB_SIZE = (360, 360)
-THUMBNAIL_QUALITY=100
+THUMBNAIL_QUALITY = 100
 
 AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
 #don't auto compress css/jss files, use command by manual
 ASSETS_AUTO_BUILD = False
+ASSETS_ROOT = r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
+
+#pay config
+#30minutes
+PAY_OVERTIME = 30
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 RAVEN_CONFIG = {
     'register_signals': True,
@@ -204,6 +222,14 @@ LOGGING = {
             'backupCount': 7,
             'formatter': 'verbose',
         },
+        'pay': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'pay.log'),
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
+            },
         'sentry': {
             'level': 'ERROR',
             'class': 'raven.contrib.django.handlers.SentryHandler',
@@ -232,6 +258,11 @@ LOGGING = {
         },
         'api': {
             'handlers': ['default', 'sentry'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'pay': {
+            'handlers': ['pay', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
         },

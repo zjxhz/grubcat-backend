@@ -88,6 +88,7 @@ urlpatterns = patterns('',
     #    url(r'^meal/(?P<meal_id>\d+)/order/$',login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()),
         name='order_detail'),
+    url(r'^meal/(?P<meal_id>\d+)/order/status/', login_required(check_order_status), name="check_order_status"),
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
 #    url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
@@ -157,6 +158,10 @@ urlpatterns = patterns('',
     # developer interfaces...
     ('^updateLatLng/$', updateLatLng),
     ('^upload_app/$', upload_app),
+
+    #pay
+    url(r'^pay/alipay/back/sync/$', handle_back_sync, name="alipay_back_sync"),
+    url(r'^pay/alipay/back/async/$', handle_back_aysnc, name="alipay_back_async"),
 )
 
 if settings.DEBUG:

@@ -3,10 +3,10 @@
     if ($("#upload-photo-wrapper")[0]) {
         $("#id_photo").change(function () {
             $("#id_upload_photo_form").ajaxSubmit({
-                beforeSubmit:function () {
+                beforeSubmit: function () {
                     $(".loading").show();
                 },
-                success:function (data) {
+                success: function (data) {
                     data = $.parseJSON(data);
                     if (data.status == 'OK') {
                         window.location = data.redirect_url;
@@ -72,7 +72,7 @@
     }
 
     if ($("#meal-list")[0]) {
-        $("img.lazy").lazyload({ threshold:200, effect:'fadeIn' });
+        $("img.lazy").lazyload({ threshold: 200, effect: 'fadeIn' });
     }
 
     if ($("#meal-detail")[0]) {
@@ -80,14 +80,28 @@
         var leftPersons = $("#left_persons_tip").data('leftPersons');
         $num_persons.find("option:gt(" + (leftPersons - 1) + ")").remove();
         $num_persons.change(function () {
-            $("#total_price").html($("#meal_price").html() * $(this).val());
+            $("#total_price").html($("#meal_price").text() * 100 * $(this).val() / 100);
         });
+        var orderTimeOut;
         $(".btn-book-now").click(function () {
             $("#order_info_form").submit();
+//            $("#pay_result_dialog").modal({backdrop:'static'});
+//            $("#meal-grub").find(".btn-book-now").text("支付中");
+            if (!orderTimeOut) {
+                orderTimeOut = setTimeout(function () {
+                    setInterval(function () {
+                        $.post($data.data("check-order-status-link"), function (data) {
+                            if (data.status == "OK") {
+                                window.location.href = data.redirect_url;
+                            }
+                        })
+                    }, 2000)
+                }, 5000)
+            }
             return false;
         });
 
-        $(".user-img-wrapper").tooltip({'placement':'bottom'});
+        $(".user-img-wrapper").tooltip({'placement': 'bottom'});
 
     }
 
@@ -130,25 +144,27 @@
 
         var $originalTagInput = $("#id_tags");
         var user_tags = $originalTagInput.val();
-        function selectionRemoved($item){
+
+        function selectionRemoved($item) {
             $item.find("a").remove();
             var tagValue;
-            $(".hot-tags li").each(function(i,tag){
+            $(".hot-tags li").each(function (i, tag) {
                 tagValue = $(this).text().replace('+ ', '');
-                if(tagValue == $item.text().replace(/\s+/g, "")){
+                if (tagValue == $item.text().replace(/\s+/g, "")) {
                     $(tag).removeClass("selected");
                 }
 
             })
             $item.remove();
         }
+
         $originalTagInput.autoSuggest($data.attr('list-tags-url'), {
-            asHtmlID:'tags',
-            preFill:user_tags,
-            keyDelay:100,
-            neverSubmit:true,
-            startText:'',
-            selectionRemoved:selectionRemoved
+            asHtmlID: 'tags',
+            preFill: user_tags,
+            keyDelay: 100,
+            neverSubmit: true,
+            startText: '',
+            selectionRemoved: selectionRemoved
         });
 
         var $tagsValues = $("#as-values-tags");
@@ -181,7 +197,7 @@
 
         function hasTag(tag) {
             tag = tag.replace(/\s+/g, '')
-            return ("," + $tagsValues.val().replace(/\s+/g, '') + ",").indexOf(',' + tag+ ',') >= 0;
+            return ("," + $tagsValues.val().replace(/\s+/g, '') + ",").indexOf(',' + tag + ',') >= 0;
         }
 
         function addTagValue(tag) {
@@ -251,11 +267,11 @@
         $("#id_avatar_for_upload").change(function () {
             $("#avatar_alert").remove();
             var options = {
-                target:'#crop_avatar_wrapper', // target element(s) to be updated with server response
-                beforeSubmit:function () {
+                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
+                beforeSubmit: function () {
                     $(".avatar .loading").show();
                 }, // pre-submit callback
-                success:function () {
+                success: function () {
                     $(".avatar .loading").hide();
                     $("#avatar-wrapper").find("img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'));
                     $('#crop-avatar-link').show();
@@ -280,7 +296,7 @@
         function submit_crop_form() {
             $("#crop_submit").click(function () {
                 $("#id_crop_form").ajaxSubmit({
-                    success:function (data) {
+                    success: function (data) {
                         //noinspection JSUnresolvedVariable
                         $("#avatar-wrapper").find("img").attr('src', $.parseJSON(data).big_avatar_url);
                         $("#crop_avatar_modal").modal('hide');
@@ -310,7 +326,7 @@
             $("#choose-menu-wrapper").css('visibility', 'hidden');
             var $ajax_loader = $('#loading-menus');
             $ajax_loader.show(1, function () {
-                $.get($("#data").data('menu-list-link'), {num_persons:numPersons}, function (data) {
+                $.get($("#data").data('menu-list-link'), {num_persons: numPersons}, function (data) {
                     $ajax_loader.hide();
                     $("#choose-menu-wrapper").html(data).css('visibility', 'visible');
                     $("#choose-restaurant-msg").clone(true).appendTo("#choose-restaurant-info").show();
@@ -331,27 +347,27 @@
             })
         }
 
-        $("#id_privacy").dropkick({width:313, startSpeed:0});
+        $("#id_privacy").dropkick({width: 313, startSpeed: 0});
 
         var $startDateInput = $("#id_start_date");
         $startDateInput.css('visibility', 'visible').datepicker({
-            format:'yyyy-mm-dd',
-            todayHighlight:true,
-            startDate:$startDateInput.data('startDate'),
-            endDate:$startDateInput.data('endDate')
+            format: 'yyyy-mm-dd',
+            todayHighlight: true,
+            startDate: $startDateInput.data('startDate'),
+            endDate: $startDateInput.data('endDate')
         });
 
 
-        $('#id_start_time').dropkick({width:116, startSpeed:0});
+        $('#id_start_time').dropkick({width: 116, startSpeed: 0});
         $minPersons.dropkick({
-                width:313,
-                startSpeed:0,
-                change:function (value) {
+                width: 313,
+                startSpeed: 0,
+                change: function (value) {
                     getMenuList(value);
                 }
             }
         );
-        $('#id_list_price,#id_region').dropkick({width:120, startSpeed:100});
+        $('#id_list_price,#id_region').dropkick({width: 120, startSpeed: 100});
         var oldMenuId = $("#id_menu_id").val();
         getMenuList($minPersons.find("option:selected").val(), oldMenuId);
 
@@ -368,12 +384,12 @@
             var $mapLink = $(this);
             $("#show_map_modal").modal().on('shown', function () {
                 $('#map').gmap3({
-                    marker:{
-                        latLng:[$mapLink.attr('lat'), $mapLink.attr("long")]
+                    marker: {
+                        latLng: [$mapLink.attr('lat'), $mapLink.attr("long")]
                     },
-                    map:{
-                        options:{
-                            zoom:15
+                    map: {
+                        options: {
+                            zoom: 15
                         }
                     }
                 });
@@ -396,8 +412,8 @@
                 $(this).attr("title", "点击复制到我的兴趣");
             }).live("click", function () {
                     var $item = $(this);
-                    $.post($data.data("add-tag-url"), {'tag':$(this).text()}, function () {
-                        noty({text:$item.text() + " 已经复制到我的兴趣", timeout:500});
+                    $.post($data.data("add-tag-url"), {'tag': $(this).text()}, function () {
+                        noty({text: $item.text() + " 已经复制到我的兴趣", timeout: 500});
                         $(".tags li:contains(" + $item.text() + ")").each(function () {
                             if ($(this).text() == $item.text()) {
                                 $(this).addClass("common").removeAttr("title");
@@ -423,8 +439,8 @@
         });
         $container.imagesLoaded(function () {
             $container.masonry({
-                itemSelector:'.box',
-                isAnimated:!Modernizr.csstransitions
+                itemSelector: '.box',
+                isAnimated: !Modernizr.csstransitions
             }, function () {
                 if ($(document).height() <= $(window).height()) {
                     $(window).scroll();
@@ -435,37 +451,37 @@
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
-                navSelector:'#page-nav', // selector for the paged navigation
-                nextSelector:'#page-nav a', // selector for the NEXT link (to page 2)
-                itemSelector:'.box', // selector for all items you'll retrieve
-                animate:false,
-                errorCallback:function () {
+                navSelector: '#page-nav', // selector for the paged navigation
+                nextSelector: '#page-nav a', // selector for the NEXT link (to page 2)
+                itemSelector: '.box', // selector for all items you'll retrieve
+                animate: false,
+                errorCallback: function () {
 
                     var $need_edit_tags_again_tip = $("#need_edit_tags_again_tip");
                     if ($need_edit_tags_again_tip[0]) {
                         $need_edit_tags_again_tip.show();
                         var scrollTo = $(window).scrollTop() + $need_edit_tags_again_tip.height() + 100 + 'px';
-                        $('html,body').animate({ scrollTop:scrollTo }, 800);
+                        $('html,body').animate({ scrollTop: scrollTo }, 800);
                     }
                 },
-                extendFinished:function (responseText) {
+                extendFinished: function (responseText) {
                     $("#main-container").append($(responseText).siblings("div.alert"));
                 },
-                loading:{
-                    msgText:'加载中...',
-                    finishedMsg:'没有了！',
-                    img:ajaxLoaderImageId
+                loading: {
+                    msgText: '加载中...',
+                    finishedMsg: '没有了！',
+                    img: ajaxLoaderImageId
                 }
             },
             // trigger Masonry as a callback
             function (newElements) {
                 // hide new items while they are loading
-                var $newElems = $(newElements).css({ opacity:0 });
+                var $newElems = $(newElements).css({ opacity: 0 });
                 // ensure that images load before adding to masonry layout
                 $newElems.imagesLoaded(function () {
                     // show elems now they're ready
-                    $newElems.animate({ opacity:1 });
-                    $(newElements).find("img.lazy").lazyload({ threshold:400, effect:'fadeIn' });
+                    $newElems.animate({ opacity: 1 });
+                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
 //                        if($(document).height() <= $(window).height()){
 //                        $(window).scroll();
@@ -484,7 +500,7 @@
 
     var notyMsg = $data.data("notyMsg");
     if (notyMsg) {
-        noty({text:notyMsg})
+        noty({text: notyMsg})
     }
 })
     (jQuery);
@@ -498,15 +514,15 @@ function showPreview(coords) {
     var originalWidth = $avatarInput.data('org-width');
     var originalHeight = $avatarInput.data('org-height');
     jQuery('#preview_big').css({
-        width:Math.round(rxBig * originalWidth) + 'px',
-        height:Math.round(ryBig * originalHeight) + 'px',
-        marginLeft:'-' + Math.round(rxBig * coords.x) + 'px',
-        marginTop:'-' + Math.round(ryBig * coords.y) + 'px'
+        width: Math.round(rxBig * originalWidth) + 'px',
+        height: Math.round(ryBig * originalHeight) + 'px',
+        marginLeft: '-' + Math.round(rxBig * coords.x) + 'px',
+        marginTop: '-' + Math.round(ryBig * coords.y) + 'px'
     });
     jQuery('#preview_middle').css({
-        width:Math.round(rxMiddle * originalWidth) + 'px',
-        height:Math.round(ryMiddle * originalHeight) + 'px',
-        marginLeft:'-' + Math.round(rxMiddle * coords.x) + 'px',
-        marginTop:'-' + Math.round(ryMiddle * coords.y) + 'px'
+        width: Math.round(rxMiddle * originalWidth) + 'px',
+        height: Math.round(ryMiddle * originalHeight) + 'px',
+        marginLeft: '-' + Math.round(rxMiddle * coords.x) + 'px',
+        marginTop: '-' + Math.round(ryMiddle * coords.y) + 'px'
     });
 }

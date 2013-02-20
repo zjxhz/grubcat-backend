@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, IntegrityError
+from django.db.models import Sum, Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
@@ -197,7 +198,7 @@ class Menu(models.Model):
                 'box': self.cropping,
                 #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
             url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url
@@ -211,7 +212,7 @@ class Menu(models.Model):
                 'box': self.cropping,
                 #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
             url = settings.STATIC_URL + "img/default/meal_cover.jpg"
         return url
@@ -221,7 +222,7 @@ class Menu(models.Model):
         return u'套餐%s' % self.id
 
     class Meta:
-        unique_together = (('restaurant','status', 'name'),)
+        unique_together = (('restaurant', 'status', 'name'),)
         db_table = u'menu'
         verbose_name = u'套餐'
         verbose_name_plural = u'套餐'
@@ -346,22 +347,37 @@ class Order(models.Model):
     status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
     total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=2)
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
-    paid_time = models.DateTimeField(u'支付时间', blank=True, null=True)
+    payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
-    code = models.CharField(u'订单验证码', max_length=12, null=True, unique=True)
+    code = models.CharField(u'订单验证码',blank=True, max_length=12, null=True, unique=True)
 
     @models.permalink
     def get_absolute_url(self):
         return 'order_detail', [str(self.meal_id), str(self.id)]
 
     def __unicode__(self):
-        return "%s %s" % (self.meal.topic, self.customer.user.username)
+        return "%s %s %s" % (self.meal.id, self.id, self.customer.id)
 
 
-    def save(self, *args, **kargs):
-        if not self.code:
-            self.gen_code()
-        super(Order, self).save(*args, **kargs)
+    def set_payed(self, payed_time):
+        order = self
+        order.status = OrderStatus.PAYIED
+        order.payed_time = payed_time
+        if not order.code:
+            order.gen_code()
+        order.save()
+        #set all other unpaid order as "canceld" status
+        Order.objects.filter(meal=order.meal,customer=order.customer, status=OrderStatus.CREATED).update(status=OrderStatus.CANCELED)
+        meal = order.meal
+        meal.participants.add(order.customer)
+        meal.actual_persons += order.num_persons
+        if order.customer == meal.host:
+            #创建饭局后，支付
+            if meal.status is MealStatus.CREATED_NO_MENU:
+                meal.status = MealStatus.PAID_NO_MENU
+            elif meal.status is MealStatus.CREATED_WITH_MENU:
+                meal.status = MealStatus.PUBLISHED
+        meal.save()
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
@@ -388,6 +404,17 @@ class Order(models.Model):
         verbose_name = u'订单'
         verbose_name_plural = u'订单'
 
+#交易流水
+class TransFlow(models.Model):
+    order = models.OneToOneField(Order, verbose_name=u'站内订单号', related_name='flow')
+    alipay_trade_no = models.CharField(u'支付宝订单号', max_length=64)
+
+    def __unicode__(self):
+        return '%s' % self.alipay_trade_no
+
+    class Meta:
+        verbose_name = u'交易流水'
+        verbose_name_plural = u'交易流水'
 
 class Relationship(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name='from_user')
@@ -723,7 +750,7 @@ class UserPhoto(models.Model):
 
     @property
     def large_photo(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (700,1400 ),
+        return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
                                                           'crop': False,
                                                           'detail': True
         }).url
@@ -828,19 +855,36 @@ class Meal(models.Model):
         return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
             Q(start_date__gt=date.today()) | Q(start_date=date.today(),
                 start_time__gt=datetime.now().time())).order_by("start_date",
-            "start_time")
+            "start_time").select_related("menu")
 
-    def join(self, order):
-        if self.actual_persons + order.num_persons > self.max_persons:
-            raise NoAvailableSeatsError
-        if self.is_participant(order.customer):
+    def join(self, customer, requesting_persons):
+        if self.is_participant(customer):
             raise AlreadyJoinedError()
-        self.participants.add(order.customer)
-        self.actual_persons += order.num_persons
-        self.save()
-        order.save()
 
-    def is_reservable(self):
+        other_paying_orders = self.orders.exclude(customer=customer).exclude(customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
+            created_time__gte=datetime.now() - timedelta(minutes=settings.PAY_OVERTIME)).values('customer').annotate(max_num_persons=Max('num_persons'))
+        paying_persons = sum([o['max_num_persons'] for o in other_paying_orders])
+        if self.actual_persons + requesting_persons + paying_persons > self.max_persons:
+            if self.actual_persons >= self.max_persons:
+                message = u'该饭局已卖光了！'
+            elif paying_persons == 0:
+                message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
+            elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0 :
+                message = u'现在正有%s位用户在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+            else:
+                message = u'现在正有%s位用户在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
+            raise NoAvailableSeatsError(message)
+
+        order = Order()
+        order.meal = self
+        order.customer = customer
+        order.num_persons = requesting_persons
+        order.total_price = self.list_price * requesting_persons
+        order.status = OrderStatus.CREATED
+        order.save()
+        return order
+
+    def is_avaliable(self):
         return True
 
 
@@ -850,10 +894,7 @@ class Meal(models.Model):
             self.start_date == date.today() and self.start_time < datetime.now().time())
 
     def is_participant(self, user_profile):
-        for participant in self.participants.all(): #TODO query the user by id to see the if the user exist
-            if participant == user_profile:
-                return True
-        return False
+        return self.participants.filter(pk=user_profile.id).exists()
 
     def liked(self, user_profile):
         for like in self.likes.all():
@@ -877,9 +918,9 @@ class Meal(models.Model):
                 'crop': True,
                 #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
-            url = url = self.menu.big_cover_url
+            url = self.menu.big_cover_url
         return url
 
     @property
@@ -888,10 +929,10 @@ class Meal(models.Model):
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (360, 240),
                 'crop': True,
-#                'box': self.cropping,
+                #                'box': self.cropping,
                 #                'quality':85,
                 'detail': True,
-                }).url
+            }).url
         else:
             url = self.menu.normal_cover_url
         return url

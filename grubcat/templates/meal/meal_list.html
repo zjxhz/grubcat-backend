@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
 {% load static_asset %}
+{% load cache %}
 {% load assets %}
 {% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
 {% block page_css %}
@@ -20,6 +21,7 @@
 {% block page_js %}
 {% endblock %}
 {% block content %}
+{#    {% cache 900 meal_list_frag %}#}
     <div class="row" id="meal-list-page">
         <div id="meal-list" class="span9">
             {% for meal in meal_list %}
@@ -61,6 +63,7 @@
             {% include "support/faq_sidebar.html" %}
         </div>
     </div>
+{#    {% endcache %}#}
 {% endblock %}
 
 {% block active-nav-id %}nav-meal{% endblock %}

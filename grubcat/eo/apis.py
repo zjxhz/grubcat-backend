@@ -268,13 +268,10 @@ class UserResource(ModelResource):
         order_resource = OrderResource()
 
         if request.method == 'POST':
-            order = Order()
-            order.meal = Meal.objects.get(id=request.POST.get('meal_id'))
-            order.num_persons = int(request.POST.get('num_persons'))
-            order.customer = user_profile
-            order.total_price = request.POST.get('total_price')
-            order.created_time = datetime.now()
-            order.meal.join(order)
+            meal = Meal.objects.get(id=request.POST.get('meal_id'))
+            num_persons = int(request.POST.get('num_persons'))
+            #TODO try catch if no avaliable seats
+            order = meal.join(user_profile, num_persons)
             return createGeneralResponse('OK', "You've just joined the meal",{"code":order.code})
         else:
             return order_resource.get_list(request, customer=user_profile)

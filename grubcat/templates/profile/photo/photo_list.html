@@ -23,7 +23,11 @@
             </ul>
         {% else %}
             <div class="no-results">
-                TA还没上传照片，邀请TA上传吧。
+                {% if is_mine %}
+                    还没有任何照片，现在就上传吧。可以是你的靓照，也可以是你的兴趣爱好，比如你喜欢的书。
+                {% else %}
+                    TA还没上传照片，邀请TA上传吧。
+                {% endif %}
             </div>
         {% endif %}
     </div>

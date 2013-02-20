@@ -3,7 +3,7 @@ from ajax_select.admin import AjaxSelectAdmin
 import datetime
 from django.contrib import admin
 from image_cropping.admin import ImageCroppingMixin
-from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment
+from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment, TransFlow
 from models import Group, GroupCategory, UserProfile, ImageTest
 
 class UserProfileAdmin(ImageCroppingMixin, admin.ModelAdmin):
@@ -21,7 +21,7 @@ class DishCategoryAdmin(admin.ModelAdmin):
     list_display =('name', 'restaurant')
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','meal', 'customer', 'created_time','completed_time','status', 'num_persons', 'code','total_price',)
+    list_display = ('id','meal', 'customer', 'created_time','payed_time','completed_time','status', 'num_persons', 'code','total_price','flow')
     list_filter = ('meal', 'status')
     ordering = ('-id','meal', 'status',)
     actions = ['cancel_order']
@@ -31,9 +31,11 @@ class OrderAdmin(admin.ModelAdmin):
         self.message_user(request, "订单取消成功!")
     cancel_order.short_description = u"取消订单"
 
+class TransFlowAdmin(admin.ModelAdmin):
+    list_display = ('order','alipay_trade_no')
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ('topic', 'menu','host', 'list_price',)
+    list_display = ('topic', 'menu','host', 'list_price','actual_persons')
     list_filter = ('start_date',)
     ordering = ('menu', )
     actions = ['postpone_meal']
@@ -74,6 +76,7 @@ class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
 
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(TransFlow, TransFlowAdmin)
 admin.site.register(Dish, DishAdmin)
 admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu,MenuAdmin)

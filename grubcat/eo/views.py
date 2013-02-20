@@ -9,21 +9,25 @@ from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
-from eo.exceptions import NoRightException
+from eo.exceptions import *
 from eo.models import   Order,\
     Relationship, Meal
-from eo.views_common import  create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS
+from eo.pay.alipay.alipay import create_partner_trade_by_buyer
+from eo.views_common import  create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 import simplejson
 from django.conf import settings
 
 
 logger = logging.getLogger()
+pay_logger = logging.getLogger("pay")
+
 ###Photo related views ###
 class PhotoCreateView(CreateView):
     form_class = PhotoForm
@@ -448,13 +452,6 @@ class OrderCreateView(CreateView):
     def get_initial(self):
         return {'meal_id': self.kwargs['meal_id']}
 
-    def get_success_url(self):
-        url = super(OrderCreateView, self).get_success_url()
-        if not self.request.user.get_profile().avatar:
-            url += "?check=avatar"
-        return url
-
-
     def get_context_data(self, **kwargs):
         context = super(OrderCreateView, self).get_context_data(**kwargs)
         try:
@@ -464,22 +461,46 @@ class OrderCreateView(CreateView):
         return context
 
     def form_valid(self, form):
-        order = form.save(False)
-        order.customer = self.request.user.get_profile()
-        order.meal_id = form.cleaned_data['meal_id']
-        order.status = OrderStatus.PAYIED #TODO if alipay is used, here should be created status
-        order.total_price = order.meal.list_price * order.num_persons
+        meal = Meal.objects.get(pk=form.cleaned_data['meal_id'])
+        num_persons = form.cleaned_data['num_persons']
+        customer = self.request.user.get_profile()
+        order = meal.join(customer, num_persons)
         #        TODO some checks
-        response = super(OrderCreateView, self).form_valid(form)
-        meal = order.meal
-        if order.customer == meal.host:
-            #创建饭聚后，支付
-            if meal.status is MealStatus.CREATED_NO_MENU:
-                meal.status = MealStatus.PAID_NO_MENU
-            elif meal.status is MealStatus.CREATED_WITH_MENU:
-                meal.status = MealStatus.PUBLISHED
-        order.meal.join(order)
-        return response
+        url = create_partner_trade_by_buyer(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
+        pay_logger.info("支付订单：%s" % url)
+        return HttpResponseRedirect(url)
+
+#TODO check pay status
+
+
+@csrf_exempt
+def handle_back_aysnc(request):
+    pay_logger.info(u'alipay异步通知开始....')
+    if request.method == 'POST':
+        try:
+            handle_alipay_back(request.POST)
+            return HttpResponse("success")
+        except AliapyBackVerifyFailedError:
+            return HttpResponse("fail")
+        except Exception:
+            return HttpResponse("success")
+    else:
+        return HttpResponse("fail")
+
+
+def handle_back_sync(request):
+    pay_logger.info(u'alipay同步通知开始....')
+    if request.method == 'GET':
+        try:
+            handle_alipay_back(request.GET)
+            order_id = request.GET.get('out_trade_no')
+            order = Order.objects.get(pk=order_id)
+            #TODO check avatar
+            return HttpResponseRedirect(order.get_absolute_url())
+        except (PayOverTimeError, AlreadyJoinedError):
+            raise
+        except Exception as e:
+            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！", e)
 
 
 class MealDetailView(OrderCreateView):
@@ -487,19 +508,30 @@ class MealDetailView(OrderCreateView):
     template_name = "meal/meal_detail.html"
 
     def get_context_data(self, **kwargs):
-        context = super(MealDetailView, self).get_context_data(**kwargs)
-        meal = Meal.objects.select_related('menu__restaurant', 'host__user').prefetch_related('participants__user').get(
+        context = super(CreateView, self).get_context_data(**kwargs)
+        meal = Meal.objects.select_related('menu__restaurant', ).prefetch_related('participants').get(
             pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         context['avaliable_seats'] = range(meal.left_persons)
         if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
-            orders = Order.objects.filter(meal=meal,
-                customer=self.request.user.get_profile()) #TODO , status=OrderStatus.PAYIED
-            if orders.exists():
+            orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=self.request.user.get_profile())
+            if len(orders):
                 context['order'] = orders[0]
-        if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU:
+        if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
         return context
+
+
+def check_order_status(request, meal_id):
+    if request.method == "POST":
+        #check if mine
+        meal = Meal.objects.get(pk=meal_id)
+        payed_orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=request.user.get_profile())
+        if len(payed_orders):
+            return create_sucess_json_response(extra_dict={'redirect_url': payed_orders[0].get_absolute_url()})
+        elif meal.left_persons <= 0:
+            return create_sucess_json_response(extra_dict={'redirect_url': meal.get_absolute_url()})
+    return create_failure_json_response()
 
 
 class OrderDetailView(DetailView):
