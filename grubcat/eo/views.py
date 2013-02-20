@@ -495,7 +495,6 @@ def handle_back_sync(request):
             handle_alipay_back(request.GET)
             order_id = request.GET.get('out_trade_no')
             order = Order.objects.get(pk=order_id)
-            #TODO check avatar
             return HttpResponseRedirect(order.get_absolute_url())
         except (PayOverTimeError, AlreadyJoinedError):
             raise
@@ -524,7 +523,6 @@ class MealDetailView(OrderCreateView):
 
 def check_order_status(request, meal_id):
     if request.method == "POST":
-        #check if mine
         meal = Meal.objects.get(pk=meal_id)
         payed_orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=request.user.get_profile())
         if len(payed_orders):
@@ -548,7 +546,7 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
-        if self.request.GET.get('check') == 'avatar' and not self.request.user.get_profile().avatar:
+        if not self.request.user.get_profile().avatar:
             context['avatar_tip'] = True
         return context
 
