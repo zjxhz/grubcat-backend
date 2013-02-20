@@ -19,8 +19,8 @@ from eo.models import   Order,\
     Relationship, Meal
 from eo.views_common import  create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS
 from grubcat.eo.forms import *
-import simplejson
 from django.conf import settings
+import json
 
 
 logger = logging.getLogger()
@@ -34,7 +34,7 @@ class PhotoCreateView(CreateView):
         photo.user = self.request.user.get_profile()
         super(PhotoCreateView, self).form_valid(form)
         data = {'status': SUCESS, 'redirect_url': reverse('photo_detail', kwargs={'pk': photo.id})}
-        return HttpResponse(simplejson.dumps(data), ) #text/html hack for IE ajax upload file
+        return HttpResponse(json.dumps(data), ) #text/html hack for IE ajax upload file
 
     def get_context_data(self, **kwargs):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
@@ -346,7 +346,7 @@ class UploadAvatarView(UpdateView):
             return HttpResponseRedirect(reverse('upload_avatar'))
         else:
             data = {'big_avatar_url': self.object.big_avatar}
-            return HttpResponse(simplejson.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
+            return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
 
 class ProfileUpdateView(UpdateView):
