@@ -79,9 +79,9 @@ def create_direct_pay_by_user(tn, subject, body, total_fee):
     params['partner'] = settings.ALIPAY_PARTNER
     params['seller_id'] = settings.ALIPAY_PARTNER
     params[
-        'return_url'] = django_settings.ALIPAY_RETURN_URL if django_settings.ALIPAY_RETURN_URL else  settings.ALIPAY_RETURN_URL
+        'return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL')else  settings.ALIPAY_RETURN_URL
     params[
-        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if django_settings.ALIPAY_NOTIFY_URL else  settings.ALIPAY_NOTIFY_URL
+        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
     params['show_url'] = settings.ALIPAY_SHOW_URL
 
@@ -123,9 +123,9 @@ def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount='
     params['partner'] = settings.ALIPAY_PARTNER
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
     params[
-        'return_url'] = django_settings.ALIPAY_RETURN_URL if django_settings.ALIPAY_RETURN_URL else  settings.ALIPAY_RETURN_URL
+        'return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL') else  settings.ALIPAY_RETURN_URL
     params[
-        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if django_settings.ALIPAY_NOTIFY_URL else  settings.ALIPAY_NOTIFY_URL
+        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
 
     # 业务参数
     params['out_trade_no'] = tn        # 请与贵网站订单系统中的唯一订单号匹配
