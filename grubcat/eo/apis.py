@@ -151,6 +151,11 @@ class UserTagResource(ModelResource):
 
 class UserPhotoResource(ModelResource):
     photo = Base64FileField('photo')
+    
+    def dehydrate(self, bundle):
+        bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
+        return bundle
+    
     class Meta:
         queryset = UserPhoto.objects.all()
         authorization = Authorization()
@@ -185,7 +190,7 @@ class UserResource(ModelResource):
             bundle.data['updated_at'] = "2012-10-16"
         
         bundle.data['small_avatar'] = bundle.obj.small_avatar
-        bundle.data['big_avatar'] = bundle.obj.big_avatar    
+        bundle.data['big_avatar'] = bundle.obj.big_avatar  
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
@@ -692,8 +697,11 @@ class MealResource(ModelResource):
         bundle.data['actual_persons']=1
         if not bundle.data.get('max_persons'):
             bundle.data['max_persons'] = bundle.data['min_persons']
+        
+    def dehydrate(self, bundle):
+        bundle.data["photo"] = bundle.obj.big_cover_url
         return bundle
-    
+        
     def override_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/comments%s$" % (self._meta.resource_name, trailing_slash()),
@@ -813,18 +821,15 @@ def checkemail(request):
     
 def weibo_user_login(request):
     if request.method == 'POST':        
-        if request.user.is_authenticated():
-            return createLoggedInResponse(request.user)
+        # logs the user in as he has been authenticated by weibo at the mobile client side already. 
+        # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
+        post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
+        user_to_authenticate = auth.authenticate(**post_dict)
+        if user_to_authenticate:
+            auth.login(request, user_to_authenticate)
+            return createLoggedInResponse(user_to_authenticate)
         else:
-            # not logged in, logs the user in as he has been authenticated by weibo at the mobile client side already. 
-            # a new uesr might be created if this is the first time the user logs in, check WeiboAuthenticationBackend
-            post_dict = dict(request.POST.items()) # POST.dict() is available since django 1.4
-            user_to_authenticate = auth.authenticate(**post_dict)
-            if user_to_authenticate:
-                auth.login(request, user_to_authenticate)
-                return createLoggedInResponse(user_to_authenticate)
-            else:
-                return createGeneralResponse('NOK', "Login failed")
+            return createGeneralResponse('NOK', "Login failed")
     else:
         raise # not used by mobile client   
        

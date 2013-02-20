@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
-from eo.db import  updateLatLng
 from eo.decorators import restaurant_login_required
 from eo.views import  upload_app
 from eo.views_common import list_tags, add_tag
@@ -156,7 +155,6 @@ urlpatterns = patterns('',
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
 
     # developer interfaces...
-    ('^updateLatLng/$', updateLatLng),
     ('^upload_app/$', upload_app),
 
     #pay
