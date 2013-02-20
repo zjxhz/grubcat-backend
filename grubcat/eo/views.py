@@ -374,7 +374,7 @@ class ProfileDetailView(DetailView):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         context['is_mine'] = self.object == self.request.user.get_profile()
         context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
-        if self.object.industry:
+        if self.object.industry >= 0:
             for industry_value, industry_label in INDUSTRY_CHOICE:
                 if self.object.industry == industry_value:
                     context['industry_label'] = industry_label

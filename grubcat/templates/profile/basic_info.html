@@ -97,10 +97,10 @@
                     <div class="info-value"><a href="{% url edit_basic_profile %}">编辑</a></div>
                 </div>
             {% endif %}
-            {% if profile.industry %}
+            {% if profile.industry >= 0 %}
                 <div class="info-item">
                     <div class="info-label">行业：</div>
-                    <div class="info-value">{{ industry_label|default:"未填写" }}</div>
+                    <div class="info-value">{{ industry_label|default_if_none:"未填写" }}</div>
                 </div>
             {% elif is_mine %}
                 <div class="info-item">
