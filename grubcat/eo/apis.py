@@ -151,6 +151,11 @@ class UserTagResource(ModelResource):
 
 class UserPhotoResource(ModelResource):
     photo = Base64FileField('photo')
+    
+    def dehydrate(self, bundle):
+        bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
+        return bundle
+    
     class Meta:
         queryset = UserPhoto.objects.all()
         authorization = Authorization()
@@ -185,8 +190,7 @@ class UserResource(ModelResource):
             bundle.data['updated_at'] = "2012-10-16"
         
         bundle.data['small_avatar'] = bundle.obj.small_avatar
-        bundle.data['big_avatar'] = bundle.obj.big_avatar
-        bundle.data['photo_thumbnails'] = bundle.obj.photo_thumbnails    
+        bundle.data['big_avatar'] = bundle.obj.big_avatar  
         self.mergeOneToOneField(bundle, 'user', id)
         self.mergeOneToOneField(bundle, 'location')
         return bundle
