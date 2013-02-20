@@ -857,7 +857,7 @@ class Meal(models.Model):
 
     def join(self, customer, requesting_persons):
         if self.is_participant(customer):
-            raise AlreadyJoinedError()
+            raise AlreadyJoinedError(u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！")
 
         other_paying_orders = self.orders.exclude(customer=customer).exclude(customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
             created_time__gte=datetime.now() - timedelta(minutes=settings.PAY_OVERTIME)).values('customer').annotate(max_num_persons=Max('num_persons'))
