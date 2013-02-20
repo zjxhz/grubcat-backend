@@ -8,7 +8,7 @@ from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteVi
 from django.views.generic.list import ListView
 from eo.models import Dish, Order
 from eo.forms import *
-import simplejson
+import json
 
 #restaurant admin related views
 from eo.views_common import create_sucess_json_response, create_failure_json_response
@@ -195,7 +195,7 @@ class EditMenuCoverView(UpdateView):
 def add_edit_menu(request, pk=None, is_copy=False):
     '''添加或者删除一个套餐，如果传入pk则是编辑，否则是添加'''
     if request.method == 'POST':
-        menu_json = simplejson.loads(request.raw_post_data)
+        menu_json = json.loads(request.raw_post_data)
         num_persons = menu_json['num_persons']
         average_price = menu_json['average_price']
         name = menu_json['name']

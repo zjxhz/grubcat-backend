@@ -511,6 +511,10 @@ class UserProfile(models.Model):
             'detail': True,
         })
 
+    @property 
+    def photo_thumbnails(self):
+        return [photo.photo_thumbnail for photo in self.photos.all()]
+
     @property
     def age(self):
         if self.birthday:
