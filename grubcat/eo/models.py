@@ -868,10 +868,10 @@ class Meal(models.Model):
             elif paying_persons == 0:
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0 :
-                message = u'现在正有%s位用户在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+                message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
             else:
-                message = u'现在正有%s位用户在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
-            raise NoAvailableSeatsError(message)
+                message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
+            raise NoAvailableSeatsError(message=message)
 
         order = Order()
         order.meal = self
