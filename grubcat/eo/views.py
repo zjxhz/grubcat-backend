@@ -487,13 +487,13 @@ def handle_back_aysnc(request):
     else:
         return HttpResponse("fail")
 
-
+order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 def handle_back_sync(request):
     pay_logger.info(u'alipay同步通知开始....')
     if request.method == 'GET':
         try:
             handle_alipay_back(request.GET)
-            order_id = request.GET.get('out_trade_no')
+            order_id = request.GET.get('out_trade_no').replace(order_prefix, '')
             order = Order.objects.get(pk=order_id)
             return HttpResponseRedirect(order.get_absolute_url())
         except (PayOverTimeError, AlreadyJoinedError):
