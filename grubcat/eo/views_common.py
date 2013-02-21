@@ -15,7 +15,7 @@ from eo.pay.alipay.alipay import send_goods_confirm_by_platform, notify_verify
 SUCESS = "OK"
 ERROR = 'NOK'
 pay_logger = logging.getLogger("pay")
-
+order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
 def handle_alipay_back(data):
     """
@@ -27,7 +27,7 @@ def handle_alipay_back(data):
     pay_logger.info(data)
     trade_status = data.get('trade_status')
     if trade_status == 'WAIT_SELLER_SEND_GOODS':
-        order = Order.objects.get(pk=data.get('out_trade_no'))
+        order = Order.objects.get(pk=data.get('out_trade_no').replace(order_prefix, ''))
         alipay_trade_no = data.get('trade_no')
         try:
             payed_time = time.strptime(data.get('gmt_payment'), '%Y-%m-%d %H:%M:%S')

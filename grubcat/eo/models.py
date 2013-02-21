@@ -2,15 +2,13 @@
 from datetime import datetime, time, date
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
-from django.contrib.contenttypes.models import ContentType
 from django.db import models, IntegrityError
-from django.db.models import Sum, Max
+from django.db.models import  Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError, BusinessException
-from image_cropping.fields import ImageRatioField, ImageCropField
+from image_cropping.fields import ImageRatioField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
 import random
@@ -537,7 +535,7 @@ class UserProfile(models.Model):
             'crop': True,
             'detail': True,
         })
-        
+
     @property
     def age(self):
         if self.birthday:
@@ -625,8 +623,8 @@ class UserProfile(models.Model):
     @property
     def non_restaurant_usres(self):
         return UserProfile.objects.exclude(user__restaurant__isnull=False)
-    
-    
+
+
     @property
     def users_nearby(self):
         distance_user_dict = {}
@@ -724,7 +722,7 @@ class UserProfile(models.Model):
     #        print response
 
     def __unicode__(self):
-        return self.user.username
+        return self.name if self.name is not None else self.user.username
 
     class Meta:
         db_table = u'user_profile'
@@ -798,7 +796,7 @@ MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
     )
 
-MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(3, 13)]
+MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(2, 13)]
 START_TIME_CHOICE = (
     (time(9, 00), "9:00"), (time(9, 30), "9:30"), (time(10, 00), "10:00"), (time(10, 30), "10:30"),
     (time(11, 00), "11:00"), (time(11, 30), "11:30"), (time(12, 00), "12:00"), (time(12, 30), "12:30"),
@@ -859,16 +857,22 @@ class Meal(models.Model):
         if self.is_participant(customer):
             raise AlreadyJoinedError(u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！")
 
-        other_paying_orders = self.orders.exclude(customer=customer).exclude(customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
-            created_time__gte=datetime.now() - timedelta(minutes=settings.PAY_OVERTIME)).values('customer').annotate(max_num_persons=Max('num_persons'))
+        other_paying_orders = self.orders.exclude(customer=customer).exclude(
+            customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
+                                                         created_time__gte=datetime.now() - timedelta(
+                                                             minutes=settings.PAY_OVERTIME)).select_for_update().values(
+            'customer').annotate(max_num_persons=Max('num_persons'))
         paying_persons = sum([o['max_num_persons'] for o in other_paying_orders])
+        # print 'orders.len=%s paying:%s requesting:%s payed:%s' % (
+        # len(other_paying_orders), paying_persons, requesting_persons, self.actual_persons)
         if self.actual_persons + requesting_persons + paying_persons > self.max_persons:
             if self.actual_persons >= self.max_persons:
                 message = u'该饭局已卖光了！'
             elif paying_persons == 0:
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
-            elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0 :
-                message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+            elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
+                message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (
+                paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
             else:
                 message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
             raise NoAvailableSeatsError(message)
@@ -881,10 +885,6 @@ class Meal(models.Model):
         order.status = OrderStatus.CREATED
         order.save()
         return order
-
-    def is_avaliable(self):
-        return True
-
 
     @property
     def is_passed(self):

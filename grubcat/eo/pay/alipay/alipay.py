@@ -13,7 +13,7 @@ from config import settings
 from django.conf import settings as django_settings
 
 pay_logger = logging.getLogger("pay")
-
+order_prefix = getattr(django_settings, 'ORDER_PREFIX', '')
 
 def smart_str(s, encoding='utf-8', strings_only=False, errors='strict'):
     """
@@ -70,6 +70,7 @@ def build_mysign(prestr, key, sign_type='MD5'):
 
 
 # 即时到账交易接口
+#TODO price 0.01
 def create_direct_pay_by_user(tn, subject, body, total_fee):
     params = {}
     params['service'] = 'create_direct_pay_by_user'
@@ -86,7 +87,7 @@ def create_direct_pay_by_user(tn, subject, body, total_fee):
     params['show_url'] = settings.ALIPAY_SHOW_URL
 
     # 从订单数据中动态获取到的必填参数
-    params['out_trade_no'] = tn        # 请与贵网站订单系统中的唯一订单号匹配
+    params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
     params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
     params['body'] = body      # 订单描述、订单详细、订单备注，显示在支付宝收银台里的“商品描述”里
     params['total_fee'] = total_fee # 订单总金额，显示在支付宝收银台里的“应付总额”里
@@ -128,7 +129,7 @@ def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount='
         'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
 
     # 业务参数
-    params['out_trade_no'] = tn        # 请与贵网站订单系统中的唯一订单号匹配
+    params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
     params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
     params['payment_type'] = '1'
     params['logistics_type'] = 'EMS'   # 第一组物流类型
@@ -137,7 +138,7 @@ def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount='
     # TODO 超时设置
     # params['it_b_pay'] = '1m'
     #    params['t_b_rec_post'] = '1d'
-    params['price'] = price             # 单价
+    params['price'] = 0.01 #TODO price             # 单价
     params['quantity'] = quantity       # 商品的数量
     params['discount'] = discount       # 商品的数量
     params['seller_id'] = settings.ALIPAY_PARTNER
@@ -161,7 +162,7 @@ def send_goods_confirm_by_platform(tn):
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
 
     # 业务参数
-    params['trade_no'] = tn
+    params['trade_no'] = order_prefix + str(tn)
     # params['logistics_name'] = u'银河列车'   # 物流公司名称
     params['transport_type'] = u'POST'
 
