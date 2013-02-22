@@ -82,6 +82,11 @@
         $num_persons.change(function () {
             $("#total_price").html($("#meal_price").text() * 100 * $(this).val() / 100);
         });
+        var orginalOrderNumPersons = $data.data("num-persons")
+        if (orginalOrderNumPersons){
+            $num_persons.val(orginalOrderNumPersons);
+            $("#meal-grub").find(".btn-book-now").text("去支付");
+        }
         var orderTimeOut;
         $(".btn-book-now").click(function () {
             $("#order_info_form").submit();
