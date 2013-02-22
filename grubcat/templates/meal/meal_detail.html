@@ -160,7 +160,7 @@
             </div>
         </div>{% endcomment %}
     </div>
-    <div id="data" style="display: none" data-check-order-status-link="{% url check_order_status meal.id%}"></div>
+    <div id="data" style="display: none" data-check-order-status-link="{% url check_order_status meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
 {% endblock %}
 
 {% block page_js %}

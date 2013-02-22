@@ -516,6 +516,35 @@ class UserProfile(models.Model):
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
 
+    def get_passedd_orders(self):
+        return self.orders.filter(status=OrderStatus.PAYIED).filter(
+            Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
+                                                     meal__start_time__lt=datetime.now().time())).order_by(
+            "meal__start_date", "meal__start_time").select_related('meal')
+
+    def get_upcomming_orders(self):
+        return self.orders.filter(status=OrderStatus.PAYIED).filter(
+            Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
+                                                     meal__start_time__gt=datetime.now().time())).order_by(
+            "meal__start_date", "meal__start_time").select_related('meal')
+
+    #return 30分钟内未支付的饭局订单，如果一个饭局有多个未支付的订单，那么这个饭局只返回最新的一个订单
+    def get_paying_orders(self):
+        return self.orders.filter(id__in=[o['latest_order_id'] for o in self.__get_paying_order_ids()]).order_by(
+            "meal__start_date", "meal__start_time").select_related('meal')
+
+    #return 30分钟内未支付的饭局订单数，如果一个饭局有多个未支付的订单，那么这个饭局只返回最新的一个订单
+    def get_paying_orders_count(self):
+        return len(self.__get_paying_order_ids())
+
+    #@return 30分钟内未支付的饭局订单的id，如果一个饭局有多个未支付的订单，那么这个饭局只返回最新的一个订单
+    def __get_paying_order_ids(self):
+        payed_orders = self.orders.filter(status=OrderStatus.PAYIED)
+        all_paying_orders = self.orders.filter(status=OrderStatus.CREATED,
+                                               created_time__gte=datetime.now() - timedelta(
+                                                   minutes=settings.PAY_OVERTIME)).exclude(id__in=payed_orders)
+        paying_orders_per_meal = all_paying_orders.values('meal').annotate(latest_order_id=Max('id'))
+        return paying_orders_per_meal
 
     def avatar_thumbnail(self, width, height):
         if self.avatar:

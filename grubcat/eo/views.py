@@ -1,6 +1,5 @@
 #coding=utf-8
 # Create your views here.
-from datetime import datetime
 import logging
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
@@ -16,10 +15,9 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
 from eo.exceptions import *
-from eo.models import   Order,\
-    Relationship, Meal
+from eo.models import Order, Relationship, Meal
 from eo.pay.alipay.alipay import create_partner_trade_by_buyer
-from eo.views_common import  create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
+from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 from django.conf import settings
 import json
@@ -43,8 +41,7 @@ class PhotoCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
-        context['is_mine'] = True
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
         return context
 
 
@@ -67,9 +64,18 @@ class PhotoDetailView(DetailView):
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
         context['profile'] = self.object.user
-        context['is_mine'] = context['profile'] == self.request.user.get_profile()
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
         return context
+
+
+def set_profile_common_attrs(context, request):
+    '''
+    used in all profile pages:basic_profile, photo_list, photo_detail, upload_photo, user_meals, follower/followees
+    '''
+    context['is_mine'] = context['profile'] == request.user.get_profile()
+    context['orders_count'] = context['profile'].orders.filter(status=OrderStatus.PAYIED).count()
+    if context['is_mine']:
+        context['orders_count'] += context['profile'].get_paying_orders_count()
 
 
 class PhotoListView(ListView):
@@ -80,8 +86,7 @@ class PhotoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(PhotoListView, self).get_context_data(**kwargs)
         context['profile'] = UserProfile.objects.get(pk=self.kwargs['user_id'])
-        context['is_mine'] = context['profile'] == self.request.user.get_profile()
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
         return context
 
     def get_queryset(self):
@@ -372,8 +377,7 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
-        context['is_mine'] = self.object == self.request.user.get_profile()
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
         if self.object.industry >= 0:
             for industry_value, industry_label in INDUSTRY_CHOICE:
                 if self.object.industry == industry_value:
@@ -551,38 +555,41 @@ class OrderDetailView(DetailView):
         return context
 
 
+#支付30分钟内未支付的饭局
+def pay_order(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    if order.customer != request.user.get_profile():
+        raise NoRightException
+    url = "%s?num=%s" % (reverse('meal_detail', kwargs={'meal_id': order.meal.id}), order.num_persons)
+    return HttpResponseRedirect(url)
+
+
 class UserMealListView(TemplateView):
     template_name = "profile/meals.html"
 
     def get_context_data(self, **kwargs):
         context = super(UserMealListView, self).get_context_data(**kwargs)
         user = UserProfile.objects.get(pk=self.kwargs['user_id'])
-        orders = user.orders.exclude(
-            status=OrderStatus.CANCELED).order_by("meal__start_date", "meal__start_time").select_related('meal')
-        context['upcomming_orders'] = orders.filter(
-            Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
-                meal__start_time__gt=datetime.now().time()))
-
-        context['passed_orders'] = orders.filter(
-            Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
-                meal__start_time__lt=datetime.now().time())).order_by("-meal__start_date", "-meal__start_time")
-
         context['profile'] = user
-        context['is_mine'] = user == self.request.user.get_profile()
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
+        if context['is_mine']:
+            context['paying_orders'] = user.get_paying_orders()
+            context['pay_overtime'] = settings.PAY_OVERTIME
+        context['upcomming_orders'] = user.get_upcomming_orders()
+        context['passed_orders'] = user.get_passedd_orders()
         return context
 
 
 def weibo_login(request):
     weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
-        redirect_uri=settings.WEIBO_REDIRECT_URL)
+                                   redirect_uri=settings.WEIBO_REDIRECT_URL)
 
     #    if request.user.is_authenticated() and not request.user.is_active:
     #        return HttpResponseRedirect(reverse_lazy('bind'))
 
     code = request.GET.get('code')
     errorcode = request.GET.get('error_code')
-    next = request.GET.get('state', '/')
+    next_url = request.GET.get('state', '/')
     if not code and not errorcode:
         #go to weibo site to auth
         kw = {'state': request.GET.get('next', '/')}
@@ -604,7 +611,7 @@ def weibo_login(request):
             #            if not request.user.is_active:
             #                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
             #            else:
-            return HttpResponseRedirect(next)
+            return HttpResponseRedirect(next_url)
         else:
             raise Exception(u'微博接口异常')
 
@@ -665,14 +672,14 @@ class FollowsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FollowsView, self).get_context_data(**kwargs)
         context['profile'] = self.request.user.get_profile()
-        context['is_mine'] = True
-        context['orders'] = context['profile'].orders.exclude(status=OrderStatus.CANCELED)
+        set_profile_common_attrs(context, self.request)
         return context
 
+
 #others
-def handle_uploaded_app(file):
-    destination = open(settings.MEDIA_ROOT + '/apps/' + file.name, 'wb+')
-    for chunk in file.chunks():
+def handle_uploaded_app(app_file):
+    destination = open(settings.MEDIA_ROOT + '/apps/' + app_file.name, 'wb+')
+    for chunk in app_file.chunks():
         destination.write(chunk)
     destination.close()
 

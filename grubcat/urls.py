@@ -87,6 +87,8 @@ urlpatterns = patterns('',
     #    url(r'^meal/(?P<meal_id>\d+)/order/$',login_required(OrderCreateView.as_view()), name='create_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/(?P<pk>\d+)/$', login_required(OrderDetailView.as_view()),
         name='order_detail'),
+    url(r'^order/paying/(?P<order_id>\d+)/$', login_required(pay_order),
+        name='pay_order'),
     url(r'^meal/(?P<meal_id>\d+)/order/status/', login_required(check_order_status), name="check_order_status"),
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),

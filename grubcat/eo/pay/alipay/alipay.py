@@ -162,8 +162,8 @@ def send_goods_confirm_by_platform(tn):
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
 
     # 业务参数
-    params['trade_no'] = order_prefix + str(tn)
-    # params['logistics_name'] = u'银河列车'   # 物流公司名称
+    params['trade_no'] = tn
+    params['logistics_name'] = u'银河列车'   # 物流公司名称
     params['transport_type'] = u'POST'
 
     params, prestr = params_filter(params)
