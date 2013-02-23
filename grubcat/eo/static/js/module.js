@@ -97,7 +97,7 @@
                     setInterval(function () {
                         $.post($data.data("check-order-status-link"), function (data) {
                             if (data.status == "OK") {
-                                window.location.href = data.redirect_url;
+                                location.reload();
                             }
                         })
                     }, 2000)
