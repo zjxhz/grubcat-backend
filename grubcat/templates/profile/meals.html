@@ -11,7 +11,7 @@
     {% if paying_orders %}
         <h3 class="pass-meals-info span12 ">{{ pay_overtime }}分钟内未支付的饭局</h3>
         {% for order in paying_orders %}
-            {% include 'profile/profile_meal_frag.html' with paying=True %}
+            {% include 'profile/profile_meal_frag.html'%}
         {% endfor %}
     {% endif %}
 

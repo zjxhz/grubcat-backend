@@ -5,7 +5,7 @@
     <div class="meal-cell span4 fl">
         <h3 class="meal-topic"><a href="{{ meal.get_absolute_url }}" target="_blank">{{ meal.topic }}</a></h3>
         {% if is_mine %}
-            {% if paying %}
+            {% if order.code %}
                 <a href="{% url order_detail meal.id order.id %}" target="_blank" class="order-detail-link">订单详情</a>
             {% else %}
                 <a href="{% url pay_order order.id %}" target="_blank" class="go-to-pay-link">去支付</a>
