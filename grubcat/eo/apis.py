@@ -171,6 +171,21 @@ class UserPhotoResource(ModelResource):
         allowed_methods = ['get', 'post', 'delete']
 
 class SimpleUserResource(ModelResource):
+    user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
+    location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
+    def dehydrate(self, bundle):
+        if not bundle.data['location']:
+            # simulate a location. TODO remove these lines in production
+            bundle.data['lat'] = 30.275
+            bundle.data['lng'] = 120.148
+            bundle.data['updated_at'] = "2012-10-16"
+        
+        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['big_avatar'] = bundle.obj.big_avatar  
+        mergeOneToOneField(bundle, 'user', ['id', ])
+        mergeOneToOneField(bundle, 'location', ['id', ])
+        return bundle
+    
     class Meta:
         queryset = UserProfile.objects.all()
         authorization = Authorization()
