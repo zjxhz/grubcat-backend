@@ -242,7 +242,7 @@ LOGGING = {
     },
     'loggers': {
         'django.db.backends': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'handlers': ['default'],
             'propagate': False,
         },
