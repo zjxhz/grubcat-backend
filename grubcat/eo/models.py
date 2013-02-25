@@ -869,7 +869,7 @@ class Meal(models.Model):
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
     host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
-    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True)
+    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True, through="MealParticipants")
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
         null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
@@ -976,7 +976,13 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
-
+class MealParticipants(models.Model):
+    meal = models.ForeignKey(Meal)
+    userprofile = models.ForeignKey(UserProfile)
+    class Meta:
+        db_table = u'meal_participants'
+        ordering = ['id',]
+    
 class Comment(models.Model):
     from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)
     comment = models.CharField(u'评论', max_length=300)
