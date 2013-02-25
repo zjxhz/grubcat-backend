@@ -7,10 +7,11 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
-from eo.models import UserProfile, Restaurant, RestaurantTag, Region, \
-    RestaurantInfo, Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
+from eo.models import UserProfile, Restaurant,\
+    Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
     UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag, DishItem, \
     Menu, DishCategoryItem, UserPhoto
+from grubcat.eo.models import MealParticipants
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -91,6 +92,14 @@ def get_my_list(resource, queryset, request):
     to_be_serialized = resource.alter_list_data_to_serialize(request, to_be_serialized)
     return resource.create_response(request, to_be_serialized)
 
+def mergeOneToOneField(bundle, field_name, exclude_fields=None):
+    if bundle.data[field_name]:
+        for key in bundle.data[field_name].data:
+            if exclude_fields and key in exclude_fields:
+                continue;
+            bundle.data[key] = bundle.data[field_name].data[key]
+        del bundle.data[field_name]
+        
 #todo maybe we can use decorator
 def login_required(request):
     response = {"status": "NOK", "info": "You were not logged in"}
@@ -160,7 +169,24 @@ class UserPhotoResource(ModelResource):
         queryset = UserPhoto.objects.all()
         authorization = Authorization()
         allowed_methods = ['get', 'post', 'delete']
-                    
+
+class SimpleUserResource(ModelResource):
+    class Meta:
+        queryset = UserProfile.objects.all()
+        authorization = Authorization()
+
+class MealParticipantResource(ModelResource):
+    user = fields.ForeignKey(SimpleUserResource, 'userprofile', full=True)
+    
+    def dehydrate(self, bundle):
+        mergeOneToOneField(bundle, 'user')
+        return bundle
+        
+        
+    class Meta:
+        queryset = MealParticipants.objects.all()
+        
+    
 class UserResource(ModelResource):
     user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     orders = fields.ToManyField('eo.apis.OrderResource', 'orders')
@@ -169,14 +195,6 @@ class UserResource(ModelResource):
     following = fields.ToManyField('self', 'following', null=True)
     tags = fields.ToManyField(UserTagResource, 'tags', full=True, null=True)
     photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
-    
-    def mergeOneToOneField(self, bundle, field_name, exclude_fields=None):
-        if bundle.data[field_name]:
-            for key in bundle.data[field_name].data:
-                if key == "id": #never ever combine ids as there should be only one, which is the one from UserResource
-                    continue
-                bundle.data[key] = bundle.data[field_name].data[key]
-            del bundle.data[field_name]
     
     def hydrate(self, bundle):
         bundle.data['avatar'] = str(bundle.obj.avatar) # never change avatar in a patch request, or it always add /media/
@@ -191,8 +209,8 @@ class UserResource(ModelResource):
         
         bundle.data['small_avatar'] = bundle.obj.small_avatar
         bundle.data['big_avatar'] = bundle.obj.big_avatar  
-        self.mergeOneToOneField(bundle, 'user', id)
-        self.mergeOneToOneField(bundle, 'location')
+        mergeOneToOneField(bundle, 'user', ['id', ])
+        mergeOneToOneField(bundle, 'location', ['id', ])
         return bundle
        
     def override_urls(self):
@@ -527,25 +545,9 @@ class RelationshipResource(ModelResource):
 
 #TODO what if pagination is needed for comments?
 class RestaurantResource(ModelResource):
-    tags = fields.ToManyField('eo.apis.RestaurantTagResource', 'tags')
-    regions = fields.ToManyField('eo.apis.RegionResource', 'regions')
-    info = fields.ToOneField('eo.apis.RestaurantInfoResource', 'info', full=True, null=True)
     ratings = fields.ToManyField('eo.apis.RatingResource', 'ratings', full=True, null=True)
     best_rating_dishes = fields.ToManyField('eo.apis.BestRatingDishResource', 'best_rating_dishes', full=True, null=True)
     user_favorite = fields.ToManyField('eo.apis.UserResource', 'user_favorite')
-    def dehydrate(self, bundle):
-        if not bundle.data['info']:
-            bundle.data['average_cost'] = -1
-            bundle.data['average_rating'] = -1
-            bundle.data['good_rating_percentage'] = -1
-        else:
-            for key in bundle.data['info'].data:
-                bundle.data[key] = bundle.data['info'].data[key]
-        del bundle.data['regions']
-        del bundle.data['tags']
-        del bundle.data['info']
-        
-        return bundle
     
     def override_urls(self):
         return [
@@ -601,16 +603,7 @@ class RestaurantResource(ModelResource):
             'regions': ALL_WITH_RELATIONS,
             'user_favorite': ALL_WITH_RELATIONS,
         }
-
-class RestaurantInfoResource(ModelResource):
-    restaurant = fields.ForeignKey(RestaurantResource, 'restaurant')
-    
-    class Meta:
-        queryset = RestaurantInfo.objects.all()
-        resource_name = 'restaurant_info'
-        excludes = ['divider','id',]
-        include_resource_uri = False
-
+        
 class RatingResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant')
     
@@ -624,31 +617,6 @@ class BestRatingDishResource(ModelResource):
     
     class Meta:
         queryset = BestRatingDish.objects.all()
-        
-                                
-class RestaurantTagResource(ModelResource):
-    def override_urls(self):
-        return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/restaurant%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_restaurants'), name="api_get_restaurants"),
-        ]
-    
-    def get_restaurants(self, request, **kwargs):
-        obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
-        restaurant_resource = RestaurantResource()
-        tag = RestaurantTag.objects.get(id=obj.pk)
-        return restaurant_resource.get_list(request, tags=tag)
-        
-    class Meta:
-        queryset = RestaurantTag.objects.all()
-        resource_name = 'restaurant_tag'
-        authorization = Authorization()
-        allowed_methods = ['get', 'post', 'delete']
-        
-class RegionResource(ModelResource):
-    class Meta:
-        queryset = Region.objects.all()
-
      
 class UserMessageResource(ModelResource): 
     from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
@@ -688,10 +656,10 @@ class MenuResource(ModelResource):
     
 class MealResource(ModelResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
-    host = fields.ForeignKey(UserResource, 'host', full=True)
-    participants = fields.ToManyField(UserResource, 'participants', full=True, null=True)
+    host = fields.ForeignKey(SimpleUserResource, 'host', full=True)
+    participants = fields.ToManyField(MealParticipantResource, 'mealparticipants_set', full=True, null=True)
     photo = Base64FileField("photo")
-    likes = fields.ToManyField(UserResource, 'likes', full=True)
+#    likes = fields.ToManyField(SimpleUserResource, 'likes', full=True)
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
@@ -866,9 +834,6 @@ v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
 v1_api.register(DjangoUserResource())
 v1_api.register(RestaurantResource())
-v1_api.register(RestaurantTagResource())
-v1_api.register(RegionResource())
-v1_api.register(RestaurantInfoResource())
 v1_api.register(RatingResource())
 v1_api.register(DishResource())
 #v1_api.register(MenuResource())
