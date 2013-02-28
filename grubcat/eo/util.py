@@ -91,43 +91,58 @@ class XMPPClientWrapper(object):
 
 class PubSub(object):
     def createNode(self, user_profile, node_name):
-        username, pw =get_xmpp_username_and_password(user_profile)
+#        username, pw =get_xmpp_username_and_password(user_profile) TODO maybe we can always use XMPP_PUBSUB_USER to create nodes
+        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
         jid = xmpp.protocol.JID(username + "@fanjoin.com")
+        logger.debug("%s is creating node: %s" % (username, node_name))
+        
         cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
         cl.connect()
         cl.auth(str(jid), pw)
         
-        iq = xmpp.protocol.Iq('set', to = xmpp.protocol.NS_PUBSUB)
-        iq.NT.pubsub['xmlns']='http://jabber.org/protocol/pubsub'
+        iq = self.buildIq()
+        iq.NT.pubsub['xmlns']=xmpp.protocol.NS_PUBSUB
         iq.T.pubsub.NT.create['node']=node_name
         cl.send(iq)
+        cl.disconnect()
         
     def subscribe(self, subscriber, node_name):
         username, pw =get_xmpp_username_and_password(subscriber)
         jid = xmpp.protocol.JID(username + "@fanjoin.com")
         
+        logger.debug("%s is subscribing node: %s" % (username, node_name))
+        
         cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
         cl.connect()
         cl.auth(str(jid), pw)
         
-        iq = xmpp.protocol.Iq('set', to=getattr(settings, 'XMPP_PUBSUB_SERVICE'))
-        iq.NT.pubsub['xmlns']= xmpp.protocol.NS_PUBSUB
+        iq = self.buildIq()
         iq.T.pubsub.NT.subscribe['node']=node_name
-        iq.T.pubsub.T.subscribe['jid']=str(subscriber)
+        iq.T.pubsub.T.subscribe['jid']=str(jid)
         cl.send(iq)
+        cl.disconnect()
 
     def publish(self, publisher, node_name, payload):
-        username, pw =get_xmpp_username_and_password(publisher)
+#        username, pw =get_xmpp_username_and_password(publisher) TODO  maybe we can always use XMPP_PUBSUB_USER to publish
+        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
         jid = xmpp.protocol.JID(username + "@fanjoin.com")
+        
+        logger.debug("%s is publishing node: %s with payload: %s" % (username, node_name, payload))
         
         cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
         cl.connect()
         cl.auth(str(jid), pw)
         
-        iq = xmpp.protocol.Iq('set', to=getattr(settings, 'XMPP_PUBSUB_SERVICE'))
-        iq.NT.pubsub['xmlns'] = xmpp.protocol.NS_PUBSUB
+        iq = self.buildIq()
         iq.T.pubsub.NT.publish['node'] = node_name
-        iq.T.pubsub.T.publish.NT.item = payload
+        iq.T.pubsub.T.publish.T.item = ""
+        iq.T.pubsub.T.publish.T.item.T.entry = payload
+        iq.T.pubsub.T.publish.T.item.T.entry.namespace = 'http://www.w3.org/2005/Atom'
         cl.send(iq)
-
+        cl.disconnect()
+        
+    def buildIq(self):
+        iq = xmpp.protocol.Iq('set', to = settings.XMPP_PUBSUB_SERVICE)
+        iq.NT.pubsub['xmlns']=xmpp.protocol.NS_PUBSUB
+        return iq
 pubsub = PubSub()        
