@@ -1,21 +1,23 @@
 # coding=utf-8
-from datetime import datetime, time, date
+from datetime import datetime, time, date, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models, IntegrityError
-from django.db.models import  Max
+from django.db.models import Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
-from eo.exceptions import NoAvailableSeatsError, AlreadyJoinedError, BusinessException
+from easy_thumbnails.files import get_thumbnailer
+from grubcat.eo.exceptions import BusinessException, AlreadyJoinedError, \
+    NoAvailableSeatsError
+from grubcat.eo.util import pubsub
 from image_cropping.fields import ImageRatioField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
-import random
-from datetime import timedelta
-from easy_thumbnails.files import get_thumbnailer
-#import redis
+import json
 import os
+import random
+#import redis
 # Create your models here.
 
 
@@ -513,6 +515,7 @@ class UserProfile(models.Model):
         try:
             relationship = Relationship(from_person=self, to_person=followee)
             relationship.save()
+            pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":self.id}))
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
 
@@ -758,6 +761,12 @@ class UserProfile(models.Model):
         verbose_name = u'用户资料'
         verbose_name_plural = u'用户资料'
 
+def pubsub_userprofile_created(sender, instance, created, **kwargs):
+    if created:
+        user_profile = instance
+        pubsub.createNode(user_profile, "/user/%d/followers" % user_profile.id)
+        
+post_save.connect(pubsub_userprofile_created, sender=UserProfile)
 
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
@@ -804,7 +813,7 @@ class UserMessage(models.Model):
 # Create a user profile if the profile does not exist
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        profile, created = UserProfile.objects.get_or_create(user=instance)
+        UserProfile.objects.get_or_create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
 
