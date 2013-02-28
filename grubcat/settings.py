@@ -287,6 +287,11 @@ APNS_HOST = 'http://localhost:7077/'
 APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Created in step 2
 
 XMPP_SERVER='localhost'
+XMPP_PUBSUB_JID="weibo_1495715991@fanjoin.com" #'pubsub@fanjoin.com'
+XMPP_PUBSUB_PASSWORD="2.00TDsNdBG_tW8Ed246481377AIBoPD" #password for pubsub
+XMPP_PUBSUB_SERVICE='pubsub.fanjoin.com'
+XMPP_DEBUG=[]
+
 try:
     from settings_dev import *
 except Exception: pass
