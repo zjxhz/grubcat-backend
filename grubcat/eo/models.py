@@ -764,9 +764,11 @@ class UserProfile(models.Model):
 def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
         user_profile = instance
-        pubsub.createNode(user_profile, "/user/%d/followers" % user_profile.id)
+        node_name = "/user/%d/followers" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
+        pubsub.subscribe(user_profile, node_name)
         
-post_save.connect(pubsub_userprofile_created, sender=UserProfile)
+post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created")
 
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")

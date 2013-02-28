@@ -5,7 +5,7 @@ from settings import *
 ASSETS_AUTO_BUILD = True
 STATIC_URL = '/static/'
 DEBUG=True
-XMPP_SERVER='www.fanjoin.com'
+XMPP_SERVER="localhost"
 LOGGING_ROOT = "/Users/wayne/temp/"
 
 LOGGING = {
@@ -42,25 +42,31 @@ LOGGING = {
     'loggers': {
         'django.db.backends': {
             'level': 'ERROR',
-            'handlers': ['default'],
+            'handlers': ['console'],
             'propagate': False,
         },
         'raven': {
             'level': 'ERROR',
-            'handlers': ['default'],
+            'handlers': ['console'],
             'propagate': False,
         },
         'sentry.errors': {
             'level': 'DEBUG',
-            'handlers': ['default'],
+            'handlers': ['console'],
             'propagate': False,
         },
         'api': {
-            'handlers': ['default', 'sentry'],
+            'handlers': ['console', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
         },
     }
 }
 
-INSTALLED_APPS += ('debug_toolbar','devserver')
+#INSTALLED_APPS += ('debug_toolbar','devserver')
+MEDIA_ROOT = '/Users/wayne/workspace/media'
+ASSETS_ROOT = r'/Users/wayne/workspace/grubcat-backend/grubcat/eo/static'
+LESS_BIN="/usr/local/bin/lessc"
+ASSETS_AUTO_BUILD = True
+XMPP_DEBUG=["socket"]
+#os.path.join("/usr/local/", "bin")
