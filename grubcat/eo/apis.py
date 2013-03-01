@@ -143,7 +143,7 @@ class DjangoUserResource(ModelResource):
         excludes = ['password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get']
         include_resource_uri = False
-        filtering = {'username': ALL}
+        filtering = {'username': ALL, "id":ALL}
 
 class UserLocationResource(ModelResource):
     class Meta:
@@ -186,9 +186,19 @@ class SimpleUserResource(ModelResource):
         mergeOneToOneField(bundle, 'location', ['id', ])
         return bundle
     
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+        
+        orm_filters = super(SimpleUserResource, self).build_filters(filters)
+        if "ids" in filters:
+            orm_filters["pk__in"] = str(filters['ids']).split(',')
+        return orm_filters
+    
     class Meta:
         queryset = UserProfile.objects.all()
         authorization = Authorization()
+        resource_name = 'simple_user'
 
 class MealParticipantResource(ModelResource):
     user = fields.ForeignKey(SimpleUserResource, 'userprofile', full=True)
@@ -864,3 +874,4 @@ v1_api.register(TagResource())
 v1_api.register(UserTagResource())
 v1_api.register(DishItemResource())
 v1_api.register(UserPhotoResource())
+v1_api.register(SimpleUserResource())
