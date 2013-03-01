@@ -768,7 +768,7 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         pubsub.createNode(user_profile, node_name)
         pubsub.subscribe(user_profile, node_name)
         
-post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created")
+post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
