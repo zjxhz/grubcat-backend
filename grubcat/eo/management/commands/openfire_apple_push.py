@@ -20,27 +20,31 @@ class Command(BaseCommand):
         data = json.loads(content)
         f.close();
 
-        sender = data["sender"]
+
         receiver = data["receiver"]
         message = data["message"]
         unread_count = int(data["unread"])
         if len(message) > 160:
             message = message[0:160] + " ... "
 
-        fromUser = User.objects.get(username=util.escape_xmpp_username(sender)).get_profile()
+
         toUser = User.objects.get(username=util.escape_xmpp_username(receiver)).get_profile()
         message_utf8=message.encode("utf-8")
-        logger.info("%s->%s: %s" % (fromUser, toUser, message_utf8))
 
+        logger.debug("about to push to user %s with apns_token: %s" % (receiver, toUser.apns_token) )
         if toUser.apns_token:
             receiver_name_utf8 = toUser.name.encode("utf-8")
-            sender_name_utf8 = fromUser.name.encode("utf-8")
-            logger.debug("pushing message to %s from %s(%d unread)" % (receiver_name_utf8, sender_name_utf8, unread_count))
             if data["type"] == "chat":
+                sender = data["sender"]
+                fromUser = User.objects.get(username=util.escape_xmpp_username(sender)).get_profile()
+                logger.info("%s->%s: %s" % (fromUser, toUser, message_utf8))
+                sender_name_utf8 = fromUser.name.encode("utf-8")
                 message_to_user="%s: %s" % (sender_name_utf8, message_utf8)
+                logger.debug("pushing message to %s from %s(%d unread)" % (receiver_name_utf8, sender_name_utf8, unread_count))
             else:
+                logger.debug("pushing an event")
                 message_to_user= message_utf8
             pyapns_wrapper.notify(toUser.apns_token, message_to_user, unread_count )
 
-        os.remove(f)   
+        # os.remove(f)   TODO enable this again in production, it is here now for easy debugging
         return ""
