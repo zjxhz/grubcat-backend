@@ -1055,8 +1055,7 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
         user_profile = instance
         node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
-        pubsub.subscribe(user_profile, node_name)        
+        pubsub.createNode(user_profile, node_name)      
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
