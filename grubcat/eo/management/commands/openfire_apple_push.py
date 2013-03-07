@@ -36,7 +36,10 @@ class Command(BaseCommand):
             receiver_name_utf8 = toUser.name.encode("utf-8")
             sender_name_utf8 = fromUser.name.encode("utf-8")
             logger.debug("pushing message to %s from %s(%d unread)" % (receiver_name_utf8, sender_name_utf8, unread_count))
-            message_to_user="%s: %s" % (sender_name_utf8, message_utf8)
+            if data["type"] == "chat":
+                message_to_user="%s: %s" % (sender_name_utf8, message_utf8)
+            else:
+                message_to_user= message_utf8
             pyapns_wrapper.notify(toUser.apns_token, message_to_user, unread_count )
 
         os.remove(f)   
