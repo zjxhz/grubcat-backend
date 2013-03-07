@@ -101,7 +101,6 @@ class PubSub(object):
         cl.auth(str(jid), pw)
         
         iq = self.buildIq()
-        iq.NT.pubsub['xmlns']=xmpp.protocol.NS_PUBSUB
         iq.T.pubsub.NT.create['node']=node_name
         cl.send(iq)
         cl.Process(1)
