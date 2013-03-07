@@ -515,7 +515,7 @@ class UserProfile(models.Model):
         try:
             relationship = Relationship(from_person=self, to_person=followee)
             relationship.save()
-            pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":self.id, "message": "%s关注了你" % self.name}))
+            pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":self.id, "message": u"%s关注了你" % self.name}))
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
 
@@ -761,15 +761,6 @@ class UserProfile(models.Model):
         verbose_name = u'用户资料'
         verbose_name_plural = u'用户资料'
 
-def pubsub_userprofile_created(sender, instance, created, **kwargs):
-    if created:
-        user_profile = instance
-        node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
-        pubsub.subscribe(user_profile, node_name)
-        
-post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
-
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
@@ -811,13 +802,6 @@ class UserMessage(models.Model):
 
     def __unicode__(self):
         return "%s -> %s(%s): %s" % (self.from_person, self.to_person, self.timestamp, self.message)
-
-# Create a user profile if the profile does not exist
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.get_or_create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
 
 class BestRatingDish(models.Model):
     restaurant = models.ForeignKey(Restaurant, related_name="best_rating_dishes")
@@ -1057,3 +1041,28 @@ class ImageTest(models.Model):
     image = ImageField(blank=True, null=True, upload_to='apps')
     # size is "width x height"
     cropping = ImageRatioField('image', '640x640')
+
+
+####################################################  POST SAVE   #######################################
+
+# Create a user profile if the profile does not exist
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.get_or_create(user=instance)
+post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_profile")
+
+
+def pubsub_userprofile_created(sender, instance, created, **kwargs):
+    if created:
+        user_profile = instance
+        node_name = "/user/%d/followers" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
+        pubsub.subscribe(user_profile, node_name)        
+post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
+
+def user_followed(sender, instance, created, **kwargs):
+    if created:
+        followee = instance.to_person
+        follower = instance.from_person
+        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
+post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
