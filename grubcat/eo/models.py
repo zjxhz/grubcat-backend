@@ -515,7 +515,6 @@ class UserProfile(models.Model):
         try:
             relationship = Relationship(from_person=self, to_person=followee)
             relationship.save()
-            pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":self.id, "message": u"%s关注了你" % self.name}))
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
 
