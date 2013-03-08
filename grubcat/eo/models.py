@@ -1089,7 +1089,7 @@ def meal_joined(sender, instance, created, **kwargs):
         followee_join_meal_node = "/user/%d/meals" % participant.id
         payload = json.dumps( {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) } )
         pubsub.publish(meal.host, meal_participant_node, payload) 
-        pubsub.publish(meal.host, followee_join_meal_node, payload )
+        pubsub.publish(participant, followee_join_meal_node, payload )
         pubsub.subscribe(participant, meal_participant_node) #TODO how about quit the meal
 post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
