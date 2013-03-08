@@ -1056,6 +1056,8 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         user_profile = instance
         node_name = "/user/%d/followers" % user_profile.id
         pubsub.createNode(user_profile, node_name)      
+        node_name = "/user/%d/meals" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1063,6 +1065,7 @@ def user_followed(sender, instance, created, **kwargs):
         followee = instance.to_person
         follower = instance.from_person
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
+        pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 def meal_created(sender, instance, created, **kwargs):
@@ -1079,12 +1082,15 @@ def meal_joined(sender, instance, created, **kwargs):
         meal_participant = instance
         meal = meal_participant.meal
         participant = meal_participant.userprofile;
-        node_name = "/meal/%d/participants" % meal.id
-        if meal.host and meal.host.id == participant.id:
+        
+        if meal.host and meal.host.id == participant.id: # already published when the host created the meal
             return
-        pubsub.publish(meal.host, node_name, json.dumps( \
-            {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) }) )
-        pubsub.subscribe(participant, node_name) #TODO how about quit the meal
+        meal_participant_node = "/meal/%d/participants" % meal.id
+        followee_join_meal_node = "/user/%d/meals" % participant.id
+        payload = json.dumps( {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) } )
+        pubsub.publish(meal.host, meal_participant_node, payload) 
+        pubsub.publish(meal.host, followee_join_meal_node, payload )
+        pubsub.subscribe(participant, meal_participant_node) #TODO how about quit the meal
 post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
 

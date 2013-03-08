@@ -1,4 +1,5 @@
 from django.conf import settings
+from xmpp.protocol import NS_DATA
 import json
 import logging
 import pyapns
@@ -102,6 +103,13 @@ class PubSub(object):
         
         iq = self.buildIq()
         iq.T.pubsub.NT.create['node']=node_name
+#        enable below lines if needed
+#        x_node = iq.NT.configure.NT.x
+#        x_node["xmlns"]=NS_DATA
+#        field = x_node.NT.field
+#        field["var"]="pubsub#send_last_published_item"
+#        field.NT.value="never"
+        
         cl.send(iq)
         cl.Process(1)
         cl.disconnect()
