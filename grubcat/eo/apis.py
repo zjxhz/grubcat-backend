@@ -848,6 +848,9 @@ def mobile_user_login(request):
     
 def mobile_user_logout(request):
     if request.method == 'POST':
+        profile = request.user.get_profile()
+        profile.apns_token = ""
+        profile.save()
         logout(request)
         return createGeneralResponse('OK',"You've logged out.")
         # return HttpResponse("Hello world") # there is no response from the server even the code is so simple, might be bug of dotcloud
