@@ -369,7 +369,7 @@ class Order(models.Model):
         #set all other unpaid order as "canceld" status
         Order.objects.filter(meal=order.meal,customer=order.customer, status=OrderStatus.CREATED).update(status=OrderStatus.CANCELED)
         meal = order.meal
-        meal.participants.add(order.customer)
+        MealParticipants.objects.create(meal=meal, userprofile=order.customer)
         meal.actual_persons += order.num_persons
         if order.customer == meal.host:
             #创建饭局后，支付
@@ -381,7 +381,7 @@ class Order(models.Model):
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
-            self.meal.participants.remove(self.customer)
+            self.meal.participants.filter(meal=self.meal, userprofile=self.customer).delete()
             self.meal.actual_persons -= self.num_persons
             self.meal.save()
             self.status = OrderStatus.CANCELED
