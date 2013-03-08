@@ -6,7 +6,7 @@ from django.db import models, IntegrityError
 from django.db.models import Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from easy_thumbnails.files import get_thumbnailer
 from grubcat.eo.exceptions import BusinessException, AlreadyJoinedError, \
     NoAvailableSeatsError
@@ -1067,6 +1067,13 @@ def user_followed(sender, instance, created, **kwargs):
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
+
+def user_unfollowed(sender, instance, created, **kwargs):
+    if created:
+        followee = instance.to_person
+        follower = instance.from_person
+        pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
+post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 def meal_created(sender, instance, created, **kwargs):
     if created:
