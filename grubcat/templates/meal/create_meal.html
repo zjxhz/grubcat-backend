@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load bootstrap_tags %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}发起饭局{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
+    {% assets "module_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript" src="http://maps.google.com.hk/maps/api/js?sensor=false"></script>
+    {% assets "create_meal_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    <script type="text/javascript">
+        {% comment %}            {% if my_groups %}
+       var group_privacy_josn = { {% for group in my_groups %}{{ group.id}}:{{ group.privacy }},{% endfor %} };
+       $("#id_group").dropkick({
+               change:false,
+               width:313,
+               startSpeed:0,
+               change:function (group_id, label) {
+                   if (!group_id) { //no grouop selected, show privacy select
+                       $("#dk_container_id_privacy").dropkick('reset');
+                       $("#dk_container_id_privacy").show();
+                       $("#privacy-text").hide();
+                       $("#id_privacy").val(0);
+                   } else{
+                       var privacy = group_privacy_josn[group_id];
+                       $("#dk_container_id_privacy").hide();
+                       $("#id_privacy").val(privacy);
+
+                       var privacy_text=$("#id_privacy option[value=" + privacy + "]").text();
+                       if( privacy == 0 ) { //public
+                           privacy_text += " （圈子是公开类型）"
+                       } else if(privacy == 1) {// private
+                           privacy_text += " （圈子是私密类型）"
+                       }
+
+                       if($("#privacy-text")[0])
+                       {
+                           $("#privacy-text").text(privacy_text).show();
+                       } else {
+                           $("#id_privacy").before("<span id='privacy-text'>" +  privacy_text + "</span>");
+                       }
+                   }
+               }
+           }
+       )
+       var $current_group = $("#dk_container_id_group li.dk_option_current a");
+       if($current_group.attr("data-dk-dropdown-value"))
+       {
+           $current_group.click();
+       } else {
+           {% if request.GET.group %}
+               $("#dk_container_id_group li a[data-dk-dropdown-value=" + {{ request.GET.group }} + "]").click();
+           {% endif %}
+       }
+       {% endif %}{% endcomment %}
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div id="create-meal-page">
+    <div class="form-wrapper span10 offset1">
+        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+              class="form form-horizontal"> {% csrf_token %}
+            <fieldset>
+
+                <legend>发起一个饭局</legend>
+
+                <div class="control-group ">
+
+                    <label class="control-label" for="id_topic">饭局主题</label>
+
+                    <div class="controls">
+                        <input id="id_topic" type="text" maxlength="64" name="topic"
+                               required data-validation-required-message="请输入饭局主题"
+                               value="{{ form.topic.value|default_if_none:'' }}">
+                        {{ form.topic.errors }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_introduction">饭局简介</label>
+
+                    <div class="controls">
+
+                        <textarea name="introduction" cols="40" rows="5" id="id_introduction"
+                                  required data-validation-required-message="请输入饭局简介">{{ form.introduction.value|default_if_none:"" }}</textarea>
+
+
+                        {{ form.introduction.errors }}
+                    </div>
+                </div>
+
+
+                {#            </fieldset>#}
+
+                {#            <fieldset class="full">#}
+
+                {#                <legend>2、餐厅信息</legend>#}
+                <div class="control-group start_time">
+                    <label class="control-label" for="id_privacy">就餐时间</label>
+
+                    <div class="controls">
+                        {{ form.start_date }} {{ form.start_time }}
+                        {{ form.start_date.errors }} {{ form.start_time.errors }}
+                    </div>
+                </div>
+                <div class="control-group min_persons">
+                    <label class="control-label" for="id_min_persons">就餐人数</label>
+
+                    <div class="controls">
+                        {{ form.min_persons }} {{ form.min_persons.errors }}
+                    </div>
+                </div>
+                <div id="choose-menu-container">
+                    <div id="loading-menus" class="hide"><img alt="载入菜单"
+                                                              src="{% static_asset "img/loading-menus.gif" %}"/>
+                    </div>
+                    <div id="choose-menu-wrapper"></div>
+                </div>
+                {{ form.menu_id }}
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-create-meal">确定</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="choose-restaurant-msg" style="display: none">
+
+        {% if form.menu_id.errors %}
+            {{ form.menu_id.errors }}
+        {% else %}
+            左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
+        {% endif %}
+    </div>
+    <div id="data" data-menu-list-link="{% url menu_list %}"></div>
+
+    <div id="show_map_modal" class="modal fade" tabindex="-1" role="dialog" style="display: none"
+         aria-hidden="true">
+        <div id="map"></div>
+    </div>
+{% endblock %}
+{% block active-nav-id %}nav-create-meal{% endblock %}
