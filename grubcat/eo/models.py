@@ -1068,11 +1068,10 @@ def user_followed(sender, instance, created, **kwargs):
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
-def user_unfollowed(sender, instance, created, **kwargs):
-    if created:
-        followee = instance.to_person
-        follower = instance.from_person
-        pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
+def user_unfollowed(sender, instance, **kwargs):
+    followee = instance.to_person
+    follower = instance.from_person
+    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
 post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 def meal_created(sender, instance, created, **kwargs):
