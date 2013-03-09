@@ -26,7 +26,7 @@ class Command(BaseCommand):
         for profile in UserProfile.objects.all():
             if profile.weibo_id:
                 if self.dry_run:
-                    print u"creating nodes for user %s" % profile.user.username
+                    print u"creating nodes for user %s" % profile.id
                 else:
                     pubsub_userprofile_created(self, profile, True)
     
@@ -35,14 +35,14 @@ class Command(BaseCommand):
             followee = relationship.to_person
             if followee.weibo_id:
                 if self.dry_run:
-                    print u"creating nodes for following user %s" % followee.user.username
+                    print u"creating nodes for following user %s" % followee.id
                 else:
                     user_followed(self, relationship, True)
                     
     def signal_meal_created(self):
         for meal in Meal.objects.all():
             if self.dry_run:
-                print u"creating nodes for meal %s, and the host %s is subscribing " % (meal, meal.host)
+                print u"creating nodes for meal %s, and host %s is subscribing " % (meal.id, meal.host.id)
             else:
                 meal_created(self, meal, True)
                 
@@ -50,7 +50,7 @@ class Command(BaseCommand):
         for meal_participant in MealParticipants.objects.all():
             if meal_participant.userprofile.weibo_id:
                 if self.dry_run:
-                    print u"participant %s is subscribing meal %s" % (meal_participant.userprofile, meal_participant.meal)
+                    print u"participant %s is subscribing meal %s" % (meal_participant.userprofile.id, meal_participant.meal.id)
                 else:
                     meal_joined(self, meal_participant, True)
         
