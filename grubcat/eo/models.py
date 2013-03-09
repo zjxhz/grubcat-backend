@@ -422,7 +422,7 @@ class Relationship(models.Model):
     status = models.IntegerField(default=0) # FOLLOWING, BLOCKED
 
     def __unicode__(self):
-        return '%s -> %s: %s' % (self.from_person, self.to_person, self.status)
+        return u'%s -> %s: %s' % (self.from_person, self.to_person, self.status)
 
     class Meta:
         db_table = u'relationship'
