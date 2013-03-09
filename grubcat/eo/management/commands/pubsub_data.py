@@ -13,7 +13,7 @@ logger = logging.getLogger('api')
 class Command(BaseCommand):    
     def handle(self, *args, **options):
         logger.debug("Handle pubsub data")
-        if args and args[0] == "dry-run":
+        if args and args[0] == "--dry-run":
             self.dry_run = True
         else:
             self.dry_run = False
