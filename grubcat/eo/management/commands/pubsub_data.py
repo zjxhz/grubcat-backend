@@ -7,17 +7,16 @@ from django.core.management.base import BaseCommand
 from grubcat.eo.models import UserProfile, Relationship, \
     pubsub_userprofile_created, user_followed, Meal, meal_created, MealParticipants, \
     meal_joined
-import django.dispatch
 import logging
 logger = logging.getLogger('api')
 
-class Command(BaseCommand):
-    profile_created = django.dispatch.Signal(providing_args=["instance", "created"])
-    
+class Command(BaseCommand):    
     def handle(self, *args, **options):
         logger.debug("Handle pubsub data")
         if args and args[0] == "dry-run":
             self.dry_run = True
+        else:
+            self.dry_run = False
         self.signal_profile_created()
         self.signal_profile_followed()
         self.signal_meal_created()
