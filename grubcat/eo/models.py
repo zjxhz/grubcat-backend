@@ -656,12 +656,17 @@ class UserProfile(models.Model):
         return UserProfile.objects.exclude(user__restaurant__isnull=False)
 
 
-    @property
-    def users_nearby(self):
+    def users_nearby(self, lat=None, lng=None):
         distance_user_dict = {}
+        if lat and lng:
+            lat = float(lat)
+            lng = float(lng)
+        else:
+            lat = self.faked_location().lat
+            lng = self.faked_location().lng
         for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
-                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng,
+                distance = self.getDistance(lng, lat, user.faked_location.lng,
                     user.faked_location.lat)
                 distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)

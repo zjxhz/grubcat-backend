@@ -496,8 +496,13 @@ class UserResource(ModelResource):
         if not request.user.is_authenticated():
             return login_required(request)
         if request.method == 'GET':
-            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
-            users = user_to_query.users_nearby
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs)) 
+            lat = request.GET.get("lat")
+            lng = request.GET.get("lng")
+            if lat and lng:
+                users = user_to_query.users_nearby(lat, lng)
+            else:
+                users = user_to_query.users_nearby()
             return get_my_list(UserResource(), self.filter_list(request, users), request)
         else:
             raise
