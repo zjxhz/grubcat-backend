@@ -662,8 +662,8 @@ class UserProfile(models.Model):
             lat = float(lat)
             lng = float(lng)
         else:
-            lat = self.faked_location().lat
-            lng = self.faked_location().lng
+            lat = self.faked_location.lat
+            lng = self.faked_location.lng
         for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
                 distance = self.getDistance(lng, lat, user.faked_location.lng,
