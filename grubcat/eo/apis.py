@@ -163,6 +163,7 @@ class UserPhotoResource(ModelResource):
     
     def dehydrate(self, bundle):
         bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
+        bundle.data['large'] = bundle.obj.large_photo
         return bundle
     
     class Meta:
