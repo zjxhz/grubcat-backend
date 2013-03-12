@@ -281,7 +281,7 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_new_messages'), name="api_get_new_messages"),  
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('vist'), name="api_visit"),            
+                self.wrap_view('visit'), name="api_visit"),            
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
