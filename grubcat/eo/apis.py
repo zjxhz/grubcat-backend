@@ -846,21 +846,22 @@ def weibo_user_login(request):
        
 def mobile_user_login(request):
     if request.method == 'POST':
-        return createGeneralResponse('NOK', "Currently only logging in from sina weibo is possible")
-#        username = request.POST.get('username', '')
-#        password = request.POST.get('password', '')
-#        user = auth.authenticate(username=username, password=password)
-#        if user is not None and user.is_active:
-#            auth.login(request, user)
+#        return createGeneralResponse('NOK', "Currently only logging in from sina weibo is possible")
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
 #            user_resource = UserResource()
 #            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
 #            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
 #            dic = json.loads(serialized)
-#            dic['status'] = 'OK'
-#            dic['info'] = "You've logged in"
-#            return HttpResponse(json.dumps(dic), content_type ='application/json')
-#        else:
-#            return createGeneralResponse('NOK', "Incorrect username or password")
+            dic = {}
+            dic['status'] = 'OK'
+            dic['info'] = "You've logged in"
+            return HttpResponse(json.dumps(dic), content_type ='application/json')
+        else:
+            return createGeneralResponse('NOK', "Incorrect username or password")
     else:
         raise # not used by mobile client
     

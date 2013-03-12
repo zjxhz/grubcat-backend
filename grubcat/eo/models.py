@@ -1125,4 +1125,4 @@ def user_visited(sender, instance, created, **kwargs):
         if visitor.id != instance.to_person.id:
             node_name = "/user/%d/visitors" % instance.to_person.id
             payload = json.dumps({"visitor":visitor.id, "message":u"%s查看了你的资料" % visitor.name})
-            pubsub.publish(visitor.userprofile, node_name, payload)
+            pubsub.publish(instance.to_person, node_name, payload)
