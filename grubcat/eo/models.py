@@ -7,6 +7,7 @@ from django.db.models import Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save, post_delete
+from django.dispatch.dispatcher import receiver
 from easy_thumbnails.files import get_thumbnailer
 from grubcat.eo.exceptions import BusinessException, AlreadyJoinedError, \
     NoAvailableSeatsError
@@ -428,7 +429,16 @@ class Relationship(models.Model):
         db_table = u'relationship'
         unique_together = ('from_person', 'to_person')
 
+class Visitor(models.Model):
+    from_person = models.ForeignKey("UserProfile", related_name="host")
+    to_person = models.ForeignKey("UserProfile", related_name="visitor")
+    def __unicode__(self):
+        return u'%s -> %s: %s' % (self.from_person, self.to_person)
 
+    class Meta:
+        db_table = u'visitor'
+        unique_together = ('from_person', 'to_person')
+    
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
@@ -490,6 +500,7 @@ class UserProfile(models.Model):
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
+    visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
         blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
@@ -1063,6 +1074,8 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         pubsub.createNode(user_profile, node_name)      
         node_name = "/user/%d/meals" % user_profile.id
         pubsub.createNode(user_profile, node_name)
+        node_name="/user/%d/visitors" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1105,4 +1118,11 @@ def meal_joined(sender, instance, created, **kwargs):
 post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
 
-
+@receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
+def user_visited(sender, instance, created, **kwargs):
+    if created:
+        visitor = instance.from_person
+        if visitor.id != instance.to_person.id:
+            node_name = "/user/%d/visitors" % instance.to_person.id
+            payload = json.dumps({"visitor":visitor.id, "message":u"%s查看了你的资料" % visitor.name})
+            pubsub.publish(visitor.userprofile, node_name, payload)

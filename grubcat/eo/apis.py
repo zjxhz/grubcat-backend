@@ -7,11 +7,10 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
-from eo.models import UserProfile, Restaurant,\
-    Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
-    UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag, DishItem, \
-    Menu, DishCategoryItem, UserPhoto
-from grubcat.eo.models import MealParticipants
+from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
+    DishCategory, Order, Relationship, UserMessage, Meal, MealInvitation, \
+    UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
+from grubcat.eo.models import MealParticipants, Visitor
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -280,7 +279,9 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_chat_history'), name="api_get_chat_history"), 
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_new_messages'), name="api_get_new_messages"),             
+                self.wrap_view('get_new_messages'), name="api_get_new_messages"),  
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('vist'), name="api_visit"),            
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -536,6 +537,17 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
             raise NotImplementedError
+        
+    def visit(self, request, **kwargs):
+        host = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == "POST":
+            visitor = UserProfile.objects.get(id=request.POST.get('visitor_id'))
+            visitor = Visitor(from_person=visitor, to_person=host)
+            visitor.save()
+            return createGeneralResponse('OK', 'You visited %s' % host)
+        else:
+            raise NotImplementedError 
+    
     def avatar(self, request, **kwargs):
         user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
         if request.method == "GET":
