@@ -542,8 +542,7 @@ class UserResource(ModelResource):
         host = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
         if request.method == "POST":
             visitor = UserProfile.objects.get(id=request.POST.get('visitor_id'))
-            v = Visitor.objects.get_or_create(from_person=visitor, to_person=host)
-            v.save()
+            Visitor.objects.get_or_create(from_person=visitor, to_person=host)
             return createGeneralResponse('OK', 'You visited %s' % host)
         else:
             raise NotImplementedError 
