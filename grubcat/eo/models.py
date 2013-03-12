@@ -433,7 +433,7 @@ class Visitor(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name="host")
     to_person = models.ForeignKey("UserProfile", related_name="visitor")
     def __unicode__(self):
-        return u'%s -> %s: %s' % (self.from_person, self.to_person)
+        return u'%s -> %s' % (self.from_person, self.to_person)
 
     class Meta:
         db_table = u'visitor'
