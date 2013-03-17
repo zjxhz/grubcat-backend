@@ -1076,6 +1076,8 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         pubsub.createNode(user_profile, node_name)
         node_name="/user/%d/visitors" % user_profile.id
         pubsub.createNode(user_profile, node_name)
+        node_name="/user/%d/photos" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1084,12 +1086,15 @@ def user_followed(sender, instance, created, **kwargs):
         follower = instance.from_person
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
+        pubsub.subscribe(follower, "/user/%d/photos" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
     pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
+    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id)
+    
 post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 def meal_created(sender, instance, created, **kwargs):
@@ -1126,3 +1131,10 @@ def user_visited(sender, instance, created, **kwargs):
             node_name = "/user/%d/visitors" % instance.to_person.id
             payload = json.dumps({"visitor":visitor.id, "message":u"%s查看了你的资料" % visitor.name})
             pubsub.publish(instance.to_person, node_name, payload)
+
+@receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
+def photo_uploaded(sender, instance, created, **kwargs):
+    if created:
+        node_name = "/user/%d/photos" % instance.user.id
+        payload = json.dumps({"user":instance.user.id, "photo":instance.photo.id, "message":u"%s上传了新的照片" % instance.user.name})
+        pubsub.publish(instance.user, node_name, payload)
