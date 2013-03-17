@@ -1078,6 +1078,7 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         pubsub.createNode(user_profile, node_name)
         node_name="/user/%d/photos" % user_profile.id
         pubsub.createNode(user_profile, node_name)
+        pubsub.unsubscribe(user_profile, node_name) # the user himself doesn't want to be bothered if he uploaded a photo
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
