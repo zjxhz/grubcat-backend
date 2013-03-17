@@ -1136,5 +1136,6 @@ def user_visited(sender, instance, created, **kwargs):
 def photo_uploaded(sender, instance, created, **kwargs):
     if created:
         node_name = "/user/%d/photos" % instance.user.id
-        payload = json.dumps({"user":instance.user.id, "photo":instance.photo.id, "message":u"%s上传了新的照片" % instance.user.name})
+        payload = json.dumps({"user":instance.user.id, "photo_id":instance.id, "photo_url":instance.photo.url, \
+                              "message":u"%s上传了新的照片" % instance.user.name})
         pubsub.publish(instance.user, node_name, payload)
