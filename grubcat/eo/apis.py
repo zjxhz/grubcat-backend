@@ -180,7 +180,7 @@ class SimpleUserResource(ModelResource):
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
         
-        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['small_avatar'] = bundle.obj.medium_avatar
         bundle.data['big_avatar'] = bundle.obj.big_avatar  
         mergeOneToOneField(bundle, 'user', ['id', ])
         mergeOneToOneField(bundle, 'location', ['id', ])
@@ -232,7 +232,7 @@ class UserResource(ModelResource):
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
         
-        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['small_avatar'] = bundle.obj.medium_avatar #small is too small for iPhone
         bundle.data['big_avatar'] = bundle.obj.big_avatar  
         mergeOneToOneField(bundle, 'user', ['id', ])
         mergeOneToOneField(bundle, 'location', ['id', ])
