@@ -33,9 +33,10 @@ class Command(BaseCommand):
     def signal_profile_followed(self):
         for relationship in Relationship.objects.all():
             followee = relationship.to_person
-            if followee.weibo_id:
+            follower = relationship.from_person
+            if followee.weibo_id and follower.weibo_id:
                 if self.dry_run:
-                    print u"creating nodes for following user %s" % followee.id
+                    print u"creating nodes for following user %s from user %s" % (followee.id, relationship.from_person.id)
                 else:
                     user_followed(self, relationship, True)
                     
