@@ -516,7 +516,11 @@ class UserResource(ModelResource):
         elif request.method == "POST":
             photo = UserPhoto(user=user_to_query, photo=request.FILES['file'])
             photo.save()
-            return createGeneralResponse('OK', 'Photo uploaded.' , {"id":photo.id, "photo":photo.photo.url})
+            photo_resource = UserPhotoResource()
+            photo_bundle = photo_resource.build_bundle(obj=photo)
+            serialized = photo_resource.serialize(None, photo_resource.full_dehydrate(photo_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', 'Photo uploaded.' , dic)
         elif request.method == 'DELETE':
             raise NotImplementedError        
     
