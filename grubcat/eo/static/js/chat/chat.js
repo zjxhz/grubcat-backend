@@ -1,4 +1,4 @@
-var chatServer = "http://www.fanjoin.com:7070/http-bind/"
+var chatServer = "http://www.fanjoin.com/http-bind/"
 var chatServerDomain ="@fanjoin.com"
 //var chatServer = "http://localhost:8001/http-bind/"
 //var chatServerDomain ="@dds-pc"
