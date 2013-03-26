@@ -274,7 +274,7 @@ var Chat = Backbone.Model.extend({
         {
             var uid = msg.from;
             if (!msg.isRead){
-                if(chatApp.isWindowFocused && uid == chatApp.currentChat.id){
+                if(chatApp.isWindowFocused && chatApp.currentChat.id && uid == chatApp.currentChat.id){
                     chatApp.contactList.get(uid).sendReceivedRecipts();
                 } else {
                     chatApp.contactList.get(uid).increaseUnReadCount(1);
