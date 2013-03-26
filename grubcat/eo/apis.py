@@ -568,7 +568,11 @@ class UserResource(ModelResource):
             if old_avatar and os.path.exists(old_avatar.path):
                 os.remove(old_avatar.path)
             xmpp_client.syncProfile(user_to_query)
-            return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
+            user_resource = UserResource()
+            ur_bundle = user_resource.build_bundle(obj=user_to_query)
+            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', 'avatar uploaded.' , dic)
         elif request.method == 'DELETE':
             raise NotImplementedError
                
