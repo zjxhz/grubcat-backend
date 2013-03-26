@@ -5,6 +5,7 @@ from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
+from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -13,6 +14,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+import simplejson
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
@@ -337,6 +339,24 @@ def del_group_comment(request, pk):
 
 ### User related views ###
 
+
+def get_user_info(request):
+    if request.method == 'POST':
+        if request.POST.get("ids"):
+            usernames = request.POST.get("ids").split(",")
+            prfoiles = UserProfile.objects.filter(user__username__in=usernames).select_related("user")
+            result = []
+            for profile in prfoiles:
+                result.append({"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
+                               'profileUrl': profile.get_absolute_url()})
+        elif request.POST.get("id"):
+            username = request.POST.get("id")
+            profile = UserProfile.objects.filter(user__username=username).select_related("user")[0]
+            result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
+                      'profileUrl': profile.get_absolute_url()}
+        return HttpResponse(simplejson.dumps(result), content_type='application/json', )
+
+
 #User related
 class UploadAvatarView(UpdateView):
     form_class = UploadAvatarForm
@@ -655,9 +675,11 @@ def un_follow(request, user_id):
         try:
             user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
             relationship = Relationship.objects.get(from_person=request.user.get_profile(),
-                to_person=user_to_be_unfollowed)
+                                                    to_person=user_to_be_unfollowed)
             relationship.delete()
-            html = '<a class="btn btn-follow" href="%s"><i class="icon-star"></i> 关注</a>' % (
+            print request.user.username
+            html = u'<a class="btn btn-follow" data-uid="%s" href="%s"><i class="icon-star"></i> 关注</a>' % (
+                user_to_be_unfollowed.user.username,
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
             return create_sucess_json_response(extra_dict={'html': html})
         except Exception:

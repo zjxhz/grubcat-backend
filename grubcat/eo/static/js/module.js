@@ -1,5 +1,35 @@
 (function ($) {
     var $data = $("#data");
+
+    //chat
+    setTimeout(function () {
+        if (!$("#chat-container")[0]) {
+            $.get("/chat/", function(data){
+                $("body").append($(data));
+                $("#chat-dialog").modal({
+                    show: false
+                })
+            }, "html")
+
+        }
+    }, 3000)
+
+    $("#nav-chat").click(function(){
+        if (!$("#chat-container")[0]) {
+            $.get("/chat/", function(data){
+                $("body").append($(data));
+                $("#chat-dialog").modal({
+                    show: false
+                })
+            }, "html")
+
+        } else {
+            $("#chat-dialog").modal({
+                show: true
+            })
+        }
+    })
+
     if ($("#upload-photo-wrapper")[0]) {
         $("#id_photo").change(function () {
             $("#id_upload_photo_form").ajaxSubmit({
