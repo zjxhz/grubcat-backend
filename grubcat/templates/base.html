@@ -31,7 +31,9 @@
                     <li id="nav-meal"><a href="{% url meal_list %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url create_meal %}" class="hidden-phone">发起饭局</a></li>
+                    {% if user.is_authenticated %}
                     <li id="nav-chat"><a href="#">聊天</a><span id="total-unread-count" class="unread-count" style="display: none">0</span></li>
+                    {% endif %}
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}

@@ -68,12 +68,12 @@ noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/la
                  'js/noty/layouts/center.js', 'js/noty/thems/default.js',
                  output='gen/jquery-noty.%(version)s.js', filters='jsmin')
 # 'js/jquery.lionbars.0.3.js',
-chat_js = Bundle('js/underscore.js', 'js/backbone.js', 'js/chat/iso8601_support.js',
-                 'js/chat/strophe.min.js',
+chat_js = Bundle('js/underscore-min.js', 'js/backbone-min.js', 'js/chat/iso8601_support.js',
+                 'js/chat/strophe-min.js',
                  'js/chat/strophe.rsm.js', 'js/chat/strophe.chatstates.js', 'js/chat/strophe.archive.js',
                  'js/chat/strophe.roster.js', 'js/chat/strophe.messaging.js', 'js/chat/strophe.serverdate.js',
                  'js/chat/chat.js',
-                 filters='jsmin',
+                 # filters='jsmin',
                  output="gen/chat.%(version)s.js")
 base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.min.js', noty_js,
                  output="gen/base.%(version)s.js")
