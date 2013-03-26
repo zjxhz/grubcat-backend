@@ -1,0 +1,69 @@
+{#{% extends "base.html" %}#}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{#{% block title %}聊天{% endblock %}#}
+{#{% block page_css %}#}
+{#    {{ block.super }}#}
+{#    {% assets "module_css" %}#}
+{#        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">#}
+{#    {% endassets %}#}
+{#{% endblock %}#}
+{#{% block content %}#}
+{#<!DOCTYPE html>#}
+{#<html lang="zh-CN">#}
+{#<body>#}
+<div id="chat-dialog" class="modal fade" style="display: none">
+    <div class="modal-body">
+
+        <div id="chat-container">
+            <div id="chat-left-column">
+                <div id="roster"></div>
+            </div>
+
+            <div id='chat-right-column'>
+            </div>
+            <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
+                 data-get-user-info-url="{% url get_user_info %}"
+                 data-my-avatar="{{ request.user.get_profile.small_avatar }}"
+                 data-my-name="{{ request.user.get_profile.name }}"
+                 data-profile-url="{{ request.user.get_profile.get_absolute_url }}"></div>
+        </div>
+    </div>
+</div>
+{% assets "base_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+{% assets "chat_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+{% comment %}
+{% endblock %}
+
+{% block page_js %}
+{{ block.super }}{% endcomment %}
+{% comment %}<script id="tpl-contact-list-item" type="text/template">
+        <div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"/></div>
+        <div class="nickname"><%= name %></div>
+        <div class="unread-count"><%=unReadCount%></div>
+    </script>{% endcomment %}
+{% comment %}<script id="tpl-chat-box" type="text/template">
+            <div class="chat-title"><%= withName %></div>
+            <div class="chat-message-container">
+                <div class="chat-item-list"></div>
+                <div class="chat-status">对方正在输入...</div>
+            </div>
+            <div class="chat-editor">
+                <textarea type="text" class="chat-input"></textarea>
+                <button class="btn btn-primary btn-send">发送</button>
+            </div>
+    </script>
+    <script id="tpl-message-list-item" type="text/template">
+        <div class="message-item <%=from%>" data-timestamp="<%=timestamp%>">
+            <img class="avatar" src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>">
+            <div class="message-content"><div class="message-text"><%=body%></div><div class="message-arrow"></div></div>
+        </div>
+    </script>{% endcomment %}
+
+{#</body>#}
+{#</html>#}
+{#{% endblock %}#}
+

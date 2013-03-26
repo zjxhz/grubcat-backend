@@ -1,0 +1,133 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+
+{#PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"#}
+{#"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"#}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
+    <meta content="饭聚，饭局，杭州的饭聚，fanju,杭州的饭局,美食社交，社交晚餐" name="keywords">
+    <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    {% block page_css %}
+        {% assets "base_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+    {% endblock %}
+</head>
+<body>
+<!--[if IE 6]>
+<div id="ie6-warning">您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用 <a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div>
+<![endif]-->
+{% block nav %}
+    <div class="navbar navbar-static-top" id="main-nav">
+        <div class="navbar-inner  ">
+            <div class="container">
+                <a class="brand " href="/">饭聚 @杭州</a>
+                <ul class="nav ">
+                    <li id="nav-meal"><a href="{% url meal_list %}" class="hidden-phone">首页</a></li>
+                    <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
+                    <li id="nav-create-meal"><a href="{% url create_meal %}" class="hidden-phone">发起饭局</a></li>
+                    <li id="nav-chat"><a href="#">聊天</a><span id="total-unread-count" class="unread-count" style="display: none">0</span></li>
+                </ul>
+                <ul class="nav pull-right">
+                    {% if user.is_authenticated %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="hidden-phone">{% if user.get_profile.name %}
+                                    {{ user.get_profile.name }} {% else %}{{ user.username }}{% endif %} </span>
+                                <b class="caret"></b></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{% url user_detail user.get_profile.id %}">我的主页</a></li>
+                                <li><a href="{% url edit_basic_profile %}">修改资料</a></li>
+                                <li id="nav-upload-photo" class="hidden-phone"><a href="{% url upload_photo %}"
+                                                                                  class="upload-photo-link">上传照片</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="{% url user_meal_list user.get_profile.id %}">我的饭局</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url logout %}">退出</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        {#                        {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}#}
+                        {#                            <li><a href="#}
+                        {#                                    {% url weibo_login %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"#}
+                        {#                                   id="login_link"#}
+                        {#                                    >登录</a></li>#}
+                        {#                        {% else %}#}
+                        <li>
+                            <a id="login_link" class="login" href="{% url weibo_login %}?next={{ request.path_info }}">登录</a>
+                        </li>
+                        {#                        {% endif %}#}
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div id="nav-active-id" style="display:none;">{% block active-nav-id %}{% endblock %}</div>
+    </div>
+{% endblock %}
+
+{% block page-container %}
+    <div class="container" id="main-container">
+        {% block container-inner %}
+            {% block content %}{% endblock %}
+            {#    use for active nav item, see example on meal_list page#}
+        {% endblock %}
+    </div>
+
+    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.get_profile.weibo_access_token }}"></div>
+    {% block footer %}
+        <div id="footer"></div>
+    {% endblock %}
+    <div id="chat-dialog" class="modal fade" style="display: none">
+        <div class="modal-body">
+
+            <div id="chat-container">
+                <div id="chat-left-column">
+                    <div id="roster"></div>
+                </div>
+
+                <div id='chat-right-column'>
+                </div>
+                <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
+                     data-get-user-info-url="{% url get_user_info %}"
+                     data-my-avatar="{{ request.user.get_profile.small_avatar }}"
+                     data-my-name="{{ request.user.get_profile.name }}"
+                     data-profile-url="{{ request.user.get_profile.get_absolute_url }}"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block base_js %}
+    {% include "ga.html" %}
+    {% assets "base_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+{% assets "chat_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+<script type="text/javascript">
+    $(document).ready(function ($) {
+
+        $("#main-nav ul.nav li").removeClass("active");
+        var $active = $("#" + $("#nav-active-id").html());
+        $active.addClass("active");
+        $("#main-nav ul.nav  li").not(".active").hover(function () {
+            $active.removeClass("active");
+            $(this).addClass("active");
+        }, function () {
+            $(this).removeClass("active");
+            $active.addClass("active");
+        });
+    })
+</script>
+{% block page_js %}{% endblock %}
+</body>
+</html>

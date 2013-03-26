@@ -1,0 +1,46 @@
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+
+
+<div id="crop_avatar_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4>请选择合适的区域作为头像，注意不同尺寸的头像是否清晰</h4>
+    </div>
+    <div class="modal-body">
+        <form action="{% url upload_avatar %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
+            <div id="cropping-area" class="">
+                {{ form.avatar }}
+                {{ form.cropping }}
+            </div>
+            <div id="preview_area" class="">
+                {% comment %} <div id="cropping-tip">
+                    您上传的头像会生成不同尺寸的缩略图，<br/>请注意不同大小尺寸的头像是否清晰
+                </div>{% endcomment %}
+                <div id="preview_big_container" class="preview-container ">
+                    <img id="preview_big">
+                </div>
+                <div id="preview_middle_container" class="preview-container ">
+                    <img id="preview_middle">
+                </div>
+            </div>
+        </form>
+        <div id="data-avatar-page" class="hide" data-big-avatar-url='{{ user.get_profile.big_avatar }}'></div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button id="crop_submit" type="submit" class="btn btn-large btn-primary">保存</button>
+    </div>
+
+</div>
+
+{% block page_js %}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
+    <script type="text/javascript">
+        jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
+    </script>
+{% endblock %}
