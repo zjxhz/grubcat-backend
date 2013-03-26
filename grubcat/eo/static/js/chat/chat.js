@@ -1,6 +1,7 @@
-//var chatServer = "http://www.fanjoin.com:7070/http-bind/"
-var chatServer = "http://localhost:8001/http-bind/"
-var chatServerDomain ="@dds-pc"
+var chatServer = "http://www.fanjoin.com:7070/http-bind/"
+var chatServerDomain ="@fanjoin.com"
+//var chatServer = "http://localhost:8001/http-bind/"
+//var chatServerDomain ="@dds-pc"
 var myTemplate = {
     tplContactListItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"/></div>' +
         '<div class="nickname"><%= name %></div>' +
