@@ -922,7 +922,8 @@ Strophe = {
     {
         return node.replace(/^\s+|\s+$/g, '')
             .replace(/\\/g,  "\\5c")
-            .replace(/ /g,   "\\20")
+//            .replace(/ /g,   "\\20")
+            .replace(new RegExp(" ", "g"),   "\\20") // to avoid js min error
             .replace(/\"/g,  "\\22")
             .replace(/\&/g,  "\\26")
             .replace(/\'/g,  "\\27")
