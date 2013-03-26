@@ -14,7 +14,7 @@ dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick
 common_css = Bundle(dropkick_css, 'less/common.less', filters='less,cssmin', output='gen/common.%(version)s.css')
 responsive_css = Bundle('less/responsive.less', filters='less,cssmin', output='gen/responsive.%(version)s.css')
 
-base_css = Bundle(bootstrap_css, filters='cssmin', output='gen/base.%(version)s.css')
+base_css = Bundle(bootstrap_css, 'css/lionbars.css', filters='cssmin', output='gen/base.%(version)s.css')
 
 module_css = Bundle(
     common_css, 'less/module.less', responsive_css, filters='less,cssmin', output='gen/module.%(version)s.css'
@@ -65,14 +65,21 @@ jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)
 jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='jsmin')
 
 noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
-    'js/noty/layouts/center.js', 'js/noty/thems/default.js',
-    output='gen/jquery-noty.%(version)s.js', filters='jsmin')
+                 'js/noty/layouts/center.js', 'js/noty/thems/default.js',
+                 output='gen/jquery-noty.%(version)s.js', filters='jsmin')
+# 'js/jquery.lionbars.0.3.js',
+chat_js = Bundle('js/underscore.js', 'js/backbone.js', 'js/chat/iso8601_support.js',
+                 'js/chat/strophe.js',
+                 'js/chat/strophe.rsm.js', 'js/chat/strophe.chatstates.js', 'js/chat/strophe.archive.js',
+                 'js/chat/strophe.roster.js', 'js/chat/strophe.messaging.js', 'js/chat/strophe.serverdate.js',
+                 'js/chat/chat.js',
+                 filters='jsmin',
+                 output="gen/chat.%(version)s.js")
+base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.min.js', noty_js,
+                 output="gen/base.%(version)s.js")
 
-base_js = Bundle(jquery_js, 'js/bootstrap.min.js', noty_js,
-    output="gen/base.%(version)s.js")
-
-base_main_js = Bundle(jquery_js, 'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
-    output="gen/base.main.%(version)s.js")
+base_main_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
+                      output="gen/base.main.%(version)s.js")
 
 module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version)s.js")
 auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
@@ -87,8 +94,8 @@ restaurant_admin_js = Bundle(
     'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
 )
 create_meal_js = Bundle('js/bootstrap/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
-    validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='jsmin', output="gen/create-meal.%(version)s.js")
-
+                        validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='jsmin',
+                        output="gen/create-meal.%(version)s.js")
 
 jquery_ajax_bootstrap_js = Bundle(
     'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
@@ -96,10 +103,10 @@ jquery_ajax_bootstrap_js = Bundle(
 )
 
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin',
-    output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
+                      output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
 
 image_cropping_js = Bundle('js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
-    output='gen/iamge-cropping.%(version)s.js')
+                           output='gen/iamge-cropping.%(version)s.js')
 
 register('common_css', common_css)
 register('base_css', base_css)
@@ -122,6 +129,7 @@ register('noty_js', noty_js)
 register('base_js', base_js)
 register('base_main_js', base_main_js)
 register('module_js', module_js)
+register('chat_js', chat_js)
 register('create_meal_js', create_meal_js)
 register('auto_suggest_js', auto_suggest_js)
 register('restaurant_admin_js', restaurant_admin_js)

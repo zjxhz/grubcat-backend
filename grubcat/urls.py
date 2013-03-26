@@ -103,8 +103,9 @@ urlpatterns = patterns('',
     url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
         name="more_user"),
     url(r'^profile/edit/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
-    url(r'^profile/(?P<pk>\d+)/$', login_required(ProfileDetailView.as_view()), name='user_detail'),
+    url(r'^user/(?P<pk>\d+)/$', login_required(ProfileDetailView.as_view()), name='user_detail'),
     url(r'profile/upload_avatar/$', login_required(UploadAvatarView.as_view()), name='upload_avatar'),
+    url(r'user/info/$', login_required(get_user_info), name='get_user_info'),
 
 
     url(r'^follow/(?P<user_id>\d+)/$', login_required(follow), name='follow'),
@@ -149,8 +150,11 @@ urlpatterns = patterns('',
     url(r'^restaurant/menu/del/(?P<pk>\d+)/$', restaurant_login_required(rest.del_menu), name="del_menu"),
     url(r'^restaurant/menu/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.edit_menu), name="edit_menu"),
     url(r'^restaurant/menu/copy/(?P<pk>\d+)/$', restaurant_login_required(rest.copy_menu), name="copy_menu"),
-    url(r'^restaurant/menu/cover/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.EditMenuCoverView.as_view()), name="edit_menu_cover"),
+    url(r'^restaurant/menu/cover/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.EditMenuCoverView.as_view()),
+        name="edit_menu_cover"),
 
+    #chat
+    url(r'^chat/$', TemplateView.as_view(template_name="chat.html"), name="chat"),
 
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),

@@ -5,7 +5,6 @@
 {% block title %}发起饭局{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/lionbars.css' %}">
     {% assets "module_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}

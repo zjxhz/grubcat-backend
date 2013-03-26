@@ -519,6 +519,9 @@ class UserProfile(models.Model):
     tags = TaggableManager(through=TaggedUser)
     apns_token = models.CharField(max_length=255, blank=True)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return 'user_detail', [str(self.id)]
 
     def follow(self, followee):
         if self == followee:

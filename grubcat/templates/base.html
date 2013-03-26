@@ -31,6 +31,7 @@
                     <li id="nav-meal"><a href="{% url meal_list %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url user_list %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url create_meal %}" class="hidden-phone">发起饭局</a></li>
+                    <li id="nav-chat"><a href="#">聊天</a><span id="total-unread-count" class="unread-count" style="display: none">0</span></li>
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}
@@ -78,16 +79,40 @@
             {#    use for active nav item, see example on meal_list page#}
         {% endblock %}
     </div>
+
+    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.get_profile.weibo_access_token }}"></div>
     {% block footer %}
         <div id="footer"></div>
     {% endblock %}
+    <div id="chat-dialog" class="modal fade" style="display: none">
+        <div class="modal-body">
+
+            <div id="chat-container">
+                <div id="chat-left-column">
+                    <div id="roster"></div>
+                </div>
+
+                <div id='chat-right-column'>
+                </div>
+                <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
+                     data-get-user-info-url="{% url get_user_info %}"
+                     data-my-avatar="{{ request.user.get_profile.small_avatar }}"
+                     data-my-name="{{ request.user.get_profile.name }}"
+                     data-profile-url="{{ request.user.get_profile.get_absolute_url }}"></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block base_js %}
+    {% include "ga.html" %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
+{% assets "chat_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
 <script type="text/javascript">
     $(document).ready(function ($) {
 
@@ -104,6 +129,5 @@
     })
 </script>
 {% block page_js %}{% endblock %}
-{% include "ga.html" %}
 </body>
 </html>
