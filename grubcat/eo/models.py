@@ -165,7 +165,7 @@ class MenuStatus:
 MENU_STATUS = (
     (MenuStatus.PUBLISHED, '已发布'),
     (MenuStatus.DELETED, '已删除')
-)
+    )
 
 LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
 
@@ -253,7 +253,7 @@ class GroupCategory(models.Model):
             return settings.STATIC_URL + 'img/default/category-cover.png'
 
     def __unicode__(self):
-        return self.name
+        return  self.name
 
     class Meta:
         verbose_name = u'圈子分类'
@@ -266,8 +266,7 @@ class GroupPrivacy(Privacy):
 GROUP_PRIVACY_CHOICE = (
     (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
     (GroupPrivacy.PRIVATE, u'私密：仅被邀请的人可以加入')
-)
-
+    )
 
 class Group(models.Model):
     """圈子"""
@@ -283,15 +282,15 @@ class Group(models.Model):
     def recent_meals(self):
         return Meal.objects.filter(group=self).filter(
             Q(start_date__gt=date.today()) | Q(start_date=date.today(),
-                                               start_time__gt=datetime.now().time())).order_by("start_date",
-                                                                                               "start_time")
+                start_time__gt=datetime.now().time())).order_by("start_date",
+            "start_time")
 
     @property
     def passed_meals(self):
         return Meal.objects.filter(group=self).filter(
             Q(start_date__lt=date.today()) | Q(start_date=date.today(),
-                                               start_time__lte=datetime.now().time())).order_by("start_date",
-                                                                                                "start_time")
+                start_time__lte=datetime.now().time())).order_by("start_date",
+            "start_time")
 
     @property
     def logo_url_default_if_none(self):
@@ -338,7 +337,7 @@ ORDER_STATUS = (
     (OrderStatus.PAYIED, '已支付'),
     (OrderStatus.USED, '已使用'),
     (OrderStatus.CANCELED, '已取消')
-)
+    )
 
 
 class Order(models.Model):
@@ -350,7 +349,7 @@ class Order(models.Model):
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
-    code = models.CharField(u'订单验证码', blank=True, max_length=12, null=True, unique=True)
+    code = models.CharField(u'订单验证码',blank=True, max_length=12, null=True, unique=True)
 
     @models.permalink
     def get_absolute_url(self):
@@ -368,8 +367,7 @@ class Order(models.Model):
             order.gen_code()
         order.save()
         #set all other unpaid order as "canceld" status
-        Order.objects.filter(meal=order.meal, customer=order.customer, status=OrderStatus.CREATED).update(
-            status=OrderStatus.CANCELED)
+        Order.objects.filter(meal=order.meal,customer=order.customer, status=OrderStatus.CREATED).update(status=OrderStatus.CANCELED)
         meal = order.meal
         MealParticipants.objects.create(meal=meal, userprofile=order.customer)
         meal.actual_persons += order.num_persons
@@ -418,7 +416,6 @@ class TransFlow(models.Model):
         verbose_name = u'交易流水'
         verbose_name_plural = u'交易流水'
 
-
 class Relationship(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name='from_user')
     to_person = models.ForeignKey("UserProfile", related_name='to_user')
@@ -450,7 +447,7 @@ class UserTag(Tag):
 
 class TaggedUser(GenericTaggedItemBase):
     tag = models.ForeignKey(UserTag,
-                            related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
+        related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
 
     class Meta:
         db_table = u'tagged_user'
@@ -460,11 +457,10 @@ class Gender:
     MALE = 0
     FEMALE = 1
 
-
 GENDER_CHOICE = (
     (Gender.MALE, u'男'),
     (Gender.FEMALE, u'女'),
-)
+    )
 INDUSTRY_CHOICE = (
     (0, u'计算机/互联网/通信'),
     (1, u'商业/服务业/个体经营'),
@@ -485,17 +481,17 @@ INDUSTRY_CHOICE = (
     (16, u'酒店旅游'),
     (17, u'现代农业'),
     (18, u'在校学生'),
-)
+    )
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
-                                                  related_name="user_favorite")
+        related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
-                                                   blank=True, null=True)
+        blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
     avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, null=True) # photo
     cropping = ImageRatioField('avatar', '180x180', adapt_rotation=True)
@@ -669,7 +665,7 @@ class UserProfile(models.Model):
         for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
                 distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng,
-                                            user.faked_location.lat)
+                    user.faked_location.lat)
                 distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)
 
@@ -725,10 +721,9 @@ class UserProfile(models.Model):
         return dic.values()
 
     def chat_history_with_user(self, other_user, limit=20):
-        return \
-            self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user)).order_by(
-                'timestamp')[
-            :limit]
+        return\
+        self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user)).order_by('timestamp')[
+        :limit]
 
     def new_messages(self, last_message_id):
         last_message = UserMessage.objects.get(pk=last_message_id)
@@ -767,7 +762,6 @@ class UserProfile(models.Model):
         db_table = u'user_profile'
         verbose_name = u'用户资料'
         verbose_name_plural = u'用户资料'
-
 
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
@@ -811,7 +805,6 @@ class UserMessage(models.Model):
     def __unicode__(self):
         return "%s -> %s(%s): %s" % (self.from_person, self.to_person, self.timestamp, self.message)
 
-
 class BestRatingDish(models.Model):
     restaurant = models.ForeignKey(Restaurant, related_name="best_rating_dishes")
     dish = models.ForeignKey(Dish)
@@ -824,11 +817,10 @@ class BestRatingDish(models.Model):
 class MealPrivacy(Privacy):
     pass
 
-
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
-)
+    )
 
 MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(2, 13)]
 START_TIME_CHOICE = (
@@ -838,8 +830,7 @@ START_TIME_CHOICE = (
     (time(15, 00), "15:00"), (time(15, 30), "15:30"), (time(16, 00), "16:00"), (time(16, 30), "16:30"),
     (time(17, 00), "17:00"), (time(17, 30), "17:30"), (time(18, 00), "18:00"), (time(18, 30), "18:30"),
     (time(19, 00), "19:00"), (time(19, 30), "19:30"), (time(20, 00), "20:00"), (time(20, 30), "20:30"),
-)
-
+    )
 
 class MealStatus:
     CREATED_NO_MENU = 0
@@ -847,14 +838,12 @@ class MealStatus:
     PAID_NO_MENU = 2
     PUBLISHED = 3 #
 
-
 MEAL_STATUS_CHOICE = (
     (MealStatus.CREATED_NO_MENU, u'创建且无菜单' ),
     (MealStatus.CREATED_WITH_MENU, u'创建且有菜单'),
     (MealStatus.PAID_NO_MENU, u'支付且无菜单'),
     (MealStatus.PUBLISHED, u'可以发布')
-)
-
+    )
 
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
@@ -864,23 +853,22 @@ class Meal(models.Model):
     start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=time(19, 00))
     group = models.ForeignKey('Group', verbose_name=u'通知圈子', null=True, blank=True)
     privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
-                                  choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
+        choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
-                                     blank=True, null=True)
+        blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
-                             upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
+        upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
     host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
-    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True,
-                                          through="MealParticipants")
+    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True, through="MealParticipants")
     likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
-                                   null=True)
+        null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
@@ -888,9 +876,8 @@ class Meal(models.Model):
     def get_default_upcomming_meals(cls):
         return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
             Q(start_date__gt=date.today()) | Q(start_date=date.today(),
-                                               start_time__gt=datetime.now().time())).order_by("start_date",
-                                                                                               "start_time").select_related(
-            "menu")
+                start_time__gt=datetime.now().time())).order_by("start_date",
+            "start_time").select_related("menu")
 
     def join(self, customer, requesting_persons):
         if self.is_participant(customer):
@@ -911,7 +898,7 @@ class Meal(models.Model):
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
                 message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (
-                    paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+                paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
             else:
                 message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
             raise NoAvailableSeatsError(message)
@@ -986,16 +973,13 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
-
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
     userprofile = models.ForeignKey(UserProfile)
-
     class Meta:
         db_table = u'meal_participants'
-        ordering = ['id', ]
-
-
+        ordering = ['id',]
+    
 class Comment(models.Model):
     from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)
     comment = models.CharField(u'评论', max_length=300)
@@ -1031,13 +1015,13 @@ class GroupComment(Comment):
         verbose_name_plural = u'圈子评论'
 
     def __unicode__(self):
-        return u'圈子(%s) 评论%s' % (self.group, self.id)
+        return  u'圈子(%s) 评论%s' % (self.group, self.id)
 
 
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
 
-    class Meta:
+    class  Meta:
         db_table = u'meal_comment'
 
 
@@ -1067,8 +1051,6 @@ class ImageTest(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.get_or_create(user=instance)
-
-
 post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_profile")
 
 
@@ -1076,23 +1058,15 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
         user_profile = instance
         node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
-
-
-post_save.connect(pubsub_userprofile_created, sender=UserProfile,
-                  dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
-
+        pubsub.createNode(user_profile, node_name)      
+post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
     if created:
         followee = instance.to_person
         follower = instance.from_person
-        pubsub.publish(followee, "/user/%d/followers" % followee.id,
-                       json.dumps({"follower": follower.id, "message": u"%s关注了你" % follower.name}))
-
-
+        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
-
 
 def meal_created(sender, instance, created, **kwargs):
     if created:
@@ -1100,10 +1074,8 @@ def meal_created(sender, instance, created, **kwargs):
         host = meal.host
         node_name = "/meal/%d/participants" % meal.id
         pubsub.createNode(host, node_name)
-
-#        pubsub.subscribe(user_profile, node_name)
+#        pubsub.subscribe(user_profile, node_name)  
 post_save.connect(meal_created, sender=Meal, dispatch_uid="meal_created")
-
 
 def meal_joined(sender, instance, created, **kwargs):
     if created:
@@ -1114,11 +1086,8 @@ def meal_joined(sender, instance, created, **kwargs):
         if meal.host and meal.host.id == participant.id:
             return
         pubsub.publish(meal.host, node_name, json.dumps( \
-            {"meal": meal.id, "participant": participant.id,
-             "message": u"%s参加了饭局：%s" % (participant.name, meal.topic)}))
+            {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) }) )
         pubsub.subscribe(participant, node_name) #TODO how about quit the meal
-
-
 post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
 
