@@ -110,9 +110,6 @@
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
-{% assets "chat_js" %}
-    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-{% endassets %}
 <script type="text/javascript">
     $(document).ready(function ($) {
 
@@ -129,5 +126,8 @@
     })
 </script>
 {% block page_js %}{% endblock %}
+{% assets "chat_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
 </body>
 </html>
