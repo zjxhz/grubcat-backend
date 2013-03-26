@@ -447,7 +447,7 @@ var chatApp = {
     totalUnReadCount:0,
 
     myProfile: new Contact({
-        id: !$.browser.webkit ? "test1" : "admin",
+        id: $("#common-data").data("uid"),
 //        jid: "",
         avatarUrl: $chatData.data("my-avatar"),
         profileUrl: $chatData.data("profile-url"),
