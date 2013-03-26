@@ -1,4 +1,5 @@
 from django.conf import settings
+from xmpp.protocol import NS_DATA
 import json
 import logging
 import pyapns
@@ -102,26 +103,40 @@ class PubSub(object):
         
         iq = self.buildIq()
         iq.T.pubsub.NT.create['node']=node_name
+#        enable below lines if needed
+#        x_node = iq.NT.configure.NT.x
+#        x_node["xmlns"]=NS_DATA
+#        field = x_node.NT.field
+#        field["var"]="pubsub#send_last_published_item"
+#        field.NT.value="never"
+        
         cl.send(iq)
         cl.Process(1)
         cl.disconnect()
         
-    def subscribe(self, subscriber, node_name):
+    def subscribe(self, subscriber, node_name, subscribing=True):
         username, pw =get_xmpp_username_and_password(subscriber)
         jid = xmpp.protocol.JID(username + "@fanjoin.com")
         
-        logger.debug("%s is subscribing node: %s" % (username, node_name))
+        logger.debug("%s is subscribing(%s) node: %s" % (username, subscribing, node_name))
         
         cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
         cl.connect()
         cl.auth(str(jid), pw)
         
         iq = self.buildIq()
-        iq.T.pubsub.NT.subscribe['node']=node_name
-        iq.T.pubsub.T.subscribe['jid']=str(jid)
+        if subscribing:
+            subscribe_node = iq.T.pubsub.NT.subscribe
+        else:
+            subscribe_node = iq.T.pubsub.NT.unsubscribe
+        subscribe_node['node']=node_name
+        subscribe_node['jid']=str(jid)
         cl.send(iq)
         cl.Process(1)
         cl.disconnect()
+        
+    def unsubscribe(self, subscriber, node_name):
+        self.subscribe(subscriber, node_name, False)
 
     def publish(self, publisher, node_name, payload):
         username, pw =get_xmpp_username_and_password(publisher)

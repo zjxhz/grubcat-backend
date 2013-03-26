@@ -6,7 +6,8 @@ from django.db import models, IntegrityError
 from django.db.models import Max
 from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
+from django.dispatch.dispatcher import receiver
 from easy_thumbnails.files import get_thumbnailer
 from grubcat.eo.exceptions import BusinessException, AlreadyJoinedError, \
     NoAvailableSeatsError
@@ -422,13 +423,22 @@ class Relationship(models.Model):
     status = models.IntegerField(default=0) # FOLLOWING, BLOCKED
 
     def __unicode__(self):
-        return '%s -> %s: %s' % (self.from_person, self.to_person, self.status)
+        return u'%s -> %s: %s' % (self.from_person, self.to_person, self.status)
 
     class Meta:
         db_table = u'relationship'
         unique_together = ('from_person', 'to_person')
 
+class Visitor(models.Model):
+    from_person = models.ForeignKey("UserProfile", related_name="host")
+    to_person = models.ForeignKey("UserProfile", related_name="visitor")
+    def __unicode__(self):
+        return u'%s -> %s' % (self.from_person, self.to_person)
 
+    class Meta:
+        db_table = u'visitor'
+        unique_together = ('from_person', 'to_person')
+    
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
@@ -490,6 +500,7 @@ class UserProfile(models.Model):
     favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
         related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
+    visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
     recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
         blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
@@ -600,7 +611,15 @@ class UserProfile(models.Model):
         else:
             thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
         return thumbnail_url
-
+    
+    @property
+    def medium_avatar(self):
+        if self.avatar and os.path.exists(self.avatar.path):
+            thumbnail_url = self.avatar_thumbnailer(settings.MEDIUM_AVATAR_SIZE).url
+        else:
+            thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
+        return thumbnail_url
+        
     @property
     def small_avatar_path(self):
         if self.avatar and os.path.exists(self.avatar.path):
@@ -659,12 +678,17 @@ class UserProfile(models.Model):
         return UserProfile.objects.exclude(user__restaurant__isnull=False)
 
 
-    @property
-    def users_nearby(self):
+    def users_nearby(self, lat=None, lng=None):
         distance_user_dict = {}
+        if lat and lng:
+            lat = float(lat)
+            lng = float(lng)
+        else:
+            lat = self.faked_location.lat
+            lng = self.faked_location.lng
         for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
             if user.faked_location.lat and user.faked_location.lng:
-                distance = self.getDistance(self.faked_location.lng, self.faked_location.lat, user.faked_location.lng,
+                distance = self.getDistance(lng, lat, user.faked_location.lng,
                     user.faked_location.lat)
                 distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)
@@ -1059,6 +1083,13 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         user_profile = instance
         node_name = "/user/%d/followers" % user_profile.id
         pubsub.createNode(user_profile, node_name)      
+        node_name = "/user/%d/meals" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
+        node_name="/user/%d/visitors" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
+        node_name="/user/%d/photos" % user_profile.id
+        pubsub.createNode(user_profile, node_name)
+        pubsub.unsubscribe(user_profile, node_name) # the user himself doesn't want to be bothered if he uploaded a photo
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1066,7 +1097,17 @@ def user_followed(sender, instance, created, **kwargs):
         followee = instance.to_person
         follower = instance.from_person
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
+        pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
+        pubsub.subscribe(follower, "/user/%d/photos" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
+
+def user_unfollowed(sender, instance, **kwargs):
+    followee = instance.to_person
+    follower = instance.from_person
+    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
+    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id)
+    
+post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 def meal_created(sender, instance, created, **kwargs):
     if created:
@@ -1082,13 +1123,31 @@ def meal_joined(sender, instance, created, **kwargs):
         meal_participant = instance
         meal = meal_participant.meal
         participant = meal_participant.userprofile;
-        node_name = "/meal/%d/participants" % meal.id
-        if meal.host and meal.host.id == participant.id:
+        
+        if meal.host and meal.host.id == participant.id: # already published when the host created the meal
             return
-        pubsub.publish(meal.host, node_name, json.dumps( \
-            {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) }) )
-        pubsub.subscribe(participant, node_name) #TODO how about quit the meal
+        meal_participant_node = "/meal/%d/participants" % meal.id
+        followee_join_meal_node = "/user/%d/meals" % participant.id
+        payload = json.dumps( {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) } )
+        pubsub.publish(meal.host, meal_participant_node, payload) 
+        pubsub.publish(participant, followee_join_meal_node, payload )
+        pubsub.subscribe(participant, meal_participant_node) #TODO how about quit the meal
 post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
 
+@receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
+def user_visited(sender, instance, created, **kwargs):
+    if created:
+        visitor = instance.from_person
+        if visitor.id != instance.to_person.id:
+            node_name = "/user/%d/visitors" % instance.to_person.id
+            payload = json.dumps({"visitor":visitor.id, "message":u"%s查看了你的资料" % visitor.name})
+            pubsub.publish(instance.to_person, node_name, payload)
 
+@receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
+def photo_uploaded(sender, instance, created, **kwargs):
+    if created:
+        node_name = "/user/%d/photos" % instance.user.id
+        payload = json.dumps({"user":instance.user.id, "photo_id":instance.id, "photo_url":instance.photo.url, \
+                              "message":u"%s上传了新的照片" % instance.user.name})
+        pubsub.publish(instance.user, node_name, payload)

@@ -7,11 +7,10 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
-from eo.models import UserProfile, Restaurant,\
-    Rating, BestRatingDish, Dish, DishCategory, Order, Relationship, \
-    UserMessage, Meal, MealInvitation, UserLocation, MealComment, UserTag, DishItem, \
-    Menu, DishCategoryItem, UserPhoto
-from grubcat.eo.models import MealParticipants
+from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
+    DishCategory, Order, Relationship, UserMessage, Meal, MealInvitation, \
+    UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
+from grubcat.eo.models import MealParticipants, Visitor
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -163,6 +162,7 @@ class UserPhotoResource(ModelResource):
     
     def dehydrate(self, bundle):
         bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
+        bundle.data['large'] = bundle.obj.large_photo
         return bundle
     
     class Meta:
@@ -180,7 +180,7 @@ class SimpleUserResource(ModelResource):
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
         
-        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['small_avatar'] = bundle.obj.medium_avatar
         bundle.data['big_avatar'] = bundle.obj.big_avatar  
         mergeOneToOneField(bundle, 'user', ['id', ])
         mergeOneToOneField(bundle, 'location', ['id', ])
@@ -232,7 +232,7 @@ class UserResource(ModelResource):
             bundle.data['lng'] = 120.148
             bundle.data['updated_at'] = "2012-10-16"
         
-        bundle.data['small_avatar'] = bundle.obj.small_avatar
+        bundle.data['small_avatar'] = bundle.obj.medium_avatar #small is too small for iPhone
         bundle.data['big_avatar'] = bundle.obj.big_avatar  
         mergeOneToOneField(bundle, 'user', ['id', ])
         mergeOneToOneField(bundle, 'location', ['id', ])
@@ -279,7 +279,9 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/chat_history%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_chat_history'), name="api_get_chat_history"), 
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/new_messages%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_new_messages'), name="api_get_new_messages"),             
+                self.wrap_view('get_new_messages'), name="api_get_new_messages"),  
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('visit'), name="api_visit"),            
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -495,8 +497,13 @@ class UserResource(ModelResource):
         if not request.user.is_authenticated():
             return login_required(request)
         if request.method == 'GET':
-            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
-            users = user_to_query.users_nearby
+            user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs)) 
+            lat = request.GET.get("lat")
+            lng = request.GET.get("lng")
+            if lat and lng:
+                users = user_to_query.users_nearby(lat, lng)
+            else:
+                users = user_to_query.users_nearby()
             return get_my_list(UserResource(), self.filter_list(request, users), request)
         else:
             raise
@@ -509,7 +516,11 @@ class UserResource(ModelResource):
         elif request.method == "POST":
             photo = UserPhoto(user=user_to_query, photo=request.FILES['file'])
             photo.save()
-            return createGeneralResponse('OK', 'Photo uploaded.' , {"id":photo.id, "photo":photo.photo.url})
+            photo_resource = UserPhotoResource()
+            photo_bundle = photo_resource.build_bundle(obj=photo)
+            serialized = photo_resource.serialize(None, photo_resource.full_dehydrate(photo_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', 'Photo uploaded.' , dic)
         elif request.method == 'DELETE':
             raise NotImplementedError        
     
@@ -530,6 +541,16 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'Photo uploaded.') # , {"id":photo.id, "photo":photo.photo}
         elif request.method == 'DELETE':
             raise NotImplementedError
+        
+    def visit(self, request, **kwargs):
+        host = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
+        if request.method == "POST":
+            visitor = UserProfile.objects.get(id=request.POST.get('visitor_id'))
+            Visitor.objects.get_or_create(from_person=visitor, to_person=host)
+            return createGeneralResponse('OK', 'You visited %s' % host)
+        else:
+            raise NotImplementedError 
+    
     def avatar(self, request, **kwargs):
         user_to_query = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))   
         if request.method == "GET":
@@ -547,7 +568,11 @@ class UserResource(ModelResource):
             if old_avatar and os.path.exists(old_avatar.path):
                 os.remove(old_avatar.path)
             xmpp_client.syncProfile(user_to_query)
-            return createGeneralResponse('OK', 'avatar uploaded.' , {"avatar":user_to_query.avatar.url})
+            user_resource = UserResource()
+            ur_bundle = user_resource.build_bundle(obj=user_to_query)
+            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', 'avatar uploaded.' , dic)
         elif request.method == 'DELETE':
             raise NotImplementedError
                
@@ -737,7 +762,7 @@ class MealResource(ModelResource):
             raise
     
     class Meta:
-        queryset = Meal.get_default_upcomming_meals()
+        queryset = Meal.objects.all()
         filtering = {'type': ALL,'start_date':ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
@@ -828,26 +853,30 @@ def weibo_user_login(request):
        
 def mobile_user_login(request):
     if request.method == 'POST':
-        return createGeneralResponse('NOK', "Currently only logging in from sina weibo is possible")
-#        username = request.POST.get('username', '')
-#        password = request.POST.get('password', '')
-#        user = auth.authenticate(username=username, password=password)
-#        if user is not None and user.is_active:
-#            auth.login(request, user)
+#        return createGeneralResponse('NOK', "Currently only logging in from sina weibo is possible")
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
 #            user_resource = UserResource()
 #            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
 #            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
 #            dic = json.loads(serialized)
-#            dic['status'] = 'OK'
-#            dic['info'] = "You've logged in"
-#            return HttpResponse(json.dumps(dic), content_type ='application/json')
-#        else:
-#            return createGeneralResponse('NOK', "Incorrect username or password")
+            dic = {}
+            dic['status'] = 'OK'
+            dic['info'] = "You've logged in"
+            return HttpResponse(json.dumps(dic), content_type ='application/json')
+        else:
+            return createGeneralResponse('NOK', "Incorrect username or password")
     else:
         raise # not used by mobile client
     
 def mobile_user_logout(request):
     if request.method == 'POST':
+        profile = request.user.get_profile()
+        profile.apns_token = ""
+        profile.save()
         logout(request)
         return createGeneralResponse('OK',"You've logged out.")
         # return HttpResponse("Hello world") # there is no response from the server even the code is so simple, might be bug of dotcloud

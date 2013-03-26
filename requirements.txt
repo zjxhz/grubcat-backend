@@ -6,7 +6,7 @@ pil
 easy_thumbnails
 mimeparse
 python-dateutil
-django-tastypie
+django-tastypie==0.9.11
 cssmin
 jsmin
 south
