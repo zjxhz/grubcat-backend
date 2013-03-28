@@ -161,7 +161,7 @@ class UserTagResource(ModelResource):
     def users(self, request, **kwargs):
         user_tag = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
         if request.method == 'GET':
-            return get_my_list(SimpleUserResource(), user_tag.tagged_users(), request )
+            return get_my_list(UserResource(), user_tag.tagged_users(), request )
         else:
             raise
                     
