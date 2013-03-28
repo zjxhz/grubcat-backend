@@ -451,6 +451,9 @@ class UserLocation(models.Model):
 class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
 
+    def tagged_users(self):
+        return [tagged_user.content_object for tagged_user in self.items.all()[:50] ]
+        
     class Meta:
         db_table = u'user_tag'
 
