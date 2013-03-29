@@ -1119,7 +1119,6 @@ def meal_created(sender, instance, created, **kwargs):
         host = meal.host
         node_name = "/meal/%d/participants" % meal.id
         pubsub.createNode(host, node_name)
-#        pubsub.subscribe(user_profile, node_name)  
 
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
@@ -1133,12 +1132,15 @@ def meal_joined(sender, instance, created, **kwargs):
         else:
             event = u"参加饭局"
             
-        
         followee_join_meal_node = "/user/%d/meals" % participant.id
         payload = json.dumps( {"meal":meal.id, 
                                "participant":participant.id, 
                                "message":u"%s%s：%s" % (participant.name, event, meal.topic),
-                                "event":event, } )
+                                "event":event,
+                                "avatar":participant.medium_avatar,
+                                "name": participant.name,
+                                "topic": meal.topic,
+                                "meal_photo":meal.photo} )
         pubsub.publish(participant, followee_join_meal_node, payload )
         if meal.host and meal.host.id == participant.id:
             return # host does not publish meal events to participants and he has subscribed the events already when he created the meal
