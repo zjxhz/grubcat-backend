@@ -1130,7 +1130,7 @@ def meal_joined(sender, instance, created, **kwargs):
         if meal.host and meal.host.id == participant.id:
             event = u"发起了饭局"
         else:
-            event = u"参加饭局"
+            event = u"参加了饭局"
             
         followee_join_meal_node = "/user/%d/meals" % participant.id
         payload = json.dumps( {"meal":meal.id, 
@@ -1162,6 +1162,13 @@ def user_visited(sender, instance, created, **kwargs):
 def photo_uploaded(sender, instance, created, **kwargs):
     if created:
         node_name = "/user/%d/photos" % instance.user.id
-        payload = json.dumps({"user":instance.user.id, "photo_id":instance.id, "photo_url":instance.photo.url, \
-                              "message":u"%s上传了新的照片" % instance.user.name})
+        event = u"上传了一张照片"
+        payload = json.dumps({"user":instance.user.id, 
+                              "photo_id":instance.id, 
+                              "photo_url":instance.photo.url,
+                              "message":u"%s%s" % (instance.user.name, event),
+                              "event": event,
+                              "avatar":instance.user.medium_avatar,
+                              "name": instance.user.name,
+                              "photo":instance.photo.url})
         pubsub.publish(instance.user, node_name, payload)
