@@ -1140,7 +1140,7 @@ def meal_joined(sender, instance, created, **kwargs):
                                 "avatar":participant.medium_avatar,
                                 "name": participant.name,
                                 "topic": meal.topic,
-                                "meal_photo":meal.photo} )
+                                "meal_photo":meal.big_cover_url} )
         pubsub.publish(participant, followee_join_meal_node, payload )
         if meal.host and meal.host.id == participant.id:
             return # host does not publish meal events to participants and he has subscribed the events already when he created the meal
