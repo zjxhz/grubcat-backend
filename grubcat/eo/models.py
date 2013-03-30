@@ -451,6 +451,9 @@ class UserLocation(models.Model):
 class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
 
+    def tagged_users(self):
+        return [tagged_user.content_object for tagged_user in self.items.all()[:50] ]
+        
     class Meta:
         db_table = u'user_tag'
 
@@ -1109,30 +1112,41 @@ def user_unfollowed(sender, instance, **kwargs):
     
 post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
+@receiver(post_save, sender=Meal, dispatch_uid="meal_created")
 def meal_created(sender, instance, created, **kwargs):
     if created:
         meal = instance
         host = meal.host
         node_name = "/meal/%d/participants" % meal.id
         pubsub.createNode(host, node_name)
-#        pubsub.subscribe(user_profile, node_name)  
-post_save.connect(meal_created, sender=Meal, dispatch_uid="meal_created")
 
+@receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
         meal_participant = instance
         meal = meal_participant.meal
         participant = meal_participant.userprofile;
         
-        if meal.host and meal.host.id == participant.id: # already published when the host created the meal
-            return
-        meal_participant_node = "/meal/%d/participants" % meal.id
+        if meal.host and meal.host.id == participant.id:
+            event = u"发起了饭局"
+        else:
+            event = u"参加了饭局"
+            
         followee_join_meal_node = "/user/%d/meals" % participant.id
-        payload = json.dumps( {"meal":meal.id, "participant":participant.id, "message":u"%s参加了饭局：%s" % (participant.name, meal.topic) } )
-        pubsub.publish(meal.host, meal_participant_node, payload) 
+        payload = json.dumps( {"meal":meal.id, 
+                               "participant":participant.id, 
+                               "message":u"%s%s：%s" % (participant.name, event, meal.topic),
+                                "event":event,
+                                "avatar":participant.medium_avatar,
+                                "name": participant.name,
+                                "topic": meal.topic,
+                                "meal_photo":meal.big_cover_url} )
         pubsub.publish(participant, followee_join_meal_node, payload )
+        if meal.host and meal.host.id == participant.id:
+            return # host does not publish meal events to participants and he has subscribed the events already when he created the meal
+        meal_participant_node = "/meal/%d/participants" % meal.id
+        pubsub.publish(meal.host, meal_participant_node, payload) 
         pubsub.subscribe(participant, meal_participant_node) #TODO how about quit the meal
-post_save.connect(meal_joined, sender=MealParticipants, dispatch_uid="meal_joined")
 
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
@@ -1148,6 +1162,13 @@ def user_visited(sender, instance, created, **kwargs):
 def photo_uploaded(sender, instance, created, **kwargs):
     if created:
         node_name = "/user/%d/photos" % instance.user.id
-        payload = json.dumps({"user":instance.user.id, "photo_id":instance.id, "photo_url":instance.photo.url, \
-                              "message":u"%s上传了新的照片" % instance.user.name})
+        event = u"上传了一张照片"
+        payload = json.dumps({"user":instance.user.id, 
+                              "photo_id":instance.id, 
+                              "photo_url":instance.photo.url,
+                              "message":u"%s%s" % (instance.user.name, event),
+                              "event": event,
+                              "avatar":instance.user.medium_avatar,
+                              "name": instance.user.name,
+                              "photo":instance.photo.url})
         pubsub.publish(instance.user, node_name, payload)
