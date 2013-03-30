@@ -1099,7 +1099,13 @@ def user_followed(sender, instance, created, **kwargs):
     if created:
         followee = instance.to_person
         follower = instance.from_person
-        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, "message": u"%s关注了你" % follower.name}))
+        event = u'关注了你'
+        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, 
+                                                                                 "message": u"%s%s" % (follower.name, event),
+                                                                                 "event": event,
+                                                                                  "avatar":follower.medium_avatar,
+                                                                                  "name": follower.name,
+                                                                                  }))
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
         pubsub.subscribe(follower, "/user/%d/photos" % followee.id)
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
