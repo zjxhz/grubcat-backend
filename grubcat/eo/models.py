@@ -1155,7 +1155,13 @@ def user_visited(sender, instance, created, **kwargs):
         visitor = instance.from_person
         if visitor.id != instance.to_person.id:
             node_name = "/user/%d/visitors" % instance.to_person.id
-            payload = json.dumps({"visitor":visitor.id, "message":u"%s查看了你的资料" % visitor.name})
+            event = u"查看了你的个人资料"
+            payload = json.dumps({"visitor":visitor.id, 
+                                  "message":u"%s%s" % (visitor.name, event),
+                                  "event": event,
+                                  "avatar":visitor.medium_avatar,
+                                  "name": visitor.name,
+                                  })
             pubsub.publish(instance.to_person, node_name, payload)
 
 @receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
