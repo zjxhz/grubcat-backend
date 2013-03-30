@@ -1182,5 +1182,5 @@ def photo_uploaded(sender, instance, created, **kwargs):
                               "event": event,
                               "avatar":instance.user.medium_avatar,
                               "name": instance.user.name,
-                              "photo":instance.photo.url})
+                              "photo":instance.photo_thumbnail})
         pubsub.publish(instance.user, node_name, payload)
