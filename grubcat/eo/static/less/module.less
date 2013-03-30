@@ -298,65 +298,6 @@ a.user-img-wrapper, div.empty-user-wrapper {
   }
 }
 
-#menu {
-}
-
-#menu-popup.ui-widget-content {
-  background-color: white;
-}
-
-#menu-popup .ribbon-menu {
-  position: relative;
-  width: 400px;
-  height: 41px;
-  margin-top: 10px;
-  background: #8DC641;
-  margin-left: 4px;
-  -webkit-box-shadow: inset 41px 0 19px -38px rgba(0, 0, 0, 0.6);
-}
-
-#menu-popup .ribbon-right {
-  width: 15px;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  right: -15px;
-  background: url("https://d1gwxpes5z0r7f.cloudfront.net/assets/twopointoh/ribbons/green_ribbon_right-8bcf780b22c077dbe61e227fecf905d1.gif") no-repeat;
-}
-
-#menu-popup .ribbon-title {
-  position: relative;
-  top: 10px;
-  text-transform: none;
-  font-size: 20px;
-  padding: 0 30px 0 30px;
-  color: white;
-  font-family: georgia, serif;
-  font-style: italic;
-}
-
-#menu-popup .content {
-  padding: 5px 30px 0 30px;
-  font-size: 15px;
-  color: #666;
-/*width: 500px;*/
-}
-
-#menu-popup .content h3 {
-  color: #222;
-  font-size: 16px;
-  padding: 10px 0 5px 0;
-  font-style: normal;
-  clear: right;
-}
-
-#menu-popup .content  p {
-  margin-top: 0;
-  font-size: 14px;
-  padding-left: 5px;
-  clear: right;
-}
-
 .dish-pic {
   float: left;
   clear: left;
@@ -753,7 +694,6 @@ dl.menu-items {
   background-color: #ff551e;
   padding: 0px 7px;
   text-align: center;
-  margin: 15px 0px;
   font-size: 12px;
 }
 //#chat related
@@ -789,15 +729,16 @@ dl.menu-items {
       height: 50px;
       margin-bottom: -1px;
       padding: 6px 7px;
+      position: relative;
       .clearfix;
       &.current{
         background-color: #eee;
       }
       &.online .nickname {
-        color: green;
+//        color: green;
       }
       &.offline .nickname {
-        color: grey;
+        color: green;
       }
 
       .avatar{
@@ -806,13 +747,32 @@ dl.menu-items {
           .square(50px);
         }
       }
-      .nickname{
+       .nickname{
         float: left;
         font-size: 14px;
         height: 21px;
-        margin: 15px 4px 15px 10px;
+        margin: 4px 4px 0px 10px;
         overflow: hidden;
         width: 83px;
+         color: green;
+      }
+      .last-message{
+        float: left;
+        font-size: 12px;
+        height: 21px;
+        width: 90px;
+        width: 122px;
+        color: grey;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: normal;
+        white-space: nowrap;
+        margin: 5px 4px 0 10px;
+      }
+      .unread-count{
+        position: absolute;
+        left: 45px;
+        top: 2px;
       }
     }
   }
@@ -837,19 +797,18 @@ dl.menu-items {
       margin: 5px 20px;
     }
     .chat-editor{
-      padding: 20px 20px;
+      padding: 10px 20px;
     }
 
     .chat-input{
       margin: 0 20px 0 0;
       width: 78%;
-      height: 20px;
     }
 
     .btn-send{
       width: 70px;
     }
-    .chat-item-list{
+    .message-list{
       overflow: auto;
       height: 470px;
     }
@@ -860,6 +819,33 @@ dl.menu-items {
         float: left;
         .square(38px);
       }
+      .message-time-wrapper{
+        margin: 10px auto;
+        height: 20px;
+        text-align: center;
+        .message-time{
+          color: #888;
+          position: relative;
+          padding: 0 30px;
+          display: inline-block;
+        }
+        .message-time{
+          _display:inline;
+        }
+        .time-span{
+          width: 25px;
+          background: #B4B8BD;
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          &.left{
+            left: 0;
+          }
+          &.right{
+            right: 0;
+          }
+        }
+      }
       .message-content{
         position: relative;
         .clearfix();
@@ -869,7 +855,7 @@ dl.menu-items {
       .message-text{
         float: left;
         word-wrap: break-word;
-        max-width: 400px;
+        max-width: 200px;
         .border-radius(5px);
         min-width: 12px;
         min-height: 20px;
@@ -926,7 +912,7 @@ dl.menu-items {
         }
         .message-arrow:after{
           top: -5px;
-          left: -7px;
+          left: -6px;
           border-left-color: #F5F5F5;
           border-right-color: transparent;
         }

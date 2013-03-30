@@ -28,6 +28,7 @@
                 show: true
             })
         }
+        return false;
     })
 
     if ($("#upload-photo-wrapper")[0]) {

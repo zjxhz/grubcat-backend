@@ -60,52 +60,52 @@ restaurant_admin_css = Bundle(
 )
 
 #js below
-jquery_js = Bundle('js/jquery-1.7.2.min.js', output='gen/jquery-1.7.2.%(version)s.js')
+jquery_js = Bundle('js/jquery-1.7.2.js', output='gen/jquery-1.7.2.%(version)s.js', filters="yui_js")
 
-jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='jsmin')
+jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='yui_js')
 
 noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
                  'js/noty/layouts/center.js', 'js/noty/thems/default.js',
-                 output='gen/jquery-noty.%(version)s.js', filters='jsmin')
+                 output='gen/jquery-noty.%(version)s.js', filters='rjsmin')
 # 'js/jquery.lionbars.0.3.js',
-chat_js = Bundle('js/underscore-min.js', 'js/backbone-min.js', 'js/chat/iso8601_support.js',
-                 'js/chat/strophe.min.js',
+chat_js = Bundle('js/underscore-1.4.4.js', 'js/backbone-1.0.0.js', 'js/chat/iso8601_support.js',
+                 'js/chat/strophe.js',
                  'js/chat/strophe.rsm.js', 'js/chat/strophe.chatstates.js', 'js/chat/strophe.archive.js',
                  'js/chat/strophe.roster.js', 'js/chat/strophe.messaging.js', 'js/chat/strophe.serverdate.js',
                  'js/chat/chat.js',
-                 # filters='jsmin',
+                 filters='yui_js',
                  output="gen/chat.%(version)s.js")
-base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.min.js', noty_js,
+base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', noty_js,
                  output="gen/base.%(version)s.js")
 
-base_main_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.min.js', 'js/jquery.lazyload.min.js', filters='jsmin',
+base_main_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', 'js/jquery.lazyload.js', filters='yui_js',
                       output="gen/base.main.%(version)s.js")
 
-module_js = Bundle('js/module.js', filters='jsmin', output="gen/module.%(version)s.js")
-auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='jsmin', output="gen/autosuggest.%(version)s.js")
+module_js = Bundle('js/module.js', filters='yui_js', output="gen/module.%(version)s.js")
+auto_suggest_js = Bundle('js/jquery.autoSuggest.js', filters='yui_js', output="gen/autosuggest.%(version)s.js")
 
 water_fall_js = Bundle(
-    'js/jquery.infinitescroll.js', 'js/jquery.masonry.js', 'js/modernizr-transitions.js', filters='jsmin',
+    'js/jquery.infinitescroll.js', 'js/jquery.masonry.js', 'js/modernizr-transitions.js', filters='yui_js',
     output='gen/water-fall.%(version)s.js'
 )
-jquery_form_js = Bundle('js/jquery.form.js', filters='jsmin', output='gen/jquery.form.%(version)s.js')
-validate_js = Bundle('js/jqBootstrapValidation.js', filters='jsmin', output='gen/validate.%(version)s.js')
+jquery_form_js = Bundle('js/jquery.form.js', filters='yui_js', output='gen/jquery.form.%(version)s.js')
+validate_js = Bundle('js/jqBootstrapValidation.js', filters='yui_js', output='gen/validate.%(version)s.js')
 restaurant_admin_js = Bundle(
-    'js/restaurant-admin.js', filters='jsmin', output='gen/restaurant-admin.%(version)s.js'
+    'js/restaurant-admin.js', filters='yui_js', output='gen/restaurant-admin.%(version)s.js'
 )
 create_meal_js = Bundle('js/bootstrap/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
-                        validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='jsmin',
+                        validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='yui_js',
                         output="gen/create-meal.%(version)s.js")
 
 jquery_ajax_bootstrap_js = Bundle(
-    'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='jsmin',
+    'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='yui_js',
     output='gen/jquery.ajax.bootstrap.%(version)s.js'
 )
 
-jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='jsmin',
+jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='yui_js',
                       output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
 
-image_cropping_js = Bundle('js/jquery.Jcrop.js', 'js/image_cropping.js', filters='jsmin',
+image_cropping_js = Bundle('js/jquery.Jcrop.js', 'js/image_cropping.js', filters='yui_js',
                            output='gen/iamge-cropping.%(version)s.js')
 
 register('common_css', common_css)

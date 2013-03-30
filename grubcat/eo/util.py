@@ -162,4 +162,8 @@ class PubSub(object):
         iq = xmpp.protocol.Iq('set', to = settings.XMPP_PUBSUB_SERVICE)
         iq.NT.pubsub['xmlns']=xmpp.protocol.NS_PUBSUB
         return iq
-pubsub = PubSub()        
+pubsub = PubSub()
+
+
+def chat_context_processor(request):
+    return {"CHATSERVER": settings.CHATSERVER, "CHATDOMAIN": settings.CHATDOMAIN}

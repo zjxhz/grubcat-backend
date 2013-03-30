@@ -8,7 +8,7 @@ mimeparse
 python-dateutil
 django-tastypie==0.9.11
 cssmin
-jsmin
+yuicompressor
 south
 webassets
 django_assets

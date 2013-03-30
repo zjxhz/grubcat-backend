@@ -149,7 +149,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages"
+    "django.contrib.messages.context_processors.messages",
+    "eo.util.chat_context_processor"
     )
 
 #from easy_thumbnails.conf import settings as thumbnail_settings
@@ -181,8 +182,8 @@ ASSETS_ROOT = r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
 #30minutes
 PAY_OVERTIME = 30
 
-
-
+CHATSERVER = "http://www.fanjoin.com/http-bind/"
+CHATDOMAIN = "fanjoin.com"
 
 
 

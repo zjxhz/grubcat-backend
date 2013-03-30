@@ -82,7 +82,8 @@
         {% endblock %}
     </div>
 
-    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.get_profile.weibo_access_token }}"></div>
+    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.get_profile.weibo_access_token }}"
+            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
     {% block footer %}
         <div id="footer"></div>
     {% endblock %}
