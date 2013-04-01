@@ -93,7 +93,7 @@ class RelationshipAdmin(admin.ModelAdmin):
     
     def resend_message(self, request, queryset):
         for relationship in queryset:
-            user_followed(Relationship, relationship.from_person, True)
+            user_followed(Relationship, relationship, True)
         self.message_user(request, "成功发送用户关注消息!")
 
     resend_message.short_description = u"重新发送用户关注消息"
@@ -104,7 +104,7 @@ class VisitorAdmin(admin.ModelAdmin):
     
     def resend_message(self, request, queryset):
         for visitor in queryset:
-            user_visited(Visitor, visitor.from_person, True)
+            user_visited(Visitor, visitor, True)
         self.message_user(request, "成功发送用户访问消息!")
 
     resend_message.short_description = u"重新发送用户访问消息"
@@ -115,7 +115,7 @@ class UserPhotoAdmin(admin.ModelAdmin):
     
     def resend_message(self, request, queryset):
         for up in queryset:
-            photo_uploaded(UserPhoto, up.user, True)
+            photo_uploaded(UserPhoto, up, True)
         self.message_user(request, "成功发送用户上传照片消息!")
 
     resend_message.short_description = u"重新发送用户上传照片消息"
