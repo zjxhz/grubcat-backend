@@ -428,6 +428,8 @@ class Relationship(models.Model):
     class Meta:
         db_table = u'relationship'
         unique_together = ('from_person', 'to_person')
+        verbose_name = u'用户关系'
+        verbose_name_plural = u'用户关系'
 
 class Visitor(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name="host")
@@ -438,6 +440,8 @@ class Visitor(models.Model):
     class Meta:
         db_table = u'visitor'
         unique_together = ('from_person', 'to_person')
+        verbose_name = u'用户访问'
+        verbose_name_plural = u'用户访问'
     
 class UserLocation(models.Model):
     lat = models.FloatField()
@@ -817,6 +821,8 @@ class UserPhoto(models.Model):
 
     class Meta:
         db_table = u'user_photo'
+        verbose_name = u'用户照片'
+        verbose_name_plural = u'用户照片'
 
 
 class UserMessage(models.Model):
@@ -1003,9 +1009,15 @@ class Meal(models.Model):
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
     userprofile = models.ForeignKey(UserProfile)
+    
+    def __unicode__(self):
+        return u"%s参加了饭局%s" %(self.userprofile, self.meal)
+        
     class Meta:
         db_table = u'meal_participants'
         ordering = ['id',]
+        verbose_name = u'饭局参加者'
+        verbose_name_plural = verbose_name
     
 class Comment(models.Model):
     from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)

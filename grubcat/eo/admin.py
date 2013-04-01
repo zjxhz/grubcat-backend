@@ -1,10 +1,13 @@
 #coding=utf-8
 from ajax_select.admin import AjaxSelectAdmin
-import datetime
 from django.contrib import admin
+from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
+    DishItem, DishCategoryItem, GroupComment, TransFlow
+from grubcat.eo.models import meal_joined, MealParticipants, user_followed, \
+    Relationship, user_visited, Visitor, photo_uploaded, UserPhoto
 from image_cropping.admin import ImageCroppingMixin
-from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, DishItem, DishCategoryItem, GroupComment, TransFlow
 from models import Group, GroupCategory, UserProfile, ImageTest
+import datetime
 
 class UserProfileAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id','name','weibo_id','avatar','cropping')
@@ -73,7 +76,50 @@ class GroupCommentAdmin(admin.ModelAdmin):
 class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
     pass
 
+class MealParticipantsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'userprofile', 'meal')
+    actions = ['resend_message']
+    
+    def resend_message(self, request, queryset):
+        for participant in queryset:
+            meal_joined(MealParticipants, participant, True)
+        self.message_user(request, "成功发送加入饭局消息!")
 
+    resend_message.short_description = u"重新发送加入饭局消息"
+    
+class RelationshipAdmin(admin.ModelAdmin):
+    list_display = ('id', 'from_person', 'to_person')
+    actions = ['resend_message']
+    
+    def resend_message(self, request, queryset):
+        for relationship in queryset:
+            user_followed(Relationship, relationship.from_person, True)
+        self.message_user(request, "成功发送用户关注消息!")
+
+    resend_message.short_description = u"重新发送用户关注消息"
+    
+class VisitorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'from_person', 'to_person')
+    actions = ['resend_message']
+    
+    def resend_message(self, request, queryset):
+        for visitor in queryset:
+            user_visited(Visitor, visitor.from_person, True)
+        self.message_user(request, "成功发送用户访问消息!")
+
+    resend_message.short_description = u"重新发送用户访问消息"
+    
+class UserPhotoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'photo')
+    actions = ['resend_message']
+    
+    def resend_message(self, request, queryset):
+        for up in queryset:
+            photo_uploaded(UserPhoto, up.user, True)
+        self.message_user(request, "成功发送用户上传照片消息!")
+
+    resend_message.short_description = u"重新发送用户上传照片消息"
+    
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(TransFlow, TransFlowAdmin)
@@ -87,4 +133,8 @@ admin.site.register(GroupCategory)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(GroupComment, GroupCommentAdmin)
 admin.site.register(ImageTest,ImageTestAdmin)
+admin.site.register(MealParticipants, MealParticipantsAdmin)
+admin.site.register(Relationship, RelationshipAdmin)
+admin.site.register(Visitor, VisitorAdmin)
+admin.site.register(UserPhoto, UserPhotoAdmin)
 
