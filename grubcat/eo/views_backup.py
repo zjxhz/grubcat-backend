@@ -4,16 +4,13 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import  reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.views.generic.edit import  UpdateView
-from eo.forms import  UploadFileForm
+from django.http import HttpResponse
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order,\
     BestRatingDish, RestaurantTag, Region, Relationship, UserMessage, Meal, MealInvitation
 from grubcat.eo.forms import *
-import simplejson
 import sys
+import json
+
 from django.conf import settings
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
@@ -31,7 +28,7 @@ def createGeneralResponse(status, message, extra_dict=None):
     response = {'status': status, 'info': message}
     if extra_dict:
         response.update(extra_dict)
-    return HttpResponse(simplejson.dumps(response))
+    return HttpResponse(json.dumps(response))
 
 # get distance in meter, code from google maps
 def getDistance( lng1, lat1, lng2, lat2):
@@ -50,8 +47,8 @@ def getDistance( lng1, lat1, lng2, lat2):
 def modelToDict(query_set, relations=None):
     serializer = serializers.get_serializer("json")()
     if relations:
-        return simplejson.loads(serializer.serialize(query_set, relations=relations))
-    return simplejson.loads(serializer.serialize(query_set))
+        return json.loads(serializer.serialize(query_set, relations=relations))
+    return json.loads(serializer.serialize(query_set))
 
 
 def restaurantList(request):
@@ -80,7 +77,7 @@ def get_restaurant(request, restaurant_id):
         jsonR['fields']['good_rating_percentage'] = -1
         jsonR['fields']['comments'] = []
         jsonR['fields']['recommended_dishes'] = []
-    response.write(simplejson.dumps(jsonR, ensure_ascii=False))
+    response.write(json.dumps(jsonR, ensure_ascii=False))
     return response
 
 
@@ -140,7 +137,7 @@ def get_restaurant_list_by_geo(request):
 
 def login_required_response(request):
     response = {"status": "NOK", "info": "You were not logged in"}
-    return HttpResponse(simplejson.dumps(response))
+    return HttpResponse(json.dumps(response))
 
 
 def order_last_modified(request, order_id):
@@ -171,7 +168,7 @@ def favorite_restaurant(request, id):
     elif request.method == 'GET':
         response['status'] = 'NOK'
         response['info'] = 'GET is not supported'
-    return HttpResponse(simplejson.dumps(response, ensure_ascii=False))
+    return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 
 def favorite_restaurants(request):
@@ -198,7 +195,7 @@ def restaurant_rating(request, restaurant_id):
     elif request.method == 'POST':
         if not request.user.is_authenticated():
             return login_required_response(request)
-        data = simplejson.loads(request.raw_post_data)
+        data = json.loads(request.raw_post_data)
         comments = data['comments']
         rating = float(data['rating'])
         averageCost = float(data['average_cost'])

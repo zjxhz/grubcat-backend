@@ -5,7 +5,6 @@ from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
-from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -14,7 +13,6 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-import simplejson
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
@@ -354,7 +352,7 @@ def get_user_info(request):
             profile = UserProfile.objects.filter(user__username=username).select_related("user")[0]
             result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
                       'profileUrl': profile.get_absolute_url()}
-        return HttpResponse(simplejson.dumps(result), content_type='application/json', )
+        return HttpResponse(json.dumps(result), content_type='application/json', )
 
 
 #User related
