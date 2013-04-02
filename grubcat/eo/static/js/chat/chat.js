@@ -8,7 +8,7 @@ var myTemplate = {
         '<% if( typeof body != "undefined" ) { %><div class="last-message"><%= body %></div><% } %>',
     tplChatBox: '<div class="chat-title"><%= name %></div>' +
         '            <div class="chat-message-container">' +
-        '                <div class="message-list"></div>' +
+        '                <div class="message-list"><a class="more-history" href="#">查看更多消息</a></div>' +
         '           <div class="chat-status">对方正在输入...</div>' +
         '       </div>' +
         '   <div class="chat-editor">' +
@@ -34,7 +34,7 @@ $(document).bind('connect', function (ev, data) {
     var conn = new Strophe.Connection(chatServer);
 
     conn.xmlInput = function (elem) {
-        if($(elem).find("message")[0]){
+        if($(elem).find("chat")[0]){
             chatApp.debug(elem)
         }
     }
@@ -66,7 +66,9 @@ var Contact = Backbone.Model.extend({
         isTyping: false,
         unReadCount: 0,
         current: false, // is current chat user
-        avatarUrl: $chatData.data("default-avatar")
+        avatarUrl: $chatData.data("default-avatar"),
+        hasMoreUnReadMessages: true,
+        hasMoreReadMessages: true
         //other attributes, profileUrl,tags
     },
 
@@ -91,33 +93,40 @@ var Contact = Backbone.Model.extend({
         this.messages.add(msg);
     },
 
+    retrieveUnReadMessages: function(){
+        var before = this.messages.length > 0 ? this.messages.first().get("timestamp").getTime() : ""
+        var user = this
+        this.retrieveMessages(before, function () {
+            if (user.get("hasMoreUnReadMessages")) {
+                user.retrieveUnReadMessages()
+            }
+        })
+    },
 
-    retrieveMessages: function(before){
-        if(!before){
-            before = "";
-        }
-        var user = this;
-        var max = 5;
-        chatApp.connection.archive.retrieveMessages(this.get("jid"), new Strophe.RSM({max:max, before:before}), function(messages){
-            var isRetrieveAgain = messages.length == max;
-            messages.reverse()
-            _.each(messages, function (oldMsg) {
+    retrieveMessages: function(before, callback){
+        var user = this, max = 10, rsm = new Strophe.RSM({max: max, before: before})
+        chatApp.connection.archive.retrieveMessages(this.get("jid"), rsm , function(messages, rsm, hasMoreMessages){
+            var hasMoreUnReadMessages = hasMoreMessages;
+            _.each(messages, function (oldMsg) { //from old to new
                 var msg = new Message({
                     from: Strophe.getNodeFromJid(oldMsg.from),
                     to: Strophe.getNodeFromJid(oldMsg.to),
                     body: oldMsg.body,
-                    timestamp: oldMsg.timestamp
+                    timestamp: oldMsg.timestamp,
+                    isRead: oldMsg.isRead
                 })
-                if (oldMsg.isRead || msg.sender == chatApp.myProfile) {
-                    isRetrieveAgain = false;
-                    return; // currently just show unread msgs, don't show history msgs which are read
+                if (hasMoreUnReadMessages && msg.sender == chatApp.myProfile || oldMsg.isRead) {
+                    hasMoreUnReadMessages = false;
                 }
-                msg.sender && msg.sender.addMessage(msg);
+                if (msg.isIn() && msg.sender) {
+                    msg.sender.addMessage(msg);
+                } else if (!msg.isIn() && msg.receiver) {
+                    msg.receiver.addMessage(msg);
+                }
             })
-            if ( isRetrieveAgain) {
-                before = messages[0].timestamp.valueOf();
-                user.retrieveMessages( before);
-            }
+            user.set("hasMoreUnReadMessages", hasMoreUnReadMessages)
+            user.set("hasMoreReadMessages", hasMoreMessages)
+            callback && callback()
         });
     },
 
@@ -296,6 +305,17 @@ var Message = Backbone.Model.extend({
         this.sender = chatApp.contactList.get(this.get("from")) || chatApp.myProfile
         this.receiver = chatApp.contactList.get(this.get("to"))|| chatApp.myProfile
     },
+    shouldShowTime: function(){
+        var list = this.collection, index = list.indexOf(this), previousMsg, ifShowTime = false;
+        if(index > 0){
+            previousMsg = list.at(index-1);
+            (this.get("timestamp")-previousMsg.get("timestamp"))/1000/60 >= 15 && (ifShowTime = true); // show time if time gaps > 10 minutes
+        } else if( index == 0){
+            ifShowTime = true;
+        }
+        return ifShowTime
+
+    },
 
     isIn: function(){
         return this.get("from") != chatApp.myProfile.id
@@ -308,14 +328,7 @@ var MessageCollection = Backbone.Collection.extend({
     model: Message,
     initialize:function(){
         this.on("add",function(msg){
-            var index = this.indexOf(msg), previousMsg, ifShowTime = false;
-            if(index > 0){
-                previousMsg = this.at(index-1);
-                (msg.get("timestamp")-previousMsg.get("timestamp"))/1000/60 >= 15 && (ifShowTime = true); // show time if time gaps > 10 minutes
-            } else if( index == 0){
-                ifShowTime = true;
-            }
-            if(ifShowTime){
+            if(msg.shouldShowTime()){
                 msg.set("formattedTime", this.formatTime(msg.get("timestamp")))
             }
         })
@@ -327,7 +340,7 @@ var MessageCollection = Backbone.Collection.extend({
 
     formatTime: function(date){
         var today = new ServerDate()
-        var d1, d2, dayGap, resultTime=date.getHourMinuteSecond() + "." + date.getMilliseconds(), resultDate;
+        var d1, d2, dayGap, resultTime=date.getHourMinuteSecond() /*+ "." + date.getMilliseconds()*/, resultDate;
         d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         dayGap = Math.abs(d1 - d2)/1000/60/60/24
@@ -350,6 +363,16 @@ var MessageItemView = Backbone.View.extend({
     className: "message-item",
     template: _.template(myTemplate.tplMessageItem),
 
+    initialize: function(){
+      this.listenTo(this.model, "change:shouldScrollIntoView",function(){
+          if (this.model.get("shouldScrollIntoView")) {
+              this.el.scrollIntoView(false)
+              var $msgList = this.$el.parents(".message-list")
+//              $msgList.scrollTop( $msgList.scrollTop() + 10)
+          }
+      })
+    },
+
     render: function () {
         this.$el.html(this.template(_.extend({}, this.model.attributes, this.model.sender.attributes))).addClass(this.model.isIn() ? "others": "me")
         return this;
@@ -367,20 +390,23 @@ var ChatBoxView = Backbone.View.extend({
     template: _.template(myTemplate.tplChatBox),
 
     initialize: function () {
-        this.listenTo(this.model, "change:current change:isTyping change:name", this.render);
-        this.listenTo(this.model.messages, "add", function(msg, msgCollection){
-            var msgItemEl = new MessageItemView({model:msg}).render().el
-            var index = msgCollection.indexOf(msg)
-            if( index == 0){
-                this.$(".message-list").prepend(msgItemEl)
-            } else {
-                this.$(".message-list .message-item:eq(" + (index-1) + ")").after(msgItemEl)
-            }
-
-            this._scrollChatToBottom()
-        });
+        this.listenTo(this.model, "change:current change:isTyping change:name change:hasMoreReadMessages change:hasMoreUnReadMessages", this.render);
+        this.listenTo(this.model.messages, "add", this.addMessageView);
         this.$el.html(this.template(this.model.attributes));
-//        this.$("textarea").autosize()
+
+    },
+
+    addMessageView: function(msg, msgCollection){
+        var msgItemEl = new MessageItemView({model:msg}).render().el
+        var index = msgCollection.indexOf(msg)
+        if( index == 0){
+            this.$(".message-list .more-history").after(msgItemEl)
+        } else {
+            this.$(".message-list .message-item:eq(" + (index-1) + ")").after(msgItemEl)
+            if(index + 1 < msgCollection.length && !msgCollection.at(index+1).shouldShowTime()){
+             this.$(".message-list .message-item:eq(" + (index+1) + ")").find(".message-time-wrapper").hide()
+            }
+        }
 
     },
 
@@ -391,9 +417,16 @@ var ChatBoxView = Backbone.View.extend({
             $mesageList[0] && this.$(".message-list").replaceWith($mesageList)
         }
 
+        if(this.model.hasChanged("hasMoreUnReadMessages") || this.model.hasChanged("hasMoreReadMessages")){
+            if(!this.model.get("hasMoreUnReadMessages") && this.model.get("hasMoreReadMessages")){
+                this.$(".more-history").show()
+            } else {
+                this.$(".more-history").hide()
+            }
+        }
+
         var show = this.model.get("current");
         if (this.model.hasChanged("current")) {
-
             if (show) {
                 this.$el.show()
                 this.$el.find(".chat-input").focus();
@@ -410,7 +443,8 @@ var ChatBoxView = Backbone.View.extend({
     events: {
         "keypress .chat-input": "keyPressed",
         "focusout .chat-input": "sendPausedStatus",
-        "click .btn-send": "sendMessage"
+        "click .btn-send": "sendMessage",
+        "click .more-history": "getMoreHistory"
     },
 
     keyPressed: function(ev){
@@ -437,6 +471,7 @@ var ChatBoxView = Backbone.View.extend({
             body: body,
             timestamp: new ServerDate()
         }))
+        this._scrollChatToBottom()
         return false;
     },
 
@@ -464,9 +499,24 @@ var ChatBoxView = Backbone.View.extend({
         }
     },
 
+    getMoreHistory: function(){
+        var currentUser = chatApp.contactList.getCurrentUser()
+        var firstMsgInView = currentUser.messages.first()
+        currentUser.retrieveMessages(currentUser.messages.first().get("timestamp").getTime(),function(){
+            currentUser.messages.at(currentUser.messages.indexOf(firstMsgInView)-1).set("shouldScrollIntoView",true)
+        })
+//        this._scrollChatToTop()
+        return false;
+    },
+
     _scrollChatToBottom: function(){
         var div = this.$(".message-list")[0];
         div.scrollTop = div.scrollHeight;
+    },
+
+    _scrollChatToTop: function(){
+        var div = this.$(".message-list")[0];
+        div.scrollTop = 0;
     }
 
 })
@@ -495,7 +545,6 @@ var chatApp = {
     isVisible: function(){
         return $("#chat-dialog").is(":visible");
     },
-
     connection: null,
 
     totalUnReadCount:0,
@@ -530,7 +579,7 @@ var chatApp = {
             }
         })
         this.contactList.each(function(contact){
-            contact.retrieveMessages();
+            contact.retrieveUnReadMessages();
         })
     },
     createContact: function(bareJID){
@@ -616,7 +665,8 @@ $(document).bind('connected', function () {
                 body: data.body,
                 timestamp: new ServerDate()
             })
-            msg.sender && msg.sender.addMessage( msg);
+            msg.sender.addMessage(msg)
+
         }
     });
 

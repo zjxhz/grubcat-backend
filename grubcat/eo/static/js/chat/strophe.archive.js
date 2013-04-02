@@ -48,6 +48,7 @@ Strophe.ArchivedCollection.prototype = {
       var responseRsm;
       var msgTimestamp;
       var chat = stanza.getElementsByTagName('chat')[0];
+      var hasMoreMessages = chat.getAttribute("more") == "1"
       var timestamp = (new Date()).setISO8601(chat.getAttribute("start"));
       var element = chat.firstChild;
       while (element) {
@@ -68,7 +69,7 @@ Strophe.ArchivedCollection.prototype = {
         }
         element = element.nextSibling;
       }
-      callback(messages, responseRsm);
+      callback(messages, responseRsm, hasMoreMessages);
     }.bind(this));
   },
 
