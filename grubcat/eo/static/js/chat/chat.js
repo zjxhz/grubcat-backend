@@ -263,6 +263,7 @@ var ContactListView = Backbone.View.extend({
             this.listenTo(contact.messages, "sort add", function(){
                 this.sortContacts()
                 this.render();
+                $("#chat-left-column").scrollTop(0)
             })
 
         }, this)
@@ -271,6 +272,7 @@ var ContactListView = Backbone.View.extend({
         this.listenTo(this.model, "change:show", function(){
             this.sortContacts()
             this.render()
+            $("#chat-left-column").scrollTop(0)
         })
         this.listenTo(this.model, "add", function (contact) {
             if ($("#no-roster-tip")[0]) {
@@ -722,8 +724,12 @@ $(window).bind("beforeunload", function(){
 });
 $(window).focus(function(){
     chatApp.isWindowFocused = true;
-    if (chatApp.isVisible() && chatApp.contactList.getCurrentUser() && chatApp.contactList.getCurrentUser().get("unReadCount") > 0) {
-        chatApp.contactListView.$el.find(".current").click();
+    try {
+
+        if (chatApp.isVisible() && chatApp.contactList.getCurrentUser() && chatApp.contactList.getCurrentUser().get("unReadCount") > 0) {
+            chatApp.contactListView.$el.find(".current").click();
+        }
+    } catch (e) {
     }
 }).blur(function(){
     chatApp.isWindowFocused = false;
@@ -733,5 +739,7 @@ $(document).bind('disconnected', function () {
     chatApp.log("dis-connected");
 });
 $(function(){
-
+    $(window).resize(function(){
+//        $("#chat-dialog").height($(window).height()-100)
+    })
 })
