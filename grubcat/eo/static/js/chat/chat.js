@@ -234,7 +234,10 @@ var ContactItemView = Backbone.View.extend({
     },
 
     openChat: function (event) {
-
+        if(!chatApp.hasAvatar()){
+            $("#no-avatar-tip").show();
+            return false;
+        }
         var beforeUser = chatApp.contactList.getCurrentUser()
         beforeUser && beforeUser.set("current", false)
 
@@ -340,7 +343,7 @@ var MessageCollection = Backbone.Collection.extend({
 
     formatTime: function(date){
         var today = new ServerDate()
-        var d1, d2, dayGap, resultTime=date.getHourMinuteSecond() /*+ "." + date.getMilliseconds()*/, resultDate;
+        var d1, d2, dayGap, resultTime=date.getHourMinute() /*+ "." + date.getMilliseconds()*/, resultDate;
         d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         dayGap = Math.abs(d1 - d2)/1000/60/60/24
@@ -555,6 +558,9 @@ var chatApp = {
         profileUrl: $chatData.data("profile-url"),
         name: $chatData.data("my-name")
     }),
+    hasAvatar: function(){
+        return this.myProfile.get("avatarUrl") != $chatData.data("defaultAvatar")
+    },
 
     isWindowFocused: false,
 
@@ -594,11 +600,15 @@ var chatApp = {
         return contact;
     },
     log: function (msg) {
-        console && console.log(msg);
+        if(typeof console != "undefined"){
+            console.log(msg);
+        }
     },
 
     debug: function (msg) {
-        console && console.log(msg);
+        if(typeof console != "undefined"){
+            console.log(msg);
+        }
     }
 }
 
@@ -699,3 +709,6 @@ $(window).focus(function(){
 $(document).bind('disconnected', function () {
     chatApp.log("dis-connected");
 });
+$(function(){
+
+})

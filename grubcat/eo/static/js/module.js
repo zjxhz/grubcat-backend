@@ -31,6 +31,15 @@
         return false;
     })
 
+    $("#chat-dialog").on("show",function(){
+        $("html").addClass("chat-app")
+        if ($("body").height() > $(window).height()) {
+            $("html").addClass("scroll")
+        }
+    }).on("hidden",function(){
+            $("html").removeClass("chat-app scroll")
+        })
+
     if ($("#upload-photo-wrapper")[0]) {
         $("#id_photo").change(function () {
             $("#id_upload_photo_form").ajaxSubmit({
@@ -146,7 +155,7 @@
         $("#profile-nav").find("li.active").removeClass("active");
         $("#" + $data.data("activeNavId")).addClass("active");
 
-        $(".btn-follow, .btn-unfollow").live('click', function () {
+        $("#profile_actions").find(".btn-follow, .btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function (data) {
                 if (data.status == "OK") {
@@ -171,8 +180,6 @@
             });
             return false;
         })
-
-
     }
 
     if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
