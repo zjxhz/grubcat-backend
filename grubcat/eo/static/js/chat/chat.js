@@ -68,7 +68,7 @@ var Contact = Backbone.Model.extend({
         current: false, // is current chat user
         avatarUrl: $chatData.data("default-avatar"),
         hasMoreUnReadMessages: true,
-        hasMoreReadMessages: true
+        hasMoreReadMessages: false
         //other attributes, profileUrl,tags
     },
 
@@ -104,7 +104,7 @@ var Contact = Backbone.Model.extend({
     },
 
     retrieveMessages: function(before, callback){
-        var user = this, max = 10, rsm = new Strophe.RSM({max: max, before: before})
+        var user = this, max = 15, rsm = new Strophe.RSM({max: max, before: before||""})
         chatApp.connection.archive.retrieveMessages(this.get("jid"), rsm , function(messages, rsm, hasMoreMessages){
             var hasMoreUnReadMessages = hasMoreMessages;
             _.each(messages, function (oldMsg) { //from old to new
@@ -267,13 +267,16 @@ var ContactListView = Backbone.View.extend({
 
         }, this)
 
-
         this.listenTo(this.model, "change", this.render)
         this.listenTo(this.model, "change:show", function(){
             this.sortContacts()
             this.render()
         })
         this.listenTo(this.model, "add", function (contact) {
+            if ($("#no-roster-tip")[0]) {
+                $("#no-roster-tip").remove()
+                $("#chat-left-column, #chat-right-column").show()
+            }
             var contactItemView = new ContactItemView({model: contact});
             this.itemViewList.push(contactItemView);
             this.sortContacts()
@@ -305,8 +308,23 @@ var Message = Backbone.Model.extend({
     },
 
     initialize: function(){
-        this.sender = chatApp.contactList.get(this.get("from")) || chatApp.myProfile
-        this.receiver = chatApp.contactList.get(this.get("to"))|| chatApp.myProfile
+        var fromUID = this.get("from"), toUID = this.get("to")
+        if(chatApp.contactList.get(fromUID)){
+            this.sender = chatApp.contactList.get(fromUID)
+        } else if(fromUID == chatApp.myProfile.id ){
+            this.sender = chatApp.myProfile
+        } else {
+            this.sender = chatApp.createContact(fromUID + chatServerDomain)
+            this.sender.retrieveUnReadMessages()
+        }
+        if(chatApp.contactList.get(toUID)){
+            this.receiver = chatApp.contactList.get(toUID)
+        } else if(toUID == chatApp.myProfile.id ){
+            this.receiver = chatApp.myProfile
+        } else {
+            this.receiver = chatApp.createContact(toUID + chatServerDomain)
+            this.receiver.retrieveUnReadMessages()
+        }
     },
     shouldShowTime: function(){
         var list = this.collection, index = list.indexOf(this), previousMsg, ifShowTime = false;
@@ -370,8 +388,6 @@ var MessageItemView = Backbone.View.extend({
       this.listenTo(this.model, "change:shouldScrollIntoView",function(){
           if (this.model.get("shouldScrollIntoView")) {
               this.el.scrollIntoView(false)
-              var $msgList = this.$el.parents(".message-list")
-//              $msgList.scrollTop( $msgList.scrollTop() + 10)
           }
       })
     },
@@ -578,6 +594,11 @@ var chatApp = {
         this.contactList = new ContactCollection(contacts);
         this.contactListView = new ContactListView({model: this.contactList})
         this.chatBoxListView = new ChatBoxListView({model: this.contactList})
+        if(contacts.length == 0){
+            $("#chat-left-column, #chat-right-column").hide()
+            $("#no-roster-tip").show()
+            return ;
+        }
         contacts.length && this.contactList.fetch({
             type: 'post',
             data: {
@@ -632,10 +653,11 @@ $(document).bind('connected', function () {
         })
         if (!chatApp.contactList.get( toUID)) {
             chatApp.createContact(toJID).retrieveMessages();
+            chatApp.connection.roster.subscribe(toJID);
         }
         chatApp.contactListView.$el.find("#contact-" + toUID).click();
         //add to roster
-        chatApp.connection.roster.subscribe(toJID);
+
         return false;
     })
 
@@ -655,7 +677,6 @@ $(document).bind('connected', function () {
             chatApp.connection.roster.subscribe(data.jid);
 
         }).on("xmpp:roster:set", function(items){
-
             //add new contacts
             _.each(items, function (item) {
                 if (item.subscription != 'remove' && !chatApp.contactList.get(Strophe.getNodeFromJid(item.jid))) {
@@ -694,8 +715,10 @@ $(document).bind('connected', function () {
 });
 
 $(window).bind("beforeunload", function(){
-    chatApp.connection.disconnect();
-    chatApp.connection = null;
+    if (chatApp.connection) {
+        chatApp.connection.disconnect();
+        chatApp.connection = null;
+    }
 });
 $(window).focus(function(){
     chatApp.isWindowFocused = true;
