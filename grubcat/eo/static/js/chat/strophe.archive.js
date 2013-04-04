@@ -55,11 +55,11 @@ Strophe.ArchivedCollection.prototype = {
         switch (element.tagName) {
         case 'to':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, Strophe.getText(element.getElementsByTagName('body')[0]), Boolean(parseInt(element.getAttribute("isRead")))));
+          messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
           break;
         case 'from':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, Strophe.getText(element.getElementsByTagName('body')[0]), Boolean(parseInt(element.getAttribute("isRead")))));
+          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
           break;
         case 'set':
           responseRsm = new Strophe.RSM({xml: element});
