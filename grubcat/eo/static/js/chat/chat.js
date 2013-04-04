@@ -5,7 +5,7 @@ var myTemplate = {
     tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"/></div>' +
         '<div class="nickname"><%= name %></div>' +
         '<div class="unread-count"><%=unReadCount%></div>' +
-        '<% if( typeof body != "undefined" ) { %><div class="last-message"><%= body %></div><% } %>',
+        '<% if( typeof body != "undefined" ) { %><div class="last-message"><%- body %></div><% } %>',
     tplChatBox: '<div class="chat-title"><%= name %></div>' +
         '            <div class="chat-message-container">' +
         '                <div class="message-list"><a class="more-history" href="#">查看更多消息</a></div>' +
@@ -20,7 +20,7 @@ var myTemplate = {
         '<div class="message-time-wrapper"><div class="message-time"><span class="time-span left"/><%=formattedTime%><span class="time-span right"/></div></div>' +
         '<% } %>' +
         '<a href="<%=profileUrl%>" target="_blank" ><img class="avatar" src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></a>' +
-        '<div class="message-content"><div class="message-text"><%=body%></div><div class="message-arrow"></div></div>'
+        '<div class="message-content"><div class="message-text"><%- body%></div><div class="message-arrow"></div></div>'
 }
 $(function () {
     $(document).trigger('connect', {
@@ -263,7 +263,6 @@ var ContactListView = Backbone.View.extend({
             this.listenTo(contact.messages, "sort add", function(){
                 this.sortContacts()
                 this.render();
-                $("#chat-left-column").scrollTop(0)
             })
 
         }, this)
@@ -272,7 +271,6 @@ var ContactListView = Backbone.View.extend({
         this.listenTo(this.model, "change:show", function(){
             this.sortContacts()
             this.render()
-            $("#chat-left-column").scrollTop(0)
         })
         this.listenTo(this.model, "add", function (contact) {
             if ($("#no-roster-tip")[0]) {
@@ -493,6 +491,7 @@ var ChatBoxView = Backbone.View.extend({
             timestamp: new ServerDate()
         }))
         this._scrollChatToBottom()
+        $("#chat-left-column").scrollTop(0)
         return false;
     },
 
@@ -699,7 +698,6 @@ $(document).bind('connected', function () {
                 timestamp: new ServerDate()
             })
             msg.sender.addMessage(msg)
-
         }
     });
 
@@ -733,13 +731,4 @@ $(window).focus(function(){
     }
 }).blur(function(){
     chatApp.isWindowFocused = false;
-})
-
-$(document).bind('disconnected', function () {
-    chatApp.log("dis-connected");
-});
-$(function(){
-    $(window).resize(function(){
-//        $("#chat-dialog").height($(window).height()-100)
-    })
 })
