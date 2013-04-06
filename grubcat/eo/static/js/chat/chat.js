@@ -6,7 +6,10 @@ var myTemplate = {
         '<div class="nickname"><%= name %></div>' +
         '<div class="unread-count"><%=unReadCount%></div>' +
         '<% if( typeof body != "undefined" ) { %><div class="last-message"><%- body %></div><% } %>',
-    tplChatBox: '<div class="chat-title"><%= name %></div>' +
+    tplChatBox: '<div class="chat-title"><a href="<%=profileUrl%>" target="_blank" >' +
+        '           <img class="avatar" src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>">' +
+        '           <span class="name"><%=name%></span></a>' +
+        '       </div>' +
         '            <div class="chat-message-container">' +
         '                <div class="message-list"><a class="more-history" href="#">查看更多消息</a></div>' +
         '           <div class="chat-status">对方正在输入...</div>' +
@@ -67,6 +70,7 @@ var Contact = Backbone.Model.extend({
         unReadCount: 0,
         current: false, // is current chat user
         avatarUrl: $chatData.data("default-avatar"),
+        profileUrl: "",
         hasMoreUnReadMessages: true,
         hasMoreReadMessages: false
         //other attributes, profileUrl,tags
@@ -290,6 +294,11 @@ var ContactListView = Backbone.View.extend({
         _.each(this.itemViewList, function (contactView) {
             this.$el.prepend(contactView.el);
         }, this);
+        this.$el.children().removeClass("first").first().addClass("first")
+        if (this.$el.children().size() == 9) {
+
+            this.$el.children().removeClass("last").last().addClass("last")
+        }
         return this;
     },
 
@@ -388,6 +397,8 @@ var MessageItemView = Backbone.View.extend({
       this.listenTo(this.model, "change:shouldScrollIntoView",function(){
           if (this.model.get("shouldScrollIntoView")) {
               this.el.scrollIntoView(false)
+              var $list = this.$el.parents(".message-list")
+              $list.scrollTop($list.scrollTop() + 55)
           }
       })
     },
@@ -523,6 +534,7 @@ var ChatBoxView = Backbone.View.extend({
         var currentUser = chatApp.contactList.getCurrentUser()
         var firstMsgInView = currentUser.messages.first()
         currentUser.retrieveMessages(currentUser.messages.first().get("timestamp").getTime(),function(){
+//            currentUser.messages.at(currentUser.messages.indexOf(firstMsgInView)-1).set("shouldScrollIntoView",true)
             currentUser.messages.at(currentUser.messages.indexOf(firstMsgInView)-1).set("shouldScrollIntoView",true)
         })
 //        this._scrollChatToTop()
@@ -732,3 +744,12 @@ $(window).focus(function(){
 }).blur(function(){
     chatApp.isWindowFocused = false;
 })
+
+//$(window).resize(function(){
+//    if($("#chat-container")){
+//        var windowHeight = $(window).height();
+//        $("#chat-dialog").height(windowHeight > 800 ? 600 :windowHeight - 100)
+//        $(".chat-message-container").height(windowHeight > 800 ? 500 :windowHeight - 200)
+//        $(".message-list").height(windowHeight > 800 ? 470 :windowHeight - 230)
+//    }
+//}).resize()
