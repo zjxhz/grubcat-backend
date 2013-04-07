@@ -537,18 +537,12 @@ var ChatBoxView = Backbone.View.extend({
 //            currentUser.messages.at(currentUser.messages.indexOf(firstMsgInView)-1).set("shouldScrollIntoView",true)
             currentUser.messages.at(currentUser.messages.indexOf(firstMsgInView)-1).set("shouldScrollIntoView",true)
         })
-//        this._scrollChatToTop()
         return false;
     },
 
     _scrollChatToBottom: function(){
         var div = this.$(".message-list")[0];
         div.scrollTop = div.scrollHeight;
-    },
-
-    _scrollChatToTop: function(){
-        var div = this.$(".message-list")[0];
-        div.scrollTop = 0;
     }
 
 })
@@ -624,6 +618,7 @@ var chatApp = {
                 ids : _.pluck(contacts, "id").join(",")
             }
         })
+        $(window).resize()
         this.contactList.each(function(contact){
             contact.retrieveUnReadMessages();
         })
@@ -759,14 +754,14 @@ $(window).resize(function(){
             $("#chat-dialog").height(630)
             $("#chat-container").height(590)
             $(".message-list").height( 470)
-        } else if(windowHeight < 500 ){
-            $("#chat-dialog").height(430)
-            $("#chat-container").height(390)
-            $(".message-list").height( 270)
+        } else if(windowHeight < 250 ){
+            $("#chat-dialog").height(180)
+            $("#chat-container").height(140)
+            $(".message-list").height( 20)
         } else {
             $("#chat-dialog").height(windowHeight - 70)
             $("#chat-container").height(windowHeight - 110)
             $(".message-list").height( windowHeight - 230)
         }
     }
-}).resize()
+})
