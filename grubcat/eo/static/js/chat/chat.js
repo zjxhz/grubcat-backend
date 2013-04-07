@@ -42,9 +42,9 @@ $(document).bind('connect', function (ev, data) {
         }
     }
     conn.xmlOutput = function (elem) {
-        if($(elem).find("retrieve")[0]){
+//        if($(elem).find("retrieve")[0]){
             chatApp.debug(elem)
-        }
+//        }
     }
 
     conn.connect(data.jid, data.password, function (status) {
@@ -465,7 +465,7 @@ var ChatBoxView = Backbone.View.extend({
             }
             this._scrollChatToBottom()
         }
-        show && this.model.get("isTyping") ? this.$el.find(".chat-status").show() : this.$el.find(".chat-status").hide();
+        show && this.model.get("isTyping") ? this.$el.find(".chat-status").css('visibility','visible') : this.$el.find(".chat-status").css('visibility','hidden');
 
         return this;
     },
@@ -598,6 +598,12 @@ var chatApp = {
     unReadMsgInterval: null,
 
     initialize: function () {
+    },
+
+    reInitConnection: function(){
+        if (!this.connection){
+
+        }
     },
 
     listContacts: function (roster) {

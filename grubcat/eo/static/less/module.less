@@ -703,7 +703,8 @@ dl.menu-items {
   .border-radius(0);
   .modal-header{
     background-color: rgba(247, 247, 247, 0.2);
-    height: 30px;
+    height: 29px;
+    border-bottom: 1px solid #BBB;
     .close{
       margin-top: 3px;
       font-size: 25px;
@@ -711,10 +712,9 @@ dl.menu-items {
   }
 }
 #chat-container {
-  border-top: 1px solid #aaa;
   background-color: rgba(247, 247, 247, 0.2);
   .clearfix();
-  height: 93%;
+  height: 590px;
   width: 100%;
   max-height: 100%;
   padding: 0px;
@@ -832,7 +832,7 @@ dl.menu-items {
       margin: 10px;
     }
     .chat-status{
-      display: none;
+      visibility: hidden;
       margin: 5px 20px;
     }
     .chat-editor{
@@ -853,8 +853,7 @@ dl.menu-items {
     }
     .message-list{
       overflow: auto;
-//      height: 470px;
-      height: 500px;
+      height: 470px;
     }
     .message-item{
       .clearfix;
