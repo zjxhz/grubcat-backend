@@ -751,11 +751,22 @@ $(window).focus(function(){
     chatApp.isWindowFocused = false;
 })
 
-//$(window).resize(function(){
-//    if($("#chat-container")){
-//        var windowHeight = $(window).height();
-//        $("#chat-dialog").height(windowHeight > 800 ? 600 :windowHeight - 100)
-//        $(".chat-message-container").height(windowHeight > 800 ? 500 :windowHeight - 200)
-//        $(".message-list").height(windowHeight > 800 ? 470 :windowHeight - 230)
-//    }
-//}).resize()
+$(window).resize(function(){
+    if($("#chat-container")){
+        var windowHeight = $(window).height();
+        chatApp.log(windowHeight)
+        if(windowHeight > 700 ){
+            $("#chat-dialog").height(630)
+            $("#chat-container").height(590)
+            $(".message-list").height( 470)
+        } else if(windowHeight < 500 ){
+            $("#chat-dialog").height(430)
+            $("#chat-container").height(390)
+            $(".message-list").height( 270)
+        } else {
+            $("#chat-dialog").height(windowHeight - 70)
+            $("#chat-container").height(windowHeight - 110)
+            $(".message-list").height( windowHeight - 230)
+        }
+    }
+}).resize()
