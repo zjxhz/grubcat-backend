@@ -10,13 +10,13 @@ var myTemplate = {
         '           <img class="avatar" src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>">' +
         '           <span class="name"><%=name%></span></a>' +
         '       </div>' +
-        '            <div class="chat-message-container">' +
-        '                <div class="message-list"><a class="more-history" href="#">查看更多消息</a></div>' +
-        '           <div class="chat-status">对方正在输入...</div>' +
+        '       <div class="chat-message-container">' +
+        '            <div class="message-list"><a class="more-history" href="#">查看更多消息</a></div>' +
+        '            <div class="chat-status">对方正在输入...</div>' +
         '       </div>' +
-        '   <div class="chat-editor">' +
+        '       <div class="chat-editor">' +
         '           <textarea type="text" class="chat-input" rows="2" ></textarea>' +
-        '       <button class="btn btn-primary btn-send">发送</button>' +
+        '           <button class="btn btn-primary btn-send">发送</button>' +
         '       </div>',
     tplMessageItem:
         '<% if(typeof formattedTime != "undefined"){  %>' +
@@ -441,9 +441,10 @@ var ChatBoxView = Backbone.View.extend({
 
     render: function () {
         if (this.model.hasChanged("name")) {
-            var $mesageList = this.$(".message-list");
+            var $mesageList = this.$(".message-list").detach();
             this.$el.html(this.template(this.model.attributes));
             $mesageList[0] && this.$(".message-list").replaceWith($mesageList)
+//            $mesageList.remove()
         }
 
         if(this.model.hasChanged("hasMoreUnReadMessages") || this.model.hasChanged("hasMoreReadMessages")){
@@ -616,6 +617,12 @@ var chatApp = {
             return new Contact({"id":Strophe.getNodeFromJid(jid) , "jid": jid});
         })
         this.contactList = new ContactCollection(contacts);
+        contacts.length && this.contactList.fetch({
+            type: 'post',
+            data: {
+                ids : _.pluck(contacts, "id").join(",")
+            }
+        })
         this.contactListView = new ContactListView({model: this.contactList})
         this.chatBoxListView = new ChatBoxListView({model: this.contactList})
         if(contacts.length == 0){
@@ -623,12 +630,7 @@ var chatApp = {
 //            $("#no-roster-tip").show()
             return ;
         }
-        contacts.length && this.contactList.fetch({
-            type: 'post',
-            data: {
-                ids : _.pluck(contacts, "id").join(",")
-            }
-        })
+
         $(window).resize()
         this.contactList.each(function(contact){
             contact.retrieveUnReadMessages();
@@ -643,6 +645,7 @@ var chatApp = {
             }
         })
         chatApp.contactList.add(contact);
+
         return contact;
     },
     log: function (msg) {
@@ -664,6 +667,17 @@ $(document).bind('connected', function () {
     chatApp.connection.roster.get().done(function (roster) {
         chatApp.listContacts(roster)
         chatApp.connection.send($pres());
+        $("#chat-dialog").on("show", function () {
+            if (chatApp.contactList.length == 0) {
+                location.href = $("#nav-user").find("a").attr("href") + "?showChatTip=1"
+                return false;
+            } else{
+                return true
+            }
+        })
+        if(chatApp.isVisible()){
+            $("#chat-dialog").trigger("show")
+        }
     })
 
     $(".btn-follow").live("click", function(){
@@ -672,14 +686,15 @@ $(document).bind('connected', function () {
     $(".btn-chat").click(function(){
         var toUID = $(this).data("uid");
         var toJID = toUID + chatServerDomain;
-        //show chat dialog
-        $("#chat-dialog").modal({
-            show: true
-        })
+
         if (!chatApp.contactList.get( toUID)) {
             chatApp.createContact(toJID).retrieveMessages();
             chatApp.connection.roster.subscribe(toJID);
         }
+        //show chat dialog
+        $("#chat-dialog").modal({
+            show: true
+        })
         chatApp.contactListView.$el.find("#contact-" + toUID).click();
         //add to roster
 
