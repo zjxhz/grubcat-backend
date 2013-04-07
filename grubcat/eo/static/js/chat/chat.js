@@ -37,9 +37,9 @@ $(document).bind('connect', function (ev, data) {
     var conn = new Strophe.Connection(chatServer);
 
     conn.xmlInput = function (elem) {
-        if($(elem).find("chat")[0]){
+//        if($(elem).find("chat")[0]){
             chatApp.debug(elem)
-        }
+//        }
     }
     conn.xmlOutput = function (elem) {
 //        if($(elem).find("retrieve")[0]){
@@ -52,6 +52,7 @@ $(document).bind('connect', function (ev, data) {
             $(document).trigger('connected');
         } else if (status === Strophe.Status.DISCONNECTED) {
             $(document).trigger('disconnected');
+            chatApp.connection = null;
         }
     });
 
@@ -108,7 +109,7 @@ var Contact = Backbone.Model.extend({
     },
 
     retrieveMessages: function(before, callback){
-        var user = this, max = 15, rsm = new Strophe.RSM({max: max, before: before||""})
+        var user = this, max = 10, rsm = new Strophe.RSM({max: max, before: before||""})
         chatApp.connection.archive.retrieveMessages(this.get("jid"), rsm , function(messages, rsm, hasMoreMessages){
             var hasMoreUnReadMessages = hasMoreMessages;
             _.each(messages, function (oldMsg) { //from old to new
@@ -334,6 +335,7 @@ var Message = Backbone.Model.extend({
             this.receiver = chatApp.createContact(toUID + chatServerDomain)
             this.receiver.retrieveUnReadMessages()
         }
+
     },
     shouldShowTime: function(){
         var list = this.collection, index = list.indexOf(this), previousMsg, ifShowTime = false;
@@ -356,35 +358,11 @@ var Message = Backbone.Model.extend({
 
 var MessageCollection = Backbone.Collection.extend({
     model: Message,
-    initialize:function(){
-        this.on("add",function(msg){
-            if(msg.shouldShowTime()){
-                msg.set("formattedTime", this.formatTime(msg.get("timestamp")))
-            }
-        })
-    },
 
     comparator: function(msg){
         return msg.get("timestamp").getTime();
-    },
-
-    formatTime: function(date){
-        var today = new ServerDate()
-        var d1, d2, dayGap, resultTime=date.getHourMinute() /*+ "." + date.getMilliseconds()*/, resultDate;
-        d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        dayGap = Math.abs(d1 - d2)/1000/60/60/24
-        if (dayGap == 0) {
-            resultDate = ""
-        } else if (dayGap == 1) {
-            resultDate = "昨天"
-        } else if (dayGap == 2){
-            resultDate = "前天"
-        }  else {
-            resultDate = date.getTwoDigitMonth() + "-" + date.getTwoDigitDate()
-        }
-        return resultDate + " " + resultTime;
     }
+
 })
 
 var MessageItemView = Backbone.View.extend({
@@ -404,10 +382,31 @@ var MessageItemView = Backbone.View.extend({
     },
 
     render: function () {
-        this.$el.html(this.template(_.extend({}, this.model.attributes, this.model.sender.attributes))).addClass(this.model.isIn() ? "others": "me")
+        var extraAttrs = {}
+        if(this.model.shouldShowTime()){
+            extraAttrs["formattedTime"] = this.formatTime(this.model.get("timestamp"))
+        }
+        this.$el.html(this.template(_.extend({}, this.model.attributes, this.model.sender.attributes, extraAttrs))).addClass(this.model.isIn() ? "others": "me")
         return this;
-    }
+    },
 
+    formatTime: function(date){
+        var today = new ServerDate()
+        var d1, d2, dayGap, resultTime=date.getHourMinute()/* + "." + date.getMilliseconds()*/, resultDate;
+        d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        dayGap = Math.abs(d1 - d2)/1000/60/60/24
+        if (dayGap == 0) {
+            resultDate = ""
+        } else if (dayGap == 1) {
+            resultDate = "昨天"
+        } else if (dayGap == 2){
+            resultDate = "前天"
+        }  else {
+            resultDate = date.getTwoDigitMonth() + "-" + date.getTwoDigitDate()
+        }
+        return resultDate + " " + resultTime;
+    }
 })
 
 
@@ -483,6 +482,9 @@ var ChatBoxView = Backbone.View.extend({
             this.sendMessage();
             this.sendPausedStatus();
         } else {
+            if(!chatApp.checkConnection()){
+                return
+            }
             this.sendTypingStatus();
         }
     },
@@ -493,6 +495,9 @@ var ChatBoxView = Backbone.View.extend({
             return false;
         }
         $chatInput.val("");
+        if(!chatApp.checkConnection()){
+            return false
+        }
         var currentUser = chatApp.contactList.getCurrentUser()
         chatApp.connection.message.send(currentUser.get("jid"), body)
         currentUser.addMessage(new Message({
@@ -594,9 +599,15 @@ var chatApp = {
     initialize: function () {
     },
 
-    reInitConnection: function(){
+    checkConnection: function(){
         if (!this.connection){
-
+            alert("连接已断开，点击确认后自动刷新页面")
+            setTimeout(function(){
+                location.reload()
+            }, 1000)
+            return false
+        } else {
+            return true
         }
     },
 
@@ -729,6 +740,8 @@ $(document).bind('connected', function () {
 
 $(window).bind("beforeunload", function(){
     if (chatApp.connection) {
+        chatApp.connection.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+        chatApp.connection.flush();
         chatApp.connection.disconnect();
         chatApp.connection = null;
     }
@@ -749,7 +762,6 @@ $(window).focus(function(){
 $(window).resize(function(){
     if($("#chat-container")){
         var windowHeight = $(window).height();
-        chatApp.log(windowHeight)
         if(windowHeight > 700 ){
             $("#chat-dialog").height(630)
             $("#chat-container").height(590)
