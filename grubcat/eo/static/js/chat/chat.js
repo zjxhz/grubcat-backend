@@ -619,8 +619,8 @@ var chatApp = {
         this.contactListView = new ContactListView({model: this.contactList})
         this.chatBoxListView = new ChatBoxListView({model: this.contactList})
         if(contacts.length == 0){
-            $("#chat-left-column, #chat-right-column").hide()
-            $("#no-roster-tip").show()
+//            $("#chat-left-column, #chat-right-column").hide()
+//            $("#no-roster-tip").show()
             return ;
         }
         contacts.length && this.contactList.fetch({

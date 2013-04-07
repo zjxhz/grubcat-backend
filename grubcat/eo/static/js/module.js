@@ -1,7 +1,12 @@
 (function ($) {
     var $data = $("#data");
+    var $chatData = $("#chat-data");
 
     $("#nav-chat").click(function(){
+        if($(".contact-item").size() == 0){
+            location.href=$("#nav-user").find("a").attr("href") +"?showChatTip=1"
+            return false;
+        }
         if (!$("#chat-container")[0]) {
             $.get("/chat/", function(data){
                 $("body").append($(data));
