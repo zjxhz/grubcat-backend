@@ -663,7 +663,7 @@ var chatApp = {
             }
         })
         chatApp.contactList.add(contact);
-
+        $(window).resize()
         return contact;
     },
     log: function (msg) {
@@ -748,6 +748,7 @@ $(document).bind('connected', function () {
         // data = {jid: "", type:"" , body:"" , html_body: ""}
         var fromUID = Strophe.getNodeFromJid(data.jid);
         if (fromUID != chatApp.myProfile.id) { //come from others
+            var isNewContact = !chatApp.contactList.get(fromUID)
             var msg = new Message({
                 from: fromUID, //who I am chatting with
                 to: chatApp.myProfile.id,
@@ -757,8 +758,8 @@ $(document).bind('connected', function () {
             if(msg.sender.messages.where({body: data.body}).length){
                 chatApp.log("duplicate msg")
             }
-            msg.sender.addMessage(msg)
-             msg.sender.set("isTyping", false)
+            !isNewContact && msg.sender.addMessage(msg)
+            msg.sender.set("isTyping", false)
         }
     });
 
