@@ -251,6 +251,8 @@ var ContactItemView = Backbone.View.extend({
         if(!chatApp.hasAvatar()){
             $("#no-avatar-tip").show();
             return false;
+        } else {
+            $("#no-avatar-tip").hide();
         }
         var beforeUser = chatApp.contactList.getCurrentUser()
         beforeUser && beforeUser.set("current", false)
