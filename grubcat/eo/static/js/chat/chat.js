@@ -2,7 +2,7 @@ var $commonData = $("#common-data");
 var chatServer = $commonData.data("chat-server")
 var chatServerDomain ="@" + $commonData.data("chat-domain")
 var myTemplate = {
-    tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"/></div>' +
+    tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></div>' +
         '<div class="nickname"><%= name %></div>' +
         '<div class="unread-count"><%=unReadCount%></div>' +
         '<% if( typeof body != "undefined" ) { %><div class="last-message"><%- body %></div><% } %>',
@@ -32,7 +32,9 @@ $(function () {
     });
 
 })
-
+Strophe.log = function (level, msg) {
+//    chatApp.log(msg)
+}
 $(document).bind('connect', function (ev, data) {
     var conn = new Strophe.Connection(chatServer);
 
@@ -177,7 +179,7 @@ var Contact = Backbone.Model.extend({
 
     sendReceivedRecipts: function(){
         var out = $msg({to: this.get("jid")}).c("received", {'xmlns': "urn:xmpp:receipts", 'id': 1});
-        chatApp.connection.send(out);
+        chatApp.connection && chatApp.connection.send(out);
     }
 });
 
@@ -297,7 +299,6 @@ var ContactListView = Backbone.View.extend({
         }, this);
         this.$el.children().removeClass("first").first().addClass("first")
         if (this.$el.children().size() == 9) {
-
             this.$el.children().removeClass("last").last().addClass("last")
         }
         return this;
@@ -376,7 +377,7 @@ var MessageItemView = Backbone.View.extend({
           if (this.model.get("shouldScrollIntoView")) {
               this.el.scrollIntoView(false)
               var $list = this.$el.parents(".message-list")
-              $list.scrollTop($list.scrollTop() + 55)
+              $list.scrollTop($list.scrollTop() + 115)
           }
       })
     },
@@ -409,8 +410,6 @@ var MessageItemView = Backbone.View.extend({
     }
 })
 
-
-
 //model Contact
 var ChatBoxView = Backbone.View.extend({
 
@@ -435,6 +434,9 @@ var ChatBoxView = Backbone.View.extend({
             if(index + 1 < msgCollection.length && !msgCollection.at(index+1).shouldShowTime()){
              this.$(".message-list .message-item:eq(" + (index+1) + ")").find(".message-time-wrapper").hide()
             }
+        }
+        if(index == msgCollection.length -1){
+            this._scrollChatToBottom()
         }
 
     },
@@ -481,7 +483,6 @@ var ChatBoxView = Backbone.View.extend({
         if (ev.which === 13) {
             ev.preventDefault();
             this.sendMessage();
-            this.sendPausedStatus();
         } else {
             if(!chatApp.checkConnection()){
                 return
@@ -501,6 +502,13 @@ var ChatBoxView = Backbone.View.extend({
         }
         var currentUser = chatApp.contactList.getCurrentUser()
         chatApp.connection.message.send(currentUser.get("jid"), body)
+        if(chatApp.myProfile.get("isTyping") ){
+            chatApp.myProfile.set("isTyping", false)
+        }
+        if (chatApp.statesTimeOut) {
+            clearTimeout(chatApp.statesTimeOut);
+            chatApp.statesTimeOut = null;
+        }
         currentUser.addMessage(new Message({
             from: chatApp.myProfile.id,
             to: currentUser.id,
@@ -528,6 +536,9 @@ var ChatBoxView = Backbone.View.extend({
     sendPausedStatus: function () {
         if(chatApp.myProfile.get("isTyping") ){
             chatApp.myProfile.set("isTyping", false)
+            if(!chatApp.checkConnection()){
+                return
+            }
             chatApp.connection.chatstates.sendPaused(chatApp.contactList.getCurrentUser().get("jid"), "chat");
         }
         if (chatApp.statesTimeOut) {
@@ -736,7 +747,11 @@ $(document).bind('connected', function () {
                 body: data.body,
                 timestamp: new ServerDate()
             })
+            if(msg.sender.messages.where({body: data.body}).length){
+                chatApp.log("duplicate msg")
+            }
             msg.sender.addMessage(msg)
+             msg.sender.set("isTyping", false)
         }
     });
 
@@ -761,15 +776,19 @@ $(window).bind("beforeunload", function(){
         chatApp.connection = null;
     }
 });
-$(window).focus(function(){
-    chatApp.isWindowFocused = true;
-    try {
 
+function setRead(){
+    try {
         if (chatApp.isVisible() && chatApp.contactList.getCurrentUser() && chatApp.contactList.getCurrentUser().get("unReadCount") > 0) {
             chatApp.contactListView.$el.find(".current").click();
         }
     } catch (e) {
     }
+}
+$("#chat-dialog").on("shown",setRead)
+$(window).focus(function(){
+    chatApp.isWindowFocused = true;
+    setRead()
 }).blur(function(){
     chatApp.isWindowFocused = false;
 })

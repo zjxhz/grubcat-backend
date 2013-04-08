@@ -8,21 +8,6 @@
 // Roster plugin partially implementing
 // [Roster management](http://xmpp.org/rfcs/rfc6121.html) & [Roster Item Exchange](http://xmpp.org/extensions/xep-0144.html)
 
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['jquery', 'underscore', 'backbone', 'strophe'], function ($, _, Backbone, Strophe) {
-            // Also create a global in case some scripts
-            // that are loaded still are looking for
-            // a global even when an AMD loader is in use.
-            return factory($, _, Backbone, Strophe);
-        });
-    } else {
-        // Browser globals
-        factory(root.$, root._, root.Backbone, root.Strophe);
-    }
-}(this,function ($, _, Backbone, Strophe) {
-
     Strophe.addConnectionPlugin('roster', {
         _connection: null,
 
@@ -199,4 +184,3 @@
             return true;
         }
     });
-}));

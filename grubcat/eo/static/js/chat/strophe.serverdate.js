@@ -53,9 +53,7 @@ Strophe.addConnectionPlugin('serverdate', {
           var header = this.getResponseHeader('Date');
           var server_date = new Date(header);
           if ( header && server_date != 'Invalid Date' ){
-            system_date = new Date();
-            skew_ms = server_date - system_date;
-            ServerDate.skew = skew_ms;
+            ServerDate.skew = server_date -  new Date()
           }
         }
         handler();
