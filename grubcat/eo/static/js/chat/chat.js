@@ -40,13 +40,20 @@ $(document).bind('connect', function (ev, data) {
 
     conn.xmlInput = function (elem) {
 //        if($(elem).find("chat")[0]){
-            chatApp.debug(elem)
+//            chatApp.debug(elem)
 //        }
     }
     conn.xmlOutput = function (elem) {
 //        if($(elem).find("retrieve")[0]){
-            chatApp.debug(elem)
+//            chatApp.debug(elem)
 //        }
+    }
+    conn.rawInput = function(data){
+        chatApp.debug("in----" + data)
+    }
+
+    conn.rawOutput= function(data){
+        chatApp.debug("out++" + data)
     }
 
     conn.connect(data.jid, data.password, function (status) {
