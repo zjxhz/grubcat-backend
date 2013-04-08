@@ -65,8 +65,8 @@ jquery_js = Bundle('js/jquery-1.7.2.js', output='gen/jquery-1.7.2.%(version)s.js
 jquery_dropkick_js = Bundle('js/jquery.dropkick-1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='yui_js')
 
 noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
-                 'js/noty/layouts/center.js', 'js/noty/thems/default.js',
-                 output='gen/jquery-noty.%(version)s.js', filters='rjsmin')
+                 'js/noty/layouts/center.js', 'js/noty/themes/default.js',
+                 output='gen/jquery-noty.%(version)s.js', filters='yui_js')
 # 'js/jquery.lionbars.0.3.js',
 chat_js = Bundle('js/underscore-1.4.4.js', 'js/backbone-1.0.0.js', 'js/chat/iso8601_support.js',
                  'js/chat/strophe.js',
@@ -75,7 +75,7 @@ chat_js = Bundle('js/underscore-1.4.4.js', 'js/backbone-1.0.0.js', 'js/chat/iso8
                  'js/chat/chat.js',
                  filters='yui_js',
                  output="gen/chat.%(version)s.js")
-base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', noty_js,
+base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', noty_js, filters='yui_js',
                  output="gen/base.%(version)s.js")
 
 base_main_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', 'js/jquery.lazyload.js', filters='yui_js',

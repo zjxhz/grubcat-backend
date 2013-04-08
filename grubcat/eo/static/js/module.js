@@ -23,7 +23,7 @@
         if ($("body").height() > $(window).height()) {
             $("html").addClass("scroll")
         }
-    }).on("hidden",function(){
+    }).on("hide",function(){
             $("html").removeClass("chat-app scroll")
         })
 
