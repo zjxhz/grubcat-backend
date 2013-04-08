@@ -293,6 +293,12 @@ var ContactListView = Backbone.View.extend({
             }
             var contactItemView = new ContactItemView({model: contact});
             this.itemViewList.push(contactItemView);
+
+            this.listenTo(contact.messages, "sort add", function(){
+                this.sortContacts()
+                this.render();
+            })
+
             this.sortContacts()
             this.render()
         });
