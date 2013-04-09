@@ -380,7 +380,7 @@ if (typeof Object.create !== 'function') {
     $.noty.defaults = {
         layout:'top',
         theme:'defaultTheme',
-        type:'alert',
+        type: 'success',
         text:'',
         dismissQueue:true,
         template:'<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',

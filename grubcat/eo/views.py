@@ -16,7 +16,7 @@ from django.views.generic.list import ListView
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
-from eo.pay.alipay.alipay import create_partner_trade_by_buyer
+from eo.pay.alipay.alipay import create_direct_pay_by_user
 from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 from django.conf import settings
@@ -488,7 +488,7 @@ class OrderCreateView(CreateView):
         customer = self.request.user.get_profile()
         order = meal.join(customer, num_persons)
         #        TODO some checks
-        url = create_partner_trade_by_buyer(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
+        url = create_direct_pay_by_user(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
         pay_logger.info("支付订单：%s" % url)
         return HttpResponseRedirect(url)
 
@@ -520,8 +520,8 @@ def handle_back_sync(request):
             return HttpResponseRedirect(order.get_absolute_url())
         except (PayOverTimeError, AlreadyJoinedError):
             raise
-        except Exception as e:
-            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！", e)
+        except Exception:
+            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！")
 
 
 class MealDetailView(OrderCreateView):
