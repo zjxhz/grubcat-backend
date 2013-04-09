@@ -3,12 +3,12 @@
 
 class settings:
     # 安全检验码，以数字和字母组成的32位字符
-    ALIPAY_KEY = 'kbq5z59ps1brpiggxn0t21besoecsxiq'
+    ALIPAY_KEY = '7g5w00e0eu37l8tm85pp1wutcoxjglzl'
 
     ALIPAY_INPUT_CHARSET = 'utf-8'
 
     # 合作身份者ID，以2088开头的16位纯数字
-    ALIPAY_PARTNER = '2088902170992223'
+    ALIPAY_PARTNER = '2088901270565065'
 
     # 签约支付宝账号或卖家支付宝帐户
     #ALIPAY_SELLER_EMAIL = 'fanjoin.com@gmail.com'

@@ -26,7 +26,7 @@ def handle_alipay_back(data):
     """
     pay_logger.info(data)
     trade_status = data.get('trade_status')
-    if trade_status == 'WAIT_SELLER_SEND_GOODS':
+    if trade_status == 'WAIT_SELLER_SEND_GOODS' or trade_status == "TRADE_SUCCESS":
         order = Order.objects.get(pk=data.get('out_trade_no').replace(order_prefix, ''))
         alipay_trade_no = data.get('trade_no')
         try:
@@ -74,7 +74,7 @@ def handle_alipay_back(data):
             raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
 
     else:
-        pay_logger.debug(u"alipay返回状态不是WAIT_SELLER_SEND_GOODS，是%s" % trade_status)
+        pay_logger.debug(u"alipay返回状态不是TRADE_SUCCESS 或者WAIT_SELLER_SEND_GOODS，是%s" % trade_status)
 
 
 # Create a json response with status and message)
