@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load cache %}
+{% load assets %}
+{% block title %}{{ city|default:"杭州" }}的饭局{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "module_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+{% block base_js %}
+    {% assets "base_main_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+{% block page_js %}
+{% endblock %}
+{% block content %}
+{#    {% cache 900 meal_list_frag %}#}
+    <div class="row" id="meal-list-page">
+        <div id="meal-list" class="span9">
+            {% for meal in meal_list %}
+                <div class="meal-cell">
+                    <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+
+                    <div class="row">
+                        <div class="meal-img-wrapper span5">
+                            <a href="{{ meal.get_absolute_url }}">
+                                {% if forloop.counter0 < 1 %}
+                                    <img width="360" height="240" class="img-polaroid"
+                                         src="{{ meal.normal_cover_url }}">
+                                {% else %}
+                                    <img width="360" height="240" src="{% static 'img/meal-placeholder.png' %}"
+                                         class="lazy img-polaroid"
+                                         data-original="{{ meal.normal_cover_url }}">
+                                {% endif %}
+                            </a>
+
+                            <div class="date-wrapper">
+                                <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                            </div>
+                            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
+                        </div>
+                        <div class="meal-info span4">
+                            <p class="introduction">
+                                {{ meal.introduction|truncatechars:"100" }}
+                            </p>
+                            <a class="btn btn-primary btn-block btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="sidebar span3 visible-desktop">
+            {% include "support/faq_sidebar.html" %}
+        </div>
+    </div>
+{#    {% endcache %}#}
+{% endblock %}
+
+{% block active-nav-id %}nav-meal{% endblock %}
