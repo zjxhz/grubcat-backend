@@ -7,7 +7,6 @@ Created on 2011-4-21
 import logging
 import types
 from urllib import urlencode, urlopen
-import django
 from hashcompat import md5_constructor as md5
 from config import settings
 from django.conf import settings as django_settings
@@ -79,38 +78,36 @@ def create_direct_pay_by_user(tn, subject, body, price, quantity, discount=''):
     # 获取配置文件
     params['partner'] = settings.ALIPAY_PARTNER
     params['seller_id'] = settings.ALIPAY_PARTNER
-    params[
-        'return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL')else  settings.ALIPAY_RETURN_URL
-    params[
-        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
+    params['return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL')else  settings.ALIPAY_RETURN_URL
+    params['notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
-    params['show_url'] = settings.ALIPAY_SHOW_URL
+    # params['show_url'] = settings.ALIPAY_SHOW_URL
 
     # 从订单数据中动态获取到的必填参数
     params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
     params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
     params['body'] = body      # 订单描述、订单详细、订单备注，显示在支付宝收银台里的“商品描述”里
     # TODO 超时设置
-    # params['it_b_pay'] = '1m'
-    #    params['t_b_rec_post'] = '1d'
+    # params['it_b_pay'] = str(django_settings.PAY_OVERTIME) + 'm'
+    # params['t_b_rec_post'] = '1d'
     params['price'] = 0.01 #TODO price             # 单价
     params['quantity'] = quantity       # 商品的数量
     params['discount'] = discount       # 商品的数量
     # 扩展功能参数——网银提前
-    params['paymethod'] = ''   # 默认支付方式，四个值可选：bankPay(网银); cartoon(卡通); directPay(余额); CASH(网点支付)
-    params['defaultbank'] = ''          # 默认网银代号，代号列表见http://club.alipay.com/read.php?tid=8681379
+    # params['paymethod'] = ''   # 默认支付方式，四个值可选：bankPay(网银); cartoon(卡通); directPay(余额); CASH(网点支付)
+    # params['defaultbank'] = ''          # 默认网银代号，代号列表见http://club.alipay.com/read.php?tid=8681379
 
     # 扩展功能参数——防钓鱼
-    params['anti_phishing_key'] = ''
-    params['exter_invoke_ip'] = ''
+    # params['anti_phishing_key'] = ''
+    # params['exter_invoke_ip'] = ''
 
     # 扩展功能参数——自定义参数
-    params['buyer_email'] = ''
-    params['extra_common_param'] = ''
+    # params['buyer_email'] = ''
+    # params['extra_common_param'] = ''
 
     # 扩展功能参数——分润
-    params['royalty_type'] = ''
-    params['royalty_parameters'] = ''
+    # params['royalty_type'] = ''
+    # params['royalty_parameters'] = ''
 
     params, prestr = params_filter(params)
 
@@ -127,10 +124,8 @@ def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount='
     params['service'] = 'create_partner_trade_by_buyer'
     params['partner'] = settings.ALIPAY_PARTNER
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
-    params[
-        'return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL') else  settings.ALIPAY_RETURN_URL
-    params[
-        'notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
+    params['return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL') else  settings.ALIPAY_RETURN_URL
+    params['notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
 
     # 业务参数
     params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
@@ -139,9 +134,6 @@ def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount='
     params['logistics_type'] = 'EMS'   # 第一组物流类型
     params['logistics_fee'] = '0.00'
     params['logistics_payment'] = 'BUYER_PAY'
-    # TODO 超时设置
-    # params['it_b_pay'] = '1m'
-    #    params['t_b_rec_post'] = '1d'
     params['price'] = 0.01 #TODO price             # 单价
     params['quantity'] = quantity       # 商品的数量
     params['discount'] = discount       # 商品的数量

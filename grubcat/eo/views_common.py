@@ -27,6 +27,7 @@ def handle_alipay_back(data):
     pay_logger.info(data)
     trade_status = data.get('trade_status')
     if trade_status == 'WAIT_SELLER_SEND_GOODS' or trade_status == "TRADE_SUCCESS":
+        #WAIT_SELLER_SEND_GOODS 是担保支付返回的成功状态，TRADE_SUCCESS是及时支付返回的成功状态
         order = Order.objects.get(pk=data.get('out_trade_no').replace(order_prefix, ''))
         alipay_trade_no = data.get('trade_no')
         try:
@@ -62,9 +63,11 @@ def handle_alipay_back(data):
         elif order.status == OrderStatus.CREATED:
             order.set_payed(payed_time)
             TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
-            url = send_goods_confirm_by_platform(alipay_trade_no)
-            urllib.urlopen(url)
-            pay_logger.info('确认发货.订单:%s, url:%s' % (order.id, url))
+            if trade_status == 'WAIT_SELLER_SEND_GOODS':
+                #担保支付需要发送确认发货请求
+                url = send_goods_confirm_by_platform(alipay_trade_no)
+                urllib.urlopen(url)
+                pay_logger.info('确认发货.订单:%s, url:%s' % (order.id, url))
 
         elif order.status == OrderStatus.CANCELED:
             #another order paied and this order is not handled before
