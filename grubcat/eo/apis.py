@@ -591,7 +591,7 @@ class UserResource(ModelResource):
         authorization = Authorization()
         queryset = UserProfile.objects.exclude(user__restaurant__isnull=False)
         resource_name = 'user'
-        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS}
+        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
 
 
@@ -805,7 +805,7 @@ class OrderResource(ModelResource):
         
     class Meta:
         queryset = Order.objects.all() # .exclude(status=4)
-        filtering = {'customer':ALL,}
+        filtering = {'customer':ALL_WITH_RELATIONS, 'meal':ALL_WITH_RELATIONS, "status":ALL}
         ordering = ['created_time','meal']
             
 def createLoggedInResponse(loggedInuser):
