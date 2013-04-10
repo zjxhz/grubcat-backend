@@ -774,7 +774,7 @@ class MealResource(ModelResource):
     
     class Meta:
         queryset = Meal.objects.all()
-        filtering = {'type': ALL,'start_date':ALL}
+        filtering = {'type': ALL,'start_date':ALL, "id":ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
         ordering = ['start_date']
