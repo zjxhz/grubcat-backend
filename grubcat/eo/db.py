@@ -2,12 +2,11 @@
 import urllib
 import urllib2
 from BeautifulSoup import BeautifulSoup
-import re
 import random
 import uuid
 import os
 import logging
-import simplejson
+import json
 from types import NoneType
 from django.http import HttpResponse
 from grubcat.eo.models import Restaurant
@@ -120,7 +119,7 @@ def query_restaurant_from_google(request):
                     "lat":restaurant["lat"], "lng": restaurant["lng"],
                     "phoneNumbers":restaurant.get("phoneNumbers")}
             results.append(info)
-    return HttpResponse(simplejson.dumps(results, ensure_ascii=False))
+    return HttpResponse(json.dumps(results, ensure_ascii=False))
 
 def do_query_restaurant_from_google(name):
     city = u'中国浙江省杭州市'
@@ -130,7 +129,7 @@ def do_query_restaurant_from_google(name):
     print "url: %s" % url
     response = getWebPageContent(url, False)
     print "response: %s" % response
-    return simplejson.loads(response)['responseData']['results']
+    return json.loads(response)['responseData']['results']
 
 
 

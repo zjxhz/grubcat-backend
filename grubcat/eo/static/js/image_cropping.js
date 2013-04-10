@@ -1,10 +1,10 @@
 var image_cropping = {
-    $:jQuery.noConflict(),
-    init:function () {
-        // set styles for size-warning
-        var style_img_warning = 'div.jcrop-image.size-warning .jcrop-vline{border:1px solid red; background: none;}' +
-            'div.jcrop-image.size-warning .jcrop-hline{border:1px solid red; background: none;}';
-        image_cropping.$("<style type='text/css'>" + style_img_warning + "</style>").appendTo('head');
+  $: jQuery,
+  init: function() {
+    // set styles for size-warning
+    var style_img_warning = 'div.jcrop-image.size-warning .jcrop-vline{border:1px solid red; background: none;}' +
+                            'div.jcrop-image.size-warning .jcrop-hline{border:1px solid red; background: none;}';
+    image_cropping.$("<style type='text/css'>" + style_img_warning + "</style>").appendTo('head');
 
         image_cropping.$('input.image-ratio').each(function () {
             var $this = image_cropping.$(this),
@@ -16,16 +16,21 @@ var image_cropping = {
             // there can be several. Deal with it gracefully.
                 $image_input = image_cropping.$('input.crop-thumb[data-field-name=' + field + ']:first');
 
-            // skip this image if it's empty and hide the whole field
-            if (!$image_input.length || $image_input.data('thumbnail-url') == undefined) {
-                $this.parents('div.form-row:first').hide();
-                return;
-            }
-            var image_id = $this.attr('id') + '-image',
-                org_width = $image_input.data('org-width'),
-                org_height = $image_input.data('org-height'),
-                min_width = $this.data('width'),
-                min_height = $this.data('height');
+      // skip this image if it's empty and hide the whole field, within admin and by itself
+      if (!$image_input.length || $image_input.data('thumbnail-url') == undefined) {
+        $this.hide().parents('div.form-row:first').hide();
+        return;
+      }
+      // check if the image field should be hidden
+      if ($image_input.data('hide-field')) {
+        $image_input.hide().parents('div.form-row:first').hide();
+      }
+
+      var image_id = $this.attr('id') + '-image',
+          org_width = $image_input.data('org-width'),
+          org_height = $image_input.data('org-height'),
+          min_width = $this.data('width'),
+          min_height = $this.data('height');
 
             var is_image_portrait = (org_height > org_width);
             var is_select_portrait = (min_height > min_width);
@@ -46,7 +51,8 @@ var image_cropping = {
 
             var options = {
                 aspectRatio:min_width / min_height,
-                minSize:[min_width, min_height],
+	        minSize: [5, 5],
+	        keySupport: false,
                 trueSize:[org_width, org_height],
                 onSelect:image_cropping.update_selection($this),
                 onChange:image_cropping.update_selection($this),

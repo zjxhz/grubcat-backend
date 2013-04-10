@@ -5,12 +5,12 @@ import urllib
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.utils import simplejson
 from taggit.models import Tag
 import time
 from eo.exceptions import *
 from eo.models import UserProfile, Order, OrderStatus, TransFlow
 from eo.pay.alipay.alipay import send_goods_confirm_by_platform, notify_verify
+import json
 
 SUCESS = "OK"
 ERROR = 'NOK'
@@ -26,7 +26,7 @@ def handle_alipay_back(data):
     """
     pay_logger.info(data)
     trade_status = data.get('trade_status')
-    if trade_status == 'WAIT_SELLER_SEND_GOODS':
+    if trade_status == 'WAIT_SELLER_SEND_GOODS' or trade_status == "TRADE_SUCCESS":
         order = Order.objects.get(pk=data.get('out_trade_no').replace(order_prefix, ''))
         alipay_trade_no = data.get('trade_no')
         try:
@@ -74,7 +74,7 @@ def handle_alipay_back(data):
             raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
 
     else:
-        pay_logger.debug(u"alipay返回状态不是WAIT_SELLER_SEND_GOODS，是%s" % trade_status)
+        pay_logger.debug(u"alipay返回状态不是TRADE_SUCCESS 或者WAIT_SELLER_SEND_GOODS，是%s" % trade_status)
 
 
 # Create a json response with status and message)
@@ -86,7 +86,7 @@ def create_json_response(status=None, message=None, extra_dict=None):
         response['message'] = message
     if extra_dict:
         response.update(extra_dict)
-    return HttpResponse(simplejson.dumps(response), content_type='application/json', )
+    return HttpResponse(json.dumps(response), content_type='application/json', )
 
 
 def create_sucess_json_response(message=u"成功", extra_dict=None):
@@ -116,7 +116,7 @@ def list_tags(request):
         data = [{'value': tag[0]} for tag in paginator.page(page).object_list]
     else:
         data = []
-    return HttpResponse(simplejson.dumps(data), content_type='application/json', )
+    return HttpResponse(json.dumps(data), content_type='application/json', )
 
 
 def add_tag(request):

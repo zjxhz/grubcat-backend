@@ -1,19 +1,6 @@
 (function ($) {
     var $data = $("#data");
 
-    //chat
-    setTimeout(function () {
-        if (!$("#chat-container")[0]) {
-            $.get("/chat/", function(data){
-                $("body").append($(data));
-                $("#chat-dialog").modal({
-                    show: false
-                })
-            }, "html")
-
-        }
-    }, 3000)
-
     $("#nav-chat").click(function(){
         if (!$("#chat-container")[0]) {
             $.get("/chat/", function(data){
@@ -30,6 +17,15 @@
         }
         return false;
     })
+
+    $("#chat-dialog").on("show",function(){
+        $("html").addClass("chat-app")
+        if ($("body").height() > $(window).height()) {
+            $("html").addClass("scroll")
+        }
+    }).on("hide",function(){
+            $("html").removeClass("chat-app scroll")
+        })
 
     if ($("#upload-photo-wrapper")[0]) {
         $("#id_photo").change(function () {
@@ -146,7 +142,7 @@
         $("#profile-nav").find("li.active").removeClass("active");
         $("#" + $data.data("activeNavId")).addClass("active");
 
-        $(".btn-follow, .btn-unfollow").live('click', function () {
+        $("#profile_actions").find(".btn-follow, .btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function (data) {
                 if (data.status == "OK") {
@@ -171,8 +167,6 @@
             });
             return false;
         })
-
-
     }
 
     if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
@@ -298,7 +292,11 @@
                 return false;
             }
         ).click();
-
+        function setChatAvatar(avatar){
+            if(typeof chatApp != "undefined" && chatApp.myProfile){
+                chatApp.myProfile.set("avatarUrl", avatar)
+            }
+        }
         //upload avatar
         $("#id_avatar_for_upload").change(function () {
             $("#avatar_alert").remove();
@@ -310,6 +308,7 @@
                 success: function () {
                     $(".avatar .loading").hide();
                     $("#avatar-wrapper").find("img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'));
+                    setChatAvatar( $("#data-avatar-page").data('small-avatar-url'))
                     $('#crop-avatar-link').show();
                     submit_crop_form();
                     $("#crop_avatar_modal").modal();
@@ -335,6 +334,7 @@
                     success: function (data) {
                         //noinspection JSUnresolvedVariable
                         $("#avatar-wrapper").find("img").attr('src', $.parseJSON(data).big_avatar_url);
+                        setChatAvatar($.parseJSON(data).small_avatar_url)
                         $("#crop_avatar_modal").modal('hide');
                         return false;
                     }

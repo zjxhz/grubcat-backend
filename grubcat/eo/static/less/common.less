@@ -110,3 +110,290 @@ ul.as-selections {
     left: 53px;
   }
 }
+
+//#chat related
+.chat-app{
+  overflow: hidden;
+}
+.scroll body{
+  overflow-y: scroll;
+}
+
+.unread-count{
+  float: right;
+  min-width: 6px;
+  .border-radius(9px);
+  color: white;
+  background-color: #ff551e;
+  padding: 0px 7px;
+  text-align: center;
+  font-size: 12px;
+}
+#chat-dialog.modal{
+  width: 830px;
+//  height: 662px;
+  height: 630px;
+  margin-left: -415px;
+  top: 50px;
+  .border-radius(0);
+  .modal-header{
+    background-color: rgba(247, 247, 247, 0.2);
+    height: 29px;
+    border-bottom: 1px solid #BBB;
+    padding-right: 10px;
+    .close{
+      margin-top: 3px;
+      font-size: 25px;
+    }
+  }
+}
+#chat-container {
+  background-color: rgba(247, 247, 247, 0.2);
+  .clearfix();
+  height: 590px;
+  width: 100%;
+  max-height: 100%;
+  padding: 0px;
+  #chat-left-column{
+    float: left;
+    width: 230px;
+    overflow: auto;
+  //    border: 1px solid #aaa;
+  }
+  #no-roster-tip{
+    width: 70%;
+    text-align: center;
+    margin: 20% auto;
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+  #chat-left-column, #chat-right-column{
+    height: 100%;
+  }
+  #roster {
+    padding: 0px;
+    .contact-item {
+      border-bottom: 1px solid #AAAAAA;
+      border-top: 1px solid #AAAAAA;
+      cursor: pointer;
+      height: 50px;
+      margin-bottom: -1px;
+      padding: 7px;
+      position: relative;
+      &.first{
+        border-top: 0px;
+      }
+      &.last{
+        border-bottom: 0px;
+      }
+      .clearfix;
+      &.current{
+      //        background-color: #eee;
+        #gradient > .vertical-three-colors(#f1f1f1, #fbfbfb, 50%, #f1f1f1)
+      }
+      &.online .nickname {
+      //        color: green;
+      }
+      &.offline .nickname {
+        color: green;
+      }
+
+      .avatar{
+        float: left;
+        img {
+          .square(50px);
+        }
+      }
+      .nickname{
+        float: left;
+        font-size: 14px;
+        height: 21px;
+        margin: 4px 4px 0px 10px;
+        overflow: hidden;
+        width: 83px;
+        color: green;
+      }
+      .last-message{
+        float: left;
+        font-size: 12px;
+        height: 21px;
+        width: 90px;
+        width: 122px;
+        color: grey;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: normal;
+        white-space: nowrap;
+        margin: 5px 4px 0 10px;
+      }
+      .unread-count{
+        position: absolute;
+        left: 45px;
+        top: 2px;
+      }
+    }
+  }
+
+
+  #chat-right-column{
+    width: 599px;
+    float: left;
+    border-left: 1px solid #aaa;
+
+    #no-avatar-tip{
+      margin: 20% auto;
+      width: 74%;
+      font-size: 15px;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    .chat-box{
+      display: none;
+    }
+    .chat-title{
+      display: none;
+      padding: 5px 10px;
+      .name{
+        color: green;
+        margin-left: 8px;
+      }
+    }
+
+    .chat-message-container{
+    //      border-top: 1px solid #aaa;
+      border-bottom: 1px solid #aaa;
+    }
+    .more-history{
+      text-align: center;
+      display: block;
+      margin: 10px;
+    }
+    .chat-status{
+      visibility: hidden;
+      margin: 5px 20px;
+    }
+    .chat-editor{
+      padding: 17px 15px;
+    }
+
+    .chat-input{
+      margin: 0 20px 0 0;
+      width: 78%;
+      resize: none;
+      height: 40px;
+    }
+
+    .btn-send{
+      width: 80px;
+      font-size: 18px;
+      height: 36px;
+    }
+    .message-list{
+      overflow: auto;
+      height: 470px;
+    }
+    .message-item{
+      .clearfix;
+      margin: 16px 15px;
+      .avatar{
+        float: left;
+        .square(38px);
+      }
+      .message-time-wrapper{
+        margin: 10px auto;
+        height: 20px;
+        text-align: center;
+        .message-time{
+          color: #888;
+          position: relative;
+          padding: 0 25px;
+          display: inline-block;
+        }
+        .message-time{
+          _display:inline;
+        }
+        .time-span{
+          width: 20px;
+          background: #B4B8BD;
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          &.left{
+            left: 0;
+          }
+          &.right{
+            right: 0;
+          }
+        }
+      }
+      .message-content{
+        position: relative;
+        .clearfix();
+        float: left;
+        margin: 0 20px 5px 20px;
+      }
+      .message-text{
+        float: left;
+        word-wrap: break-word;
+        max-width: 200px;
+        .border-radius(5px);
+        min-width: 12px;
+        min-height: 20px;
+        padding: 8px 10px;
+        background-color: #B4D17C;
+      //        #gradient > .vertical(#C4DE94, #A4C363);
+        border:  1px solid #7AA23F;
+      }
+      .message-arrow, .message-arrow:after{
+        position: absolute;
+        width:0px;
+        height:0px;
+        border-color:transparent;
+        border-style:solid dashed dashed dashed;
+      //        _line-height:0px;
+      //        _font-size:0;
+      }
+      .message-arrow{
+        top: 11px;
+        left: -12px;
+        border-width:6px;
+        border-right-color: #7AA23F;
+      }
+      .message-arrow:after{
+        top: -5px;
+        left: -3px;
+        content: "";
+        border-width: 5px;
+        border-right-color: #B4D17C;
+      }
+
+      &.me{
+        .avatar{
+          float: right;
+        }
+        .message-content{
+          float: right;
+          .message-text{
+
+          //            #gradient > .vertical(#FCFCFC, #ECECEC);
+            border: 1px solid #AFAFAF;
+            background-color:#F5F5F5 ;
+          }
+        }
+        .message-arrow{
+          top: 11px;
+          left: auto;
+          right: -11px;
+          border-left-color: #AFAFAF;
+          border-right-color: transparent;
+        }
+        .message-arrow:after{
+          top: -5px;
+          left: -6px;
+          border-left-color: #F5F5F5;
+          border-right-color: transparent;
+        }
+      }
+    }
+  }
+}
