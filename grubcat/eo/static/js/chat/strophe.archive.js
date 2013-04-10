@@ -48,17 +48,18 @@ Strophe.ArchivedCollection.prototype = {
       var responseRsm;
       var msgTimestamp;
       var chat = stanza.getElementsByTagName('chat')[0];
+      var hasMoreMessages = chat.getAttribute("more") == "1"
       var timestamp = (new Date()).setISO8601(chat.getAttribute("start"));
       var element = chat.firstChild;
       while (element) {
         switch (element.tagName) {
         case 'to':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, Strophe.getText(element.getElementsByTagName('body')[0]), Boolean(parseInt(element.getAttribute("isRead")))));
+          messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
           break;
         case 'from':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, Strophe.getText(element.getElementsByTagName('body')[0]), Boolean(parseInt(element.getAttribute("isRead")))));
+          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
           break;
         case 'set':
           responseRsm = new Strophe.RSM({xml: element});
@@ -68,7 +69,7 @@ Strophe.ArchivedCollection.prototype = {
         }
         element = element.nextSibling;
       }
-      callback(messages, responseRsm);
+      callback(messages, responseRsm, hasMoreMessages);
     }.bind(this));
   },
 

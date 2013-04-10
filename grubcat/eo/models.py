@@ -2,6 +2,7 @@
 from datetime import datetime, time, date, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models, IntegrityError
 from django.db.models import Max
 from django.db.models.fields.files import ImageField
@@ -201,7 +202,7 @@ class Menu(models.Model):
                 'detail': True,
             }).url
         else:
-            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+            url = staticfiles_storage.url("img/default/meal_cover.jpg")
         return url
 
     @property
@@ -215,7 +216,7 @@ class Menu(models.Model):
                 'detail': True,
             }).url
         else:
-            url = settings.STATIC_URL + "img/default/meal_cover.jpg"
+            url = staticfiles_storage.url("img/default/meal_cover.jpg")
         return url
 
 
@@ -251,7 +252,7 @@ class GroupCategory(models.Model):
         if self.cover:
             return self.cover.url
         else:
-            return settings.STATIC_URL + 'img/default/category-cover.png'
+            return staticfiles_storage.url('img/default/category-cover.png')
 
     def __unicode__(self):
         return  self.name
@@ -298,7 +299,7 @@ class Group(models.Model):
         if self.logo:
             return self.logo.url
         else:
-            return settings.STATIC_URL + 'img/default/group-logo.jpg'
+            return staticfiles_storage.url('img/default/group-logo.jpg')
 
     @models.permalink
     def get_absolute_url(self):
@@ -600,7 +601,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.BIG_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/big_avatar.png"
+            thumbnail_url = staticfiles_storage.url("img/default/big_avatar.png")
         return thumbnail_url
 
     @property
@@ -608,7 +609,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.NORMAL_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/normal_avatar.png"
+            thumbnail_url = staticfiles_storage.url("img/default/normal_avatar.png")
         return thumbnail_url
 
     @property
@@ -616,7 +617,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
+            thumbnail_url = staticfiles_storage.url("img/default/small_avatar.png")
         return thumbnail_url
     
     @property
@@ -624,7 +625,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.exists(self.avatar.path):
             thumbnail_url = self.avatar_thumbnailer(settings.MEDIUM_AVATAR_SIZE).url
         else:
-            thumbnail_url = settings.STATIC_URL + "img/default/small_avatar.png"
+            thumbnail_url = staticfiles_storage.url("img/default/small_avatar.png")
         return thumbnail_url
         
     @property

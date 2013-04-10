@@ -71,7 +71,7 @@ def build_mysign(prestr, key, sign_type='MD5'):
 
 # 即时到账交易接口
 #TODO price 0.01
-def create_direct_pay_by_user(tn, subject, body, total_fee):
+def create_direct_pay_by_user(tn, subject, body, price, quantity, discount=''):
     params = {}
     params['service'] = 'create_direct_pay_by_user'
     params['payment_type'] = '1'
@@ -90,10 +90,14 @@ def create_direct_pay_by_user(tn, subject, body, total_fee):
     params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
     params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
     params['body'] = body      # 订单描述、订单详细、订单备注，显示在支付宝收银台里的“商品描述”里
-    params['total_fee'] = total_fee # 订单总金额，显示在支付宝收银台里的“应付总额”里
-
+    # TODO 超时设置
+    # params['it_b_pay'] = '1m'
+    #    params['t_b_rec_post'] = '1d'
+    params['price'] = 0.01 #TODO price             # 单价
+    params['quantity'] = quantity       # 商品的数量
+    params['discount'] = discount       # 商品的数量
     # 扩展功能参数——网银提前
-    params['paymethod'] = 'directPay'   # 默认支付方式，四个值可选：bankPay(网银); cartoon(卡通); directPay(余额); CASH(网点支付)
+    params['paymethod'] = ''   # 默认支付方式，四个值可选：bankPay(网银); cartoon(卡通); directPay(余额); CASH(网点支付)
     params['defaultbank'] = ''          # 默认网银代号，代号列表见http://club.alipay.com/read.php?tid=8681379
 
     # 扩展功能参数——防钓鱼

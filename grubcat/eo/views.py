@@ -5,7 +5,6 @@ from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
-from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -14,11 +13,10 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-import simplejson
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
-from eo.pay.alipay.alipay import create_partner_trade_by_buyer
+from eo.pay.alipay.alipay import create_direct_pay_by_user
 from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 from django.conf import settings
@@ -354,7 +352,7 @@ def get_user_info(request):
             profile = UserProfile.objects.filter(user__username=username).select_related("user")[0]
             result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
                       'profileUrl': profile.get_absolute_url()}
-        return HttpResponse(simplejson.dumps(result), content_type='application/json', )
+        return HttpResponse(json.dumps(result), content_type='application/json', )
 
 
 #User related
@@ -374,7 +372,7 @@ class UploadAvatarView(UpdateView):
         if self.request.GET.get('action') == 'upload':
             return HttpResponseRedirect(reverse('upload_avatar'))
         else:
-            data = {'big_avatar_url': self.object.big_avatar}
+            data = {'big_avatar_url': self.object.big_avatar, 'small_avatar_url': self.object.small_avatar}
             return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
 
@@ -490,7 +488,7 @@ class OrderCreateView(CreateView):
         customer = self.request.user.get_profile()
         order = meal.join(customer, num_persons)
         #        TODO some checks
-        url = create_partner_trade_by_buyer(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
+        url = create_direct_pay_by_user(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
         pay_logger.info("支付订单：%s" % url)
         return HttpResponseRedirect(url)
 
@@ -522,8 +520,8 @@ def handle_back_sync(request):
             return HttpResponseRedirect(order.get_absolute_url())
         except (PayOverTimeError, AlreadyJoinedError):
             raise
-        except Exception as e:
-            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！", e)
+        except Exception:
+            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！")
 
 
 class MealDetailView(OrderCreateView):
