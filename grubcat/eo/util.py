@@ -79,17 +79,20 @@ class XMPPClientWrapper(object):
         logger.debug("sync avatar finished with response: %s " % soc.recv(1024))
         
     def syncProfile(self, user_profile):
-        logger.debug("sync avatar of %s " % user_profile)
-        if user_profile.weibo_access_token:
-            password = user_profile.weibo_access_token
-        else:
-            password = user_profile.user.password
-        dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.connect(('localhost',self.PORT)) 
-        soc.send(json.dumps(dic))
-        logger.debug("sync profile finished with response: %s " % soc.recv(1024))
-        soc.close()
+        try:
+            logger.debug("sync avatar of %s " % user_profile)
+            if user_profile.weibo_access_token:
+                password = user_profile.weibo_access_token
+            else:
+                password = user_profile.user.password
+            dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
+            soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            soc.connect(('localhost',self.PORT)) 
+            soc.send(json.dumps(dic))
+            logger.debug("sync profile finished with response: %s " % soc.recv(1024))
+            soc.close()
+        except Exception:
+            logger.error("failed to sync profile")
 
 class PubSub(object):
     def createNode(self, user_profile, node_name):
