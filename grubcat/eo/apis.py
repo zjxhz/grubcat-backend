@@ -525,8 +525,9 @@ class UserResource(ModelResource):
             photos = user_to_query.photos.all()
             return get_my_list(UserPhotoResource(), photos, request)
         elif request.method == "POST":
-            photo = UserPhoto(user=user_to_query, photo=request.FILES['file'])
-            photo.save()
+            photo = UserPhoto(user=user_to_query)
+            name = request.FILES.keys()[0]
+            photo.photo.save(name, request.FILES.values()[0])
             photo_resource = UserPhotoResource()
             photo_bundle = photo_resource.build_bundle(obj=photo)
             serialized = photo_resource.serialize(None, photo_resource.full_dehydrate(photo_bundle),  'application/json')
@@ -573,10 +574,11 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
         elif request.method == 'POST':
             old_avatar = user_to_query.avatar
-            user_to_query.avatar = request.FILES['file']
+            contentFile = request.FILES.values()[0]
+            filename = contentFile.name
             user_to_query.cropping = "" #cropping is not supported by app yet so clear it
-            user_to_query.save()
-            if old_avatar and os.path.exists(old_avatar.path):
+            user_to_query.avatar.save(filename, contentFile)
+            if old_avatar and os.path.exists(old_avatar.path) and user_to_query.avatar.path != old_avatar.path:
                 os.remove(old_avatar.path)
             xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
@@ -874,10 +876,11 @@ def mobile_user_login(request):
 #            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
 #            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
 #            dic = json.loads(serialized)
-            dic = {}
-            dic['status'] = 'OK'
-            dic['info'] = "You've logged in"
-            return HttpResponse(json.dumps(dic), content_type ='application/json')
+##            dic = {}
+#            dic['status'] = 'OK'
+#            dic['info'] = "You've logged in"
+#            return HttpResponse(json.dumps(dic), content_type ='application/json')
+            return createLoggedInResponse(user)
         else:
             return createGeneralResponse('NOK', "Incorrect username or password")
     else:

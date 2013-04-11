@@ -571,24 +571,26 @@ class UserProfile(models.Model):
         return paying_orders_per_meal
 
     def avatar_thumbnail(self, width, height):
-        if self.avatar:
+        if self.avatar and os.path.exists(self.avatar.path):
             return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height),
                                                                'box': self.cropping,
                                                                'crop': True,
                                                                'detail': True
-            }).url
+                                                               }).url
         else:
             return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     def avatar_thumbnailer(self, avatar_size):
-        return get_thumbnailer(self.avatar).get_thumbnail({
-            'size': avatar_size,
-            'box': self.cropping,
-            'quality': 90,
-            'crop': True,
-            'detail': True,
-        })
-
+        if self.avatar and os.path.exists(self.avatar.path):
+            return get_thumbnailer(self.avatar).get_thumbnail({
+                'size': avatar_size,
+                'box': self.cropping,
+                'quality': 90,
+                'crop': True,
+                'detail': True,
+            })
+        else:
+            return settings.MEDIA_URL + "uploaded_images/anno.png"
     @property
     def age(self):
         if self.birthday:
@@ -804,18 +806,24 @@ class UserPhoto(models.Model):
 
     @property
     def photo_thumbnail(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
-                                                          'crop': True,
-                                                          'detail': True
-        }).url
+        try:
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
+                                                              'crop': True,
+                                                              'detail': True
+            }).url
+        except Exception:
+            return None
 
     @property
     def large_photo(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
-                                                          'crop': False,
-                                                          'detail': True
-        }).url
-
+        try:
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
+                                                              'crop': False,
+                                                              'detail': True
+                                                              }).url
+        except Exception:
+            return None
+        
     @models.permalink
     def get_absolute_url(self):
         return 'photo_detail', [str(self.id)]
