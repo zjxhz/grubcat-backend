@@ -185,16 +185,7 @@ PAY_OVERTIME = 30
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
 
-
-
-
-
-
-
-
-
-
-
+ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 
 RAVEN_CONFIG = {
     'register_signals': True,
