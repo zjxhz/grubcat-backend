@@ -333,7 +333,11 @@ class UserResource(ModelResource):
             num_persons = int(request.POST.get('num_persons'))
             #TODO try catch if no avaliable seats
             order = meal.join(user_profile, num_persons)
-            return createGeneralResponse('OK', "You've just joined the meal",{"code":order.code})
+            order_resource = OrderResource()
+            order_bundle = order_resource.build_bundle(obj=order)
+            serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', "You've just joined the meal",dic)
         else:
             return order_resource.get_list(request, customer=user_profile)
     
