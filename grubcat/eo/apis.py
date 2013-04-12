@@ -577,13 +577,16 @@ class UserResource(ModelResource):
             url = user_to_query.avatar_thumbnail(int(width), int(height))
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
         elif request.method == 'POST':
-            old_avatar = user_to_query.avatar
+            if user_to_query.avatar:
+                old_avatar_path = user_to_query.avatar.path
+            else:
+                old_avatar_path = None
             contentFile = request.FILES.values()[0]
             filename = contentFile.name
             user_to_query.cropping = "" #cropping is not supported by app yet so clear it
             user_to_query.avatar.save(filename, contentFile)
-            if old_avatar and os.path.exists(old_avatar.path) and user_to_query.avatar.path != old_avatar.path:
-                os.remove(old_avatar.path)
+            if os.path.exists(old_avatar_path) and user_to_query.avatar.path != old_avatar_path:
+                os.remove(old_avatar_path)
             xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user_to_query)
