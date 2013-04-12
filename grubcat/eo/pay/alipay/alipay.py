@@ -4,73 +4,99 @@ Created on 2011-4-21
 支付宝接口
 @author: Yefe
 '''
+from base64 import b64decode
+import base64
 import logging
-import types
-from urllib import urlencode, urlopen
+import xml.dom.minidom
+from urllib import urlencode, urlopen, unquote_plus, quote_plus
+import M2Crypto
+from rsa._compat import b
+from django.utils.encoding import smart_str
+import rsa
+from werkzeug.urls import url_decode
+from eo.exceptions import AliapyBackVerifyFailedError
 from hashcompat import md5_constructor as md5
 from config import settings
 from django.conf import settings as django_settings
 
 pay_logger = logging.getLogger("pay")
 order_prefix = getattr(django_settings, 'ORDER_PREFIX', '')
-
-def smart_str(s, encoding='utf-8', strings_only=False, errors='strict'):
-    """
-    Returns a bytestring version of 's', encoded as specified in 'encoding'.
-
-    If strings_only is True, don't convert (some) non-string-like objects.
-    """
-    if strings_only and isinstance(s, (types.NoneType, int)):
-        return s
-    if not isinstance(s, basestring):
-        try:
-            return str(s)
-        except UnicodeEncodeError:
-            if isinstance(s, Exception):
-                # An Exception subclass containing non-ASCII data that doesn't
-                # know how to print itself properly. We shouldn't raise a
-                # further exception.
-                return ' '.join([smart_str(arg, encoding, strings_only,
-                                           errors) for arg in s])
-            return unicode(s).encode(encoding, errors)
-    elif isinstance(s, unicode):
-        return s.encode(encoding, errors)
-    elif s and encoding != 'utf-8':
-        return s.decode('utf-8', errors).encode(encoding, errors)
-    else:
-        return s
-
 # 网关地址
-_GATEWAY = 'https://www.alipay.com/cooperate/gateway.do?'
+_WEB_GATEWAY = 'https://www.alipay.com/cooperate/gateway.do?'
+_APP_GATEWAY = "http://wappaygw.alipay.com/service/rest.htm?"
 
 
+def decrypt(data):
+    private_key = M2Crypto.RSA.load_key_string(open("D:/soft/alipay/bin/rsa_private_key.pem", "rb").read())
+    content = base64.decodestring(data)
+    i = 0
+    length = len(content) / 128
+    result = ''
+    while i < length:
+        d = content[i * 128:(i + 1) * 128]
+        result += private_key.private_decrypt(d, M2Crypto.RSA.pkcs1_padding)
+        i += 1
+    return result
+
+
+def build_mysign(data, sign_type='RSA'):
+# 生成签名结果
+    if sign_type == 'MD5':
+        return md5(data + settings.MD5_KEY).hexdigest()
+    elif sign_type == 'RSA':
+        private_key_str = M2Crypto.RSA.load_key_string(open("D:/soft/alipay/bin/rsa_private_key.pem", "rb").read())
+        m = M2Crypto.EVP.MessageDigest('sha1')
+        m.update(data)
+        digest = m.final()
+        sign = private_key_str.sign(digest, "sha1")
+        return sign
+    return ''
+
+
+def verify_sign(data, sort=None):
+    # 初级验证--签名
+    _, msg = params_filter(data, sort)
+    try:
+        key = M2Crypto.RSA.load_pub_key_bio(M2Crypto.BIO.MemoryBuffer(open("D:/soft/alipay/bin/alipay_rsa_public_key.pem","rb").read()))
+        m = M2Crypto.EVP.MessageDigest('sha1')
+        m.update(msg)
+        digest = m.final()
+        result = key.verify(digest, base64.decodestring(data.get('sign')), "sha1")
+        if not result:
+            pay_logger.error("支付宝返回校验失败")
+            raise AliapyBackVerifyFailedError
+    except Exception, e:
+        pay_logger.error("支付宝返回校验失败" + str(e))
+        raise AliapyBackVerifyFailedError
+        # mysign = build_mysign(prestr, settings.ALIPAY_PRIVATE_KEY, settings.ALIPAY_WAP_SIGN_TYPE)
+        # if mysign != data.get('sign'):
+        #     pay_logger.error("支付宝返回校验失败，mysign: %s alisign: %s" % (mysign, data.get('sign')))
+        #     raise AliapyBackVerifyFailedError
+
+
+def params_filter(params, sort=None, template='%s=%s&'):
 # 对数组排序并除去数组中的空值和签名参数
 # 返回数组和链接串
-def params_filter(params):
-    ks = params.keys()
-    ks.sort()
     newparams = {}
     prestr = ''
+    if not sort:
+        ks = params.keys()
+        ks.sort()
+    else:
+        ks = sort
+
     for k in ks:
         v = params[k]
         k = smart_str(k, settings.ALIPAY_INPUT_CHARSET)
         if k not in ('sign', 'sign_type') and v != '':
             newparams[k] = smart_str(v, settings.ALIPAY_INPUT_CHARSET)
-            prestr += '%s=%s&' % (k, newparams[k])
+            prestr += template % (k, newparams[k])
     prestr = prestr[:-1]
     return newparams, prestr
 
 
-# 生成签名结果
-def build_mysign(prestr, key, sign_type='MD5'):
-    if sign_type == 'MD5':
-        return md5(prestr + key).hexdigest()
-    return ''
-
-
-# 即时到账交易接口
-#TODO price 0.01
-def create_direct_pay_by_user(tn, subject, body, price, quantity, discount=''):
+def create_direct_pay(order, subject, body, price, quantity=""):
+    # 即时到账交易接口
     params = {}
     params['service'] = 'create_direct_pay_by_user'
     params['payment_type'] = '1'
@@ -78,117 +104,45 @@ def create_direct_pay_by_user(tn, subject, body, price, quantity, discount=''):
     # 获取配置文件
     params['partner'] = settings.ALIPAY_PARTNER
     params['seller_id'] = settings.ALIPAY_PARTNER
-    params['return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL')else  settings.ALIPAY_RETURN_URL
-    params['notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
+    params['return_url'] = settings.ALIPAY_DIRECT_SYNC_BACK_URL
+    params['notify_url'] = settings.ALIPAY_DIRECT_ASYNC_BACK_URL
     params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
-    # params['show_url'] = settings.ALIPAY_SHOW_URL
 
     # 从订单数据中动态获取到的必填参数
-    params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
+    params['out_trade_no'] = order_prefix + str(order)        # 请与贵网站订单系统中的唯一订单号匹配
     params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
     params['body'] = body      # 订单描述、订单详细、订单备注，显示在支付宝收银台里的“商品描述”里
     # TODO 超时设置
     # params['it_b_pay'] = str(django_settings.PAY_OVERTIME) + 'm'
-    # params['t_b_rec_post'] = '1d'
     params['price'] = 0.01 #TODO price             # 单价
     params['quantity'] = quantity       # 商品的数量
-    params['discount'] = discount       # 商品的数量
     # 扩展功能参数——网银提前
-    # params['paymethod'] = ''   # 默认支付方式，四个值可选：bankPay(网银); cartoon(卡通); directPay(余额); CASH(网点支付)
-    # params['defaultbank'] = ''          # 默认网银代号，代号列表见http://club.alipay.com/read.php?tid=8681379
-
-    # 扩展功能参数——防钓鱼
-    # params['anti_phishing_key'] = ''
-    # params['exter_invoke_ip'] = ''
-
-    # 扩展功能参数——自定义参数
-    # params['buyer_email'] = ''
-    # params['extra_common_param'] = ''
-
-    # 扩展功能参数——分润
-    # params['royalty_type'] = ''
-    # params['royalty_parameters'] = ''
 
     params, prestr = params_filter(params)
 
-    params['sign'] = build_mysign(prestr, settings.ALIPAY_KEY, settings.ALIPAY_SIGN_TYPE)
+    params['sign'] = build_mysign(prestr, settings.ALIPAY_SIGN_TYPE)
     params['sign_type'] = settings.ALIPAY_SIGN_TYPE
 
-    return _GATEWAY + urlencode(params)
+    return _WEB_GATEWAY + urlencode(params)
 
-
-# 纯担保交易接口
-def create_partner_trade_by_buyer(tn, subject, body, price, quantity, discount=''):
+def create_app_pay(order, subject, body, total_fee):
+    # app安全支付接口
     params = {}
-    # 基本参数
-    params['service'] = 'create_partner_trade_by_buyer'
+    # 获取配置文件
     params['partner'] = settings.ALIPAY_PARTNER
-    params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
-    params['return_url'] = django_settings.ALIPAY_RETURN_URL if hasattr(django_settings, 'ALIPAY_RETURN_URL') else  settings.ALIPAY_RETURN_URL
-    params['notify_url'] = django_settings.ALIPAY_NOTIFY_URL if hasattr(django_settings, 'ALIPAY_NOTIFY_URL') else  settings.ALIPAY_NOTIFY_URL
+    params['seller'] = settings.ALIPAY_PARTNER
+    params['notify_url'] = settings.ALIPAY_APP_SYNC_BACK_URL
 
-    # 业务参数
-    params['out_trade_no'] = order_prefix + str(tn)        # 请与贵网站订单系统中的唯一订单号匹配
-    params['subject'] = subject   # 订单名称，显示在支付宝收银台里的“商品名称”里，显示在支付宝的交易管理的“商品名称”的列表里。
-    params['payment_type'] = '1'
-    params['logistics_type'] = 'EMS'   # 第一组物流类型
-    params['logistics_fee'] = '0.00'
-    params['logistics_payment'] = 'BUYER_PAY'
-    params['price'] = 0.01 #TODO price             # 单价
-    params['quantity'] = quantity       # 商品的数量
-    params['discount'] = discount       # 商品的数量
-    params['seller_id'] = settings.ALIPAY_PARTNER
-    params['body'] = body      # 订单描述、订单详细、订单备注，显示在支付宝收银台里的“商品描述”里
-    params['show_url'] = settings.ALIPAY_SHOW_URL
+    # 从订单数据中动态获取到的必填参数
+    params['out_trade_no'] = order_prefix + str(order)  # 贵网站订单系统中的唯一订单号匹配
+    params['subject'] = subject   # 订单名称
+    params['body'] = body
+    # TODO 超时设置 app支付没有这个参数
+    # params['it_b_pay'] = str(django_settings.PAY_OVERTIME) + 'm'
+    params['total_fee'] = 0.01 #TODO
 
-    params, prestr = params_filter(params)
+    params, req_str = params_filter(params, template='%s="%s"&')
+    sign = base64.encodestring(build_mysign(req_str))
+    return '%s&sign="%s"&sign_type="%s"' % ( req_str, sign, settings.ALIPAY_APP_SIGN_TYPE)
 
-    params['sign'] = build_mysign(prestr, settings.ALIPAY_KEY, settings.ALIPAY_SIGN_TYPE)
-    params['sign_type'] = settings.ALIPAY_SIGN_TYPE
-
-    return _GATEWAY + urlencode(params)
-
-# 确认发货接口
-def send_goods_confirm_by_platform(tn):
-    params = {}
-
-    # 基本参数
-    params['service'] = 'send_goods_confirm_by_platform'
-    params['partner'] = settings.ALIPAY_PARTNER
-    params['_input_charset'] = settings.ALIPAY_INPUT_CHARSET
-
-    # 业务参数
-    params['trade_no'] = tn
-    params['logistics_name'] = u'银河列车'   # 物流公司名称
-    params['transport_type'] = u'POST'
-
-    params, prestr = params_filter(params)
-
-    params['sign'] = build_mysign(prestr, settings.ALIPAY_KEY, settings.ALIPAY_SIGN_TYPE)
-    params['sign_type'] = settings.ALIPAY_SIGN_TYPE
-
-    return _GATEWAY + urlencode(params)
-
-
-def notify_verify(post):
-    # 初级验证--签名
-    _, prestr = params_filter(post)
-    mysign = build_mysign(prestr, settings.ALIPAY_KEY, settings.ALIPAY_SIGN_TYPE)
-    if mysign != post.get('sign'):
-        pay_logger.error("支付宝返回校验失败，mysign: %s alisign: %s" % (mysign, post.get('sign')))
-        return False
-
-    # 二级验证--查询支付宝服务器此条信息是否有效
-    params = {}
-    params['partner'] = settings.ALIPAY_PARTNER
-    params['notify_id'] = post.get('notify_id')
-    if settings.ALIPAY_TRANSPORT == 'https':
-        params['service'] = 'notify_verify'
-        gateway = 'https://www.alipay.com/cooperate/gateway.do'
-    else:
-        gateway = 'http://notify.alipay.com/trade/notify_query.do'
-    veryfy_result = urlopen(gateway, urlencode(params)).read()
-    if veryfy_result.lower().strip() == 'true':
-        return True
-    return False
 

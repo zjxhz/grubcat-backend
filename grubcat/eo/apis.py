@@ -333,7 +333,11 @@ class UserResource(ModelResource):
             num_persons = int(request.POST.get('num_persons'))
             #TODO try catch if no avaliable seats
             order = meal.join(user_profile, num_persons)
-            return createGeneralResponse('OK', "You've just joined the meal",{"code":order.code})
+            order_resource = OrderResource()
+            order_bundle = order_resource.build_bundle(obj=order)
+            serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return createGeneralResponse('OK', "You've just joined the meal",dic)
         else:
             return order_resource.get_list(request, customer=user_profile)
     
@@ -525,8 +529,9 @@ class UserResource(ModelResource):
             photos = user_to_query.photos.all()
             return get_my_list(UserPhotoResource(), photos, request)
         elif request.method == "POST":
-            photo = UserPhoto(user=user_to_query, photo=request.FILES['file'])
-            photo.save()
+            photo = UserPhoto(user=user_to_query)
+            name = request.FILES.keys()[0]
+            photo.photo.save(name, request.FILES.values()[0])
             photo_resource = UserPhotoResource()
             photo_bundle = photo_resource.build_bundle(obj=photo)
             serialized = photo_resource.serialize(None, photo_resource.full_dehydrate(photo_bundle),  'application/json')
@@ -573,10 +578,11 @@ class UserResource(ModelResource):
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
         elif request.method == 'POST':
             old_avatar = user_to_query.avatar
-            user_to_query.avatar = request.FILES['file']
+            contentFile = request.FILES.values()[0]
+            filename = contentFile.name
             user_to_query.cropping = "" #cropping is not supported by app yet so clear it
-            user_to_query.save()
-            if old_avatar and os.path.exists(old_avatar.path):
+            user_to_query.avatar.save(filename, contentFile)
+            if old_avatar and os.path.exists(old_avatar.path) and user_to_query.avatar.path != old_avatar.path:
                 os.remove(old_avatar.path)
             xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
@@ -591,7 +597,7 @@ class UserResource(ModelResource):
         authorization = Authorization()
         queryset = UserProfile.objects.exclude(user__restaurant__isnull=False)
         resource_name = 'user'
-        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS}
+        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
 
 
@@ -774,7 +780,7 @@ class MealResource(ModelResource):
     
     class Meta:
         queryset = Meal.objects.all()
-        filtering = {'type': ALL,'start_date':ALL}
+        filtering = {'type': ALL,'start_date':ALL, "id":ALL}
         allowed_methods = ['get','post']
         authorization = Authorization()
         ordering = ['start_date']
@@ -805,7 +811,7 @@ class OrderResource(ModelResource):
         
     class Meta:
         queryset = Order.objects.all() # .exclude(status=4)
-        filtering = {'customer':ALL,}
+        filtering = {'customer':ALL_WITH_RELATIONS, 'meal':ALL_WITH_RELATIONS, "status":ALL}
         ordering = ['created_time','meal']
             
 def createLoggedInResponse(loggedInuser):
@@ -874,10 +880,11 @@ def mobile_user_login(request):
 #            ur_bundle = user_resource.build_bundle(obj=user.get_profile())
 #            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
 #            dic = json.loads(serialized)
-            dic = {}
-            dic['status'] = 'OK'
-            dic['info'] = "You've logged in"
-            return HttpResponse(json.dumps(dic), content_type ='application/json')
+##            dic = {}
+#            dic['status'] = 'OK'
+#            dic['info'] = "You've logged in"
+#            return HttpResponse(json.dumps(dic), content_type ='application/json')
+            return createLoggedInResponse(user)
         else:
             return createGeneralResponse('NOK', "Incorrect username or password")
     else:

@@ -364,7 +364,8 @@ class Order(models.Model):
     def set_payed(self, payed_time):
         order = self
         order.status = OrderStatus.PAYIED
-        order.payed_time = payed_time
+        if payed_time:
+            order.payed_time = payed_time
         if not order.code:
             order.gen_code()
         order.save()
@@ -570,25 +571,24 @@ class UserProfile(models.Model):
         paying_orders_per_meal = all_paying_orders.values('meal').annotate(latest_order_id=Max('id'))
         return paying_orders_per_meal
 
-    def avatar_thumbnail(self, width, height):
-        if self.avatar:
-            return get_thumbnailer(self.avatar).get_thumbnail({'size': (width, height),
-                                                               'box': self.cropping,
-                                                               'crop': True,
-                                                               'detail': True
-            }).url
-        else:
-            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
+    
     def avatar_thumbnailer(self, avatar_size):
-        return get_thumbnailer(self.avatar).get_thumbnail({
-            'size': avatar_size,
-            'box': self.cropping,
-            'quality': 90,
-            'crop': True,
-            'detail': True,
-        })
+        try:
+            if self.avatar and os.path.exists(self.avatar.path):
+                return get_thumbnailer(self.avatar).get_thumbnail({
+                    'size': avatar_size,
+                    'box': self.cropping,
+                    'quality': 90,
+                    'crop': True,
+                    'detail': True,
+                })
+        except Exception:
+            pass
 
+    def avatar_thumbnail(self, width, height):
+        return self.avatar_thumbnail_for_size((width, height))
+            
     @property
     def age(self):
         if self.birthday:
@@ -596,45 +596,34 @@ class UserProfile(models.Model):
         else:
             return None
 
+    def avatar_thumbnail_for_size(self, size):
+        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(size):
+            return self.avatar_thumbnailer(size).url
+        else:
+            return staticfiles_storage.url("img/default/big_avatar.png")
+        
     @property
     def big_avatar(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = self.avatar_thumbnailer(settings.BIG_AVATAR_SIZE).url
-        else:
-            thumbnail_url = staticfiles_storage.url("img/default/big_avatar.png")
-        return thumbnail_url
+        return self.avatar_thumbnail_for_size(settings.BIG_AVATAR_SIZE)
 
     @property
     def normal_avatar(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = self.avatar_thumbnailer(settings.NORMAL_AVATAR_SIZE).url
-        else:
-            thumbnail_url = staticfiles_storage.url("img/default/normal_avatar.png")
-        return thumbnail_url
+        return self.avatar_thumbnail_for_size(settings.NORMAL_AVATAR_SIZE)
 
     @property
     def small_avatar(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).url
-        else:
-            thumbnail_url = staticfiles_storage.url("img/default/small_avatar.png")
-        return thumbnail_url
+        return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)        
     
     @property
     def medium_avatar(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = self.avatar_thumbnailer(settings.MEDIUM_AVATAR_SIZE).url
-        else:
-            thumbnail_url = staticfiles_storage.url("img/default/small_avatar.png")
-        return thumbnail_url
-        
+        return self.avatar_thumbnail_for_size(settings.MEDIUM_AVATAR_SIZE)
+
     @property
     def small_avatar_path(self):
-        if self.avatar and os.path.exists(self.avatar.path):
-            thumbnail_url = self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
+        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE):
+            return self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
         else:
-            thumbnail_url = None
-        return thumbnail_url
+            return None
 
     #    To Be Deleted, checked in group pages
     @property
@@ -804,18 +793,24 @@ class UserPhoto(models.Model):
 
     @property
     def photo_thumbnail(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
-                                                          'crop': True,
-                                                          'detail': True
-        }).url
+        try:
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
+                                                              'crop': True,
+                                                              'detail': True
+            }).url
+        except Exception:
+            return None
 
     @property
     def large_photo(self):
-        return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
-                                                          'crop': False,
-                                                          'detail': True
-        }).url
-
+        try:
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
+                                                              'crop': False,
+                                                              'detail': True
+                                                              }).url
+        except Exception:
+            return None
+        
     @models.permalink
     def get_absolute_url(self):
         return 'photo_detail', [str(self.id)]
