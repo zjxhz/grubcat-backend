@@ -1,7 +1,6 @@
 #coding=utf-8
 import logging
-import xml
-import M2Crypto
+import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -15,16 +14,15 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-import rsa
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
-from eo.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt
+from eo.pay.alipay.alipay import create_direct_pay, verify_sign
+from eo.pay.alipay.config import settings as alipay_settings
 from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 from django.conf import settings
 import json
-from eo.pay.alipay.config import settings as alipay_settings
 
 
 logger = logging.getLogger()
@@ -492,7 +490,8 @@ class OrderCreateView(CreateView):
         customer = self.request.user.get_profile()
         order = meal.join(customer, num_persons)
         #        TODO some checks
-        url = create_direct_pay(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
+        url = create_direct_pay(order.id, order.meal.topic, meal.list_price, num_persons)
+        # url = create_wap_pay(order.id, order.meal.topic, meal.list_price, num_persons)
         pay_logger.info("支付订单：%s" % url)
         return HttpResponseRedirect(url)
 
@@ -695,14 +694,13 @@ order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
 def handle_alipay_direct_sync_back(request):
     data = request.GET
-    trade_status = data.get('trade_status') if data.get('trade_status') else data.get('result')
+    trade_status = data.get('trade_status')
     pay_logger.info(u'alipay_web同步通知开始....' + trade_status)
     pay_logger.info(data)
     order_id = data.get('out_trade_no').replace(order_prefix, '')
-    if trade_status in ('WAIT_SELLER_SEND_GOODS', "TRADE_SUCCESS"):
-        #WAIT_SELLER_SEND_GOODS 是担保支付返回的成功状态，TRADE_SUCCESS是及时支付返回的成功状态
-        verify_sign(data)
-        handle_alipay_back(trade_status, order_id, data.get('trade_no'), data.get('gmt_payment'))
+    if trade_status in ('WAIT_SELLER_SEND_GOODS',   "TRADE_SUCCESS", 'success'):
+        verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE)
+        handle_alipay_back(order_id, data.get('trade_no'), data.get('gmt_payment'))
         order = Order.objects.get(pk=order_id)
         pay_logger.info(u"alipay_web同步通知--结束--成功")
         return HttpResponseRedirect(order.get_absolute_url())
@@ -717,63 +715,73 @@ def handle_alipay_direct_aysnc_back(request):
     if trade_status in ('WAIT_SELLER_SEND_GOODS', "TRADE_SUCCESS"):
         #WAIT_SELLER_SEND_GOODS 是担保支付返回的成功状态，TRADE_SUCCESS是及时支付返回的成功状态
         try:
-            verify_sign(data)
-            handle_alipay_back(trade_status, data.get('out_trade_no').replace(order_prefix, ''), data.get('trade_no'), data.get('gmt_payment'))
+            verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE )
+            handle_alipay_back(data.get('out_trade_no').replace(order_prefix, ''), data.get('trade_no'),
+                               data.get('gmt_payment'))
         except AlreadyJoinedError:
             pass
         except Exception, e:
-            pay_logger.exception(u"alipay_web异步通知--结束--失败 "+str(e))
+            pay_logger.exception(u"alipay_web异步通知--结束--失败 " + unicode(e))
             return HttpResponse("fail")
-        pay_logger.info(u"alipay_web异步通知--结束--成功")
-        return HttpResponse("success")
+    pay_logger.info(u"alipay_web异步通知--结束--成功")
+    return HttpResponse("success")
 
 @csrf_exempt
-def handle_alipay_app_aysnc_back(request):
+def handle_alipay_app_async_back(request):
     data = request.POST
     pay_logger.info(u'alipay_app异步通知--开始....')
     pay_logger.info(data)
     try:
-        #支付宝wap异步返回验签的参数顺序为如下固定顺序
-        notify_data = decrypt( smart_str(data.get('notify_data')))
-        sort = ('service', 'v', 'sec_id', 'notify_data')
-        result_param = {
-            'service': data.get('service'),
-            'v': data.get('v'),
-            'sec_id': data.get('sec_id'),
-            'notify_data': notify_data,
-            'sign': data.get('sign')
-        }
-        verify_sign(result_param, sort)
+        notify_data = smart_str(data.get('notify_data'))
 
-        #parse notify_data
+        verify_sign("notify_data=%s" % notify_data, data.get('sign'))
+
         doc = xml.dom.minidom.parseString(notify_data)
-        trade_status = doc.getElementsByTagName("trade_status")[0].firstChild.data
-        alipay_trade_no = doc.getElementsByTagName("trade_no")[0].firstChild.data
-        order_id = doc.getElementsByTagName("out_trade_no")[0].firstChild.data.replace(order_prefix, '')
-        gmt_payment = doc.getElementsByTagName("gmt_payment")[0].firstChild.data
-
+        trade_status = getTextByTagName(doc, 'trade_status')
         pay_logger.debug(trade_status)
-        if trade_status in ("TRADE_SUCCESS", 'TRADE_FINISHED'):
-            handle_alipay_back(trade_status, order_id, alipay_trade_no, gmt_payment)
-    except AlreadyJoinedError:
+        if trade_status in('TRADE_FINISHED', 'TRADE_SUCCESS'):
+            alipay_trade_no = getTextByTagName(doc, 'trade_no')
+            order_id = getTextByTagName(doc, 'out_trade_no').replace(order_prefix,'')
+            gmt_payment = getTextByTagName(doc, 'gmt_payment')
+            handle_alipay_back(order_id, alipay_trade_no, gmt_payment, check_overtime=True)
+    except (AlreadyJoinedError, PayOverTimeError):
         pass
     except Exception, e:
-        pay_logger.error(u"alipay_app异步通知--结束--失败 "+ str(e))
+        pay_logger.exception(u"alipay_app异步通知--结束--失败 " )
         return HttpResponse("fail")
     pay_logger.info(u"alipay_app异步通知--结束--成功")
     return HttpResponse("success")
-    #TRADE_FINISHED 直接返回success
+
+
+def getTextByTagName(doc, tag):
+    tags = doc.getElementsByTagName(tag)
+    if len(tags):
+        return tags[0].firstChild.data
+    else:
+        return ""
 
 
 def handle_alipay_app_sync_back(request):
-    data = request.GET
-    trade_status = data.get('result')
-    pay_logger.info(u'alipay_app同步通知开始....' + trade_status)
+    pay_logger.info(u'alipay_app同步通知开始....')
+    data = request.POST
     pay_logger.info(data)
-    order_id = data.get('out_trade_no').replace(order_prefix, '')
-    if data.get('result') == "success":
-        verify_sign(data)
-        handle_alipay_back(trade_status, order_id, data.get('trade_no'))
+    try:
+        alipay_result_str = data.get("alipay_result")
+        sign = data.get('sign')
+        alipay_result = alipay_result_str.split("&")
+        params = {}
+        verify_sign(alipay_result_str, sign)
+
+        for p in alipay_result:
+            index = p.index('=')
+            params[p[:index]] = p[index + 2:-1]
+        order_id = params.get('out_trade_no').replace(order_prefix, '')
+        handle_alipay_back(order_id, check_overtime=True)
         order = Order.objects.get(pk=order_id)
         pay_logger.info(u"alipay_app同步通知--结束--成功")
-        return HttpResponseRedirect(order.get_absolute_url())
+        return create_sucess_json_response(extra_dict={'order_id': order_id, 'code': order.code})
+    except (AlreadyJoinedError, PayOverTimeError), e:
+        return create_failure_json_response(e.message)
+    except Exception, e:
+        pay_logger.exception('alipay_app sync bac error')
+        return create_failure_json_response(u'对不起，支付出现了问题，请您查看是否已经支付成功')
