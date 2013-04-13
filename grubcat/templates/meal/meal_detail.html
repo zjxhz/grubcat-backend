@@ -65,7 +65,7 @@
                                 马上预定
                             </a>
                         {% endif %}
-                        <form id="order_info_form" method="post" target="{% comment %}_blank{% endcomment %}"
+                        <form id="order_info_form" method="post"  target="_blank"
                               class="form-horizontal"> {% csrf_token %}
                             <fieldset>
                                 {% for hidden in form.hidden_fields %}

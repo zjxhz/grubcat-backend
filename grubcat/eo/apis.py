@@ -1,9 +1,10 @@
+#coding=utf-8
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
@@ -11,6 +12,7 @@ from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
     DishCategory, Order, Relationship, UserMessage, Meal, MealInvitation, \
     UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
 from grubcat.eo.models import MealParticipants, Visitor
+from grubcat.eo.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -337,7 +339,9 @@ class UserResource(ModelResource):
             order_bundle = order_resource.build_bundle(obj=order)
             serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
             dic = json.loads(serialized)
-            return createGeneralResponse('OK', "You've just joined the meal",dic)
+            app_req_str = create_app_pay(order.id, order.meal.topic, meal.list_price * num_persons)
+            dic['app_req_str'] = app_req_str
+            return createGeneralResponse('OK', "You've just joined the meal", dic)
         else:
             return order_resource.get_list(request, customer=user_profile)
     
