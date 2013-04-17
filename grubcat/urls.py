@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
 from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
 from eo.decorators import restaurant_login_required
-from eo.views import  upload_app
+from eo.views import upload_app
 from eo.views_common import list_tags, add_tag
 from grubcat.eo.views import *
 from django.conf import settings
@@ -15,7 +15,6 @@ import eo.views_restaurant as rest
 
 admin.autodiscover()
 urlpatterns = patterns('',
-    #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     #    ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     #    ('^restaurant/(\d+)/$', get_restaurant),
@@ -164,8 +163,10 @@ urlpatterns = patterns('',
     ('^upload_app/$', upload_app),
 
     #pay
-    url(r'^pay/alipay/back/sync/$', handle_back_sync, name="alipay_back_sync"),
-    url(r'^pay/alipay/back/async/$', handle_back_aysnc, name="alipay_back_async"),
+    url(r'^pay/alipay/direct/back/sync/$', handle_alipay_direct_sync_back, name="alipay_direct_sync_back"),
+    url(r'^pay/alipay/direct/back/async/$', handle_alipay_direct_aysnc_back, name="alipay_direct_async_back"),
+    url(r'^pay/alipay/app/back/sync/$', handle_alipay_app_sync_back, name="alipay_app_sync_back"),
+    url(r'^pay/alipay/app/back/async/$', handle_alipay_app_async_back, name="alipay_app_async_back"),
 )
 
 if settings.DEBUG:
@@ -173,8 +174,7 @@ if settings.DEBUG:
 urlpatterns += staticfiles_urlpatterns()
 
 
-
 # Standard bits...
 urlpatterns += patterns('',
-    (r'^api/', include(v1_api.urls)),
+                        (r'^api/', include(v1_api.urls)),
 )

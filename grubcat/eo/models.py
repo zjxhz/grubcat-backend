@@ -361,10 +361,11 @@ class Order(models.Model):
         return "%s %s %s" % (self.meal.id, self.id, self.customer.id)
 
 
-    def set_payed(self, payed_time):
+    def set_payed(self):
         order = self
         order.status = OrderStatus.PAYIED
-        order.payed_time = payed_time
+        # if payed_time:
+        #     order.payed_time = payed_time
         if not order.code:
             order.gen_code()
         order.save()
@@ -383,7 +384,7 @@ class Order(models.Model):
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
-            self.meal.participants.filter(meal=self.meal, userprofile=self.customer).delete()
+            MealParticipants.objects.filter(meal=self.meal, userprofile=self.customer).delete()
             self.meal.actual_persons -= self.num_persons
             self.meal.save()
             self.status = OrderStatus.CANCELED
@@ -541,7 +542,7 @@ class UserProfile(models.Model):
             raise BusinessException(u'你已经关注了对方！')
 
     def get_passedd_orders(self):
-        return self.orders.filter(status=OrderStatus.PAYIED).filter(
+        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
                                                      meal__start_time__lt=datetime.now().time())).order_by(
             "meal__start_date", "meal__start_time").select_related('meal')
@@ -907,18 +908,13 @@ class Meal(models.Model):
                 start_time__gt=datetime.now().time())).order_by("start_date",
             "start_time").select_related("menu")
 
-    def join(self, customer, requesting_persons):
-        if self.is_participant(customer):
-            raise AlreadyJoinedError(u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！")
-
+    def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
             customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
                                                          created_time__gte=datetime.now() - timedelta(
                                                              minutes=settings.PAY_OVERTIME)).select_for_update().values(
             'customer').annotate(max_num_persons=Max('num_persons'))
         paying_persons = sum([o['max_num_persons'] for o in other_paying_orders])
-        # print 'orders.len=%s paying:%s requesting:%s payed:%s' % (
-        # len(other_paying_orders), paying_persons, requesting_persons, self.actual_persons)
         if self.actual_persons + requesting_persons + paying_persons > self.max_persons:
             if self.actual_persons >= self.max_persons:
                 message = u'该饭局已卖光了！'
@@ -926,10 +922,16 @@ class Meal(models.Model):
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
                 message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (
-                paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+                    paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             else:
-                message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
+                message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             raise NoAvailableSeatsError(message)
+
+    def join(self, customer, requesting_persons):
+        if self.is_participant(customer):
+            raise AlreadyJoinedError(u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！")
+
+        self.checkAvaliableSeats(customer, requesting_persons)
 
         order = Order()
         order.meal = self

@@ -1,7 +1,7 @@
 #coding=utf-8
 from datetime import datetime, timedelta
 import logging
-import urllib
+import threading
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -9,7 +9,6 @@ from taggit.models import Tag
 import time
 from eo.exceptions import *
 from eo.models import UserProfile, Order, OrderStatus, TransFlow
-from eo.pay.alipay.alipay import send_goods_confirm_by_platform, notify_verify
 import json
 
 SUCESS = "OK"
@@ -17,64 +16,45 @@ ERROR = 'NOK'
 pay_logger = logging.getLogger("pay")
 order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
-def handle_alipay_back(data):
+
+
+def handle_alipay_back(order_id, alipay_trade_no='', payed_time_str='', check_overtime=False):
     """
         handle both sync and async notifier
         @exception:　AliapyBackVerifyFailedError 支付宝返回数据校验失败，此种情况一般不会有
-        @exception:  PayOverTimeError 支付超时，替换成及时支付后，不会出现这种情况
         @exception: AlreadyJoinedError 重复支付
     """
-    pay_logger.info(data)
-    trade_status = data.get('trade_status')
-    if trade_status == 'WAIT_SELLER_SEND_GOODS' or trade_status == "TRADE_SUCCESS":
-        order = Order.objects.get(pk=data.get('out_trade_no').replace(order_prefix, ''))
-        alipay_trade_no = data.get('trade_no')
+    if payed_time_str:
         try:
-            payed_time = time.strptime(data.get('gmt_payment'), '%Y-%m-%d %H:%M:%S')
+            payed_time = time.strptime(payed_time_str, '%Y-%m-%d %H:%M:%S')
             payed_time = datetime(*payed_time[:6])
         except:
             payed_time = datetime.now()
-
-        if hasattr(order, 'flow'):
-            #already handled before
-            if order.created_time + timedelta(minutes=settings.PAY_OVERTIME) < payed_time:
-                #pay overtime and handled before
-                raise PayOverTimeError
-            elif order.status == OrderStatus.PAYIED:
-                return
-            elif order.status == OrderStatus.CANCELED:
-                #another order paied and this order is  handled before
-                raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
-
-        #fist time handled back request from alipay
-        if not notify_verify(data):
-            pay_logger.error(u"alipay返回, 校验失败")
-            raise AliapyBackVerifyFailedError
-
-        #TODO remove overtime check
-        if order.created_time + timedelta(minutes=settings.PAY_OVERTIME) < payed_time:
-            order.status = OrderStatus.CANCELED
-            order.payed_time = payed_time
-            order.save()
-            TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
-            raise PayOverTimeError
-
-        elif order.status == OrderStatus.CREATED:
-            order.set_payed(payed_time)
-            TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
-            url = send_goods_confirm_by_platform(alipay_trade_no)
-            urllib.urlopen(url)
-            pay_logger.info('确认发货.订单:%s, url:%s' % (order.id, url))
-
-        elif order.status == OrderStatus.CANCELED:
-            #another order paied and this order is not handled before
-            order.payed_time = payed_time
-            order.save()
-            TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
-            raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
-
     else:
-        pay_logger.debug(u"alipay返回状态不是TRADE_SUCCESS 或者WAIT_SELLER_SEND_GOODS，是%s" % trade_status)
+        payed_time = datetime.now()
+
+    order = Order.objects.filter(pk=order_id).select_for_update()[0]
+
+    if payed_time and not order.payed_time:
+        order.payed_time = payed_time
+        order.save()
+
+    if alipay_trade_no and not hasattr(order, 'flow'):
+        TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
+
+    if check_overtime and order.created_time + timedelta(
+            minutes=settings.PAY_OVERTIME) < payed_time:
+        try:
+            order.meal.checkAvaliableSeats(order.customer, order.num_persons)
+        except NoAvailableSeatsError:
+            raise PayOverTimeError(u'对不起，您支付超时了，请您联系饭聚网客服!')
+
+    if order.status == OrderStatus.CREATED:
+        order.set_payed()
+    elif order.status == OrderStatus.CANCELED:
+        #another order paied and this order is not handled before
+        raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
+
 
 
 # Create a json response with status and message)
@@ -86,7 +66,7 @@ def create_json_response(status=None, message=None, extra_dict=None):
         response['message'] = message
     if extra_dict:
         response.update(extra_dict)
-    return HttpResponse(json.dumps(response), content_type='application/json', )
+    return HttpResponse(json.dumps(response), content_type='application/json;charset=UTF-8', )
 
 
 def create_sucess_json_response(message=u"成功", extra_dict=None):

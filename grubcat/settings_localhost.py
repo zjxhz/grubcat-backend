@@ -6,6 +6,12 @@ ASSETS_AUTO_BUILD = True
 STATIC_URL = '/static/'
 DEBUG=True
 XMPP_SERVER="localhost"
+
+RAVEN_CONFIG = {
+    'register_signals': False,
+    # 'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
+    }
+
 LOGGING_ROOT = "/Users/wayne/temp/"
 
 LOGGING = {
