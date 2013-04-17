@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
     DishCategory, Order, Relationship, UserMessage, Meal, MealInvitation, \
     UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
+from grubcat.eo.exceptions import NoAvailableSeatsError
 from grubcat.eo.models import MealParticipants, Visitor
 from taggit.models import Tag
 from tastypie import fields
@@ -332,14 +333,19 @@ class UserResource(ModelResource):
             meal = Meal.objects.get(id=request.POST.get('meal_id'))
             num_persons = int(request.POST.get('num_persons'))
             #TODO try catch if no avaliable seats
-            order = meal.join(user_profile, num_persons)
-            order_resource = OrderResource()
-            order_bundle = order_resource.build_bundle(obj=order)
-            serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
-            dic = json.loads(serialized)
-            return createGeneralResponse('OK', "You've just joined the meal",dic)
+            try:
+                order = meal.join(user_profile, num_persons)
+                order_resource = OrderResource()
+                order_bundle = order_resource.build_bundle(obj=order)
+                serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
+                dic = json.loads(serialized)
+                return createGeneralResponse('OK', "You've just joined the meal",dic)
+            except NoAvailableSeatsError, e:
+                return createGeneralResponse('NOK', e.message)
         else:
-            return order_resource.get_list(request, customer=user_profile)
+            obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
+            return get_my_list(self, all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     def get_following(self, request, **kwargs):
         if not request.user.is_authenticated():

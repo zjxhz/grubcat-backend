@@ -40,26 +40,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'django.db.backends': {
-            'level': 'ERROR',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'raven': {
-            'level': 'ERROR',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'sentry.errors': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'api': {
-            'handlers': ['console', 'sentry'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
+        
     }
 }
 
@@ -70,3 +51,4 @@ LESS_BIN="/usr/local/bin/lessc"
 ASSETS_AUTO_BUILD = True
 XMPP_DEBUG=["socket"]
 #os.path.join("/usr/local/", "bin")
+TASTYPIE_FULL_DEBUG = True
