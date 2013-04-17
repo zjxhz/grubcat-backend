@@ -17,8 +17,6 @@ pay_logger = logging.getLogger("pay")
 order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
 
-alipay_lock = threading.Lock()
-
 
 def handle_alipay_back(order_id, alipay_trade_no='', payed_time_str='', check_overtime=False):
     """
@@ -35,32 +33,28 @@ def handle_alipay_back(order_id, alipay_trade_no='', payed_time_str='', check_ov
     else:
         payed_time = datetime.now()
 
-    try:
-        if alipay_lock.acquire():
-            order = Order.objects.get(pk=order_id)
+    order = Order.objects.filter(pk=order_id).select_for_update()[0]
 
-            if payed_time and not order.payed_time:
-                order.payed_time = payed_time
-                order.save()
+    if payed_time and not order.payed_time:
+        order.payed_time = payed_time
+        order.save()
 
-            if alipay_trade_no and not hasattr(order, 'flow'):
-                TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
+    if alipay_trade_no and not hasattr(order, 'flow'):
+        TransFlow.objects.create(order=order, alipay_trade_no=alipay_trade_no)
 
-            if check_overtime and order.created_time + timedelta(
-                    minutes=settings.PAY_OVERTIME) < payed_time:
-                try:
-                    order.meal.checkAvaliableSeats(order.customer, order.num_persons)
-                except NoAvailableSeatsError:
-                    raise PayOverTimeError(u'对不起，您支付超时了，请您联系饭聚网客服!')
+    if check_overtime and order.created_time + timedelta(
+            minutes=settings.PAY_OVERTIME) < payed_time:
+        try:
+            order.meal.checkAvaliableSeats(order.customer, order.num_persons)
+        except NoAvailableSeatsError:
+            raise PayOverTimeError(u'对不起，您支付超时了，请您联系饭聚网客服!')
 
-            if order.status == OrderStatus.CREATED:
-                order.set_payed()
-            elif order.status == OrderStatus.CANCELED:
-                #another order paied and this order is not handled before
-                raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
+    if order.status == OrderStatus.CREATED:
+        order.set_payed()
+    elif order.status == OrderStatus.CANCELED:
+        #another order paied and this order is not handled before
+        raise AlreadyJoinedError(u'对不起，您重复支付了，请您联系我们退款！')
 
-    finally:
-        alipay_lock.release()
 
 
 # Create a json response with status and message)

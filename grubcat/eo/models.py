@@ -542,7 +542,7 @@ class UserProfile(models.Model):
             raise BusinessException(u'你已经关注了对方！')
 
     def get_passedd_orders(self):
-        return self.orders.filter(status=OrderStatus.PAYIED).filter(
+        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
                                                      meal__start_time__lt=datetime.now().time())).order_by(
             "meal__start_date", "meal__start_time").select_related('meal')
@@ -922,9 +922,9 @@ class Meal(models.Model):
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
                 message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (
-                    paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME)
+                    paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             else:
-                message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME)
+                message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             raise NoAvailableSeatsError(message)
 
     def join(self, customer, requesting_persons):
