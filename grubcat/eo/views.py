@@ -1,6 +1,6 @@
 #coding=utf-8
-# Create your views here.
 import logging
+import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -8,6 +8,7 @@ from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -16,7 +17,8 @@ from django.views.generic.list import ListView
 import weibo
 from eo.exceptions import *
 from eo.models import Order, Relationship, Meal
-from eo.pay.alipay.alipay import create_direct_pay_by_user
+from eo.pay.alipay.alipay import create_direct_pay, verify_sign
+from eo.pay.alipay.config import settings as alipay_settings
 from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from grubcat.eo.forms import *
 from django.conf import settings
@@ -488,41 +490,12 @@ class OrderCreateView(CreateView):
         customer = self.request.user.get_profile()
         order = meal.join(customer, num_persons)
         #        TODO some checks
-        url = create_direct_pay_by_user(order.id, u"饭局：" + order.meal.topic, '', meal.list_price, num_persons)
+        url = create_direct_pay(order.id, order.meal.topic, meal.list_price, num_persons)
+        # url = create_wap_pay(order.id, order.meal.topic, meal.list_price, num_persons)
         pay_logger.info("支付订单：%s" % url)
         return HttpResponseRedirect(url)
 
 #TODO check pay status
-
-
-@csrf_exempt
-def handle_back_aysnc(request):
-    pay_logger.info(u'alipay异步通知开始....')
-    if request.method == 'POST':
-        try:
-            handle_alipay_back(request.POST)
-            return HttpResponse("success")
-        except AliapyBackVerifyFailedError:
-            return HttpResponse("fail")
-        except Exception:
-            return HttpResponse("success")
-    else:
-        return HttpResponse("fail")
-
-order_prefix = getattr(settings, 'ORDER_PREFIX', '')
-def handle_back_sync(request):
-    pay_logger.info(u'alipay同步通知开始....')
-    if request.method == 'GET':
-        try:
-            handle_alipay_back(request.GET)
-            order_id = request.GET.get('out_trade_no').replace(order_prefix, '')
-            order = Order.objects.get(pk=order_id)
-            return HttpResponseRedirect(order.get_absolute_url())
-        except (PayOverTimeError, AlreadyJoinedError):
-            raise
-        except Exception:
-            raise BusinessException(u"支付遇到了点问题！请您查看支付是否成功！")
-
 
 class MealDetailView(OrderCreateView):
     form_class = OrderCreateForm
@@ -540,6 +513,8 @@ class MealDetailView(OrderCreateView):
                 context['order'] = orders[0]
         if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
+        else:
+            context['just_created'] = False
         return context
 
 
@@ -592,7 +567,7 @@ class UserMealListView(TemplateView):
         set_profile_common_attrs(context, self.request)
         if context['is_mine']:
             context['paying_orders'] = user.get_paying_orders()
-            context['pay_overtime'] = settings.PAY_OVERTIME
+            context['pay_overtime'] = settings.PAY_OVERTIME_FOR_PAY_OR_USER
         context['upcomming_orders'] = user.get_upcomming_orders()
         context['passed_orders'] = user.get_passedd_orders()
         return context
@@ -714,3 +689,101 @@ def upload_app(request):
         form = UploadFileForm()
     return render_to_response('test/upload.html', {'form': form})
 
+############### pays
+
+order_prefix = getattr(settings, 'ORDER_PREFIX', '')
+
+
+def handle_alipay_direct_sync_back(request):
+    data = request.GET
+    trade_status = data.get('trade_status')
+    pay_logger.info(u'alipay_web同步通知开始....' + trade_status)
+    pay_logger.info(data)
+    order_id = data.get('out_trade_no').replace(order_prefix, '')
+    if trade_status in ('WAIT_SELLER_SEND_GOODS',   "TRADE_SUCCESS", 'success'):
+        verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE)
+        handle_alipay_back(order_id, data.get('trade_no'), data.get('gmt_payment'))
+        order = Order.objects.get(pk=order_id)
+        pay_logger.info(u"alipay_web同步通知--结束--成功")
+        return HttpResponseRedirect(order.get_absolute_url())
+
+
+@csrf_exempt
+def handle_alipay_direct_aysnc_back(request):
+    data = request.POST
+    trade_status = data.get('trade_status')
+    pay_logger.info(u'alipay_web异步通知开始....' + trade_status)
+    pay_logger.info(data)
+    if trade_status in ('WAIT_SELLER_SEND_GOODS', "TRADE_SUCCESS"):
+        #WAIT_SELLER_SEND_GOODS 是担保支付返回的成功状态，TRADE_SUCCESS是及时支付返回的成功状态
+        try:
+            verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE )
+            handle_alipay_back(data.get('out_trade_no').replace(order_prefix, ''), data.get('trade_no'),
+                               data.get('gmt_payment'))
+        except AlreadyJoinedError:
+            pass
+        except Exception, e:
+            pay_logger.exception(u"alipay_web异步通知--结束--失败 " + unicode(e))
+            return HttpResponse("fail")
+    pay_logger.info(u"alipay_web异步通知--结束--成功")
+    return HttpResponse("success")
+
+@csrf_exempt
+def handle_alipay_app_async_back(request):
+    data = request.POST
+    pay_logger.info(u'alipay_app异步通知--开始....')
+    pay_logger.info(data)
+    try:
+        notify_data = smart_str(data.get('notify_data'))
+
+        verify_sign("notify_data=%s" % notify_data, data.get('sign'))
+
+        doc = xml.dom.minidom.parseString(notify_data)
+        trade_status = getTextByTagName(doc, 'trade_status')
+        pay_logger.debug(trade_status)
+        if trade_status in('TRADE_FINISHED', 'TRADE_SUCCESS'):
+            alipay_trade_no = getTextByTagName(doc, 'trade_no')
+            order_id = getTextByTagName(doc, 'out_trade_no').replace(order_prefix,'')
+            gmt_payment = getTextByTagName(doc, 'gmt_payment')
+            handle_alipay_back(order_id, alipay_trade_no, gmt_payment, check_overtime=True)
+    except (AlreadyJoinedError, PayOverTimeError):
+        pass
+    except Exception, e:
+        pay_logger.exception(u"alipay_app异步通知--结束--失败 " )
+        return HttpResponse("fail")
+    pay_logger.info(u"alipay_app异步通知--结束--成功")
+    return HttpResponse("success")
+
+
+def getTextByTagName(doc, tag):
+    tags = doc.getElementsByTagName(tag)
+    if len(tags):
+        return tags[0].firstChild.data
+    else:
+        return ""
+
+
+def handle_alipay_app_sync_back(request):
+    pay_logger.info(u'alipay_app同步通知开始....')
+    data = request.POST
+    pay_logger.info(data)
+    try:
+        alipay_result_str = data.get("alipay_result")
+        sign = data.get('sign')
+        alipay_result = alipay_result_str.split("&")
+        params = {}
+        verify_sign(alipay_result_str, sign)
+
+        for p in alipay_result:
+            index = p.index('=')
+            params[p[:index]] = p[index + 2:-1]
+        order_id = params.get('out_trade_no').replace(order_prefix, '')
+        handle_alipay_back(order_id, check_overtime=True)
+        order = Order.objects.get(pk=order_id)
+        pay_logger.info(u"alipay_app同步通知--结束--成功")
+        return create_sucess_json_response(extra_dict={'order_id': order_id, 'code': order.code})
+    except (AlreadyJoinedError, PayOverTimeError), e:
+        return create_failure_json_response(e.message)
+    except Exception, e:
+        pay_logger.exception('alipay_app sync bac error')
+        return create_failure_json_response(u'对不起，支付出现了问题，请您查看是否已经支付成功')
