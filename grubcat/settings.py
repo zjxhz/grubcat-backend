@@ -3,7 +3,7 @@ import os
 from django.core.urlresolvers import reverse_lazy
 
 DEBUG = False
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
@@ -181,7 +181,7 @@ ASSETS_ROOT = r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
 #pay config
 #30minutes
 PAY_OVERTIME = 35
-PAY_OVERTIME_FOR_PAY = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
+PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
 
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"

@@ -34,7 +34,7 @@ def create_direct_pay(order, subject, price, quantity=""):
               'body': subject,
               'price': 0.01,
               'quantity': quantity,
-              'it_b_pay': str(django_settings.PAY_OVERTIME_FOR_PAY) + 'm'}
+              'it_b_pay': str(django_settings.PAY_OVERTIME_FOR_PAY_OR_USER) + 'm'}
 
     params, prestr = params_filter(params)
 

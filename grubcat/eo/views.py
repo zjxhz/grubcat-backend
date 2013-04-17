@@ -513,6 +513,8 @@ class MealDetailView(OrderCreateView):
                 context['order'] = orders[0]
         if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
+        else:
+            context['just_created'] = False
         return context
 
 
@@ -565,7 +567,7 @@ class UserMealListView(TemplateView):
         set_profile_common_attrs(context, self.request)
         if context['is_mine']:
             context['paying_orders'] = user.get_paying_orders()
-            context['pay_overtime'] = settings.PAY_OVERTIME
+            context['pay_overtime'] = settings.PAY_OVERTIME_FOR_PAY_OR_USER
         context['upcomming_orders'] = user.get_upcomming_orders()
         context['passed_orders'] = user.get_passedd_orders()
         return context
