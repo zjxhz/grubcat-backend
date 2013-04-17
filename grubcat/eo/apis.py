@@ -345,7 +345,7 @@ class UserResource(ModelResource):
         else:
             obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
             all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
-            return get_my_list(self, all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
+            return get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     def get_following(self, request, **kwargs):
         if not request.user.is_authenticated():
