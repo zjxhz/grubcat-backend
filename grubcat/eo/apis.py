@@ -12,6 +12,7 @@ from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
     UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
 from grubcat.eo.exceptions import NoAvailableSeatsError
 from grubcat.eo.models import MealParticipants, Visitor
+from grubcat.eo.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields
 from tastypie.api import Api
@@ -339,6 +340,8 @@ class UserResource(ModelResource):
                 order_bundle = order_resource.build_bundle(obj=order)
                 serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
                 dic = json.loads(serialized)
+                app_req_str = create_app_pay(order.id, order.meal.topic, meal.list_price * num_persons)
+                dic['app_req_str'] = app_req_str
                 return createGeneralResponse('OK', "You've just joined the meal",dic)
             except NoAvailableSeatsError, e:
                 return createGeneralResponse('NOK', e.message)
