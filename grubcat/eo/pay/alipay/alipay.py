@@ -32,7 +32,7 @@ def create_wap_pay(order, subject, price, quantity):
     #req data
     req_data = {'subject': subject,
                 'out_trade_no': order_prefix + str(order),
-                'total_fee': str(price * quantity),
+                'total_fee': str(0.01 * quantity),
                 'seller_account_name': settings.ALIPAY_SELLER_EMAIL,
                 'call_back_url': settings.ALIPAY_WAP_SYNC_BACK_URL,
                 'notify_url': settings.ALIPAY_WAP_AYSNC_BACK_URL,
