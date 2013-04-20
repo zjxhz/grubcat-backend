@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "account_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    <div class="login-wrapper">
+        <div class="login-panel span4 offset4">
+            <form id="login_form" class="login-form" action="{% url login %}" method="post">{% csrf_token %}
+                <fieldset>
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                        <p class="fieldWrapper">
+                            {{ field.errors }}
+                            {{ field.label_tag }} {{ field }}
+                        </p>
+                    {% endfor %}
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                </fieldset>
+
+                <p class="remember-wrapper">
+                    <input name="user[remember_me]" type="hidden" value="0">
+                    <input checked="checked" checked_value="1"
+                           id="user_remember_me"
+                           name="user[remember_me]" type="checkbox"
+                           unchecked_value="0" value="1"> <span>下次自动登录</span>
+                    <a href="/user/password/forget" class="hover-link forget-password fr">忘记密码</a>
+                </p>
+
+                <p class="sign-up-button">
+                    <input class="btn-signup" name="commit" type="submit" value="登录">
+                </p>
+
+            </form>
+        </div>
+
+        {% include "registration/social-login.html" %}
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
