@@ -4,13 +4,14 @@ from django.conf import settings
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from eo.models import UserProfile, Restaurant, Rating, BestRatingDish, Dish, \
     DishCategory, Order, Relationship, UserMessage, Meal, MealInvitation, \
     UserLocation, MealComment, UserTag, DishItem, Menu, DishCategoryItem, UserPhoto
+from grubcat.eo.exceptions import NoAvailableSeatsError
 from grubcat.eo.models import MealParticipants, Visitor
 from grubcat.eo.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
@@ -334,16 +335,21 @@ class UserResource(ModelResource):
             meal = Meal.objects.get(id=request.POST.get('meal_id'))
             num_persons = int(request.POST.get('num_persons'))
             #TODO try catch if no avaliable seats
-            order = meal.join(user_profile, num_persons)
-            order_resource = OrderResource()
-            order_bundle = order_resource.build_bundle(obj=order)
-            serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
-            dic = json.loads(serialized)
-            app_req_str = create_app_pay(order.id, order.meal.topic, meal.list_price * num_persons)
-            dic['app_req_str'] = app_req_str
-            return createGeneralResponse('OK', "You've just joined the meal", dic)
+            try:
+                order = meal.join(user_profile, num_persons)
+                order_resource = OrderResource()
+                order_bundle = order_resource.build_bundle(obj=order)
+                serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
+                dic = json.loads(serialized)
+                app_req_str = create_app_pay(order.id, order.meal.topic, meal.list_price * num_persons)
+                dic['app_req_str'] = app_req_str
+                return createGeneralResponse('OK', "You've just joined the meal",dic)
+            except NoAvailableSeatsError, e:
+                return createGeneralResponse('NOK', e.message)
         else:
-            return order_resource.get_list(request, customer=user_profile)
+            obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
+            return get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     def get_following(self, request, **kwargs):
         if not request.user.is_authenticated():
@@ -581,13 +587,16 @@ class UserResource(ModelResource):
             url = user_to_query.avatar_thumbnail(int(width), int(height))
             return createGeneralResponse('OK', 'user thumbnail ok', {"url": url})
         elif request.method == 'POST':
-            old_avatar = user_to_query.avatar
+            if user_to_query.avatar:
+                old_avatar_path = user_to_query.avatar.path
+            else:
+                old_avatar_path = None
             contentFile = request.FILES.values()[0]
             filename = contentFile.name
             user_to_query.cropping = "" #cropping is not supported by app yet so clear it
             user_to_query.avatar.save(filename, contentFile)
-            if old_avatar and os.path.exists(old_avatar.path) and user_to_query.avatar.path != old_avatar.path:
-                os.remove(old_avatar.path)
+            if os.path.exists(old_avatar_path) and user_to_query.avatar.path != old_avatar_path:
+                os.remove(old_avatar_path)
             # xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user_to_query)
@@ -599,7 +608,7 @@ class UserResource(ModelResource):
                
     class Meta:
         authorization = Authorization()
-        queryset = UserProfile.objects.exclude(user__restaurant__isnull=False)
+        queryset = UserProfile.objects.all()
         resource_name = 'user'
         filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
