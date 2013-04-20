@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import base64
 import logging
-from urllib import urlencode, quote_plus
+import xml.dom.minidom
+from urllib import urlencode, quote_plus, urlopen, unquote_plus
 
 import M2Crypto
 from M2Crypto import BIO
@@ -18,6 +19,73 @@ order_prefix = getattr(django_settings, 'ORDER_PREFIX', '')
 # 网关地址
 _WEB_GATEWAY = 'https://www.alipay.com/cooperate/gateway.do?'
 _WAP_GATEWAY = "http://wappaygw.alipay.com/service/rest.htm?"
+
+
+def create_wap_pay(order, subject, price, quantity):
+    params = {'service': 'alipay.wap.trade.create.direct',
+              'format': 'xml', 'v': '2.0',
+              'partner': settings.ALIPAY_PARTNER,
+              'req_id': order_prefix + str(order),
+              'pay_expire': django_settings.PAY_OVERTIME_FOR_PAY_OR_USER,
+              'sec_id': '0001'}
+
+    #req data
+    req_data = {'subject': subject,
+                'out_trade_no': order_prefix + str(order),
+                'total_fee': str(price * quantity),
+                'seller_account_name': settings.ALIPAY_SELLER_EMAIL,
+                'call_back_url': settings.ALIPAY_WAP_SYNC_BACK_URL,
+                'notify_url': settings.ALIPAY_WAP_AYSNC_BACK_URL,
+                'pay_expire': django_settings.PAY_OVERTIME}
+    #build req_data
+    impl = xml.dom.minidom.getDOMImplementation()
+    dom = impl.createDocument(None, 'direct_trade_create_req', None)
+    root = dom.documentElement
+    req_data,_ = params_filter(req_data)
+    for k in req_data:
+        item = dom.createElement(k)
+        text = dom.createTextNode(str(req_data[k]))
+        item.appendChild(text)
+        root.appendChild(item)
+    params['req_data'] = root.toxml()
+    new_params, prestr = params_filter(params)
+
+    params['sign'] = build_mysign(prestr)
+    auth_result = urlopen(_WAP_GATEWAY + urlencode(params)).read()
+    auth_result = unquote_plus(auth_result).split("&")
+    auth_result_param = {}
+    for p in auth_result:
+        index = p.index('=')
+        auth_result_param[p[:index]] = p[index+1:]
+    if 'res_error' in auth_result_param:
+        print auth_result_param.get('res_error')
+        #TODO
+        raise
+    auth_result_param['res_data'] = decrypt(auth_result_param['res_data'])
+    verify_sign(auth_result_param)
+
+    doc = xml.dom.minidom.parseString(auth_result_param['res_data'])
+    request_token = doc.getElementsByTagName("request_token")[0].firstChild.data
+
+    params['service'] = 'alipay.wap.auth.authAndExecute'
+
+    #req data
+    req_data = {'request_token': request_token}
+    #build req_data
+    impl = xml.dom.minidom.getDOMImplementation()
+    dom = impl.createDocument(None, 'auth_and_execute_req', None)
+    root = dom.documentElement
+    req_data, _ = params_filter(req_data)
+    for k in req_data:
+        item = dom.createElement(k)
+        text = dom.createTextNode(str(req_data[k]))
+        item.appendChild(text)
+        root.appendChild(item)
+    params['req_data'] = root.toxml()
+    params, prestr = params_filter(params)
+
+    params['sign'] = build_mysign(prestr)
+    return _WAP_GATEWAY + urlencode(params)
 
 
 def create_direct_pay(order, subject, price, quantity=""):
@@ -95,6 +163,19 @@ def verify_sign(data, sign='', signType='RSA', sort=None):
 
     if not result:
         raise AliapyBackVerifyFailedError
+
+
+def decrypt(data):
+    private_key = M2Crypto.RSA.load_key_string(settings.FANJOIN_PRIVATE_KEY)
+    content = base64.b64decode(data)
+    i = 0
+    length = len(content) / 128
+    result = ''
+    while i < length:
+        d = content[i * 128:(i + 1) * 128]
+        result += private_key.private_decrypt(d, M2Crypto.RSA.pkcs1_padding)
+        i += 1
+    return result
 
 
 def params_filter(params, sort=None, template='%s=%s&'):

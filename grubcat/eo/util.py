@@ -60,46 +60,31 @@ class PyapnsWrapper(object):
             dic['badge'] = badge
         pyapns.notify(self.app_id,token,{'aps': dic})
 
-class XMPPClientWrapper(object):
-    PORT = 5055
-    def syncName(self, user_profile):
-        logger.debug("sync name of %s " % user_profile)
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.connect(('localhost',self.PORT)) 
-        dic = {'task':"syncname", 'username':escape_xmpp_node(user_profile.user.username), "password":user_profile.user.password, "name": user_profile.name}
-        soc.send(json.dumps(dic))
-        logger.debug("sync name finished with response: %s " % soc.recv(1024))
-    
-    def syncAvatar(self, user_profile):
-        logger.debug("sync avatar of %s " % user_profile)
-        dic = {'task':"syncavatar",'username':escape_xmpp_node(user_profile.user.username), "password":user_profile.user.password, "avatar": user_profile.small_avatar_path}
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.connect(('localhost',self.PORT)) 
-        soc.send(json.dumps(dic))
-        logger.debug("sync avatar finished with response: %s " % soc.recv(1024))
-        
-    def syncProfile(self, user_profile):
-        try:
-            logger.debug("sync avatar of %s " % user_profile)
-            if user_profile.weibo_access_token:
-                password = user_profile.weibo_access_token
-            else:
-                password = user_profile.user.password
-            dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
-            soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            soc.connect(('localhost',self.PORT)) 
-            soc.send(json.dumps(dic))
-            logger.debug("sync profile finished with response: %s " % soc.recv(1024))
-            soc.close()
-        except Exception:
-            logger.error("failed to sync profile")
+# class XMPPClientWrapper(object):
+#     PORT = 5055
+#
+#     def syncProfile(self, user_profile):
+#         try:
+#             logger.debug("sync avatar of %s " % user_profile)
+#             if user_profile.weibo_access_token:
+#                 password = user_profile.weibo_access_token
+#             else:
+#                 password = user_profile.user.password
+#             dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
+#             soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#             soc.connect(('localhost',self.PORT))
+#             soc.send(json.dumps(dic))
+#             logger.debug("sync profile finished with response: %s " % soc.recv(1024))
+#             soc.close()
+#         except Exception:
+#             logger.error("failed to sync profile")
 
 class PubSub(object):
     def createNode(self, user_profile, node_name):
         try:
             username, pw =get_xmpp_username_and_password(user_profile)
     #        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
-            jid = xmpp.protocol.JID(username + "@fanjoin.com")
+            jid = xmpp.protocol.JID( "%s@%s" % (username, settings.CHATDOMAIN))
             logger.debug("%s is creating node: %s" % (username, node_name))
 
             cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
@@ -116,7 +101,7 @@ class PubSub(object):
     #        field.NT.value="never"
 
             cl.send(iq)
-            cl.Process(1)
+            cl.Process(100)
             cl.disconnect()
         except Exception:
             logger.exception("xmpp error")
@@ -124,7 +109,7 @@ class PubSub(object):
     def subscribe(self, subscriber, node_name, subscribing=True):
         try:
             username, pw =get_xmpp_username_and_password(subscriber)
-            jid = xmpp.protocol.JID(username + "@fanjoin.com")
+            jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
 
             logger.debug("%s is subscribing(%s) node: %s" % (username, subscribing, node_name))
 
@@ -155,7 +140,7 @@ class PubSub(object):
         try:
             username, pw =get_xmpp_username_and_password(publisher)
     #        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
-            jid = xmpp.protocol.JID(username + "@fanjoin.com")
+            jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
 
             logger.debug("%s is publishing node: %s with payload: %s" % (username, node_name, payload))
 
@@ -184,3 +169,37 @@ pubsub = PubSub()
 
 def chat_context_processor(request):
     return {"CHATSERVER": settings.CHATSERVER, "CHATDOMAIN": settings.CHATDOMAIN}
+
+# list of mobile User Agents
+mobile_uas = [
+    'w3c ', 'acs-', 'alav', 'alca', 'amoi', 'audi', 'avan', 'benq', 'bird', 'blac',
+    'blaz', 'brew', 'cell', 'cldc', 'cmd-', 'dang', 'doco', 'eric', 'hipt', 'inno',
+    'ipaq', 'java', 'jigs', 'kddi', 'keji', 'leno', 'lg-c', 'lg-d', 'lg-g', 'lge-',
+    'maui', 'maxo', 'midp', 'mits', 'mmef', 'mobi', 'mot-', 'moto', 'mwbp', 'nec-',
+    'newt', 'noki', 'oper', 'palm', 'pana', 'pant', 'phil', 'play', 'port', 'prox',
+    'qwap', 'sage', 'sams', 'sany', 'sch-', 'sec-', 'send', 'seri', 'sgh-', 'shar',
+    'sie-', 'siem', 'smal', 'smar', 'sony', 'sph-', 'symb', 't-mo', 'teli', 'tim-',
+    'tosh', 'tsm-', 'upg1', 'upsi', 'vk-v', 'voda', 'wap-', 'wapa', 'wapi', 'wapp',
+    'wapr', 'webc', 'winw', 'winw', 'xda', 'xda-'
+]
+
+mobile_ua_hints = ['SymbianOS', 'Opera Mini', 'iPhone']
+
+
+def isMobileRequest(request):
+    ''' Super simple device detection, returns True for mobile devices '''
+
+    mobile_browser = False
+    try:
+        ua = request.META['HTTP_USER_AGENT'].lower()[0:4]
+
+        if ua in mobile_uas:
+            mobile_browser = True
+        else:
+            for hint in mobile_ua_hints:
+                if request.META['HTTP_USER_AGENT'].find(hint) > 0:
+                    mobile_browser = True
+    except:
+        pass
+
+    return mobile_browser

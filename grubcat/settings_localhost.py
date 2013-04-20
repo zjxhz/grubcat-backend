@@ -75,4 +75,5 @@ ASSETS_ROOT = r'/Users/wayne/workspace/grubcat-backend/grubcat/eo/static'
 LESS_BIN="/usr/local/bin/lessc"
 ASSETS_AUTO_BUILD = True
 XMPP_DEBUG=["socket"]
+PAY_DEBUG=True
 #os.path.join("/usr/local/", "bin")
