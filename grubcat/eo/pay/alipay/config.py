@@ -48,6 +48,8 @@ Gja3UhMgqiy8b+H9BrRtjlNsS/txhhCEkSm8UbYFSCyK
     ALIPAY_DIRECT_ASYNC_BACK_URL = '%s%s' % (django_settings.ALIPAY_BACK_DOMAIN, 'pay/alipay/direct/back/async/')
     ALIPAY_APP_SYNC_BACK_URL = '%s%s' % (django_settings.ALIPAY_BACK_DOMAIN, 'pay/alipay/app/back/sync/')
     ALIPAY_APP_AYSNC_BACK_URL = '%s%s' % (django_settings.ALIPAY_BACK_DOMAIN, 'pay/alipay/app/back/async/')
+    ALIPAY_WAP_SYNC_BACK_URL = '%s%s' % (django_settings.ALIPAY_BACK_DOMAIN, 'pay/alipay/wap/back/sync/')
+    ALIPAY_WAP_AYSNC_BACK_URL = '%s%s' % (django_settings.ALIPAY_BACK_DOMAIN, 'pay/alipay/wap/back/async/')
 
     # 访问模式,根据自己的服务器是否支持ssl访问，若支持请选择https；若不支持请选择http
     ALIPAY_TRANSPORT = 'http'

@@ -167,6 +167,8 @@ urlpatterns = patterns('',
     url(r'^pay/alipay/direct/back/async/$', handle_alipay_direct_aysnc_back, name="alipay_direct_async_back"),
     url(r'^pay/alipay/app/back/sync/$', handle_alipay_app_sync_back, name="alipay_app_sync_back"),
     url(r'^pay/alipay/app/back/async/$', handle_alipay_app_async_back, name="alipay_app_async_back"),
+    url(r'^pay/alipay/wap/back/sync/$', handle_alipay_wap_sync_back, name="alipay_wap_sync_back"),
+    url(r'^pay/alipay/wap/back/async/$', handle_alipay_wap_async_back, name="alipay_wap_async_back"),
 )
 
 if settings.DEBUG:
