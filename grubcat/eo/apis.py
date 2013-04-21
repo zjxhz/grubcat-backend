@@ -1,3 +1,4 @@
+#coding=utf-8
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.conf.urls.defaults import url
@@ -31,7 +32,7 @@ import os
 import re
 import util
 
-xmpp_client = util.XMPPClientWrapper()
+# xmpp_client = util.XMPPClientWrapper()
 logger = logging.getLogger('api')
 
 class Base64FileField(FileField):
@@ -324,9 +325,9 @@ class UserResource(ModelResource):
         
         
         bundle.obj.save()
-        if nameChanged:
-            logger.debug('sync name to xmpp server')
-            xmpp_client.syncProfile(bundle.obj )
+        # if nameChanged:
+        #     logger.debug('sync name to xmpp server')
+        #     xmpp_client.syncProfile(bundle.obj )
         return bundle
     
     def get_favorite(self, request, **kwargs):
@@ -606,7 +607,7 @@ class UserResource(ModelResource):
             user_to_query.avatar.save(filename, contentFile)
             if os.path.exists(old_avatar_path) and user_to_query.avatar.path != old_avatar_path:
                 os.remove(old_avatar_path)
-            xmpp_client.syncProfile(user_to_query)
+            # xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user_to_query)
             serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
