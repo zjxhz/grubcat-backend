@@ -1,5 +1,7 @@
 #coding=utf-8
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from raven.contrib.django.models import sentry_exception_handler
 
@@ -32,9 +34,14 @@ class PayOverTimeError(BusinessException):
     def __init__(self, message=u"对不起，您支付已经超时，请联系饭聚网退款！"):
         self.message = message
 
+alipay_wap_sync_back = reverse_lazy("alipay_wap_sync_back")
+
 
 class ProcessExceptionMiddleware(object):
     def process_exception(self, request, exception):
         if not settings.DEBUG:
             sentry_exception_handler(request=request)
-            return TemplateResponse(request, "500.html", {'exception': exception})
+            if request.path != alipay_wap_sync_back:
+                return TemplateResponse(request, "500.html", {'exception': exception})
+            else:
+                return HttpResponseRedirect("%s?message=%s" % (reverse_lazy('error'), exception.message))
