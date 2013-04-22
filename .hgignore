@@ -9,3 +9,7 @@ grubcat/eo/static/.webassets*
 *.orig
 grubcat/\.settings
 grubcat/os
+grubcat/eo/static/less/responsive.css
+grubcat/eo/static/less/profile.css
+grubcat/eo/static/less/common.css
+requirements.txt~
