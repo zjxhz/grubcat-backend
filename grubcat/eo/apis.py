@@ -174,6 +174,15 @@ class UserTagResource(ModelResource):
 class UserPhotoResource(ModelResource):
     photo = Base64FileField('photo')
     
+    def post_list(self, request, **kwargs):
+        # in a REST framework there is no easy way to delete multiple objects at a time, so just use post here, be careful about the authentication
+        deleted_ids = request.POST.get("deleted_ids")
+        if deleted_ids:
+            UserPhoto.objects.filter(id__in=deleted_ids.split(",")).delete();
+            return createGeneralResponse("OK", "Photos deleted")  
+        else:
+            return super(request, **kwargs)
+                          
     def dehydrate(self, bundle):
         bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
         bundle.data['large'] = bundle.obj.large_photo
@@ -182,6 +191,7 @@ class UserPhotoResource(ModelResource):
     class Meta:
         queryset = UserPhoto.objects.all()
         authorization = Authorization()
+        filtering={"id":ALL}
         allowed_methods = ['get', 'post', 'delete']
 
 class SimpleUserResource(ModelResource):
