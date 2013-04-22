@@ -153,14 +153,42 @@ ul.as-selections {
         float: left;
         margin-left: 10px;
       }
+      &.read{
+        background-color: #fcfcfc;
+      }
+    }
+  }
+  div.actions {
+    .clearfix;
 
+    padding: 0;
+    background-color: #eee;
+    a {
+      float: left;
+      color: #555;
+
+      width: 144px;
+      text-align: center;
+      border-top: 1px solid white;
+      padding: 2px 5px;
+      &:hover {
+        text-decoration: none;
+      }
     }
   }
 }
 
+#more-noty{
+  border-right: 1px solid white;
+}
+
 #no-noty-tip {
   text-align: center;
-  color: #888;
+  cursor: pointer;
+  border-top: 1px solid white;
+  color: #555;
+  padding: 8px;
+
 }
 
 //#chat related

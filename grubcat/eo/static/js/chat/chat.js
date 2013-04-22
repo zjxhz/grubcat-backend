@@ -2,9 +2,6 @@ var $commonData = $("#common-data");
 var chatServer = $commonData.data("chat-server")
 var chatServerDomain ="@" + $commonData.data("chat-domain")
 var pubsubService = 'pubsub.' + $commonData.data("chat-domain")
-var notyType = {
-
-}
 var myTemplate = {
     tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></div>' +
         '<div class="nickname"><%= name %></div>' +
@@ -51,14 +48,14 @@ $(document).bind('connect', function (ev, data) {
     var conn = new Strophe.Connection(chatServer);
 
     conn.xmlInput = function (elem) {
-//        if($(elem).find("chat")[0]){
+        if($(elem).find("chat")[0]){
             chatApp.debug(elem)
-//        }
+        }
     }
     conn.xmlOutput = function (elem) {
-//        if($(elem).find("retrieve")[0]){
+        if($(elem).find("retrieve")[0]){
             chatApp.debug(elem)
-//        }
+        }
     }
     conn.rawInput = function(data){
 //        chatApp.debug("in----" + data)
@@ -131,7 +128,7 @@ var Contact = Backbone.Model.extend({
 
     retrieveMessages: function(before, callback){
         var user = this, max = 10, rsm = new Strophe.RSM({max: max, before: before||""})
-        chatApp.connection.archive.retrieveMessages(this.get("jid"), rsm , function(messages, rsm, hasMoreMessages){
+        chatApp.connection.archive.retrieveMessages(this.get("jid"), 2, rsm , function(messages, rsm, hasMoreMessages){
             var hasMoreUnReadMessages = hasMoreMessages;
             _.each(messages, function (oldMsg) { //from old to new
                 var msg = new Message({
@@ -612,6 +609,10 @@ var ChatBoxListView = Backbone.View.extend({
 
 var chatApp = {
 
+    UNREAD_MSG: 0,
+    READ_MSG: 1,
+    ALL_MSG: 2,
+
     isVisible: function(){
         return $("#chat-dialog").is(":visible");
     },
@@ -635,8 +636,10 @@ var chatApp = {
 
     unReadMsgInterval: null,
 
+    initialized: false,
 
     initialize: function () {
+        this.initialized = true
     },
 
     checkConnection: function(){
@@ -703,17 +706,34 @@ var chatApp = {
 
 var notyApp = {
 
+    $notyList: $("#notification-list"),
+    
+    $noNotyTip: $("#no-noty-tip"),
 
     totalNotyUnReadCount: 0,
+    
+    eldestTimestamp: new ServerDate().getTime(),
+
+    hasMoreUnReadMessages: true,
 
     initialize: function () {
         chatApp.connection.addHandler(notyApp.onNotification.bind(this), null, 'message', '');
+        $("#more-noty").click(function () {
+            var isRead = notyApp.hasMoreUnReadMessages ? chatApp.UNREAD_MSG : chatApp.READ_MSG
+            notyApp.retrieveNoty(isRead, notyApp.eldestTimestamp)
+        })
+        $("#ignore-all-noty").click(function(){
+            notyApp.sendNotyReadReceipt()
+            
+            notyApp.decreaseNotyUnReadCount(notyApp.totalNotyUnReadCount)
+            notyApp.$notyList.html("")
+        })
     },
 
-    createNoty: function ($items, notyId) {
+    createNoty: function ($items, notyId, isRead) {
 
         var node = $items.attr('node'), attrs
-        notyApp.increaseNotyUnReadCount($items.size())
+        !isRead && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
             //create noti
             attrs = $.parseJSON($(item).find("entry").text())
@@ -737,14 +757,15 @@ var notyApp = {
                 attrs.type = 'visitor'
             }
             try {
-                var $newNoti = $(_.template(myTemplate.tplNotification, attrs))
-                $newNoti.data("noty-id", notyId)
-                $newNoti.click(function () {
-                    var out = $msg({to: pubsubService}).c("received", {'xmlns': "urn:xmpp:receipts", id: $(this).data("noty-id")});
-                    chatApp.connection && chatApp.connection.send(out);
+                var $newNoty = $(_.template(myTemplate.tplNotification, attrs))
+                $newNoty.data("noty-id", notyId)
+                isRead && $newNoty.addClass("read")
+                $newNoty.click(function () {
+                    notyApp.decreaseNotyUnReadCount()
+                    notyApp.sendNotyReadReceipt( $(this).data("noty-id"))
                     $(this).remove()
                 })
-                $("#notification-list").prepend($newNoti)
+                notyApp.$notyList.append($newNoty)
             } catch (e) {
             }
 
@@ -752,12 +773,30 @@ var notyApp = {
 
     },
 
+    sendNotyReadReceipt: function(id){
+        id = id || 0
+        var out = $msg({to: pubsubService}).c("received", {'xmlns': "urn:xmpp:receipts", id: id});
+        chatApp.connection && chatApp.connection.send(out);
+    },
 
-    retrieveUnReadNoty: function () {
-        var max = 10, rsm = new Strophe.RSM({max: max, before: ""})
-        chatApp.connection.archive.retrieveMessages(pubsubService, rsm, function (messages, rsm, hasMoreMessages) {
+
+    retrieveNoty: function (isRead, before) {
+        before = before || ""
+        var max = 3, rsm = new Strophe.RSM({max: max, before: before})
+        chatApp.connection.archive.retrieveMessages(pubsubService, isRead, rsm, function (messages, rsm, hasMoreMessages) {
+            if(messages.length > 0){
+                notyApp.eldestTimestamp = messages[0].timestamp.getTime()
+                notyApp.$noNotyTip.hide()
+            }
+            if (notyApp.hasMoreUnReadMessages && isRead == chatApp.UNREAD_MSG && hasMoreMessages) {
+                notyApp.hasMoreUnReadMessages = true
+            } else {
+                notyApp.hasMoreUnReadMessages = false
+            }
+
+            messages.reverse()
             _.each(messages, function (oldMsg) { //from old to new
-                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id)
+                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.isRead)
             })
         })
     },
@@ -774,31 +813,45 @@ var notyApp = {
 
     increaseNotyUnReadCount: function (num) {
         var num = num || 1
-        $("#no-noty-tip").hide()
+        notyApp.$noNotyTip.hide()
         var $totalUnReadCount = $("#total-noty-unread-count")
         this.totalNotyUnReadCount += num
         $totalUnReadCount.text(this.totalNotyUnReadCount)
         if (!this.notyIndicatorInterval) {
             this.notyIndicatorInterval = setInterval(function () {
+                if(notyApp.totalNotyUnReadCount != parseInt($totalUnReadCount.text())){
+                   $totalUnReadCount.text(notyApp.totalNotyUnReadCount)
+                }
                 if (notyApp.totalNotyUnReadCount > 0) {
-//                    $totalUnReadCount.show();
                     $totalUnReadCount.is(":visible") ? $totalUnReadCount.hide() : $totalUnReadCount.show();
                 } else {
                     $totalUnReadCount.hide();
                 }
             }, 1000)
         }
+    },
+
+    decreaseNotyUnReadCount: function (num) {
+        var num = num || 1
+        if (this.totalNotyUnReadCount - num > 0) {
+            this.totalNotyUnReadCount -= num
+        } else {
+            this.totalNotyUnReadCount = 0
+            notyApp.$noNotyTip.show()
+        }
+
     }
 }
 
 $(document).bind('connected', function () {
-
-
+    if(chatApp.initialized){
+        return;
+    }
     notyApp.initialize();
 
     chatApp.initialize();
 
-    notyApp.retrieveUnReadNoty()
+    notyApp.retrieveNoty(chatApp.UNREAD_MSG)
 
     chatApp.connection.roster.get().done(function (roster) {
         chatApp.listContacts(roster)

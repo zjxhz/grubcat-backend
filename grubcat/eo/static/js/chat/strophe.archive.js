@@ -14,8 +14,8 @@ Strophe.addConnectionPlugin('archive', {
     this._connection.sendIQ(xml, this._handleListConnectionResponse.bind(this, callback));
   },
 
-    retrieveMessages: function (jid, rsm, callback) {
-        new Strophe.ArchivedCollection(this._connection, jid).retrieveMessages(rsm, callback);
+    retrieveMessages: function (jid,read, rsm, callback) {
+        new Strophe.ArchivedCollection(this._connection, jid).retrieveMessages(read, rsm, callback);
     },
   
   _handleListConnectionResponse: function(callback, stanza) {
@@ -39,8 +39,8 @@ Strophe.ArchivedCollection = function(connection, jid) {
 };
 
 Strophe.ArchivedCollection.prototype = {
-  retrieveMessages: function(rsm, callback) {
-    var builder = $iq({type: 'get', id: this.connection.getUniqueId('retrieve')}).c('retrieve', {xmlns: Strophe.NS.ARCHIVE, 'with': this.jid/*, start: this.start*/});
+  retrieveMessages: function(read, rsm, callback) {
+    var builder = $iq({type: 'get', id: this.connection.getUniqueId('retrieve')}).c('retrieve', {xmlns: Strophe.NS.ARCHIVE, 'with': this.jid, 'read': read/*, start: this.start*/});
     if (rsm) { builder = builder.cnode(rsm.toXML()); }
     this.connection.sendIQ(builder, function(stanza) {
       var messages = [];
