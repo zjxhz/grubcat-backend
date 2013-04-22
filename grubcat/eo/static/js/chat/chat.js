@@ -1,6 +1,10 @@
 var $commonData = $("#common-data");
 var chatServer = $commonData.data("chat-server")
 var chatServerDomain ="@" + $commonData.data("chat-domain")
+var pubsubService = 'pubsub.' + $commonData.data("chat-domain")
+var notyType = {
+
+}
 var myTemplate = {
     tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></div>' +
         '<div class="nickname"><%= name %></div>' +
@@ -23,7 +27,15 @@ var myTemplate = {
         '<div class="message-time-wrapper"><div class="message-time"><span class="time-span left"/><%=formattedTime%><span class="time-span right"/></div></div>' +
         '<% } %>' +
         '<a href="<%=profileUrl%>" target="_blank" ><img class="avatar" src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></a>' +
-        '<div class="message-content"><div class="message-text"><%- body%></div><div class="message-arrow"></div></div>'
+        '<div class="message-content"><div class="message-text"><%- body%></div><div class="message-arrow"></div></div>',
+
+    tplNotification:
+        "<li><a href='<%=url%>' target='_blank'> " +
+        "   <img src='<%= avatar %>' class='avatar' alt='<%= name %>'/>" +
+        "   <div class='action'>" +
+        "       <span class='name'><%= name%> </span> <span class='event'><%=event%></span>" +
+        "   </div>" +
+        "</a></li>"
 }
 $(function () {
     $(document).trigger('connect', {
@@ -40,20 +52,20 @@ $(document).bind('connect', function (ev, data) {
 
     conn.xmlInput = function (elem) {
 //        if($(elem).find("chat")[0]){
-//            chatApp.debug(elem)
+            chatApp.debug(elem)
 //        }
     }
     conn.xmlOutput = function (elem) {
 //        if($(elem).find("retrieve")[0]){
-//            chatApp.debug(elem)
+            chatApp.debug(elem)
 //        }
     }
     conn.rawInput = function(data){
-        chatApp.debug("in----" + data)
+//        chatApp.debug("in----" + data)
     }
 
     conn.rawOutput= function(data){
-        chatApp.debug("out++" + data)
+//        chatApp.debug("out++" + data)
     }
 
     conn.connect(data.jid, data.password, function (status) {
@@ -185,7 +197,7 @@ var Contact = Backbone.Model.extend({
     },
 
     sendReceivedRecipts: function(){
-        var out = $msg({to: this.get("jid")}).c("received", {'xmlns': "urn:xmpp:receipts", 'id': 1});
+        var out = $msg({to: this.get("jid")}).c("received", {'xmlns': "urn:xmpp:receipts"});
         chatApp.connection && chatApp.connection.send(out);
     }
 });
@@ -623,6 +635,7 @@ var chatApp = {
 
     unReadMsgInterval: null,
 
+
     initialize: function () {
     },
 
@@ -685,11 +698,108 @@ var chatApp = {
             console.log(msg);
         }
     }
+
+}
+
+var notyApp = {
+
+
+    totalNotyUnReadCount: 0,
+
+    initialize: function () {
+        chatApp.connection.addHandler(notyApp.onNotification.bind(this), null, 'message', '');
+    },
+
+    createNoty: function ($items, notyId) {
+
+        var node = $items.attr('node'), attrs
+        notyApp.increaseNotyUnReadCount($items.size())
+        $items.each(function (index, item) {
+            //create noti
+            attrs = $.parseJSON($(item).find("entry").text())
+
+            if (node.indexOf('meal') > 0) {
+                // create or paticipate a meal
+                attrs.url = '/meal/' + attrs.meal + '/'
+                attrs.type = 'meal'
+            } else if (node.indexOf('/photos') > 0) {
+                //upload photo
+                attrs.url = '/photo/' + attrs.photo_id + '/'
+                attrs.type = 'photo'
+            } else if (node.indexOf('/followers') > 0) {
+                // follow me
+                attrs.url = '/user/' + attrs.follower + '/'
+                attrs.type = 'follower'
+
+            } else if (node.indexOf('visitors') > 0) {
+                // view my profile
+                attrs.url = '/photo/' + attrs.visitor + '/'
+                attrs.type = 'visitor'
+            }
+            try {
+                var $newNoti = $(_.template(myTemplate.tplNotification, attrs))
+                $newNoti.data("noty-id", notyId)
+                $newNoti.click(function () {
+                    var out = $msg({to: pubsubService}).c("received", {'xmlns': "urn:xmpp:receipts", id: $(this).data("noty-id")});
+                    chatApp.connection && chatApp.connection.send(out);
+                    $(this).remove()
+                })
+                $("#notification-list").prepend($newNoti)
+            } catch (e) {
+            }
+
+        })
+
+    },
+
+
+    retrieveUnReadNoty: function () {
+        var max = 10, rsm = new Strophe.RSM({max: max, before: ""})
+        chatApp.connection.archive.retrieveMessages(pubsubService, rsm, function (messages, rsm, hasMoreMessages) {
+            _.each(messages, function (oldMsg) { //from old to new
+                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id)
+            })
+        })
+    },
+
+    onNotification: function (msg) {
+
+        var $msg = $(msg);
+        if ($msg.find("event")[0]) { // notifications
+            var $items = $msg.find("items")
+            notyApp.createNoty($items, $msg.attr("id"))
+        }
+        return true
+    },
+
+    increaseNotyUnReadCount: function (num) {
+        var num = num || 1
+        $("#no-noty-tip").hide()
+        var $totalUnReadCount = $("#total-noty-unread-count")
+        this.totalNotyUnReadCount += num
+        $totalUnReadCount.text(this.totalNotyUnReadCount)
+        if (!this.notyIndicatorInterval) {
+            this.notyIndicatorInterval = setInterval(function () {
+                if (notyApp.totalNotyUnReadCount > 0) {
+//                    $totalUnReadCount.show();
+                    $totalUnReadCount.is(":visible") ? $totalUnReadCount.hide() : $totalUnReadCount.show();
+                } else {
+                    $totalUnReadCount.hide();
+                }
+            }, 1000)
+        }
+    }
 }
 
 $(document).bind('connected', function () {
 
+
+    notyApp.initialize();
+
     chatApp.initialize();
+
+    notyApp.retrieveUnReadNoty()
+
     chatApp.connection.roster.get().done(function (roster) {
         chatApp.listContacts(roster)
         chatApp.connection.send($pres());

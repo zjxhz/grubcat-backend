@@ -55,11 +55,11 @@ Strophe.ArchivedCollection.prototype = {
         switch (element.tagName) {
         case 'to':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
-          break;
+            messages.push(new Strophe.ArchivedMessage(msgTimestamp, myJid, this.jid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead"))), parseInt(element.getAttribute("id"))));
+            break;
         case 'from':
           msgTimestamp = this._incrementTimestampForMessage(timestamp, element);
-          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead")))));
+          messages.push(new Strophe.ArchivedMessage(msgTimestamp, this.jid, myJid, $(element).find("body").text(), Boolean(parseInt(element.getAttribute("isRead"))), parseInt(element.getAttribute("id"))));
           break;
         case 'set':
           responseRsm = new Strophe.RSM({xml: element});
@@ -81,12 +81,13 @@ Strophe.ArchivedCollection.prototype = {
   }
 };
 
-Strophe.ArchivedMessage = function(timestamp, from, to, body, isRead) {
+Strophe.ArchivedMessage = function(timestamp, from, to, body, isRead, id) {
   this.timestamp = timestamp;
   this.from = from;
   this.to = to;
   this.body = body;
   this.isRead = isRead
+  this.id = id
 };
 
 Strophe.ArchivedMessage.prototype = {

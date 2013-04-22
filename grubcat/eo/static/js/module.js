@@ -18,13 +18,39 @@
         return false;
     })
 
+    var $notiWrapper = $("#notification-wrapper")
+    $notiWrapper.click(function (e) {
+        e.stopPropagation();
+    })
+
+    $("#nav-notification").click(function (e) {
+        if ($notiWrapper.is(":visible")) {
+            $notiWrapper.hide()
+            $(document).unbind("click.notification")
+            e.stopPropagation()
+        } else {
+            $notiWrapper.show()
+            e.stopPropagation()
+            $(document).bind('click.notification', function () {
+                $notiWrapper.hide();
+                $(document).unbind("click.notification")
+            })
+        }
+        e.preventDefault()
+
+    })
+
+
     $("#chat-dialog").on("show",function(){
         $("html").addClass("chat-app")
         if ($("body").height() > $(window).height()) {
             $("html").addClass("scroll")
         }
     }).on("hidden",function(e){
-            $("html").removeClass("chat-app scroll")
+            setTimeout(function () {
+                // a hack to prevent event loop for ever
+                $("html").removeClass("chat-app scroll")
+            },100)
         })
 
     if ($("#upload-photo-wrapper")[0]) {
@@ -142,7 +168,7 @@
         $("#profile-nav").find("li.active").removeClass("active");
         $("#" + $data.data("activeNavId")).addClass("active");
 
-        $("#profile_actions").find(".btn-follow, .btn-unfollow").live('click', function () {
+        $("#profile_actions .btn-follow, #profile_actions .btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function (data) {
                 if (data.status == "OK") {
