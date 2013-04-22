@@ -8,6 +8,9 @@
   ul.nav > li > a {
     font-size: 18px;
   }
+  .city{
+    padding-left: 5px;
+  }
 }
 
 /*form*/
@@ -102,13 +105,62 @@ ul.as-selections {
   }
 }
 
-#nav-chat{
+#nav-chat, #nav-notification {
   position: relative;
-  #total-unread-count{
+  .unread-count {
     position: absolute;
     top: 5px;
     left: 53px;
   }
+}
+
+
+//notifcations
+#notification-wrapper {
+  position: absolute;
+  top: 51px;
+  background: white;
+  border: 1px solid #ddd;
+  width: 310px;
+  left: -89px;
+  border-top: 0;
+  font-size: 14px;
+  color: #444;
+  z-index: 22;
+  .box-shadow(0px 1px 2px rgba(0,0,0, .25));
+//  .border-radius(3px);
+  #notification-list{
+    list-style: none;
+    list-style-position: inner;
+    margin: 0px;
+    li{
+
+      padding: 10px;
+      border-bottom: 1px solid #dedede;
+      cursor: pointer;
+      a{
+        .clearfix;
+        color: #777;
+        &:hover{
+          text-decoration: none;
+        }
+      }
+      .avatar{
+        float: left;
+        .square(50px);
+      }
+      .action{
+        float: left;
+        margin-left: 10px;
+      }
+
+    }
+  }
+}
+
+#no-noty-tip {
+  text-align: center;
+  color: #888;
 }
 
 //#chat related
@@ -119,7 +171,7 @@ ul.as-selections {
   overflow-y: scroll;
 }
 
-.unread-count{
+.unread-count {
   float: right;
   min-width: 6px;
   .border-radius(9px);
@@ -128,6 +180,7 @@ ul.as-selections {
   padding: 0px 7px;
   text-align: center;
   font-size: 12px;
+  z-index: 22;
 }
 #chat-dialog.modal{
   width: 830px;
