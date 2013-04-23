@@ -719,14 +719,16 @@ var notyApp = {
     initialize: function () {
         chatApp.connection.addHandler(notyApp.onNotification.bind(this), null, 'message', '');
         $("#more-noty").click(function () {
-            var isRead = notyApp.hasMoreUnReadMessages ? chatApp.UNREAD_MSG : chatApp.READ_MSG
+            var isRead = notyApp.hasMoreUnReadMessages ? chatApp.UNREAD_MSG : chatApp.ALL_MSG
             notyApp.retrieveNoty(isRead, notyApp.eldestTimestamp)
+            return false
         })
         $("#ignore-all-noty").click(function(){
             notyApp.sendNotyReadReceipt()
             
             notyApp.decreaseNotyUnReadCount(notyApp.totalNotyUnReadCount)
             notyApp.$notyList.html("")
+            return false
         })
     },
 
