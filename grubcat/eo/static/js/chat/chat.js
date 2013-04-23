@@ -27,12 +27,21 @@ var myTemplate = {
         '<div class="message-content"><div class="message-text"><%- body%></div><div class="message-arrow"></div></div>',
 
     tplNotification:
-        "<li><a href='<%=url%>' target='_blank'> " +
+        "<li class='noty <%=type%>' ><a href='<%=url%>' target='_blank'> " +
         "   <img src='<%= avatar %>' class='avatar' alt='<%= name %>'/>" +
         "   <div class='action'>" +
-        "       <span class='name'><%= name%> </span> <span class='event'><%=event%></span>" +
-        "   </div>" +
-        "</a></li>"
+        "       <div class='name'><%= name%> </div>" +
+        "       <div class='event'><%=event%></div>" +
+        "       <%if (typeof target_text !='undefined'){ %>" +
+            " <div class='target-text'><%=target_text%></div>" +
+            "<%}%>"  +
+        "   </div><div class='extra_info'>" +
+            "<div class='noty-time'><%=date%></div>" +
+            "<button class='close ignore-noty'>×</button>" +
+            "<%if (typeof target_pic !='undefined'){ %>" +
+            "<img src='<%=target_pic%>' alt='' class='target-pic'/>" +
+            "<%}%>"  +
+        "</div></a></li>"
 }
 $(function () {
     $(document).trigger('connect', {
@@ -48,7 +57,7 @@ $(document).bind('connect', function (ev, data) {
     var conn = new Strophe.Connection(chatServer);
 
     conn.xmlInput = function (elem) {
-        if($(elem).find("chat")[0]){
+        if($(elem).find("chat")[0] || $(elem).find("message")[0]){
             chatApp.debug(elem)
         }
     }
@@ -416,22 +425,11 @@ var MessageItemView = Backbone.View.extend({
     },
 
     formatTime: function(date){
-        var today = new ServerDate()
-        var d1, d2, dayGap, resultTime=date.getHourMinute()/* + "." + date.getMilliseconds()*/, resultDate;
-        d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        dayGap = Math.abs(d1 - d2)/1000/60/60/24
-        if (dayGap == 0) {
-            resultDate = ""
-        } else if (dayGap == 1) {
-            resultDate = "昨天"
-        } else if (dayGap == 2){
-            resultDate = "前天"
-        }  else {
-            resultDate = date.getTwoDigitMonth() + "-" + date.getTwoDigitDate()
-        }
-        return resultDate + " " + resultTime;
+        var resultTime = date.getHourMinute()
+        /* + "." + date.getMilliseconds()*/
+        return chatApp.formatDate(date) + " " + resultTime;
     }
+
 })
 
 //model Contact
@@ -690,6 +688,26 @@ var chatApp = {
         $(window).resize()
         return contact;
     },
+
+    formatDate: function(date, isShowToday){
+        isShowToday = isShowToday || false
+        var today = new ServerDate()
+        var d1, d2, dayGap, resultDate;
+        d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        dayGap = Math.abs(d1 - d2)/1000/60/60/24
+        if (dayGap == 0) {
+            resultDate = isShowToday ? "今天" : ""
+        } else if (dayGap == 1) {
+            resultDate = "昨天"
+        } else if (dayGap == 2){
+            resultDate = "前天"
+        }  else {
+            resultDate = date.getTwoDigitMonth() + "-" + date.getTwoDigitDate()
+        }
+        return resultDate
+    },
+
     log: function (msg) {
         if(typeof console != "undefined"){
             console.log(msg);
@@ -707,14 +725,16 @@ var chatApp = {
 var notyApp = {
 
     $notyList: $("#notification-list"),
-    
+
     $noNotyTip: $("#no-noty-tip"),
 
     totalNotyUnReadCount: 0,
-    
+
     eldestTimestamp: new ServerDate().getTime(),
 
     hasMoreUnReadMessages: true,
+
+    tplNoty: _.template(myTemplate.tplNotification),
 
     initialize: function () {
         chatApp.connection.addHandler(notyApp.onNotification.bind(this), null, 'message', '');
@@ -725,29 +745,55 @@ var notyApp = {
         })
         $("#ignore-all-noty").click(function(){
             notyApp.sendNotyReadReceipt()
-            
+
             notyApp.decreaseNotyUnReadCount(notyApp.totalNotyUnReadCount)
             notyApp.$notyList.html("")
+            notyApp.showNoNotyTip()
             return false
         })
+        notyApp.$notyList.delegate(".noty", "click",function () {
+            if (!$(this).hasClass("read")) {
+                notyApp.decreaseNotyUnReadCount()
+                notyApp.sendNotyReadReceipt($(this).data("noty-id"))
+            }
+            $(this).remove()
+            notyApp.showNoNotyTip()
+        }).delegate(".noty", "mouseenter",function () {
+                $(this).addClass("hover")
+            }).delegate(".noty", "mouseleave",function () {
+                $(this).removeClass("hover")
+            }).delegate(".ignore-noty", "click", function () {
+                var $noty = $(this).parents(".noty")
+                if (!$noty.hasClass("read")) {
+                    notyApp.decreaseNotyUnReadCount()
+                    notyApp.sendNotyReadReceipt($noty.data("noty-id"))
+                }
+                $noty.remove()
+                notyApp.showNoNotyTip()
+                return false
+            })
     },
 
-    createNoty: function ($items, notyId, isRead) {
+    createNoty: function ($items, notyId, time, isRead, isNew) {
 
         var node = $items.attr('node'), attrs
         !isRead && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
             //create noti
             attrs = $.parseJSON($(item).find("entry").text())
+            attrs.date = chatApp.formatDate(time, true)
 
             if (node.indexOf('meal') > 0) {
                 // create or paticipate a meal
                 attrs.url = '/meal/' + attrs.meal + '/'
                 attrs.type = 'meal'
+                attrs.target_text = attrs.topic
+                attrs.target_pic = attrs.meal_photo
             } else if (node.indexOf('/photos') > 0) {
                 //upload photo
                 attrs.url = '/photo/' + attrs.photo_id + '/'
                 attrs.type = 'photo'
+                attrs.target_pic = attrs.photo
             } else if (node.indexOf('/followers') > 0) {
                 // follow me
                 attrs.url = '/user/' + attrs.follower + '/'
@@ -759,15 +805,21 @@ var notyApp = {
                 attrs.type = 'visitor'
             }
             try {
-                var $newNoty = $(_.template(myTemplate.tplNotification, attrs))
+                var $newNoty = $(notyApp.tplNoty( attrs))
                 $newNoty.data("noty-id", notyId)
                 isRead && $newNoty.addClass("read")
-                $newNoty.click(function () {
-                    notyApp.decreaseNotyUnReadCount()
-                    notyApp.sendNotyReadReceipt( $(this).data("noty-id"))
-                    $(this).remove()
-                })
-                notyApp.$notyList.append($newNoty)
+//                $newNoty.click(function () {
+//                    if (!$(this).hasClass("read")) {
+//                        notyApp.decreaseNotyUnReadCount()
+//                        notyApp.sendNotyReadReceipt($(this).data("noty-id"))
+//                    }
+//                    $(this).remove()
+//                })
+                if(isNew){
+                    notyApp.$notyList.prepend($newNoty)
+                }else {
+                    notyApp.$notyList.append($newNoty)
+                }
             } catch (e) {
             }
 
@@ -784,7 +836,7 @@ var notyApp = {
 
     retrieveNoty: function (isRead, before) {
         before = before || ""
-        var max = 3, rsm = new Strophe.RSM({max: max, before: before})
+        var max = 10, rsm = new Strophe.RSM({max: max, before: before})
         chatApp.connection.archive.retrieveMessages(pubsubService, isRead, rsm, function (messages, rsm, hasMoreMessages) {
             if(messages.length > 0){
                 notyApp.eldestTimestamp = messages[0].timestamp.getTime()
@@ -798,7 +850,7 @@ var notyApp = {
 
             messages.reverse()
             _.each(messages, function (oldMsg) { //from old to new
-                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.isRead)
+                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
             })
         })
     },
@@ -808,7 +860,7 @@ var notyApp = {
         var $msg = $(msg);
         if ($msg.find("event")[0]) { // notifications
             var $items = $msg.find("items")
-            notyApp.createNoty($items, $msg.attr("id"))
+            notyApp.createNoty($items, $msg.attr("id"), new ServerDate(), false, true)
         }
         return true
     },
@@ -839,9 +891,12 @@ var notyApp = {
             this.totalNotyUnReadCount -= num
         } else {
             this.totalNotyUnReadCount = 0
-            notyApp.$noNotyTip.show()
         }
+        notyApp.showNoNotyTip()
 
+    },
+    showNoNotyTip: function(){
+        !notyApp.$notyList.children().size() &&  notyApp.$noNotyTip.show()
     }
 }
 

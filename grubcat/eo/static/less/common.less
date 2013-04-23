@@ -121,18 +121,21 @@ ul.as-selections {
   top: 51px;
   background: white;
   border: 1px solid #ddd;
-  width: 310px;
-  left: -89px;
+  width: 305px;
+  left: -100px;
   border-top: 0;
   font-size: 14px;
   color: #444;
   z-index: 22;
+  padding: 0;
   .box-shadow(0px 1px 2px rgba(0,0,0, .25));
 //  .border-radius(3px);
   #notification-list{
     list-style: none;
     list-style-position: inner;
     margin: 0px;
+    max-height: 600px;
+    overflow: auto;
     li{
 
       padding: 10px;
@@ -140,39 +143,89 @@ ul.as-selections {
       cursor: pointer;
       a{
         .clearfix;
-        color: #777;
+        color: #555;
         &:hover{
           text-decoration: none;
         }
       }
       .avatar{
         float: left;
-        .square(50px);
+        .square(40px);
       }
       .action{
         float: left;
         margin-left: 10px;
+        width:160px;
+        .name, .target-text {
+          overflow: hidden;
+          height: 20px;
+        }
+        .event {
+          color: #777;
+          font-size: 13px;
+          margin: 2px 0;
+        }
+      }
+      .noty-time {
+        color: #999;
+        font-size: 12px;
+        text-align: center;
+        margin: -2px 0 2px 0;
+      }
+      .extra_info {
+        float: right;
+        width: 60px;
+        height: 62px;
+        overflow: hidden;
+        position: relative;
+
+        .target-pic {
+          width: 60px;
+        }
+        .ignore-noty {
+          font-size: 27px;
+          display: none;
+        }
       }
       &.read{
-        background-color: #fcfcfc;
+        background-color: #fafafa;
+      }
+      &.hover{
+        background-color: #f1f1f1;
+        .noty-time{
+          visibility: hidden;
+        }
+        .ignore-noty{
+          display: block;
+          padding: 3px;
+           position: absolute;
+          top: -7px;
+          right: 0px;
+          &:hover{
+
+            .opacity(70);
+          ;
+          }
+        }
       }
     }
   }
   div.actions {
     .clearfix;
-
+    margin-bottom: 0;
     padding: 0;
     background-color: #eee;
     a {
       float: left;
       color: #555;
 
-      width: 144px;
+      width: 142px;
       text-align: center;
       border-top: 1px solid white;
       padding: 2px 5px;
       &:hover {
         text-decoration: none;
+        background-color: #dedede;
       }
     }
   }
