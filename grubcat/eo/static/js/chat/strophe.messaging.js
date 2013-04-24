@@ -25,9 +25,7 @@
         // Upon message receipt trigger an `xmpp:message` event.
         _onReceiveChatMessage: function (message) {
             var body, html_body;
-            if($(message).find("delay")[0]){
-                return true; //currently doesn't act for offline messages, because they are handled for the unread messages
-            }
+            a
             body = $(message).children('body').text();
             if (body === '') {
                 return true; // Typing notifications are not handled.

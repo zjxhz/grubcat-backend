@@ -858,6 +858,11 @@ var notyApp = {
     onNotification: function (msg) {
 
         var $msg = $(msg);
+
+        if ($msg.find("delay")[0]) {
+            return true; //currently doesn't act for offline notifications
+        }
+
         if ($msg.find("event")[0]) { // notifications
             var $items = $msg.find("items")
             notyApp.createNoty($items, $msg.attr("id"), new ServerDate(), false, true)
