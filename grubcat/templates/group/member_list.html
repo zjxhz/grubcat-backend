@@ -42,9 +42,7 @@
     {% assets "water_fall_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
+        {{ block.super }}
 {% endblock %}
 
 {% block active-nav-id %}nav-group{% endblock %}

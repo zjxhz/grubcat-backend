@@ -35,12 +35,10 @@
 
 </div>
 
-{% block page_js %}
-    {% assets "image_cropping_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
+{% assets "image_cropping_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
 
-    <script type="text/javascript">
-        jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
-    </script>
-{% endblock %}
+<script type="text/javascript">
+    jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
+</script>

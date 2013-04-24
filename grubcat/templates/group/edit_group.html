@@ -34,7 +34,6 @@
 {% endblock %}
 
 {% block page_js %}
-
     {% assets "jquery_ajax_bootstrap_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
@@ -43,7 +42,9 @@
             $("<br/>").insertBefore($("#logo-clear_id"));
             $("select").dropkick({width:163, startSpeed:0});
         })
+        {{ block.super }}
     </script>
+     {{ block.super }}
 {% endblock %}
 {% block active-nav-id %}nav-group{% endblock %}
 

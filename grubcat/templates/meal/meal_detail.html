@@ -162,10 +162,3 @@
     </div>
     <div id="data" style="display: none" data-check-order-status-link="{% url check_order_status meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
 {% endblock %}
-
-{% block page_js %}
-    {{ block.super }}
-    {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-{% endblock %}

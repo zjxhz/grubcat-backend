@@ -11,14 +11,10 @@
     {% endassets %}
 {% endblock %}
 {% block base_js %}
+    {% include "ga.html" %}
     {% assets "base_main_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-{% endblock %}
-{% block page_js %}
 {% endblock %}
 {% block content %}
 {#    {% cache 900 meal_list_frag %}#}
