@@ -776,7 +776,17 @@ var notyApp = {
 
     createNoty: function ($items, notyId, time, isRead, isNew) {
 
-        var node = $items.attr('node'), attrs
+        var node = $items.attr('node'), attrs, hasDuplicatedNoty = false
+        notyApp.$notyList.children().each(function(i,noty){
+            if($(noty).data("noty-id") == notyId){
+                hasDuplicatedNoty = true
+                return false
+            }
+        })
+        if(hasDuplicatedNoty){
+            chatApp.log("duplicated noty, id=" + notyId)
+            return
+        }
         !isRead && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
             //create noti
@@ -858,7 +868,6 @@ var notyApp = {
     onNotification: function (msg) {
 
         var $msg = $(msg);
-
 
         if (!$msg.find("delay")[0] && $msg.find("event")[0]) { // notifications
             var $items = $msg.find("items")
