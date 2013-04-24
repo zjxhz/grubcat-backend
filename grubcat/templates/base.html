@@ -144,7 +144,11 @@
         });
     })
 </script>
-{% block page_js %}{% endblock %}
+{% block page_js %}
+    {% assets "module_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+{% endblock %}
 {% if user.is_authenticated %}
     {% assets "chat_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>

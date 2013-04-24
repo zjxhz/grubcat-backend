@@ -737,7 +737,7 @@ var notyApp = {
     tplNoty: _.template(myTemplate.tplNotification),
 
     initialize: function () {
-        chatApp.connection.addHandler(notyApp.onNotification.bind(this), null, 'message', '');
+        chatApp.connection.addHandler(notyApp.onNotification, null, 'message', '');
         $("#more-noty").click(function () {
             var isRead = notyApp.hasMoreUnReadMessages ? chatApp.UNREAD_MSG : chatApp.ALL_MSG
             notyApp.retrieveNoty(isRead, notyApp.eldestTimestamp)
@@ -859,11 +859,8 @@ var notyApp = {
 
         var $msg = $(msg);
 
-        if ($msg.find("delay")[0]) {
-            return true; //currently doesn't act for offline notifications
-        }
 
-        if ($msg.find("event")[0]) { // notifications
+        if (!$msg.find("delay")[0] && $msg.find("event")[0]) { // notifications
             var $items = $msg.find("items")
             notyApp.createNoty($items, $msg.attr("id"), new ServerDate(), false, true)
         }

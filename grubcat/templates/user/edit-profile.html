@@ -108,7 +108,6 @@
 {% endblock %}
 
 {% block page_js %}
-    {{ block.super }}
     {% assets "auto_suggest_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
@@ -118,8 +117,5 @@
     {% assets "validate_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
-    {% assets "module_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-
+    {{ block.super }}
 {% endblock %}

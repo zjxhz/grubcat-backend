@@ -244,6 +244,7 @@
     {% endassets %}
 {% endblock %}
 {% block page_js %}
+     {{ block.super }}
     <script type="text/javascript">
         function loadEditLogoPage() {
             $("#id_create_group_form").ajaxForm({

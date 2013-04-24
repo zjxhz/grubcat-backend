@@ -94,7 +94,7 @@ restaurant_admin_js = Bundle(
     'js/restaurant-admin.js', filters='yui_js', output='gen/restaurant-admin.%(version)s.js'
 )
 create_meal_js = Bundle('js/bootstrap/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
-                        validate_js, 'js/gmap3.v5.0b.min.js', module_js, filters='yui_js',
+                        validate_js, 'js/gmap3.v5.0b.min.js', filters='yui_js',
                         output="gen/create-meal.%(version)s.js")
 
 jquery_ajax_bootstrap_js = Bundle(
