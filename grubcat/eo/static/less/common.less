@@ -136,10 +136,14 @@ ul.as-selections {
     max-height: 600px;
     overflow: auto;
     li {
-
+      position: relative;
       padding: 10px;
       border-bottom: 1px solid #dedede;
       cursor: pointer;
+
+      &.photo{
+        height: 64px;
+      }
       a {
         .clearfix;
         color: #555;
@@ -176,7 +180,8 @@ ul.as-selections {
         width: 60px;
         height: 62px;
         overflow: hidden;
-        position: relative;
+        position: absolute;
+        right: 8px;
 
         .target-pic {
           width: 60px;
