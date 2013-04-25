@@ -397,6 +397,11 @@ class ProfileDetailView(DetailView):
     template_name = 'profile/basic_info.html'
 
     def get_context_data(self, **kwargs):
+
+        from_user = self.request.user.get_profile()
+        if from_user != self.object:
+            Visitor.objects.get_or_create(from_person=from_user, to_person=self.object)
+
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         set_profile_common_attrs(context, self.request)
         if self.object.industry >= 0:
