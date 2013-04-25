@@ -1097,15 +1097,17 @@ post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_pr
 def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
         user_profile = instance
+        cl, jid  = pubsub.create_client(user_profile)
         node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name)      
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name = "/user/%d/meals" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name="/user/%d/visitors" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name="/user/%d/photos" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
-        pubsub.unsubscribe(user_profile, node_name) # the user himself doesn't want to be bothered if he uploaded a photo
+        pubsub.createNode(user_profile, node_name, client=cl)
+        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+        cl.disconnect()
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1113,21 +1115,27 @@ def user_followed(sender, instance, created, **kwargs):
         followee = instance.to_person
         follower = instance.from_person
         event = u'关注了你'
+
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, 
                                                                                  "message": u"%s%s" % (follower.name, event),
                                                                                  "event": event,
                                                                                   "avatar":follower.medium_avatar,
                                                                                   "name": follower.name,
                                                                                   }))
-        pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
-        pubsub.subscribe(follower, "/user/%d/photos" % followee.id)
+
+        cl, jid = pubsub.create_client(follower)
+        pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
+        pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+        cl.disconnect()
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
-    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
-    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id)
+    cl, jid = pubsub.create_client(follower)
+    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id, client=cl)
+    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+    cl.disconnect()
     
 post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
@@ -1144,7 +1152,7 @@ def meal_joined(sender, instance, created, **kwargs):
     if created:
         meal_participant = instance
         meal = meal_participant.meal
-        participant = meal_participant.userprofile;
+        participant = meal_participant.userprofile
         
         if meal.host and meal.host.id == participant.id:
             event = u"发起了饭局"
