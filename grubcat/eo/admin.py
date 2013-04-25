@@ -4,7 +4,7 @@ from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
     DishItem, DishCategoryItem, GroupComment, TransFlow
 from grubcat.eo.models import meal_joined, MealParticipants, user_followed, \
-    Relationship, user_visited, Visitor, photo_uploaded, UserPhoto
+    Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, pubsub_userprofile_created
 from image_cropping.admin import ImageCroppingMixin
 from models import Group, GroupCategory, UserProfile, ImageTest
 import datetime
@@ -12,6 +12,15 @@ import datetime
 class UserProfileAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id','name','weibo_id','avatar','cropping')
     list_editable = ('name','avatar',)
+    actions = ['resend_message']
+
+    def resend_message(self, request, queryset):
+        for user in queryset:
+            pubsub_userprofile_created(UserProfile, user, True)
+        self.message_user(request, "成功发送用户创建消息!")
+
+    resend_message.short_description = u"重新发送用户创建消息"
+
 class DishAdmin(AjaxSelectAdmin):
 #    form = make_ajax_form(Dish,{'categories':'dish_category'})
     list_display = ('restaurant', 'name', 'price', 'unit', 'available',)
@@ -128,7 +137,7 @@ admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu,MenuAdmin)
 admin.site.register(Restaurant,RestaurantAdmin)
 admin.site.register(UserTag)
-admin.site.register(UserProfile,UserProfileAdmin)
+admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(GroupCategory)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(GroupComment, GroupCommentAdmin)
