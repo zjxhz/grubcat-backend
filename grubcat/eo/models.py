@@ -638,8 +638,11 @@ class UserProfile(models.Model):
         return self.followers.all()
 
     @property
-    def meals(self):
-        return Meal.objects.filter(Q(host=self) | Q(participants=self))
+    def upcoming_meals(self):
+        return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
+            Q(start_date__gt=date.today()) | 
+            Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
+            "start_date", "start_time")
 
     @property
     def feeds(self):
@@ -681,12 +684,13 @@ class UserProfile(models.Model):
             lat = float(lat)
             lng = float(lng)
         else:
-            lat = self.faked_location.lat
-            lng = self.faked_location.lng
+            lat = self.location.lat
+            lng = self.location.lng
+        if not lat or not lng:
+            return []
         for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
-            if user.faked_location.lat and user.faked_location.lng:
-                distance = self.getDistance(lng, lat, user.faked_location.lng,
-                    user.faked_location.lat)
+            if user.location:
+                distance = self.getDistance(lng, lat, user.location.lng, user.location.lat)
                 distance_user_dict[user] = distance
         return self.sortedDictValues(distance_user_dict)
 
