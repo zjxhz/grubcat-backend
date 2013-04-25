@@ -291,6 +291,9 @@ class UserResource(EOResource):
             except NoAvailableSeatsError, e:
                 logger.warn("no available seat when joining %s", e)
                 return http.HttpApplicationError()
+            except Exception, e:
+                logger.error("failed to create an order: ", e)
+                return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
             all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
