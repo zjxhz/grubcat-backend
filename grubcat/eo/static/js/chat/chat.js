@@ -811,7 +811,7 @@ var notyApp = {
 
             } else if (node.indexOf('visitors') > 0) {
                 // view my profile
-                attrs.url = '/photo/' + attrs.visitor + '/'
+                attrs.url = '/user/' + attrs.visitor + '/'
                 attrs.type = 'visitor'
             }
             try {
@@ -1017,10 +1017,9 @@ $(document).bind('connected', function () {
 
 $(window).bind("beforeunload", function(){
     if (chatApp.connection) {
-        chatApp.connection.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
-        chatApp.connection.flush();
         chatApp.connection.disconnect();
         chatApp.connection = null;
+        chatApp.log("reload")
     }
 });
 
