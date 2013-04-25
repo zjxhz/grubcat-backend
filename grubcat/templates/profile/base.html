@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "profile_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+    <div class="row" id="profile-page">
+        <ul id="profile-nav" class="nav nav-tabs span12 ">
+            <li id="profile_actions">
+                <div class="btn-group">
+                    {% if not is_mine %}
+                        {% if profile not in user.get_profile.following.all %}
+                            <a href="{% url  follow profile.id %}" class="btn btn-follow" data-uid="{{ profile.user.username }}"><i class="icon-star"></i> 关注</a>
+                        {% else %}
+                            <a href="{% url  un_follow profile.id %}" class="btn btn-unfollow">取消关注</a>
+                        {% endif %}
+                        <button class="btn btn-chat" data-uid="{{ profile.user.username }}"><i class="icon-comment"></i> 聊天</button>
+                    {% endif %}
+                </div>
+            </li>
+
+            {% if is_mine %}
+                <li id="profile_follow" class=""><a href="{% url following_list profile.id %}">关注/粉丝</a></li>
+            {% endif %}
+            <li id="profile_meal"><a href="{% url user_meal_list profile.id %}">饭局({{ orders_count }})</a>
+            </li>
+            <li id="profile_photo"><a href="{% url photo_list profile.id %}">照片({{ profile.photos.count }})</a></li>
+            <li id="profile_basic_info"><a href="{% url user_detail profile.id %}">资料</a></li>
+        </ul>
+        {% block profile-main %}
+        {% endblock %}
+    </div>
+
+{% endblock %}
+
+
+{% block page_js %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
