@@ -222,6 +222,20 @@ class Menu(models.Model):
             url = staticfiles_storage.url("img/default/meal_cover.jpg")
         return url
 
+    @property
+    def small_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size': (150, 100),
+                'crop': True,
+                'box': self.cropping,
+                #                'quality':85,
+                'detail': True,
+            }).url
+        else:
+            url = staticfiles_storage.url("img/default/meal_cover.jpg")
+        return url
+
 
     def __unicode__(self):
         return u'套餐%s' % self.id
@@ -618,10 +632,6 @@ class UserProfile(models.Model):
         return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)        
     
     @property
-    def medium_avatar(self):
-        return self.avatar_thumbnail_for_size(settings.MEDIUM_AVATAR_SIZE)
-
-    @property
     def small_avatar_path(self):
         if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE):
             return self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
@@ -998,6 +1008,20 @@ class Meal(models.Model):
             url = self.menu.normal_cover_url
         return url
 
+    @property
+    def small_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size': (150, 100),
+                'crop': True,
+                #                'box': self.cropping,
+                #                'quality':85,
+                'detail': True,
+            }).url
+        else:
+            url = self.menu.small_cover_url
+        return url
+
     @models.permalink
     def get_absolute_url(self):
         return 'meal_detail', [str(self.id)]
@@ -1104,8 +1128,8 @@ def pubsub_userprofile_created(sender, instance, created, **kwargs):
         node_name = "/user/%d/followers" % user_profile.id
         pubsub.createNode(user_profile, node_name, client=cl)
         node_name = "/user/%d/meals" % user_profile.id
-        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
         pubsub.createNode(user_profile, node_name, client=cl)
+        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
         node_name="/user/%d/visitors" % user_profile.id
         pubsub.createNode(user_profile, node_name, client=cl)
         node_name="/user/%d/photos" % user_profile.id
@@ -1120,12 +1144,14 @@ def user_followed(sender, instance, created, **kwargs):
         follower = instance.from_person
         event = u'关注了你'
 
-        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, 
-                                                                                 "message": u"%s%s" % (follower.name, event),
+        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower": follower.id,
+                                                                                 "message": u"%s%s" % (
+                                                                                 follower.name, event),
                                                                                  "event": event,
-                                                                                  "avatar":follower.medium_avatar,
-                                                                                  "name": follower.name,
-                                                                                  }))
+                                                                                 "avatar": follower.normal_avatar,
+                                                                                 "s_avatar": follower.small_avatar,
+                                                                                 "name": follower.name,
+        }))
 
         cl, jid = pubsub.create_client(follower)
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
@@ -1160,13 +1186,14 @@ def _meal_joined(meal_participant):
     else:
         event = u"参加了饭局"
     payload = json.dumps({"meal": meal.id,
-                          "joiner": joiner.id,
+                          "participant": joiner.id,
                           "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
                           "event": event,
-                          "avatar": joiner.medium_avatar,
+                          "avatar": joiner.normal_avatar,
+                          "s_avatar": joiner.small_avatar,
                           "name": joiner.name,
                           "topic": meal.topic,
-                          "meal_photo": meal.big_cover_url})
+                          "meal_photo": meal.small_cover_url})
     if not meal.host or meal.host.id != joiner.id:
         # host does not publish meal events to participants
         # and he has subscribed the events already when he created the meal
@@ -1202,7 +1229,8 @@ def user_visited(sender, instance, created, **kwargs):
             payload = json.dumps({"visitor":visitor.id, 
                                   "message":u"%s%s" % (visitor.name, event),
                                   "event": event,
-                                  "avatar":visitor.medium_avatar,
+                                  "avatar":visitor.normal_avatar,
+                                  "s_avatar":visitor.small_avatar,
                                   "name": visitor.name,
                                   })
             pubsub.publish(instance.to_person, node_name, payload)
@@ -1217,7 +1245,8 @@ def photo_uploaded(sender, instance, created, **kwargs):
                               "photo_url":instance.photo.url,
                               "message":u"%s%s" % (instance.user.name, event),
                               "event": event,
-                              "avatar":instance.user.medium_avatar,
+                              "avatar":instance.user.normal_avatar,
+                              "s_avatar":instance.user.small_avatar,
                               "name": instance.user.name,
                               "photo":instance.photo_thumbnail})
         pubsub.publish(instance.user, node_name, payload)
