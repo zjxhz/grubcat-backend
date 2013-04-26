@@ -746,8 +746,11 @@ var notyApp = {
             notyApp.sendNotyReadReceipt()
 
             notyApp.decreaseNotyUnReadCount(notyApp.totalNotyUnReadCount)
-            notyApp.$notyList.html("")
-            notyApp.showNoNotyTip()
+            notyApp.$notyList.children().fadeOut(300, function(){
+                notyApp.$notyList.html("")
+                notyApp.showNoNotyTip()
+            })
+
             return false
         })
         notyApp.$notyList.delegate(".noty", "click",function () {
@@ -755,8 +758,11 @@ var notyApp = {
                 notyApp.decreaseNotyUnReadCount()
                 notyApp.sendNotyReadReceipt($(this).data("noty-id"))
             }
-            $(this).fadeOut()
-            notyApp.showNoNotyTip()
+            $(this).fadeOut(function () {
+                $(this).remove()
+                notyApp.showNoNotyTip()
+            })
+
         }).delegate(".noty", "mouseenter",function () {
                 $(this).addClass("hover")
             }).delegate(".noty", "mouseleave",function () {
@@ -767,8 +773,11 @@ var notyApp = {
                     notyApp.decreaseNotyUnReadCount()
                     notyApp.sendNotyReadReceipt($noty.data("noty-id"))
                 }
-                $noty.fadeOut()
-                notyApp.showNoNotyTip()
+                $noty.fadeOut(function () {
+                    $(this).remove()
+                    notyApp.showNoNotyTip()
+                })
+
                 return false
             })
     },
