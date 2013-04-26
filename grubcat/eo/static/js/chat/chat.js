@@ -729,6 +729,8 @@ var notyApp = {
 
     totalNotyUnReadCount: 0,
 
+    leftUnReadCount: 0,
+
     eldestTimestamp: new ServerDate().getTime(),
 
     hasMoreUnReadMessages: true,
@@ -873,6 +875,12 @@ var notyApp = {
 
             if(isRead == chatApp.UNREAD_MSG && !before){ // first time retrieve
                 notyApp.increaseNotyUnReadCount(parseInt(rsm.count))
+                notyApp.leftUnReadCount = notyApp.totalNotyUnReadCount
+            }
+
+            if(isRead == chatApp.UNREAD_MSG){
+                notyApp.leftUnReadCount -= messages.length;
+               notyApp.updateLeftUnReadCount()
             }
 
 
@@ -881,6 +889,14 @@ var notyApp = {
                 notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
             })
         })
+    },
+
+    updateLeftUnReadCount: function(){
+        if(notyApp.leftUnReadCount){
+            $("#more-noty").text("查看更多 (" + notyApp.leftUnReadCount + ")")
+        } else {
+            $("#more-noty").text("查看更多")
+        }
     },
 
     onNotification: function (msg) {
