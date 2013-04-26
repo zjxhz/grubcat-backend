@@ -796,7 +796,7 @@ var notyApp = {
 //            chatApp.log("duplicated noty, id=" + notyId)
 //            return
 //        }
-        !isRead && notyApp.increaseNotyUnReadCount($items.size())
+        !isRead && isNew && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
             //create noti
             attrs = $.parseJSON($(item).find("entry").text())
@@ -871,6 +871,11 @@ var notyApp = {
                 notyApp.hasMoreUnReadMessages = false
             }
 
+            if(isRead == chatApp.UNREAD_MSG && !before){ // first time retrieve
+                notyApp.increaseNotyUnReadCount(parseInt(rsm.count))
+            }
+
+
             messages.reverse()
             _.each(messages, function (oldMsg) { //from old to new
                 notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
@@ -890,8 +895,7 @@ var notyApp = {
     },
 
     increaseNotyUnReadCount: function (num) {
-        var num = num || 1
-        notyApp.$noNotyTip.hide()
+        num && notyApp.$noNotyTip.hide()
         var $totalUnReadCount = $("#total-noty-unread-count")
         this.totalNotyUnReadCount += num
         $totalUnReadCount.text(this.totalNotyUnReadCount)
