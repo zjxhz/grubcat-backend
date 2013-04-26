@@ -87,7 +87,7 @@ class DjangoUserResource(EOResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'django_user'
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'date_joined']
         allowed_methods = ['get']
         filtering = {'username': ALL, 'email':ALL}
 
