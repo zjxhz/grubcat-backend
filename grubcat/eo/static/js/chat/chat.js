@@ -28,7 +28,7 @@ var myTemplate = {
 
     tplNotification:
         "<li class='noty <%=type%>' ><a href='<%=url%>' target='_blank'> " +
-        "   <img src='<%= avatar %>' class='avatar' alt='<%= name %>'/>" +
+        "   <img src='<%=s_avatar %>' class='avatar' alt='<%= name %>'/>" +
         "   <div class='action'>" +
         "       <div class='name'><%= name%> </div>" +
         "       <div class='event'><%=event%></div>" +
@@ -689,15 +689,14 @@ var chatApp = {
         return contact;
     },
 
-    formatDate: function(date, isShowToday){
-        isShowToday = isShowToday || false
+    formatDate: function(date){
         var today = new ServerDate()
         var d1, d2, dayGap, resultDate;
         d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         dayGap = Math.abs(d1 - d2)/1000/60/60/24
         if (dayGap == 0) {
-            resultDate = isShowToday ? "今天" : ""
+            resultDate = ""
         } else if (dayGap == 1) {
             resultDate = "昨天"
         } else if (dayGap == 2){
@@ -756,7 +755,7 @@ var notyApp = {
                 notyApp.decreaseNotyUnReadCount()
                 notyApp.sendNotyReadReceipt($(this).data("noty-id"))
             }
-            $(this).remove()
+            $(this).fadeOut()
             notyApp.showNoNotyTip()
         }).delegate(".noty", "mouseenter",function () {
                 $(this).addClass("hover")
@@ -768,7 +767,7 @@ var notyApp = {
                     notyApp.decreaseNotyUnReadCount()
                     notyApp.sendNotyReadReceipt($noty.data("noty-id"))
                 }
-                $noty.remove()
+                $noty.fadeOut()
                 notyApp.showNoNotyTip()
                 return false
             })
@@ -776,22 +775,27 @@ var notyApp = {
 
     createNoty: function ($items, notyId, time, isRead, isNew) {
 
-        var node = $items.attr('node'), attrs, hasDuplicatedNoty = false
-        notyApp.$notyList.children().each(function(i,noty){
-            if($(noty).data("noty-id") == notyId){
-                hasDuplicatedNoty = true
-                return false
-            }
-        })
-        if(hasDuplicatedNoty){
-            chatApp.log("duplicated noty, id=" + notyId)
-            return
-        }
+        var node = $items.attr('node'), attrs
+//        var hasDuplicatedNoty = false
+//        notyApp.$notyList.children().each(function(i,noty){
+//            if($(noty).data("noty-id") == notyId){
+//                hasDuplicatedNoty = true
+//                return false
+//            }
+//        })
+//        if(hasDuplicatedNoty){
+//            chatApp.log("duplicated noty, id=" + notyId)
+//            return
+//        }
         !isRead && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
             //create noti
             attrs = $.parseJSON($(item).find("entry").text())
-            attrs.date = chatApp.formatDate(time, true)
+            if (!attrs.s_avatar) {
+                attrs.s_avatar = attrs.avatar
+            }
+            var formattedDate = chatApp.formatDate(time)
+            attrs.date = formattedDate ? formattedDate : time.getHourMinute()
 
             if (node.indexOf('meal') > 0) {
                 // create or paticipate a meal
