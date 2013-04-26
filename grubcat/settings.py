@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 
 DEBUG = False
 TEMPLATE_DEBUG = False
+PAY_DEBUG=True
 
 ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
