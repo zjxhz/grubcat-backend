@@ -80,16 +80,21 @@ class PyapnsWrapper(object):
 #             logger.error("failed to sync profile")
 
 class PubSub(object):
-    def createNode(self, user_profile, node_name):
-        try:
-            username, pw =get_xmpp_username_and_password(user_profile)
-    #        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
-            jid = xmpp.protocol.JID( "%s@%s" % (username, settings.CHATDOMAIN))
-            logger.debug("%s is creating node: %s" % (username, node_name))
 
-            cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
-            cl.connect()
-            cl.auth(str(jid), pw)
+    def create_client(self, subscriber, client=None):
+        username, pw = get_xmpp_username_and_password(subscriber)
+        jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
+        if not client:
+            client = xmpp.Client(settings.XMPP_SERVER, debug=settings.XMPP_DEBUG)
+            client.connect()
+            client.auth(str(jid), pw)
+        return client, jid
+
+    def createNode(self, user_profile, node_name, client=None):
+        try:
+
+            cl, jid = self.create_client(user_profile, client)
+            logger.debug("%s is creating node: %s" % (str(jid), node_name))
 
             iq = self.buildIq()
             iq.T.pubsub.NT.create['node']=node_name
@@ -102,52 +107,37 @@ class PubSub(object):
 
             cl.send(iq)
             cl.Process(100)
-            cl.disconnect()
+            if not client:
+                cl.disconnect()
         except Exception:
             logger.exception("xmpp error")
-        
-    def subscribe(self, subscriber, node_name, subscribing=True):
+
+    def subscribe(self, subscriber, node_name, subscribing=True, client=None):
         try:
-            username, pw =get_xmpp_username_and_password(subscriber)
-            jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
-
-            logger.debug("%s is subscribing(%s) node: %s" % (username, subscribing, node_name))
-
-            cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
-            cl.connect()
-            cl.auth(str(jid), pw)
-
+            cl, jid = self.create_client(subscriber, client)
+            logger.debug("%s is subscribing(%s) node: %s" % (str(jid), subscribing, node_name))
             iq = self.buildIq()
             if subscribing:
                 subscribe_node = iq.T.pubsub.NT.subscribe
             else:
                 subscribe_node = iq.T.pubsub.NT.unsubscribe
-            subscribe_node['node']=node_name
+            subscribe_node['node']= node_name
             subscribe_node['jid']=str(jid)
             cl.send(iq)
             cl.Process(1)
-            cl.disconnect()
+            if not client:
+                cl.disconnect()
         except Exception:
             logger.exception("xmpp error")
         
-    def unsubscribe(self, subscriber, node_name):
+    def unsubscribe(self, subscriber, node_name, client=None):
+        self.subscribe(subscriber, node_name, False, client=client)
+
+    def publish(self, publisher, node_name, payload, client=None):
         try:
-            self.subscribe(subscriber, node_name, False)
-        except Exception:
-            logger.exception("xmpp error")
 
-    def publish(self, publisher, node_name, payload):
-        try:
-            username, pw =get_xmpp_username_and_password(publisher)
-    #        username, pw =settings.XMPP_PUBSUB_USER, settings.XMPP_PUBSUB_PASSWORD
-            jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
-
-            logger.debug("%s is publishing node: %s with payload: %s" % (username, node_name, payload))
-
-            cl=xmpp.Client(settings.XMPP_SERVER,debug=settings.XMPP_DEBUG)
-            cl.connect()
-            cl.auth(str(jid), pw)
-
+            cl, jid = self.create_client(publisher, client)
+            logger.debug("%s is publishing node: %s with payload: %s" % (str(jid), node_name, payload))
             iq = self.buildIq()
             iq.T.pubsub.NT.publish['node'] = node_name
             iq.T.pubsub.T.publish.T.item = ""
@@ -155,7 +145,8 @@ class PubSub(object):
             iq.T.pubsub.T.publish.T.item.T.entry.namespace = 'http://www.w3.org/2005/Atom'
             cl.send(iq)
             cl.Process(1)
-            cl.disconnect()
+            if not client:
+                cl.disconnect()
         except Exception:
             logger.exception("xmpp error")
 

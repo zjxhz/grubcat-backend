@@ -1097,15 +1097,18 @@ post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_pr
 def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
         user_profile = instance
+        cl, jid  = pubsub.create_client(user_profile)
         node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name)      
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name = "/user/%d/meals" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
+        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name="/user/%d/visitors" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
+        pubsub.createNode(user_profile, node_name, client=cl)
         node_name="/user/%d/photos" % user_profile.id
-        pubsub.createNode(user_profile, node_name)
-        pubsub.unsubscribe(user_profile, node_name) # the user himself doesn't want to be bothered if he uploaded a photo
+        pubsub.createNode(user_profile, node_name, client=cl)
+        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+        cl.disconnect()
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
@@ -1113,21 +1116,27 @@ def user_followed(sender, instance, created, **kwargs):
         followee = instance.to_person
         follower = instance.from_person
         event = u'关注了你'
+
         pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower":follower.id, 
                                                                                  "message": u"%s%s" % (follower.name, event),
                                                                                  "event": event,
                                                                                   "avatar":follower.medium_avatar,
                                                                                   "name": follower.name,
                                                                                   }))
-        pubsub.subscribe(follower, "/user/%d/meals" % followee.id)
-        pubsub.subscribe(follower, "/user/%d/photos" % followee.id)
+
+        cl, jid = pubsub.create_client(follower)
+        pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
+        pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+        cl.disconnect()
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
-    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id)
-    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id)
+    cl, jid = pubsub.create_client(follower)
+    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id, client=cl)
+    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+    cl.disconnect()
     
 post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
@@ -1144,28 +1153,39 @@ def meal_joined(sender, instance, created, **kwargs):
     if created:
         meal_participant = instance
         meal = meal_participant.meal
-        participant = meal_participant.userprofile;
+        joiner = meal_participant.userprofile
         
-        if meal.host and meal.host.id == participant.id:
+        if meal.host and meal.host.id == joiner.id:
             event = u"发起了饭局"
         else:
             event = u"参加了饭局"
-            
-        followee_join_meal_node = "/user/%d/meals" % participant.id
-        payload = json.dumps( {"meal":meal.id, 
-                               "participant":participant.id, 
-                               "message":u"%s%s：%s" % (participant.name, event, meal.topic),
-                                "event":event,
-                                "avatar":participant.medium_avatar,
-                                "name": participant.name,
-                                "topic": meal.topic,
-                                "meal_photo":meal.big_cover_url} )
-        pubsub.publish(participant, followee_join_meal_node, payload )
-        if meal.host and meal.host.id == participant.id:
-            return # host does not publish meal events to participants and he has subscribed the events already when he created the meal
-        meal_participant_node = "/meal/%d/participants" % meal.id
-        pubsub.publish(meal.host, meal_participant_node, payload) 
-        pubsub.subscribe(participant, meal_participant_node) #TODO how about quit the meal
+
+        payload = json.dumps({"meal": meal.id,
+                              "joiner": joiner.id,
+                              "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
+                              "event": event,
+                              "avatar": joiner.medium_avatar,
+                              "name": joiner.name,
+                              "topic": meal.topic,
+                              "meal_photo": meal.big_cover_url})
+
+        if not meal.host or meal.host.id != joiner.id:
+            # host does not publish meal events to participants
+            # and he has subscribed the events already when he created the meal
+            meal_participant_node = "/meal/%d/participants" % meal.id
+            pubsub.publish(meal.host, meal_participant_node, payload)
+            pubsub.subscribe(joiner, meal_participant_node)
+             #TODO how about quit the meal
+
+        #remove the subscription for of the user who is the joiner of the meal
+        # and is also the  follower of the joiner, to prevent duplicate notification'
+        users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
+        followee_join_meal_node = "/user/%d/meals" % joiner.id
+        for user in users_to_unsubscribe:
+            pubsub.unsubscribe(user, followee_join_meal_node)
+        pubsub.publish(joiner, followee_join_meal_node, payload )
+        for user in users_to_unsubscribe:
+            pubsub.subscribe(user, followee_join_meal_node)
 
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
