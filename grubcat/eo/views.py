@@ -849,14 +849,3 @@ def handle_alipay_app_sync_back(request):
     except Exception, e:
         pay_logger.exception('alipay_app sync bac error')
         return create_failure_json_response(u'对不起，支付出现了问题，请您查看是否已经支付成功')
-
-def pubsub_fake(request):
-    gen = request.GET.get("gen")
-    if gen:
-        from eo.management.commands.pubsub_data import Command as pub_command
-        pub = pub_command()
-        pub.handle()
-
-        return HttpResponse("success")
-    else:
-        return HttpResponse("fail")
