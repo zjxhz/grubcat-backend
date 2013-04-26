@@ -1,0 +1,67 @@
+{% if not comment.parent %}
+    <div class="comment parent-comment clearfix">
+        <a href="{% url user_detail comment.from_person.id %}"><img
+                alt="{{ comment.from_person.user.username }}" width="75" height="75"
+                src="{{ comment.from_person.avatar_default_if_none }}"></a>
+
+        <div class="comment-content">
+            <h3>
+                <a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a>
+            </h3>
+
+            <div class="comment-widget">
+                <span class="time-gap">{{ comment.time_gap }}</span>
+                {% if comment.from_person == user.get_profile %}
+                    |&nbsp;<a href="{% url del_group_comment comment.id %}" class="del-group-comment">删除
+                </a>{% endif %}
+            </div>
+            <p>{{ comment.comment }}</p>
+
+            <div class="replies clearfix">
+                {% for reply in comment.replies.all reversed %}
+                    <div class="comment child-comment">
+                        <div class="comment-title"><a
+                                href="{% url user_detail reply.from_person.id %}">
+                            <img alt="{{ reply.from_person.user.username }}" width="40"
+                                 height="40"
+                                 src="{{ reply.from_person.avatar_default_if_none }}"></a>
+                            <b><a href="{% url user_detail reply.from_person.id %}">{{ reply.from_person.user.username }}</a></b>
+                            <span class="time-gap">({{ reply.time_gap }}) </span>
+                            {% if reply.from_person == user.get_profile %}
+                                |&nbsp;<a href="{% url del_group_comment reply.id %}" class="del-group-comment">删除
+                            </a>{% endif %}
+                        </div>
+                        <p>{{ reply.comment }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="comment-reply">
+                <form accept-charset="UTF-8" action="{% url create_group_comment %}" class="reply_comment_form"
+                      method="post">
+                    <input name="parent" type="hidden" value="{{ comment.id }}">
+                    <input name="from_person" type="hidden" value="{{ user.get_profile.id }}">
+                    <input name="group" type="hidden" value="{{ comment.group.id }}">
+                    <textarea class="tag-comment comment-reply-field toggleval" cols="40" name="comment" rows="20"
+                              title="回复{{ comment.from_person.user.username }}"></textarea>
+                    <input type="submit" value="回复" class="showloading button reply_comment_submit"
+                           style="display: none;"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="comment child-comment">
+        <div class="comment-title"><a
+                href="{% url user_detail comment.from_person.id %}">
+            <img alt="{{ comment.from_person.user.username }}" width="40"
+                 height="40"
+                 src="{{ comment.from_person.avatar_default_if_none }}"></a>
+            <b><a href="{% url user_detail comment.from_person.id %}">{{ comment.from_person.user.username }}</a></b>
+            <span class="time-gap">({{ comment.time_gap }}) </span>
+            {% if comment.from_person == user.get_profile %}
+                |&nbsp;<a href="{% url del_group_comment comment.id %}" class="del-group-comment">删除
+            </a>{% endif %}
+        </div>
+        <p>{{ comment.comment }}</p>
+    </div>
+{% endif %}
