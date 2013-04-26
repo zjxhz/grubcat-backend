@@ -1,5 +1,8 @@
 # coding=utf-8
-from datetime import datetime, time, date, timedelta
+from datetime import datetime, date, timedelta
+from datetime import time as dtime
+import time
+import threading
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -857,12 +860,12 @@ MEAL_PRIVACY_CHOICE = (
 
 MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(2, 13)]
 START_TIME_CHOICE = (
-    (time(9, 00), "9:00"), (time(9, 30), "9:30"), (time(10, 00), "10:00"), (time(10, 30), "10:30"),
-    (time(11, 00), "11:00"), (time(11, 30), "11:30"), (time(12, 00), "12:00"), (time(12, 30), "12:30"),
-    (time(13, 00), "13:00"), (time(13, 30), "13:30"), (time(14, 00), "14:00"), (time(14, 30), "14:30"),
-    (time(15, 00), "15:00"), (time(15, 30), "15:30"), (time(16, 00), "16:00"), (time(16, 30), "16:30"),
-    (time(17, 00), "17:00"), (time(17, 30), "17:30"), (time(18, 00), "18:00"), (time(18, 30), "18:30"),
-    (time(19, 00), "19:00"), (time(19, 30), "19:30"), (time(20, 00), "20:00"), (time(20, 30), "20:30"),
+    (dtime(9, 00), "9:00"), (dtime(9, 30), "9:30"), (dtime(10, 00), "10:00"), (dtime(10, 30), "10:30"),
+    (dtime(11, 00), "11:00"), (dtime(11, 30), "11:30"), (dtime(12, 00), "12:00"), (dtime(12, 30), "12:30"),
+    (dtime(13, 00), "13:00"), (dtime(13, 30), "13:30"), (dtime(14, 00), "14:00"), (dtime(14, 30), "14:30"),
+    (dtime(15, 00), "15:00"), (dtime(15, 30), "15:30"), (dtime(16, 00), "16:00"), (dtime(16, 30), "16:30"),
+    (dtime(17, 00), "17:00"), (dtime(17, 30), "17:30"), (dtime(18, 00), "18:00"), (dtime(18, 30), "18:30"),
+    (dtime(19, 00), "19:00"), (dtime(19, 30), "19:30"), (dtime(20, 00), "20:00"), (dtime(20, 30), "20:30"),
     )
 
 class MealStatus:
@@ -883,7 +886,7 @@ class Meal(models.Model):
     introduction = models.CharField(u'简介', max_length=1024)
     #    time = models.DateTimeField(u'开始时间', )
     start_date = models.DateField(u'开始日期', default=datetime.today())
-    start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=time(19, 00))
+    start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=dtime(19, 00))
     group = models.ForeignKey('Group', verbose_name=u'通知圈子', null=True, blank=True)
     privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
         choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
@@ -1148,45 +1151,46 @@ def meal_created(sender, instance, created, **kwargs):
         node_name = "/meal/%d/participants" % meal.id
         pubsub.createNode(host, node_name)
 
+
+def _meal_joined(meal_participant):
+    meal = meal_participant.meal
+    joiner = meal_participant.userprofile
+    if meal.host and meal.host.id == joiner.id:
+        event = u"发起了饭局"
+    else:
+        event = u"参加了饭局"
+    payload = json.dumps({"meal": meal.id,
+                          "joiner": joiner.id,
+                          "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
+                          "event": event,
+                          "avatar": joiner.medium_avatar,
+                          "name": joiner.name,
+                          "topic": meal.topic,
+                          "meal_photo": meal.big_cover_url})
+    if not meal.host or meal.host.id != joiner.id:
+        # host does not publish meal events to participants
+        # and he has subscribed the events already when he created the meal
+        meal_participant_node = "/meal/%d/participants" % meal.id
+        pubsub.publish(meal.host, meal_participant_node, payload)
+        pubsub.subscribe(joiner, meal_participant_node)
+        #TODO how about quit the meal
+    #remove the subscription for of the user who is the joiner of the meal
+    # and is also the  follower of the joiner, to prevent duplicate notification'
+    users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
+    followee_join_meal_node = "/user/%d/meals" % joiner.id
+    for user in users_to_unsubscribe:
+        pubsub.unsubscribe(user, followee_join_meal_node)
+    time.sleep(1)
+    pubsub.publish(joiner, followee_join_meal_node, payload)
+    for user in users_to_unsubscribe:
+        pubsub.subscribe(user, followee_join_meal_node)
+
+
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
-        meal_participant = instance
-        meal = meal_participant.meal
-        joiner = meal_participant.userprofile
-        
-        if meal.host and meal.host.id == joiner.id:
-            event = u"发起了饭局"
-        else:
-            event = u"参加了饭局"
-
-        payload = json.dumps({"meal": meal.id,
-                              "joiner": joiner.id,
-                              "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
-                              "event": event,
-                              "avatar": joiner.medium_avatar,
-                              "name": joiner.name,
-                              "topic": meal.topic,
-                              "meal_photo": meal.big_cover_url})
-
-        if not meal.host or meal.host.id != joiner.id:
-            # host does not publish meal events to participants
-            # and he has subscribed the events already when he created the meal
-            meal_participant_node = "/meal/%d/participants" % meal.id
-            pubsub.publish(meal.host, meal_participant_node, payload)
-            pubsub.subscribe(joiner, meal_participant_node)
-             #TODO how about quit the meal
-
-        #remove the subscription for of the user who is the joiner of the meal
-        # and is also the  follower of the joiner, to prevent duplicate notification'
-        users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
-        followee_join_meal_node = "/user/%d/meals" % joiner.id
-        for user in users_to_unsubscribe:
-            pubsub.unsubscribe(user, followee_join_meal_node)
-        pubsub.publish(joiner, followee_join_meal_node, payload )
-        for user in users_to_unsubscribe:
-            pubsub.subscribe(user, followee_join_meal_node)
-
+        t = threading.Thread(target=_meal_joined, args=(instance,))
+        t.start()
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
 def user_visited(sender, instance, created, **kwargs):

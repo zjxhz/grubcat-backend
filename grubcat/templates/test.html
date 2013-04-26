@@ -12,120 +12,7 @@
 {#    {% endassets %}#}
     <link rel="stylesheet" href="{% static 'css/ui/smoothness/jquery-ui-1.8.21.custom.css' %}">
 
-
-    <style type="text/css">
-    body {
-        font-family: Helvetica;
-    }
-
-    h1 {
-        text-align: center;
-    }
-
-    .hidden {
-        display: none
-    }
-
-    .button {
-        padding: 10px;
-        background-color: #ddd;
-        border: solid 1px #666;
-        font-weight: bold;
-    }
-
-    .button:hover {
-        background-color: #ddf;
-    }
-
-    #toolbar {
-        text-align: center;
-        margin-bottom: 15px;
-    }
-
-    #chat-area {
-        float: left;
-        width: 600px;
-        height: 300px;
-    }
-
-    .chat-messages {
-        height: 180px;
-        border-bottom: solid 2px #ddd;
-        overflow: auto;
-    }
-
-    #chat-area input {
-        margin-top: 10px;
-        width: 95%;
-    }
-
-    #roster-area {
-        float: right;
-        border-left: solid 2px #ddd;
-        padding: 10px;
-        width: 250px;
-        height: 300px;
-    }
-
-    .chat-name {
-        color: #c33;
-    }
-
-    .chat-message .me {
-        color: #33c;
-    }
-
-    .chat-event {
-        font-style: italic;
-        font-size: 75%;
-    }
-
-    .roster-contact {
-        padding: 3px;
-    }
-
-    .roster-contact:hover {
-        background-color: #aaa;
-        color: white;
-    }
-
-    .roster-name {
-        font-size: 150%;
-    }
-
-    .online a {
-        color: #3c3;
-    }
-
-    .away {
-        color: #c33;
-    }
-
-    .offline {
-        color: #ccc;
-    }
-    .ui-dialog .hidden{
-        display: block;
-    }
-</style>
-
 </head>
-<body>
-<div id="chat-page">
-<div id='chat-area'>
-    <div id="chat-container"></div>
-    <div id="chat-status"></div>
-    <div ><input type="text" id="chat-input"><button id="send-btn">发送</button></div>
-
-    <ul id="roster"></ul>
-</div>
-    <div id="history" ></div>
-
-<div id="log"></div>
-</div>
-<script id="tpl-contact-list-item" type="text/template">
-<a href="#"><%= name %></a>
-</script>
 
 {% assets "base_js" %}
     <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
@@ -133,12 +20,5 @@
 {% assets "jquery_ui_js" %}
     <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
 {% endassets %}
-{#{% assets "chat_js" %}#}
-{#    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-{#{% endassets %}#}
-{#    <script type="text/javascript" src="{% static 'js/jquery.form.js' %}"></script>#}
-{#    {% assets "jquery_ajax_bootstrap_js" %}#}
-{#        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>#}
-{#    {% endassets %}#}
 </body>
 </html>
