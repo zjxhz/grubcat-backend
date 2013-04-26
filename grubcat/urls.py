@@ -170,7 +170,8 @@ urlpatterns = patterns('',
     url(r'^pay/alipay/wap/back/sync/$', handle_alipay_wap_sync_back, name="alipay_wap_sync_back"),
     url(r'^pay/alipay/wap/back/async/$', handle_alipay_wap_async_back, name="alipay_wap_async_back"),
 
-    url(r'^error/$', TemplateView.as_view(template_name='500.html'), name='error')
+    url(r'^error/$', TemplateView.as_view(template_name='500.html'), name='error'),
+    url(r'^pubsub/$', pubsub_fake, name='pubsub_fake')
 )
 
 if settings.DEBUG:

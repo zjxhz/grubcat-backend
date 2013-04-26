@@ -1203,14 +1203,14 @@ def _meal_joined(meal_participant):
         #TODO how about quit the meal
     #remove the subscription for of the user who is the joiner of the meal
     # and is also the  follower of the joiner, to prevent duplicate notification'
-    users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
+    # users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
     followee_join_meal_node = "/user/%d/meals" % joiner.id
-    for user in users_to_unsubscribe:
-        pubsub.unsubscribe(user, followee_join_meal_node)
-    time.sleep(1)
-    pubsub.publish(joiner, followee_join_meal_node, payload)
-    for user in users_to_unsubscribe:
-        pubsub.subscribe(user, followee_join_meal_node)
+    # for user in users_to_unsubscribe:
+    #     pubsub.unsubscribe(user, followee_join_meal_node)
+    # time.sleep(1)
+    # pubsub.publish(joiner, followee_join_meal_node, payload)
+    # for user in users_to_unsubscribe:
+    #     pubsub.subscribe(user, followee_join_meal_node)
 
 
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
