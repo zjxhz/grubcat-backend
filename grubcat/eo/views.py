@@ -662,7 +662,6 @@ def un_follow(request, user_id):
             relationship = Relationship.objects.get(from_person=request.user.get_profile(),
                                                     to_person=user_to_be_unfollowed)
             relationship.delete()
-            print request.user.username
             html = u'<a class="btn btn-follow" data-uid="%s" href="%s"><i class="icon-star"></i> 关注</a>' % (
                 user_to_be_unfollowed.user.username,
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
