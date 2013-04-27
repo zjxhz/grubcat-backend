@@ -15,7 +15,7 @@
             </div>
             <div id="preview_area" class="">
                 {% comment %} <div id="cropping-tip">
-                    您上传的头像会生成不同尺寸的缩略图，<br/>请注意不同大小尺寸的头像是否清晰
+                    您上传的头像会生成不同尺寸缩略图，<br/>请注意不同大小尺寸的头像是否清晰
                 </div>{% endcomment %}
                 <div id="preview_big_container" class="preview-container ">
                     <img id="preview_big">
@@ -35,10 +35,10 @@
 
 </div>
 
-{% assets "image_cropping_js" %}
-    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-{% endassets %}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
 
-<script type="text/javascript">
-    jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
-</script>
+    <script type="text/javascript">
+        jQuery(".preview-container img").attr('src', '{{ form.instance.avatar.url }}');
+    </script>

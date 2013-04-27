@@ -378,7 +378,7 @@ if (typeof Object.create !== 'function') {
     };
 
     $.noty.defaults = {
-        layout:'top',
+        layout:'topCenter',
         theme:'defaultTheme',
         type: 'success',
         text:'',
