@@ -800,37 +800,38 @@ var notyApp = {
 //        }
         !isRead && isNew && notyApp.increaseNotyUnReadCount($items.size())
         $items.each(function (index, item) {
-            //create noti
-            attrs = $.parseJSON($(item).find("entry").text())
-            if (!attrs.s_avatar) {
-                attrs.s_avatar = attrs.avatar
-            }
-            var formattedDate = chatApp.formatDate(time)
-            attrs.date = formattedDate ? formattedDate : time.getHourMinute()
-
-            if (node.indexOf('meal') > 0) {
-                // create or paticipate a meal
-                attrs.url = '/meal/' + attrs.meal + '/'
-                attrs.type = 'meal'
-                attrs.target_text = attrs.topic
-                attrs.target_pic = attrs.meal_photo
-            } else if (node.indexOf('/photos') > 0) {
-                //upload photo
-                attrs.url = '/photo/' + attrs.photo_id + '/'
-                attrs.type = 'photo'
-                attrs.target_pic = attrs.photo
-            } else if (node.indexOf('/followers') > 0) {
-                // follow me
-                attrs.url = '/user/' + attrs.follower + '/'
-                attrs.type = 'follower'
-
-            } else if (node.indexOf('visitors') > 0) {
-                // view my profile
-                attrs.url = '/user/' + attrs.visitor + '/'
-                attrs.type = 'visitor'
-            }
             try {
-                var $newNoty = $(notyApp.tplNoty( attrs))
+                //create noti
+                attrs = $.parseJSON($(item).find("entry").text())
+                if (!attrs.s_avatar) {
+                    attrs.s_avatar = attrs.avatar
+                }
+                var formattedDate = chatApp.formatDate(time)
+                attrs.date = formattedDate ? formattedDate : time.getHourMinute()
+
+                if (node.indexOf('meal') > 0) {
+                    // create or paticipate a meal
+                    attrs.url = '/meal/' + attrs.meal + '/'
+                    attrs.type = 'meal'
+                    attrs.target_text = attrs.topic
+                    attrs.target_pic = attrs.meal_photo
+                } else if (node.indexOf('/photos') > 0) {
+                    //upload photo
+                    attrs.url = '/photo/' + attrs.photo_id + '/'
+                    attrs.type = 'photo'
+                    attrs.target_pic = attrs.photo
+                } else if (node.indexOf('/followers') > 0) {
+                    // follow me
+                    attrs.url = '/user/' + attrs.follower + '/'
+                    attrs.type = 'follower'
+
+                } else if (node.indexOf('visitors') > 0) {
+                    // view my profile
+                    attrs.url = '/user/' + attrs.visitor + '/'
+                    attrs.type = 'visitor'
+                }
+
+                var $newNoty = $(notyApp.tplNoty(attrs))
                 $newNoty.data("noty-id", notyId)
                 isRead && $newNoty.addClass("read")
 //                $newNoty.click(function () {
@@ -840,9 +841,9 @@ var notyApp = {
 //                    }
 //                    $(this).remove()
 //                })
-                if(isNew){
+                if (isNew) {
                     notyApp.$notyList.prepend($newNoty)
-                }else {
+                } else {
                     notyApp.$notyList.append($newNoty)
                 }
             } catch (e) {
