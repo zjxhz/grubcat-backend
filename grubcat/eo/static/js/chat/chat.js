@@ -886,7 +886,11 @@ var notyApp = {
 
             messages.reverse()
             _.each(messages, function (oldMsg) { //from old to new
-                notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
+                try{
+                    notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
+                } catch(e){
+
+                }
             })
         })
     },
