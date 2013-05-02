@@ -548,7 +548,7 @@ class UserProfile(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return 'user_detail', [str(self.id)]
-
+    
     def follow(self, followee):
         if self == followee:
             raise BusinessException(u'你不可以自己关注自己！')
@@ -557,7 +557,13 @@ class UserProfile(models.Model):
             relationship.save()
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
-
+    
+    def is_following(self, another):
+        if another.followers.filter(pk=self.pk):
+            return True
+        else:
+            return False
+        
     def get_passedd_orders(self):
         return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
