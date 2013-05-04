@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from eo.exceptions import NoAvailableSeatsError
 from eo.models import UserLocation, UserTag, UserPhoto, UserProfile, \
     MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
-    DishCategory, DishCategoryItem, MealComment, Order, Menu
+    DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
 from eo.pay.alipay.alipay import create_app_pay
 from grubcat.eo.api_auth import UserObjectsOnlyAuthorization
 from tastypie import fields, http
@@ -148,6 +148,12 @@ def dehydrate_basic_userinfo(resource, bundle):
     bundle.data['big_avatar'] = bundle.obj.big_avatar  
     resource.mergeOneToOneField(bundle, 'user', ['id', ])
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
+    
+#    request_user = bundle.request.user
+#    if request_user and request_user.is_authenticated() and request_user.get_profile().is_following(bundle.obj):
+#        bundle.data["following"] = True
+#    else:
+#        bundle.data["following"] = False
     return bundle
 
 class SimpleUserResource(EOResource):
@@ -503,14 +509,25 @@ class DishCategoryResource(EOResource):
         queryset = DishCategory.objects.all()  
         authorization = ReadOnlyAuthorization()
 
+class DishResource(ModelResource):
+    categories = fields.ToManyField(DishCategoryResource, 'categories', full=True, null=True)
+    class Meta:
+        queryset = Dish.objects.all()
+        
 class DishCategoryItemResource(EOResource):
     category = fields.ToOneField(DishCategoryResource, 'category', full=True)
     class Meta:
         queryset = DishCategoryItem.objects.all()
         authorization = ReadOnlyAuthorization()
-        
+
+class DishItemResource(ModelResource):
+    dish = fields.ToOneField(DishResource, 'dish', full=True)
+    class Meta:
+        queryset = DishItem.objects.all()
+                
 class MenuResource(EOResource):
     dishcategoryitem_set = fields.ToManyField(DishCategoryItemResource, 'dishcategoryitem_set', full=True)
+    dishitem_set = fields.ToManyField(DishItemResource, "dishitem_set", full=True)
     class Meta:
         queryset = Menu.objects.all()
         authorization = ReadOnlyAuthorization()
