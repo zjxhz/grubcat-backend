@@ -47,7 +47,7 @@ class TransFlowAdmin(admin.ModelAdmin):
     list_display = ('order','alipay_trade_no')
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ('topic', 'menu','host', 'list_price','actual_persons')
+    list_display = ('id', 'topic', 'menu', 'host', 'list_price','actual_persons')
     list_filter = ('start_date',)
     ordering = ('menu', )
     actions = ['postpone_meal']

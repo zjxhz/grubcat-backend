@@ -1,9 +1,4 @@
-from django.conf import settings
 from django_assets import Bundle, register, env
-#env.directory=settings.STATIC_ROOT
-#env.url_expire = True
-import django_assets
-from webassets.env import Environment
 
 #css below
 bootstrap_css = Bundle(

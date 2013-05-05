@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from eo.models import UserProfile, Gender
-import json
 import logging
 import urllib2
 import weibo
