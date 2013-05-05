@@ -1,5 +1,5 @@
 #coding=utf-8
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
@@ -137,13 +137,20 @@ class UserPhotoResource(EOResource):
         filtering={"id":ALL}
         allowed_methods = ['get', 'post', 'delete']
 
+date1970 = date(1970,1,1)
+datetime1970=datetime(1970,1,1)
 def dehydrate_basic_userinfo(resource, bundle):
     if not bundle.data['location']:
         # simulate a location. TODO remove these lines in production
         bundle.data['lat'] = 30.275
         bundle.data['lng'] = 120.148
         bundle.data['updated_at'] = "2012-10-16"
-    
+    if bundle.obj.birthday:
+        bundle.data['birthday_interval'] = (bundle.obj.birthday - date1970).total_seconds()
+    if bundle.obj.user.date_joined:
+        bundle.data['date_joined_interval'] = (bundle.obj.user.date_joined - datetime1970).total_seconds() 
+    if bundle.obj.location: 
+        bundle.data['updated_at_interval'] = (bundle.obj.location.updated_at - datetime1970).total_seconds()
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar  
     resource.mergeOneToOneField(bundle, 'user', ['id', ])
