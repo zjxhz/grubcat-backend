@@ -1,0 +1,49 @@
+{% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
+{% load assets %}
+{% load static_asset %}
+{% load bootstrap_tags %}
+{% block title %}今日饭局{% endblock %}
+{% block content %}
+    <div id="today-meal-list" class="span10 content">
+        <div id="today-meal-list">
+            {% for meal in meal_list %}
+                <table class="table table-striped table-bordered table-condensed">
+                    <tbody>
+                    <tr>
+                        <th>饭局主题</th>
+                        <td>{{ meal.topic|truncatechars:"20" }}</td>
+                        <td class="meal-img" rowspan="5"><a href="{% url meal_detail meal.id %}" target="_blank">
+                            <img alt="{{ meal.topic }}" id="meal-photo" src="{{ meal.big_cover_url }}" width="360"
+                                 height="240"></a></td>
+                    </tr>
+                    <tr>
+                        <th>开始时间</th>
+                        <td>{{ meal.start_time|date:"G:i " }}</td>
+                    </tr>
+                    <tr>
+                        <th>就绪情况</th>
+                        <td>计划 {{ meal.min_persons }} 人，预定 {{ meal.actual_persons }} 人<br/>已到 {{ meal.checked_persons }}
+                            人，未到 {{ meal.unchecked_persons }} 人
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>总共消费</th>
+                        <td>{{ meal.list_price }} * {{ meal.actual_persons }} = {{ meal.total_price }} 元</td>
+                    </tr>
+                    <tr>
+                        <th>菜单</th>
+                        <td>{{ meal.menu.name }}&nbsp;<a href="{% url menu_detail meal.menu.id %}"
+                                                         class="menu-detail-link">详情</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            {% empty %}
+                <div class="alert" id="no-meal-tip">今日没有饭局!</div>
+            {% endfor %}
+        </div>
+        <div id="menu-detail-modal-wrapper"></div>
+    </div>
+    <div id="data" data-nav-active-id="nav-today-meals" style="display: none"></div>
+{% endblock %}
