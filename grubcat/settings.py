@@ -40,30 +40,17 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = '/home/fanju/media/'
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/fanju/webapps/static/'
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
+STATIC_ROOT = '/home/fanju/static/'
 #STATIC_URL = '/static/'
 STATIC_URL = 'http://fanju.dn.qbox.me/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
@@ -129,12 +116,8 @@ INSTALLED_APPS = (
     'django_assets',
     'south',
     'django_forms_bootstrap',
-#    'ajax_select',
     'taggit',
     'raven.contrib.django',
-    #    'debug_toolbar'
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
     )
 
 SERIALIZATION_MODULES = {
@@ -153,12 +136,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "eo.util.chat_context_processor"
     )
 
-#from easy_thumbnails.conf import settings as thumbnail_settings
-
-#THUMBNAIL_PROCESSORS = (
-#                           'image_cropping.thumbnail_processors.crop_corners',
-#                           ) + thumbnail_settings.THUMBNAIL_PROCESSORS
-#THUMBNAIL_QUALITY=100
 THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
     'easy_thumbnails.processors.colorspace',
@@ -287,8 +264,3 @@ XMPP_PUBSUB_USER="pubsub" #'pubsub@fanjoin.com'
 XMPP_PUBSUB_PASSWORD="fan321" #password for pubsub
 XMPP_PUBSUB_SERVICE='pubsub.fanjoin.com'
 XMPP_DEBUG=[]
-
-try:
-    from settings_dev import *
-except Exception: pass
-
