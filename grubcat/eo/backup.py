@@ -1,5 +1,162 @@
 #coding=utf-8
 # Create your views here.
+
+######################### forms related ####################################################
+
+class GroupForm(ModelForm):
+    class Meta:
+        model = Group
+        widgets = {
+            'desc': Textarea({'rows': 5})
+        }
+        exclude = ('owner', 'members')
+
+
+class GroupLogoForm(ModelForm):
+    class Meta:
+        model = Group
+        fields = ('logo',)
+
+
+class GroupCommentForm(ModelForm):
+    class Meta:
+        model = GroupComment
+
+
+
+############################# model related ################################################
+from datetime import datetime, date, timedelta
+class RestaurantInfo(models.Model):
+    restaurant = models.OneToOneField(Restaurant, related_name='info')
+    average_cost = models.FloatField()
+    average_rating = models.FloatField()
+    good_rating_percentage = models.FloatField()
+    divider = models.IntegerField()
+
+
+class RatingPic(models.Model):
+    restaurant = models.ForeignKey(Restaurant)
+    user = models.ForeignKey(User)
+    image = models.CharField(max_length=1024)
+
+    class Meta:
+        db_table = u'rating_pic'
+
+class BestRatingDish(models.Model):
+    restaurant = models.ForeignKey(Restaurant, related_name="best_rating_dishes")
+    dish = models.ForeignKey(Dish)
+    times = models.IntegerField()
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, related_name='user_ratings')
+    restaurant = models.ForeignKey(Restaurant, related_name="ratings")
+    comments = models.CharField(max_length=4096)
+    time = models.DateTimeField()
+    rating = models.FloatField()
+    average_cost = models.FloatField()
+    dishes = models.ManyToManyField(Dish, db_table="rating_dishes")
+    auto_share = models.BooleanField()
+
+class MealInvitation(models.Model):
+    from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
+    to_person = models.ForeignKey(UserProfile, related_name='invitation_to_user')
+    meal = models.ForeignKey(Meal)
+    timestamp = models.DateTimeField(default=datetime.now())
+    status = models.IntegerField(default=0) # PENDING, ACCEPTED, REJECTED
+
+    def is_related(self, user_profile):
+        return self.from_person == user_profile or self.to_person == user_profile
+
+class GroupCategory(models.Model):
+    name = models.CharField(u'圈子分类名', max_length=30, unique=True)
+    cover = models.ImageField(u'分类图片', upload_to='category_cover', blank=True, null=True)
+
+    @property
+    def cover_url_default_if_none(self):
+        if self.cover:
+            return self.cover.url
+        else:
+            return staticfiles_storage.url('img/default/category-cover.png')
+
+    def __unicode__(self):
+        return  self.name
+
+    class Meta:
+        db_table = u'group_category'
+        verbose_name = u'圈子分类'
+        verbose_name_plural = u'圈子分类'
+
+
+class GroupPrivacy(Privacy):
+    pass
+
+GROUP_PRIVACY_CHOICE = (
+    (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
+    (GroupPrivacy.PRIVATE, u'私密：仅被邀请的人可以加入')
+    )
+
+class Group(models.Model):
+    """圈子"""
+    name = models.CharField(u'名称', max_length=15, unique=True)
+    desc = models.CharField(u'描述', max_length=100)
+    category = models.ForeignKey(GroupCategory, verbose_name=u'分类', null=True, blank=True)
+    privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
+    owner = models.ForeignKey(User, verbose_name=u'创建者')
+    logo = models.ImageField(upload_to='group_logos', blank=True, null=True)
+    members = models.ManyToManyField(User, verbose_name=u'成员', related_name='interest_groups')
+
+    @property
+    def recent_meals(self):
+        return Meal.objects.filter(group=self).filter(
+            Q(start_date__gt=date.today()) | Q(start_date=date.today(),
+                start_time__gt=datetime.now().time())).order_by("start_date",
+            "start_time")
+
+    @property
+    def passed_meals(self):
+        return Meal.objects.filter(group=self).filter(
+            Q(start_date__lt=date.today()) | Q(start_date=date.today(),
+                start_time__lte=datetime.now().time())).order_by("start_date",
+            "start_time")
+
+    @property
+    def logo_url_default_if_none(self):
+        if self.logo:
+            return self.logo.url
+        else:
+            return staticfiles_storage.url('img/default/group-logo.jpg')
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'group_detail', (self.id, )
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'group'
+        verbose_name = u'圈子'
+        verbose_name_plural = u'圈子'
+
+class GroupComment(Comment):
+    group = models.ForeignKey(Group, verbose_name=u'圈子', related_name='comments')
+    parent = models.ForeignKey('self', related_name='replies', verbose_name=u'父评论', null=True, blank=True)
+
+    class Meta:
+        verbose_name = u'圈子评论'
+        verbose_name_plural = u'圈子评论'
+
+    def __unicode__(self):
+        return  u'圈子(%s) 评论%s' % (self.group, self.id)
+
+
+
+
+
+
+################################################## views related ##########################################
+
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core import serializers
@@ -12,6 +169,167 @@ import sys
 import json
 
 from django.conf import settings
+
+    ### group related views ###
+
+
+class GroupListView(ListView):
+#    TODO order by member num
+    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
+        num_members=Count('members')).order_by('-num_members')
+    template_name = "group/group_list.html"
+    context_object_name = "group_list"
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupListView, self).get_context_data(**kwargs)
+        context['categories'] = GroupCategory.objects.all()
+        return context
+
+
+class GroupCreateView(CreateView):
+    form_class = GroupForm
+    template_name = 'group/add_group.html'
+
+    def form_valid(self, form):
+        group = form.save(False)
+        group.owner = self.request.user
+        super(GroupCreateView, self).form_valid(form)
+        group.members.add(self.request.user)
+        #        TODO need save many to many?
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
+        return HttpResponse(content=content)
+
+
+class GroupUpdateView(UpdateView):
+    form_class = GroupForm
+    model = Group
+    template_name = "group/edit_group.html"
+
+
+class GroupLogoUpdateView(UpdateView):
+    form_class = GroupLogoForm
+    model = Group
+    template_name = "group/edit_group_logo.html"
+
+    def form_valid(self, form):
+        group = form.save(False)
+        super(GroupLogoUpdateView, self).form_valid(form)
+        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
+        return HttpResponse(content=content)
+
+GROUP_COMMENT_PAGINATE_BY = 5
+
+class GroupDetailView(DetailView):
+    model = Group
+    context_object_name = "group"
+    template_name = "group/group_detail.html"
+
+    def get_queryset(self):
+        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
+
+    def get_context_data(self, **kwargs):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
+            'group',
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        context = super(GroupDetailView, self).get_context_data(**kwargs)
+        context.update({
+            "parent_comments": parent_comments[:GROUP_COMMENT_PAGINATE_BY],
+            'has_next': parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
+        })
+        return context
+
+
+class GroupCommentListView(ListView):
+    template_name = "group/comment_list.html"
+    context_object_name = "parent_comments"
+    model = GroupComment
+    paginate_by = GROUP_COMMENT_PAGINATE_BY
+
+    def get_queryset(self):
+        parent_comments = GroupComment.objects.filter(parent__isnull=True,
+            group=self.kwargs['group_id']).select_related(
+            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+        return parent_comments
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCommentListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id": self.kwargs['group_id']
+        })
+        return context
+
+
+class GroupMemberListView(ListView):
+    template_name = "group/member_list.html"
+    context_object_name = "user_list"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return  Group.objects.get(pk=self.kwargs['group_id']).members.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupMemberListView, self).get_context_data(**kwargs)
+        context.update({
+            "group_id": self.kwargs['group_id']
+        })
+        return context
+
+
+def join_group(request, pk):
+    if request.method == 'POST':
+        group = Group.objects.get(pk=pk)
+        if group.privacy == GroupPrivacy.PUBLIC:
+            #TODO refactor
+            if request.user not in group.members.all():
+                group.members.add(request.user)
+                return create_sucess_json_response(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
+            else:
+                return create_failure_json_response(u'对不起您已经加入该圈子，无需再次加入！')
+        else:
+        #            need to handle invitation
+            return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+
+def leave_group(request, pk):
+    if request.method == 'POST':
+        group = Group.objects.get(pk=pk)
+        if request.user in group.members.all():
+            group.members.remove(request.user)
+            return create_sucess_json_response(u'已经成功离开该圈子！')
+        else:
+            return create_failure_json_response(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+
+def create_group_comment(request):
+    if request.method == 'POST':
+        form = GroupCommentForm(request.POST)
+        #TODO some checks
+        if form.is_valid():
+            comment = form.save()
+            t = render_to_response('group/single_comment.html', {'comment': comment},
+                context_instance=RequestContext(request))
+            return create_sucess_json_response(u'已经成功创建评论！', {'comment_html': t.content})
+        else:
+            return create_failure_json_response(u'对不起您还未加入该圈子！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
+
+def del_group_comment(request, pk):
+    if request.method == 'POST':
+        user_id = request.user.get_profile().id
+        comment = GroupComment.objects.filter(pk=pk)
+        #TODO some checks
+        if len(comment) == 1:
+            comment[0].delete()
+        return create_sucess_json_response(u'已经成功删除评论！')
+    elif request.method == 'GET':
+        return HttpResponse(u'不支持该操作')
+
 def writeJson(qs, response, relations=None):
     json_serializer = serializers.get_serializer("json")()
     if relations:
@@ -393,3 +711,56 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
         return getJsonResponse([i])
     else:
         raise
+
+
+
+# not used for now
+#class RegisterView(CreateView):
+#    form_class = UserCreationForm
+#    template_name = 'registration/register.html'
+#
+#    def get_context_data(self, **kwargs):
+#        context = super(RegisterView, self).get_context_data(**kwargs)
+#        context['next'] = self.get_success_url()
+#        return context
+#
+#    def form_valid(self, form):
+#        response = super(RegisterView, self).form_valid(form)
+#        user = authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
+#        login(self.request, user)
+#        return response
+#
+#    def get_success_url(self):
+#        success_url = self.request.REQUEST.get('next', '')
+#        netloc = urlparse.urlparse(success_url)[1]
+#        # Use default setting if redirect_to is empty
+#        if not success_url:
+#            success_url = reverse_lazy("index")
+#        # Heavier security check -- don't allow redirection to a different host.
+#        elif netloc and netloc != self.request.get_host():
+#            success_url = reverse_lazy("index")
+#        return success_url
+
+
+
+
+
+
+
+
+
+
+
+########################### admin ###############################
+
+class GroupAdmin(admin.ModelAdmin):
+    list_display = ('id','name','category')
+    list_filter = ('category',)
+    list_editable = ('category',)
+
+class GroupCommentAdmin(admin.ModelAdmin):
+    list_display = ('id','group','comment')
+    list_filter = ('group',)
+
+class ImageTestAdmin(ImageCroppingMixin,admin.ModelAdmin):
+    pass
