@@ -40,7 +40,7 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = False
+USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
@@ -160,7 +160,8 @@ ASSETS_ROOT = r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
 #30minutes
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
-PAY_DEBUG=True
+PAY_DEBUG = True
+ORDER_PREFIX = 'po'
 
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"

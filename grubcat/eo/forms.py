@@ -73,25 +73,6 @@ class DishCategoryForm(ModelForm):
         model = DishCategory
 
 
-class GroupForm(ModelForm):
-    class Meta:
-        model = Group
-        widgets = {
-            'desc': Textarea({'rows': 5})
-        }
-        exclude = ('owner', 'members')
-
-
-class GroupLogoForm(ModelForm):
-    class Meta:
-        model = Group
-        fields = ('logo',)
-
-
-class GroupCommentForm(ModelForm):
-    class Meta:
-        model = GroupComment
-
 
 class MenuForm(ModelForm):
     class Meta:
@@ -114,14 +95,6 @@ class MenuCoverForm(ModelForm):
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50, required=False)
     file = forms.FileField()
-
-
-class ImgTestForm(ModelForm):
-    class Meta:
-        model = ImageTest
-        widgets = {
-            'image': widgets.ImageCropWidget,
-        }
 
 #User related
 class UploadAvatarForm(ModelForm):
