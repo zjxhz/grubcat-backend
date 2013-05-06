@@ -4,10 +4,8 @@ import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
@@ -24,7 +22,7 @@ from eo.views_common import create_sucess_json_response, create_failure_json_res
 from grubcat.eo.forms import *
 from django.conf import settings
 import json
-
+from datetime import datetime, date, timedelta
 
 logger = logging.getLogger()
 pay_logger = logging.getLogger("pay")
@@ -178,165 +176,7 @@ class MealListView(ListView):
     context_object_name = "meal_list"
     #TODO add filter to queyset
 
-    ### group related views ###
 
-
-class GroupListView(ListView):
-#    TODO order by member num
-    queryset = Group.objects.filter(privacy=GroupPrivacy.PUBLIC).select_related('category').annotate(
-        num_members=Count('members')).order_by('-num_members')
-    template_name = "group/group_list.html"
-    context_object_name = "group_list"
-
-    def get_context_data(self, **kwargs):
-        context = super(GroupListView, self).get_context_data(**kwargs)
-        context['categories'] = GroupCategory.objects.all()
-        return context
-
-
-class GroupCreateView(CreateView):
-    form_class = GroupForm
-    template_name = 'group/add_group.html'
-
-    def form_valid(self, form):
-        group = form.save(False)
-        group.owner = self.request.user
-        super(GroupCreateView, self).form_valid(form)
-        group.members.add(self.request.user)
-        #        TODO need save many to many?
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
-        return HttpResponse(content=content)
-
-
-class GroupUpdateView(UpdateView):
-    form_class = GroupForm
-    model = Group
-    template_name = "group/edit_group.html"
-
-
-class GroupLogoUpdateView(UpdateView):
-    form_class = GroupLogoForm
-    model = Group
-    template_name = "group/edit_group_logo.html"
-
-    def form_valid(self, form):
-        group = form.save(False)
-        super(GroupLogoUpdateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('group_detail', kwargs={'pk': group.id})
-        return HttpResponse(content=content)
-
-GROUP_COMMENT_PAGINATE_BY = 5
-
-class GroupDetailView(DetailView):
-    model = Group
-    context_object_name = "group"
-    template_name = "group/group_detail.html"
-
-    def get_queryset(self):
-        return Group.objects.prefetch_related('comments__from_person', 'comments__replies__from_person')
-
-    def get_context_data(self, **kwargs):
-        parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
-            'group',
-            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
-        context = super(GroupDetailView, self).get_context_data(**kwargs)
-        context.update({
-            "parent_comments": parent_comments[:GROUP_COMMENT_PAGINATE_BY],
-            'has_next': parent_comments.count() > GROUP_COMMENT_PAGINATE_BY
-        })
-        return context
-
-
-class GroupCommentListView(ListView):
-    template_name = "group/comment_list.html"
-    context_object_name = "parent_comments"
-    model = GroupComment
-    paginate_by = GROUP_COMMENT_PAGINATE_BY
-
-    def get_queryset(self):
-        parent_comments = GroupComment.objects.filter(parent__isnull=True,
-            group=self.kwargs['group_id']).select_related(
-            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
-        return parent_comments
-
-    def get_context_data(self, **kwargs):
-        context = super(GroupCommentListView, self).get_context_data(**kwargs)
-        context.update({
-            "group_id": self.kwargs['group_id']
-        })
-        return context
-
-
-class GroupMemberListView(ListView):
-    template_name = "group/member_list.html"
-    context_object_name = "user_list"
-    paginate_by = 10
-
-    def get_queryset(self):
-        return  Group.objects.get(pk=self.kwargs['group_id']).members.all()
-
-    def get_context_data(self, **kwargs):
-        context = super(GroupMemberListView, self).get_context_data(**kwargs)
-        context.update({
-            "group_id": self.kwargs['group_id']
-        })
-        return context
-
-
-def join_group(request, pk):
-    if request.method == 'POST':
-        group = Group.objects.get(pk=pk)
-        if group.privacy == GroupPrivacy.PUBLIC:
-            #TODO refactor
-            if request.user not in group.members.all():
-                group.members.add(request.user)
-                return create_sucess_json_response(u'已经成功加入该圈子！', {'redirect_url': reverse('group_list')})
-            else:
-                return create_failure_json_response(u'对不起您已经加入该圈子，无需再次加入！')
-        else:
-        #            need to handle invitation
-            return create_no_right_response(u'对不起，只有受到邀请的用户才可以加入该私密圈子')
-    elif request.method == 'GET':
-        return HttpResponse(u'不支持该操作')
-
-
-def leave_group(request, pk):
-    if request.method == 'POST':
-        group = Group.objects.get(pk=pk)
-        if request.user in group.members.all():
-            group.members.remove(request.user)
-            return create_sucess_json_response(u'已经成功离开该圈子！')
-        else:
-            return create_failure_json_response(u'对不起您还未加入该圈子！')
-    elif request.method == 'GET':
-        return HttpResponse(u'不支持该操作')
-
-
-def create_group_comment(request):
-    if request.method == 'POST':
-        form = GroupCommentForm(request.POST)
-        #TODO some checks
-        if form.is_valid():
-            comment = form.save()
-            t = render_to_response('group/single_comment.html', {'comment': comment},
-                context_instance=RequestContext(request))
-            return create_sucess_json_response(u'已经成功创建评论！', {'comment_html': t.content})
-        else:
-            return create_failure_json_response(u'对不起您还未加入该圈子！')
-    elif request.method == 'GET':
-        return HttpResponse(u'不支持该操作')
-
-
-def del_group_comment(request, pk):
-    if request.method == 'POST':
-        user_id = request.user.get_profile().id
-        comment = GroupComment.objects.filter(pk=pk)
-        #TODO some checks
-        if len(comment) == 1:
-            comment[0].delete()
-        return create_sucess_json_response(u'已经成功删除评论！')
-    elif request.method == 'GET':
-        return HttpResponse(u'不支持该操作')
 
 ### User related views ###
 
@@ -352,9 +192,13 @@ def get_user_info(request):
                                'profileUrl': profile.get_absolute_url()})
         elif request.POST.get("id"):
             username = request.POST.get("id")
-            profile = UserProfile.objects.filter(user__username=username).select_related("user")[0]
-            result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
-                      'profileUrl': profile.get_absolute_url()}
+            profile = UserProfile.objects.filter(user__username=username).select_related("user")
+            if len(profile):
+                profile = profile[0]
+                result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
+                          'profileUrl': profile.get_absolute_url()}
+            else:
+                result = {}
         return HttpResponse(json.dumps(result), content_type='application/json', )
 
 
@@ -416,32 +260,7 @@ class ProfileDetailView(DetailView):
                     break
         return context
 
-# not used for now
-#class RegisterView(CreateView):
-#    form_class = UserCreationForm
-#    template_name = 'registration/register.html'
-#
-#    def get_context_data(self, **kwargs):
-#        context = super(RegisterView, self).get_context_data(**kwargs)
-#        context['next'] = self.get_success_url()
-#        return context
-#
-#    def form_valid(self, form):
-#        response = super(RegisterView, self).form_valid(form)
-#        user = authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
-#        login(self.request, user)
-#        return response
-#
-#    def get_success_url(self):
-#        success_url = self.request.REQUEST.get('next', '')
-#        netloc = urlparse.urlparse(success_url)[1]
-#        # Use default setting if redirect_to is empty
-#        if not success_url:
-#            success_url = reverse_lazy("index")
-#        # Heavier security check -- don't allow redirection to a different host.
-#        elif netloc and netloc != self.request.get_host():
-#            success_url = reverse_lazy("index")
-#        return success_url
+
 
 
 class UserListView(ListView):

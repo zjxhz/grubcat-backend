@@ -552,8 +552,8 @@ class MealResource(EOResource):
                 self.wrap_view('get_comments'), name="api_get_comments"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/menu%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_menu'), name="api_get_menu"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/likes%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('like'), name="api_like"),
+            # url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/likes%s$" % (self._meta.resource_name, trailing_slash()),
+            #     self.wrap_view('like'), name="api_like"),
         ]
     
     def get_menu(self, request, **kwargs):

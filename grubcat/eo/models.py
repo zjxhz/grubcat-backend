@@ -31,95 +31,39 @@ class Privacy:
     PRIVATE = 1
 
 
-class Company(models.Model):
-    name = models.CharField(max_length=135)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta:
-        db_table = u'company'
-
-
-class RestaurantTag(models.Model):
-    name = models.CharField(max_length=45)
-
-    class Meta:
-        db_table = u'restaurant_tag'
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-
 class Region(models.Model):
     name = models.CharField(max_length=64)
 
     def __unicode__(self):
         return u'%s' % self.name
 
-    class Meta:
-        db_table = u'region'
-
 
 class Restaurant(models.Model):
-    user = models.OneToOneField(User, null=True, related_name="restaurant")
-    name = models.CharField(max_length=135)
-    address = models.CharField(max_length=765)
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
-    tel = models.CharField(max_length=60)
-    tel2 = models.CharField(max_length=60, blank=True)
-    introduction = models.CharField(max_length=6000, blank=True)
-    phone_img_url = models.CharField(max_length=1024, blank=True)
-    average_cost = models.IntegerField()
-    rating = models.IntegerField()
-    company = models.ForeignKey(Company)
-    tags = models.ManyToManyField(RestaurantTag)
-    regions = models.ManyToManyField(Region)
+    user = models.OneToOneField(User, verbose_name=u'用户', null=True, related_name="restaurant")
+    name = models.CharField(u'餐厅名称', max_length=135)
+    address = models.CharField(u'餐厅地址', max_length=765)
+    longitude = models.FloatField(u'经度', null=True, blank=True)
+    latitude = models.FloatField(u'纬度', null=True, blank=True)
+    tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
+    # tel2 = models.CharField(max_length=60, blank=True)
+    introduction = models.CharField(u'简介', max_length=6000, blank=True)
+    # phone_img_url = models.CharField(max_length=1024, blank=True)
+    # average_cost = models.IntegerField()
+    # rating = models.IntegerField()
+    regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.address)
 
-    def get_recommended_dishes(self, max_number=10):
-        return BestRatingDish.objects.filter(restaurant__id=self.id).order_by('-times')[:max_number]
+    # def get_recommended_dishes(self, max_number=10):
+    #     return BestRatingDish.objects.filter(restaurant__id=self.id).order_by('-times')[:max_number]
 
-    def get_rating(self):
-        return Rating.objects.filter(restaurant__id=self.id)
-
-    def get_average_cost(self):
-        '''ri = RestaurantInfo.objects.get(restaurant__id=self.id)
-        return ri.average_cost'''
-        return self.average_cost
-
-    '''def get_rating(self):
-   ri = RestaurantInfo.objects.get(restaurant__id=self.id)
-   return ri.rating
-   return rating'''
+    # def get_rating(self):
+    #     return Rating.objects.filter(restaurant__id=self.id)
 
     class Meta:
-        db_table = u'restaurant'
         verbose_name = u'餐厅'
         verbose_name_plural = u'餐厅'
-
-
-class RestaurantInfo(models.Model):
-    restaurant = models.OneToOneField(Restaurant, related_name='info')
-    average_cost = models.FloatField()
-    average_rating = models.FloatField()
-    good_rating_percentage = models.FloatField()
-    divider = models.IntegerField()
-
-    class Meta:
-        db_table = u'restaurant_info'
-
-
-class RatingPic(models.Model):
-    restaurant = models.ForeignKey(Restaurant)
-    user = models.ForeignKey(User)
-    image = models.CharField(max_length=1024)
-
-    class Meta:
-        db_table = u'rating_pic'
 
 
 class DishCategory(models.Model):
@@ -134,7 +78,6 @@ class DishCategory(models.Model):
         return u'%s' % self.name
 
     class Meta:
-        db_table = u'dish_category'
         verbose_name = u'菜的分类'
         verbose_name_plural = u'菜的分类'
 
@@ -158,7 +101,6 @@ class Dish(models.Model):
         return u'%s' % self.name
 
     class Meta:
-        db_table = u'dish'
         verbose_name = u'菜'
         verbose_name_plural = u'菜'
 
@@ -173,6 +115,7 @@ MENU_STATUS = (
     )
 
 LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
+
 
 class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant)
@@ -242,7 +185,6 @@ class Menu(models.Model):
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
-        db_table = u'menu'
         verbose_name = u'套餐'
         verbose_name_plural = u'套餐'
 
@@ -258,90 +200,6 @@ class DishCategoryItem(models.Model):
     menu = models.ForeignKey(Menu)
     category = models.ForeignKey(DishCategory)
     order_no = models.SmallIntegerField() #分类在一个Menu中的顺序
-
-###    group related  ###
-class GroupCategory(models.Model):
-    name = models.CharField(u'圈子分类名', max_length=30, unique=True)
-    cover = models.ImageField(u'分类图片', upload_to='category_cover', blank=True, null=True)
-
-    @property
-    def cover_url_default_if_none(self):
-        if self.cover:
-            return self.cover.url
-        else:
-            return staticfiles_storage.url('img/default/category-cover.png')
-
-    def __unicode__(self):
-        return  self.name
-
-    class Meta:
-        verbose_name = u'圈子分类'
-        verbose_name_plural = u'圈子分类'
-
-
-class GroupPrivacy(Privacy):
-    pass
-
-GROUP_PRIVACY_CHOICE = (
-    (GroupPrivacy.PUBLIC, u'公开：所有人都可以加入'),
-    (GroupPrivacy.PRIVATE, u'私密：仅被邀请的人可以加入')
-    )
-
-class Group(models.Model):
-    """圈子"""
-    name = models.CharField(u'名称', max_length=15, unique=True)
-    desc = models.CharField(u'描述', max_length=100)
-    category = models.ForeignKey(GroupCategory, verbose_name=u'分类', null=True, blank=True)
-    privacy = models.SmallIntegerField(u'公开', choices=GROUP_PRIVACY_CHOICE, default=GroupPrivacy.PUBLIC)
-    owner = models.ForeignKey(User, verbose_name=u'创建者')
-    logo = models.ImageField(upload_to='group_logos', blank=True, null=True)
-    members = models.ManyToManyField(User, verbose_name=u'成员', related_name='interest_groups')
-
-    @property
-    def recent_meals(self):
-        return Meal.objects.filter(group=self).filter(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(),
-                start_time__gt=datetime.now().time())).order_by("start_date",
-            "start_time")
-
-    @property
-    def passed_meals(self):
-        return Meal.objects.filter(group=self).filter(
-            Q(start_date__lt=date.today()) | Q(start_date=date.today(),
-                start_time__lte=datetime.now().time())).order_by("start_date",
-            "start_time")
-
-    @property
-    def logo_url_default_if_none(self):
-        if self.logo:
-            return self.logo.url
-        else:
-            return staticfiles_storage.url('img/default/group-logo.jpg')
-
-    @models.permalink
-    def get_absolute_url(self):
-        return 'group_detail', (self.id, )
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = u'圈子'
-        verbose_name_plural = u'圈子'
-
-
-class Rating(models.Model):
-    user = models.ForeignKey(User, related_name='user_ratings')
-    restaurant = models.ForeignKey(Restaurant, related_name="ratings")
-    comments = models.CharField(max_length=4096)
-    time = models.DateTimeField()
-    rating = models.FloatField()
-    average_cost = models.FloatField()
-    dishes = models.ManyToManyField(Dish, db_table="rating_dishes")
-    auto_share = models.BooleanField()
-    # for average cost, see RestaurantAverageCost
-    class Meta:
-        db_table = u'rating'
 
 
 class OrderStatus():
@@ -420,7 +278,6 @@ class Order(models.Model):
         self.code = str(r)
 
     class Meta:
-        db_table = u'order'
         verbose_name = u'订单'
         verbose_name_plural = u'订单'
 
@@ -436,6 +293,7 @@ class TransFlow(models.Model):
         verbose_name = u'交易流水'
         verbose_name_plural = u'交易流水'
 
+
 class Relationship(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name='from_user')
     to_person = models.ForeignKey("UserProfile", related_name='to_user')
@@ -445,10 +303,10 @@ class Relationship(models.Model):
         return u'%s -> %s: %s' % (self.from_person, self.to_person, self.status)
 
     class Meta:
-        db_table = u'relationship'
         unique_together = ('from_person', 'to_person')
         verbose_name = u'用户关系'
         verbose_name_plural = u'用户关系'
+
 
 class Visitor(models.Model):
     from_person = models.ForeignKey("UserProfile", related_name="host")
@@ -457,18 +315,15 @@ class Visitor(models.Model):
         return u'%s -> %s' % (self.from_person, self.to_person)
 
     class Meta:
-        db_table = u'visitor'
         unique_together = ('from_person', 'to_person')
         verbose_name = u'用户访问'
         verbose_name_plural = u'用户访问'
-    
+
+
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
     updated_at = models.DateTimeField()
-
-    class Meta:
-        db_table = u"user_location"
 
 
 class UserTag(Tag):
@@ -477,16 +332,11 @@ class UserTag(Tag):
     def tagged_users(self):
         return [tagged_user.content_object for tagged_user in self.items.all()[:50] ]
         
-    class Meta:
-        db_table = u'user_tag'
 
 
 class TaggedUser(GenericTaggedItemBase):
     tag = models.ForeignKey(UserTag,
-        related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
-
-    class Meta:
-        db_table = u'tagged_user'
+                            related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
 
 
 class Gender:
@@ -523,11 +373,11 @@ INDUSTRY_CHOICE = (
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
-    favorite_restaurants = models.ManyToManyField(Restaurant, db_table="favorite_restaurants", blank=True,
-        related_name="user_favorite")
+    favorite_restaurants = models.ManyToManyField(Restaurant, blank=True,
+                                                  related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
-    recommended_following = models.ManyToManyField('self', symmetrical=False, db_table="recommended_following",
+    recommended_following = models.ManyToManyField('self', symmetrical=False,
         blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
     avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, null=True) # photo
@@ -670,11 +520,11 @@ class UserProfile(models.Model):
         """
         return Order.objects.filter(customer__in=self.following.all())
 
-    @property
-    def invitations(self):
-        """ Invitation sent from others.
-        """
-        return MealInvitation.objects.filter(to_person=self).filter(status=0)
+    # @property
+    # def invitations(self):
+    #     """ Invitation sent from others.
+    #     """
+    #     return MealInvitation.objects.filter(to_person=self).filter(status=0)
 
     @property
     def recommendations(self):
@@ -803,9 +653,9 @@ class UserProfile(models.Model):
         return self.name if self.name is not None else self.user.username
 
     class Meta:
-        db_table = u'user_profile'
         verbose_name = u'用户资料'
         verbose_name_plural = u'用户资料'
+
 
 class UserPhoto(models.Model):
     user = models.ForeignKey(UserProfile, related_name="photos")
@@ -839,7 +689,6 @@ class UserPhoto(models.Model):
         return 'photo_detail', [str(self.id)]
 
     class Meta:
-        db_table = u'user_photo'
         verbose_name = u'用户照片'
         verbose_name_plural = u'用户照片'
 
@@ -851,23 +700,13 @@ class UserMessage(models.Model):
     timestamp = models.DateTimeField()
     type = models.IntegerField(default=0) # 0 message, 1 comments
 
-    class Meta:
-        db_table = u'user_message'
-
     def __unicode__(self):
         return "%s -> %s(%s): %s" % (self.from_person, self.to_person, self.timestamp, self.message)
 
-class BestRatingDish(models.Model):
-    restaurant = models.ForeignKey(Restaurant, related_name="best_rating_dishes")
-    dish = models.ForeignKey(Dish)
-    times = models.IntegerField()
 
-    class Meta:
-        db_table = u'best_rating_dish'
-
-#meal related choice
 class MealPrivacy(Privacy):
     pass
+
 
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
@@ -884,18 +723,20 @@ START_TIME_CHOICE = (
     (dtime(19, 00), "19:00"), (dtime(19, 30), "19:30"), (dtime(20, 00), "20:00"), (dtime(20, 30), "20:30"),
     )
 
+
 class MealStatus:
     CREATED_NO_MENU = 0
     CREATED_WITH_MENU = 1
     PAID_NO_MENU = 2
     PUBLISHED = 3 #
 
+
 MEAL_STATUS_CHOICE = (
     (MealStatus.CREATED_NO_MENU, u'创建且无菜单' ),
     (MealStatus.CREATED_WITH_MENU, u'创建且有菜单'),
     (MealStatus.PAID_NO_MENU, u'支付且无菜单'),
     (MealStatus.PUBLISHED, u'可以发布')
-    )
+)
 
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
@@ -903,24 +744,25 @@ class Meal(models.Model):
     #    time = models.DateTimeField(u'开始时间', )
     start_date = models.DateField(u'开始日期', default=datetime.today())
     start_time = models.TimeField(u'开始时间', choices=START_TIME_CHOICE, default=dtime(19, 00))
-    group = models.ForeignKey('Group', verbose_name=u'通知圈子', null=True, blank=True)
+    # group = models.ForeignKey('Group', verbose_name=u'通知圈子', null=True, blank=True)
     privacy = models.IntegerField(u'是否公开', default=MealPrivacy.PUBLIC,
-        choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
+                                  choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
     list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
-        blank=True, null=True)
+                                     blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
     photo = models.FileField(u'图片', null=True, blank=True,
-        upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
+                             upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
     host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
-    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True, through="MealParticipants")
-    likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
-        null=True)
+    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True,
+                                          through="MealParticipants")
+    # likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
+    #                                null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
@@ -973,11 +815,11 @@ class Meal(models.Model):
     def is_participant(self, user_profile):
         return self.participants.filter(pk=user_profile.id).exists()
 
-    def liked(self, user_profile):
-        for like in self.likes.all():
-            if like == user_profile:
-                return True
-        return False
+    # def liked(self, user_profile):
+    #     for like in self.likes.all():
+    #         if like == user_profile:
+    #             return True
+    #     return False
 
     @property
     def comments(self):
@@ -1036,9 +878,9 @@ class Meal(models.Model):
         return self.topic
 
     class Meta:
-        db_table = u'meal'
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
+
 
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
@@ -1048,11 +890,11 @@ class MealParticipants(models.Model):
         return u"%s参加了饭局%s" %(self.userprofile, self.meal)
         
     class Meta:
-        db_table = u'meal_participants'
         ordering = ['id',]
         verbose_name = u'饭局参加者'
         verbose_name_plural = verbose_name
-    
+
+
 class Comment(models.Model):
     from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)
     comment = models.CharField(u'评论', max_length=300)
@@ -1079,43 +921,15 @@ class Comment(models.Model):
         abstract = True
 
 
-class GroupComment(Comment):
-    group = models.ForeignKey(Group, verbose_name=u'圈子', related_name='comments')
-    parent = models.ForeignKey('self', related_name='replies', verbose_name=u'父评论', null=True, blank=True)
-
-    class Meta:
-        verbose_name = u'圈子评论'
-        verbose_name_plural = u'圈子评论'
-
-    def __unicode__(self):
-        return  u'圈子(%s) 评论%s' % (self.group, self.id)
-
-
 class MealComment(Comment):
     meal = models.ForeignKey(Meal, related_name="comments")
 
-    class  Meta:
-        db_table = u'meal_comment'
 
 
-class MealInvitation(models.Model):
-    from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
-    to_person = models.ForeignKey(UserProfile, related_name='invitation_to_user')
-    meal = models.ForeignKey(Meal)
-    timestamp = models.DateTimeField(default=datetime.now())
-    status = models.IntegerField(default=0) # PENDING, ACCEPTED, REJECTED
-
-    def is_related(self, user_profile):
-        return self.from_person == user_profile or self.to_person == user_profile
-
-    class Meta:
-        db_table = u'meal_invitation'
-
-
-class ImageTest(models.Model):
-    image = ImageField(blank=True, null=True, upload_to='apps')
-    # size is "width x height"
-    cropping = ImageRatioField('image', '640x640')
+# class ImageTest(models.Model):
+#     image = ImageField(blank=True, null=True, upload_to='apps')
+#     # size is "width x height"
+#     cropping = ImageRatioField('image', '640x640')
 
 
 ####################################################  POST SAVE   #######################################
