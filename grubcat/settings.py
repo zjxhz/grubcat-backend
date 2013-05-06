@@ -51,8 +51,8 @@ MEDIA_URL = '/media/'
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 STATIC_ROOT = '/home/fanju/static/'
-#STATIC_URL = '/static/'
-STATIC_URL = 'http://fanju.dn.qbox.me/'
+STATIC_URL = '/static/'
+# STATIC_URL = 'http://fanju.dn.qbox.me/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
