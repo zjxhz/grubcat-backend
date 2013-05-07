@@ -941,21 +941,29 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_profile")
 
 
+def _pubsub_userprofile_created(instance):
+    user_profile = instance
+    cl, jid = pubsub.create_client(user_profile)
+    node_name = "/user/%d/followers" % user_profile.id
+    pubsub.createNode(user_profile, node_name, client=cl)
+    node_name = "/user/%d/meals" % user_profile.id
+    pubsub.createNode(user_profile, node_name, client=cl)
+    pubsub.unsubscribe(user_profile, node_name,
+                       client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+    node_name = "/user/%d/visitors" % user_profile.id
+    pubsub.createNode(user_profile, node_name, client=cl)
+    node_name = "/user/%d/photos" % user_profile.id
+    pubsub.createNode(user_profile, node_name, client=cl)
+    pubsub.unsubscribe(user_profile, node_name,
+                       client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+    cl.disconnect()
+
+
 def pubsub_userprofile_created(sender, instance, created, **kwargs):
     if created:
-        user_profile = instance
-        cl, jid  = pubsub.create_client(user_profile)
-        node_name = "/user/%d/followers" % user_profile.id
-        pubsub.createNode(user_profile, node_name, client=cl)
-        node_name = "/user/%d/meals" % user_profile.id
-        pubsub.createNode(user_profile, node_name, client=cl)
-        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
-        node_name="/user/%d/visitors" % user_profile.id
-        pubsub.createNode(user_profile, node_name, client=cl)
-        node_name="/user/%d/photos" % user_profile.id
-        pubsub.createNode(user_profile, node_name, client=cl)
-        pubsub.unsubscribe(user_profile, node_name, client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
-        cl.disconnect()
+        t = threading.Thread(target=_pubsub_userprofile_created, args=(instance,))
+        t.start()
+
 post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
 
 def user_followed(sender, instance, created, **kwargs):
