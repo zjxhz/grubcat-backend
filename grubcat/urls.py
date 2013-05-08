@@ -8,7 +8,7 @@ from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_r
 from eo.decorators import restaurant_login_required
 from eo.views import upload_app
 from eo.views_common import list_tags, add_tag
-from grubcat.eo.views import *
+from eo.views import *
 from django.conf import settings
 
 import eo.views_restaurant as rest

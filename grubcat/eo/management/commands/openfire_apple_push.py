@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from grubcat.eo import util
+from eo import util
 import logging
 import os
 import json

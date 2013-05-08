@@ -5,7 +5,7 @@ Created on Mar 9, 2013
 '''
 from django.core.management.base import BaseCommand
 from eo.util import pubsub
-from grubcat.eo.models import UserProfile, Relationship, \
+from eo.models import UserProfile, Relationship, \
     pubsub_userprofile_created, user_followed, Meal, meal_created, MealParticipants, \
     meal_joined
 import logging

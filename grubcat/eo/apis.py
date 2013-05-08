@@ -11,7 +11,7 @@ from eo.models import UserLocation, UserTag, UserPhoto, UserProfile, \
     MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
     DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
 from eo.pay.alipay.alipay import create_app_pay
-from grubcat.eo.api_auth import UserObjectsOnlyAuthorization
+from eo.api_auth import UserObjectsOnlyAuthorization
 from tastypie import fields, http
 from tastypie.api import Api
 from tastypie.authorization import Authorization, ReadOnlyAuthorization

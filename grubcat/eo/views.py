@@ -19,7 +19,7 @@ from eo.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create
 from eo.pay.alipay.config import settings as alipay_settings
 from eo.util import isMobileRequest
 from eo.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
-from grubcat.eo.forms import *
+from eo.forms import *
 from django.conf import settings
 import json
 from datetime import datetime, date, timedelta
