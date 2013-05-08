@@ -3,7 +3,7 @@ from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
     DishItem, DishCategoryItem, TransFlow
-from grubcat.eo.models import meal_joined, MealParticipants, user_followed, \
+from eo.models import meal_joined, MealParticipants, user_followed, \
     Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, pubsub_userprofile_created
 from image_cropping.admin import ImageCroppingMixin
 from models import UserProfile

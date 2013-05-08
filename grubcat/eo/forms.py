@@ -3,8 +3,8 @@ from django import forms
 from django.forms import ModelForm, Form
 from django.forms.extras import SelectDateWidget
 from django.forms.widgets import *
-from grubcat.eo.models import *
-from grubcat.eo import widgets
+from eo.models import *
+from eo import widgets
 
 
 class MealForm(ModelForm):

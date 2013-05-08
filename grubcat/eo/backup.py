@@ -164,7 +164,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from eo.models import Restaurant, RestaurantInfo, Rating, Dish, Order,\
     BestRatingDish, RestaurantTag, Region, Relationship, UserMessage, Meal, MealInvitation
-from grubcat.eo.forms import *
+from eo.forms import *
 import sys
 import json
 

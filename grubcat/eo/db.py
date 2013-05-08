@@ -9,8 +9,8 @@ import logging
 import json
 from types import NoneType
 from django.http import HttpResponse
-from grubcat.eo.models import Restaurant
-from grubcat.eo.models import Dish
+from eo.models import Restaurant
+from eo.models import Dish
 
 def getWebPageContent(url, useProxy=True):
     if useProxy == True:

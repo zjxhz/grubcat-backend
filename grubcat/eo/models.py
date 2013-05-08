@@ -13,9 +13,9 @@ from django.db.models.query_utils import Q
 from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 from easy_thumbnails.files import get_thumbnailer
-from grubcat.eo.exceptions import BusinessException, AlreadyJoinedError, \
+from eo.exceptions import BusinessException, AlreadyJoinedError, \
     NoAvailableSeatsError
-from grubcat.eo.util import pubsub
+from eo.util import pubsub
 from image_cropping.fields import ImageRatioField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
