@@ -1,16 +1,11 @@
-# Django settings for grubcat project.
 import os
 from django.core.urlresolvers import reverse_lazy
 
+###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ADMINS = (
-    ('Peter', 'ddsfeifei@gmail.com'),
-    )
-
-
-MANAGERS = ADMINS
+SITE_ROOT = '/home/fanju/'
 
 DATABASES = {
     'default': {
@@ -24,6 +19,59 @@ DATABASES = {
     }
 }
 
+ADMINS = (
+    ('Peter', 'ddsfeifei@gmail.com'),
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'eo.exceptions.ProcessExceptionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
+    'django.middleware.transaction.TransactionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+
+ROOT_URLCONF = 'grubcat.urls'
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'eo',
+    'django.contrib.staticfiles',
+    'easy_thumbnails',
+    'image_cropping',
+    'tastypie',
+    'django_assets',
+    'south',
+    'django_forms_bootstrap',
+    'taggit',
+    'raven.contrib.django',
+)
+
+SERIALIZATION_MODULES = {
+    'json': 'wadofstuff.django.serializers.json'
+}
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.request",
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "eo.util.chat_context_processor"
+    )
+
+MANAGERS = ADMINS
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # On Unix systems, a value of None will cause Django to use the same
@@ -46,52 +94,26 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-MEDIA_ROOT = '/home/fanju/media/'
-MEDIA_URL = '/media/'
+AUTH_PROFILE_MODULE = 'eo.UserProfile'
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
-STATIC_ROOT = '/home/fanju/static/'
+###################### static ######################
 STATIC_URL = '/static/'
 # STATIC_URL = 'http://fanju.dn.qbox.me/'
-# URL prefix for admin static files -- CSS, JavaScript and images.
-# Make sure to use a trailing slash.
-# Examples: "http://foo.com/static/admin/", "/static/admin/".
-#ADMIN_MEDIA_PREFIX = '/static/admin/'
-
-WEIBO_APP_KEY="4071331500"
-WEIBO_APP_SECERT="5cf4910b217617cee72b2889a8e394eb"
-WEIBO_REDIRECT_URL="http://www.fanjoin.com/login/weibo/"
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
-
+STATIC_ROOT = SITE_ROOT + 'static/'
+ASSETS_DEBUG = False
+ASSETS_AUTO_BUILD = False
+ASSETS_ROOT = SITE_ROOT + 'src/grubcat-backend/grubcat/eo/static'
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django_assets.finders.AssetsFinder'
-    # other finders..
-    )
+)
 
-# List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    #     'django.template.loaders.eggs.Loader',
-    )
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'eo.exceptions.ProcessExceptionMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
-    'django.middleware.transaction.TransactionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-
-    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'eo.middlewares.WeiboAuthenticationBackend')
-ROOT_URLCONF = 'grubcat.urls'
+)
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -99,43 +121,11 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
     #    'path/to/debug_toolbar/templates',
-    )
+)
 
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'eo',
-    'django.contrib.staticfiles',
-    'easy_thumbnails',
-    'image_cropping',
-    'tastypie',
-    'django_assets',
-    'south',
-    'django_forms_bootstrap',
-    'taggit',
-    'raven.contrib.django',
-    )
-
-SERIALIZATION_MODULES = {
-    'json': 'wadofstuff.django.serializers.json'
-}
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "eo.util.chat_context_processor"
-    )
-
+###################### media ######################
+MEDIA_URL = '/media/'
+MEDIA_ROOT = SITE_ROOT + 'media/'
 THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
     'easy_thumbnails.processors.colorspace',
@@ -150,30 +140,60 @@ MEDIUM_AVATAR_SIZE = (150,150)
 IMAGE_CROPPING_THUMB_SIZE = (360, 360)
 THUMBNAIL_QUALITY = 100
 
-AUTH_PROFILE_MODULE = 'eo.UserProfile'
-
-#don't auto compress css/jss files, use command by manual
-ASSETS_AUTO_BUILD = False
-ASSETS_ROOT = r'/home/fanju/src/grubcat-backend/grubcat/eo/static'
-
-#pay config
-#30minutes
+###################### pay ######################
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
 PAY_DEBUG = True
 ORDER_PREFIX = 'po'
+ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 
+###################### email ######################
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST =''
+#EMAIL_PORT = 465
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD=''
+
+###################### acount ######################
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'eo.middlewares.WeiboAuthenticationBackend')
+LOGIN_URL = reverse_lazy('weibo_login')
+LOGIN_REDIRECT_URL = reverse_lazy('index')
+RESTAURANT_LOGIN_URL = reverse_lazy('login')
+
+WEIBO_APP_KEY="4071331500"
+WEIBO_APP_SECERT="5cf4910b217617cee72b2889a8e394eb"
+WEIBO_REDIRECT_URL="http://www.fanjoin.com/login/weibo/"
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
+
+
+###################### apple push ######################
+APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
+APNS_HOST = 'http://localhost:7077/'
+APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Created in step 2
+
+
+###################### xmpp chat ######################
+XMPP_SERVER = 'localhost'
+XMPP_PUBSUB_USER = "pubsub" #'pubsub@fanjoin.com'
+XMPP_PUBSUB_PASSWORD = "fan321" #password for pubsub
+XMPP_PUBSUB_SERVICE = 'pubsub.fanjoin.com'
+XMPP_DEBUG = []
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
 
-ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 
+###################### msic ######################
+SHOW_EXCEPTION_DETAIL = False
+
+
+###################### log ######################
 RAVEN_CONFIG = {
     'register_signals': True,
     'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
     }
 
-LOGGING_ROOT = "/home/fanju/logs/user/"
+LOGGING_ROOT = SITE_ROOT + "logs/user/"
 
 LOGGING = {
     'version': 1,
@@ -216,7 +236,7 @@ LOGGING = {
     },
     'loggers': {
         'django.db.backends': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': ['default'],
             'propagate': False,
         },
@@ -242,26 +262,3 @@ LOGGING = {
         },
     }
 }
-
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST =''
-#EMAIL_PORT = 465
-#EMAIL_HOST_USER = ''
-#EMAIL_HOST_PASSWORD=''
-
-#account
-LOGIN_URL = reverse_lazy('weibo_login')
-LOGIN_REDIRECT_URL = reverse_lazy('index')
-RESTAURANT_LOGIN_URL = reverse_lazy('login')
-
-SHOW_EXCEPTION_DETAIL = False
-
-APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
-APNS_HOST = 'http://localhost:7077/'
-APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Created in step 2
-
-XMPP_SERVER='localhost'
-XMPP_PUBSUB_USER="pubsub" #'pubsub@fanjoin.com'
-XMPP_PUBSUB_PASSWORD="fan321" #password for pubsub
-XMPP_PUBSUB_SERVICE='pubsub.fanjoin.com'
-XMPP_DEBUG=[]
