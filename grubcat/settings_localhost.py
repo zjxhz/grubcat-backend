@@ -6,6 +6,7 @@ ASSETS_AUTO_BUILD = True
 STATIC_URL = '/static/'
 DEBUG=True
 XMPP_SERVER="localhost"
+ORDER_PREFIX = 'dew'
 
 RAVEN_CONFIG = {
     'register_signals': False,
