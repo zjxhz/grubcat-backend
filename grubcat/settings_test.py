@@ -29,7 +29,7 @@ LOGGING = {
     'disable_existing_loggers': True,
     'root': {
         'level': 'DEBUG',
-        'handlers': ['console'],
+        'handlers': ['default'],
     },
     'formatters': {
         'verbose': {
@@ -84,6 +84,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False
         },
+        'pay': {
+            'handlers': ['pay'],
+            'level': 'DEBUG',
+            'propagate': False
+        }
     }
 }
 
