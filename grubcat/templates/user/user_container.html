@@ -38,6 +38,8 @@
     </div>
 {% endif %}
 <div id="page-nav">
+{% if page_obj.has_next %}
     <a href="{% url 'more_user' page_obj.next_page_number %}{% if 'show' in request.GET %}?show=common{% endif %}"></a>
+{% endif %}
 </div>
 
