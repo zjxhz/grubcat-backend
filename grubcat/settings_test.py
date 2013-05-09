@@ -39,11 +39,21 @@ LOGGING = {
     'handlers': {
         'default': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'all.log'),
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
+        },
+        'pay': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'pay.log'),
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
         },
         'sentry': {
-
             'level': 'ERROR',
             'class': 'raven.contrib.django.handlers.SentryHandler',
         },
