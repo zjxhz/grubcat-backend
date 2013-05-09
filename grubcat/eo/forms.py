@@ -96,10 +96,11 @@ class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50, required=False)
     file = forms.FileField()
 
+
 #User related
 class UploadAvatarForm(ModelForm):
     class Meta:
-        model = UserProfile
+        model = User
         fields = ('avatar', 'cropping')
         widgets = {
             'avatar': widgets.ImageCropWidget,
@@ -115,7 +116,7 @@ class BasicProfileForm(ModelForm):
 
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),
@@ -132,7 +133,7 @@ class BindProfileForm(ModelForm):
         return tags
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = ('name', 'gender', 'tags')
         widgets = {
             'gender': RadioSelect(choices=GENDER_CHOICE, ),

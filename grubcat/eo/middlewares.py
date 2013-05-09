@@ -1,11 +1,10 @@
 #coding=utf-8
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from eo.models import UserProfile, Gender
 import logging
 import urllib2
 import weibo
+from eo.models import User, Gender
 
 logger = logging.getLogger("api")
 
@@ -22,43 +21,40 @@ class WeiboAuthenticationBackend(object):
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(access_token, expires_in)
         
-        if UserProfile.objects.filter(weibo_access_token=access_token).count():
-            user_profile = UserProfile.objects.get(weibo_access_token=access_token)
-            logger.debug("auth for %s OK" % user_profile)
-            user_to_authenticate = user_profile.user
+        if User.objects.filter(weibo_access_token=access_token).count():
+            user_to_authenticate = User.objects.get(weibo_access_token=access_token)
+            logger.debug("auth for %s OK" % user_to_authenticate)
         else:
             try:
                 logger.debug("access_token no match, a new weibo user or access_token has expired")
                 weibo_id = weibo_client.account.get_uid.get()["uid"]
-                if UserProfile.objects.filter(weibo_id=weibo_id).count():
+                if User.objects.filter(weibo_id=weibo_id).count():
                     logger.debug("access_token found, update access token so next time it would be faster")
-                    user_profile = UserProfile.objects.get(weibo_id=weibo_id)
-                    user_profile.weibo_access_token=access_token
-                    user_profile.save()
-                    user_to_authenticate = user_profile.user
+                    user_to_authenticate = User.objects.get(weibo_id=weibo_id)
+                    user_to_authenticate.weibo_access_token=access_token
+                    user_to_authenticate.save()
                     return user_to_authenticate
                 else:
                     logger.debug("Probably a new weibo user, create a new user for it")
-                    username,password='weibo_%s' % weibo_id, User.objects.make_random_password()
+                    username, password = 'weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password)
 #                    user_to_authenticate.is_active = False #set unactive before complete some profile
 #                    user_to_authenticate.save()
-                    user_profile = user_to_authenticate.get_profile()
                     user_data = weibo_client.users.show.get(uid=weibo_id)
-                    user_profile.weibo_id = weibo_id
-                    user_profile.weibo_access_token = access_token
-                    user_profile.name = user_data.get('name')
-                    user_profile.motto = user_data.get('description')
-                    self.fetch_tags_from_weibo(weibo_client, user_profile, weibo_id)
+                    user_to_authenticate.weibo_id = weibo_id
+                    user_to_authenticate.weibo_access_token = access_token
+                    user_to_authenticate.name = user_data.get('name')
+                    user_to_authenticate.motto = user_data.get('description')
+                    self.fetch_tags_from_weibo(weibo_client, user_to_authenticate, weibo_id)
                     if user_data.get('gender') == "m":
-                        user_profile.gender = Gender.MALE
+                        user_to_authenticate.gender = Gender.MALE
                     elif user_data.get('gender') == "f":
-                        user_profile.gender = Gender.FEMALE
+                        user_to_authenticate.gender = Gender.FEMALE
                     avatar_url = user_data.get('avatar_large')
-                    if avatar_url.find('/180/0/0') < 0  and avatar_url.find('/180/0/1') < 0:
+                    if avatar_url.find('/180/0/0') < 0 and avatar_url.find('/180/0/1') < 0:
                         #don't save default empty avatar
-                        user_profile.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
-                    user_profile.save()
+                        user_to_authenticate.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
+                    user_to_authenticate.save()
                     return user_to_authenticate
             except Exception:
                 if user_to_authenticate:
@@ -67,22 +63,20 @@ class WeiboAuthenticationBackend(object):
                 return None
             
         return user_to_authenticate
-        
-        
+
     def get_user(self, user_id):
         try:
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
             return None
 
-
-    def fetch_tags_from_weibo(self, weibo_client, user_profile, weibo_id):
+    def fetch_tags_from_weibo(self, weibo_client, user, weibo_id):
         try:
-            weibo_tags  = weibo_client.tags.get(uid = weibo_id)
-            tags=[]
+            weibo_tags = weibo_client.tags.get(uid=weibo_id)
+            tags = []
             for tag in weibo_tags:
                 tags.extend(([tag[k] for k in tag.keys() if k != 'weight']))
             if tags:
-                user_profile.tags.set(*tags)
+                user.tags.set(*tags)
         except Exception:
             logger.exception(u'获取用户标签列表异常')

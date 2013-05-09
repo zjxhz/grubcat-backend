@@ -34,14 +34,14 @@ class PhotoCreateView(CreateView):
 
     def form_valid(self, form):
         photo = form.save(False)
-        photo.user = self.request.user.get_profile()
+        photo.user = self.request.user
         super(PhotoCreateView, self).form_valid(form)
         data = {'status': SUCESS, 'redirect_url': reverse('photo_detail', kwargs={'pk': photo.id})}
         return HttpResponse(json.dumps(data), ) #text/html hack for IE ajax upload file
 
     def get_context_data(self, **kwargs):
         context = super(PhotoCreateView, self).get_context_data(**kwargs)
-        context['profile'] = self.request.user.get_profile()
+        context['profile'] = self.request.user
         set_profile_common_attrs(context, self.request)
         return context
 
@@ -73,7 +73,7 @@ def set_profile_common_attrs(context, request):
     '''
     used in all profile pages:basic_profile, photo_list, photo_detail, upload_photo, user_meals, follower/followees
     '''
-    context['is_mine'] = context['profile'] == request.user.get_profile()
+    context['is_mine'] = context['profile'] == request.user
     context['orders_count'] = context['profile'].orders.filter(status=OrderStatus.PAYIED).count()
     if context['is_mine']:
         context['orders_count'] += context['profile'].get_paying_orders_count()
@@ -86,7 +86,7 @@ class PhotoListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PhotoListView, self).get_context_data(**kwargs)
-        context['profile'] = UserProfile.objects.get(pk=self.kwargs['user_id'])
+        context['profile'] = User.objects.get(pk=self.kwargs['user_id'])
         set_profile_common_attrs(context, self.request)
         return context
 
@@ -97,10 +97,10 @@ class PhotoListView(ListView):
 def del_photo(request, pk):
     if request.method == 'POST':
         photo = UserPhoto.objects.get(pk=pk)
-        if photo.user == request.user.get_profile():
+        if photo.user == request.user:
             photo.delete()
             return create_sucess_json_response(u'成功删除照片！',
-                {'redirect_url': reverse('photo_list', kwargs={'user_id': request.user.get_profile().id})})
+                {'redirect_url': reverse('photo_list', kwargs={'user_id': request.user.id})})
         else:
             return create_no_right_response(u'对不起，只有照片的所有者才能删除该照片')
     elif request.method == 'GET':
@@ -150,7 +150,7 @@ class MealCreateView(CreateView):
 
     def form_valid(self, form):
         meal = form.save(False)
-        meal.host = self.request.user.get_profile()
+        meal.host = self.request.user
         meal.max_persons = meal.min_persons
         menu_id = form.cleaned_data['menu_id']
         if menu_id:
@@ -177,26 +177,23 @@ class MealListView(ListView):
     #TODO add filter to queyset
 
 
-
 ### User related views ###
-
-
 def get_user_info(request):
     if request.method == 'POST':
         if request.POST.get("ids"):
             usernames = request.POST.get("ids").split(",")
-            prfoiles = UserProfile.objects.filter(user__username__in=usernames).select_related("user")
+            users = User.objects.filter(username__in=usernames)
             result = []
-            for profile in prfoiles:
-                result.append({"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
-                               'profileUrl': profile.get_absolute_url()})
+            for user in users:
+                result.append({"id": user.username, "name": user.name, "avatarUrl": user.small_avatar,
+                               'profileUrl': user.get_absolute_url()})
         elif request.POST.get("id"):
             username = request.POST.get("id")
-            profile = UserProfile.objects.filter(user__username=username).select_related("user")
-            if len(profile):
-                profile = profile[0]
-                result = {"id": profile.user.username, "name": profile.name, "avatarUrl": profile.small_avatar,
-                          'profileUrl': profile.get_absolute_url()}
+            user = User.objects.filter(username=username)
+            if len(user):
+                user = user[0]
+                result = {"id": user.username, "name": user.name, "avatarUrl": user.small_avatar,
+                          'profileUrl': user.get_absolute_url()}
             else:
                 result = {}
         return HttpResponse(json.dumps(result), content_type='application/json', )
@@ -205,11 +202,11 @@ def get_user_info(request):
 #User related
 class UploadAvatarView(UpdateView):
     form_class = UploadAvatarForm
-    model = UserProfile
+    model = User
     template_name = "user/upload_avatar.html"
 
     def get_object(self, queryset=None):
-        return self.request.user.get_profile()
+        return self.request.user
 
     def get_success_url(self):
         return reverse('upload_avatar')
@@ -225,24 +222,24 @@ class UploadAvatarView(UpdateView):
 
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
-    model = UserProfile
+    model = User
     template_name = 'user/edit-profile.html'
 
     def get_object(self, queryset=None):
-        return self.request.user.get_profile()
+        return self.request.user
 
     def get_success_url(self):
         return reverse('user_detail', kwargs={'pk': self.object.id})
 
 
 class ProfileDetailView(DetailView):
-    model = UserProfile
+    model = User
     context_object_name = 'profile'
     template_name = 'profile/basic_info.html'
 
     def get_context_data(self, **kwargs):
 
-        from_user = self.request.user.get_profile()
+        from_user = self.request.user
         if from_user != self.object:
             Visitor.objects.get_or_create(from_person=from_user, to_person=self.object)
 
@@ -264,31 +261,30 @@ class ProfileDetailView(DetailView):
 
 
 class UserListView(ListView):
-#    queryset = UserProfile.objects.all().select_related('tags')
+#    queryset = User.objects.all().select_related('tags')
     template_name = "user/user_list.html"
     context_object_name = "user_list"
     paginate_by = 20
 
     def get_queryset(self):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
-            return self.request.user.get_profile().tags.similar_objects()
+            return self.request.user.tags.similar_objects()
         else:
-            return UserProfile.objects.exclude(avatar="").exclude(
-                user__restaurant__isnull=False).select_related('tags').order_by(
+            return User.objects.exclude(avatar="").exclude(
+                restaurant__isnull=False).select_related('tags').order_by(
                 '-id')
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
         user = self.request.user
         if user.is_authenticated():
-            if not user.get_profile().tags.all():
+            if not user.tags.all():
                 context['need_edit_tags'] = True
-            if not user.get_profile().avatar:
+            if not user.avatar:
                 context['need_upload_avatar'] = True
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.get_profile().tags.all() and not context['page_obj'].has_next() and context[
-                                                                                          'page_obj'].number < 4:
+            elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
         return context
 
@@ -312,7 +308,7 @@ class OrderCreateView(CreateView):
     def form_valid(self, form):
         meal = Meal.objects.get(pk=form.cleaned_data['meal_id'])
         num_persons = form.cleaned_data['num_persons']
-        customer = self.request.user.get_profile()
+        customer = self.request.user
         order = meal.join(customer, num_persons)
         #        TODO some checks
         if not settings.PAY_DEBUG:
@@ -338,11 +334,11 @@ class MealDetailView(OrderCreateView):
             pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         context['avaliable_seats'] = range(meal.left_persons)
-        if self.request.user.is_authenticated() and self.request.user.get_profile() in meal.participants.all():
-            orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=self.request.user.get_profile())
+        if self.request.user.is_authenticated() and self.request.user in meal.participants.all():
+            orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=self.request.user)
             if len(orders):
                 context['order'] = orders[0]
-        if self.request.user.is_authenticated() and self.request.user.get_profile() == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
+        if self.request.user.is_authenticated() and self.request.user == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
         else:
             context['just_created'] = False
@@ -352,7 +348,7 @@ class MealDetailView(OrderCreateView):
 def check_order_status(request, meal_id):
     if request.method == "POST":
         meal = Meal.objects.get(pk=meal_id)
-        payed_orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=request.user.get_profile())
+        payed_orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=request.user)
         if len(payed_orders):
             return create_sucess_json_response(extra_dict={'redirect_url': payed_orders[0].get_absolute_url()})
         elif meal.left_persons <= 0:
@@ -368,13 +364,13 @@ class OrderDetailView(DetailView):
 
     def get_object(self, queryset=None):
         order = super(OrderDetailView, self).get_object()
-        if order.customer != self.request.user.get_profile():
+        if order.customer != self.request.user:
             raise NoRightException
         return order
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
-        if not self.request.user.get_profile().avatar:
+        if not self.request.user.avatar:
             context['avatar_tip'] = True
         return context
 
@@ -382,7 +378,7 @@ class OrderDetailView(DetailView):
 #支付30分钟内未支付的饭局
 def pay_order(request, order_id):
     order = Order.objects.get(pk=order_id)
-    if order.customer != request.user.get_profile():
+    if order.customer != request.user:
         raise NoRightException
     url = "%s?num=%s" % (reverse('meal_detail', kwargs={'meal_id': order.meal.id}), order.num_persons)
     return HttpResponseRedirect(url)
@@ -393,7 +389,7 @@ class UserMealListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserMealListView, self).get_context_data(**kwargs)
-        user = UserProfile.objects.get(pk=self.kwargs['user_id'])
+        user = User.objects.get(pk=self.kwargs['user_id'])
         context['profile'] = user
         set_profile_common_attrs(context, self.request)
         if context['is_mine']:
@@ -442,11 +438,11 @@ def weibo_login(request):
 
 #class BindProfileView(UpdateView):
 #    form_class = BindProfileForm
-#    model = UserProfile
+#    model = User
 #    template_name = 'user/bind_profile.html'
 #
 #    def get_object(self, queryset=None):
-#        return self.request.user.get_profile()
+#        return self.request.user
 #
 #    def get_success_url(self):
 #        success_url = self.request.GET.get('next', reverse('index'))
@@ -461,8 +457,8 @@ def weibo_login(request):
 
 def follow(request, user_id):
     if request.method == 'POST':
-        follower = request.user.get_profile()
-        followee = UserProfile.objects.get(id=user_id)
+        follower = request.user
+        followee = User.objects.get(id=user_id)
         try:
             follower.follow(followee)
             html = '<a class="btn btn-unfollow" href="%s">取消关注</a>' % (
@@ -477,12 +473,12 @@ def follow(request, user_id):
 def un_follow(request, user_id):
     if request.method == 'POST':
         try:
-            user_to_be_unfollowed = UserProfile.objects.get(id=user_id)
-            relationship = Relationship.objects.get(from_person=request.user.get_profile(),
+            user_to_be_unfollowed = User.objects.get(id=user_id)
+            relationship = Relationship.objects.get(from_person=request.user,
                                                     to_person=user_to_be_unfollowed)
             relationship.delete()
             html = u'<a class="btn btn-follow" data-uid="%s" href="%s"><i class="icon-star"></i> 关注</a>' % (
-                user_to_be_unfollowed.user.username,
+                user_to_be_unfollowed.username,
                 reverse('follow', kwargs={'user_id': user_to_be_unfollowed.id}))
             return create_sucess_json_response(extra_dict={'html': html})
         except Exception:
@@ -496,7 +492,7 @@ class FollowsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(FollowsView, self).get_context_data(**kwargs)
-        context['profile'] = self.request.user.get_profile()
+        context['profile'] = self.request.user
         set_profile_common_attrs(context, self.request)
         return context
 

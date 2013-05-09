@@ -5,8 +5,8 @@ Created on Mar 9, 2013
 '''
 from django.core.management.base import BaseCommand
 from eo.util import pubsub
-from eo.models import UserProfile, Relationship, \
-    pubsub_userprofile_created, user_followed, Meal, meal_created, MealParticipants, \
+from eo.models import User, Relationship, \
+    pubsub_user_created, user_followed, Meal, meal_created, MealParticipants, \
     meal_joined
 import logging
 logger = logging.getLogger('api')
@@ -27,12 +27,12 @@ class Command(BaseCommand):
         self.signal_meal_joined()
             
     def signal_profile_created(self):
-        for profile in UserProfile.objects.all():
+        for profile in User.objects.all():
             # if profile.weibo_id:
             if self.dry_run:
                 print u"creating nodes for user %s" % profile.id
             else:
-                pubsub_userprofile_created(self, profile, True)
+                pubsub_user_created(self, profile, True)
     
     def signal_profile_followed(self):
         for relationship in Relationship.objects.all():
@@ -54,15 +54,14 @@ class Command(BaseCommand):
                 
     def signal_meal_joined(self):
         for meal_participant in MealParticipants.objects.all():
-            # if meal_participant.userprofile.weibo_id:
             if self.dry_run:
                 print u"participant %s is subscribing meal %s" % (
-                    meal_participant.userprofile.id, meal_participant.meal.id)
+                    meal_participant.user.id, meal_participant.meal.id)
             else:
                 meal_joined(self, meal_participant, True)
 
     def unsubscribe_owner_meal(self):
-        for profile in UserProfile.objects.all():
+        for profile in User.objects.all():
             if profile.weibo_id:
                 if self.dry_run:
                     print u"unsubscribing meal node for owner user %s" % profile.id

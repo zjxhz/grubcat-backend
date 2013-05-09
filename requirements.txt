@@ -1,6 +1,6 @@
 BeautifulSoup==3.2.1
 Django==1.5.1
-PIL==1.1.7
+Pillow==2.0.0
 South==0.7.6
 argparse==1.2.1
 cssmin==0.1.4
@@ -9,9 +9,9 @@ django-assets==0.8
 django-debug-toolbar==0.9.4
 django-devserver==0.4.0
 django-forms-bootstrap==2.0.3.post1
-django-image-cropping==0.6.3
+django-image-cropping==0.6.4
 django-taggit==0.9.3
-django-tastypie==0.9.14
+django-tastypie==0.9.15
 easy-thumbnails==1.2
 erlport==0.6
 gunicorn==0.17.4
@@ -23,9 +23,9 @@ python-dateutil==2.1
 raven==3.1.13
 simplejson==3.1.2
 sinaweibopy==1.1.2
-virtualenv==1.9.1
+#virtualenv==1.9.1
 wadofstuff-django-serializers==1.1.0
 webassets==0.8
 xmpppy==0.5.0rc1
 yuicompressor==2.4.7
-
+MySQL-python==1.2.4

@@ -28,7 +28,7 @@ class Command(BaseCommand):
             message = message[0:160] + " ... "
 
 
-        toUser = User.objects.get(username=util.escape_xmpp_username(receiver)).get_profile()
+        toUser = User.objects.get(username=util.escape_xmpp_username(receiver))
         message_utf8=message.encode("utf-8")
 
         logger.debug("about to push to user %s with apns_token: %s" % (receiver, toUser.apns_token) )
@@ -36,7 +36,7 @@ class Command(BaseCommand):
             receiver_name_utf8 = toUser.name.encode("utf-8")
             if data["type"] == "chat":
                 sender = data["sender"]
-                fromUser = User.objects.get(username=util.escape_xmpp_username(sender)).get_profile()
+                fromUser = User.objects.get(username=util.escape_xmpp_username(sender))
                 logger.info("%s->%s: %s" % (fromUser, toUser, message_utf8))
                 sender_name_utf8 = fromUser.name.encode("utf-8")
                 message_to_user="%s: %s" % (sender_name_utf8, message_utf8)

@@ -99,7 +99,7 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-AUTH_PROFILE_MODULE = 'eo.UserProfile'
+AUTH_USER_MODEL = 'eo.User'
 
 ###################### static ######################
 STATIC_URL = '/static/'

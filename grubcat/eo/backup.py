@@ -59,8 +59,8 @@ class Rating(models.Model):
     auto_share = models.BooleanField()
 
 class MealInvitation(models.Model):
-    from_person = models.ForeignKey(UserProfile, related_name="invitation_from_user")
-    to_person = models.ForeignKey(UserProfile, related_name='invitation_to_user')
+    from_person = models.ForeignKey(User, related_name="invitation_from_user")
+    to_person = models.ForeignKey(User, related_name='invitation_to_user')
     meal = models.ForeignKey(Meal)
     timestamp = models.DateTimeField(default=datetime.now())
     status = models.IntegerField(default=0) # PENDING, ACCEPTED, REJECTED
@@ -158,7 +158,6 @@ class GroupComment(Comment):
 ################################################## views related ##########################################
 
 from datetime import datetime
-from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -230,7 +229,7 @@ class GroupDetailView(DetailView):
     def get_context_data(self, **kwargs):
         parent_comments = GroupComment.objects.filter(parent__isnull=True, group=self.get_object()).select_related(
             'group',
-            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+            'from_person').prefetch_related('replies__from_person').order_by('-id')
         context = super(GroupDetailView, self).get_context_data(**kwargs)
         context.update({
             "parent_comments": parent_comments[:GROUP_COMMENT_PAGINATE_BY],
@@ -248,7 +247,7 @@ class GroupCommentListView(ListView):
     def get_queryset(self):
         parent_comments = GroupComment.objects.filter(parent__isnull=True,
             group=self.kwargs['group_id']).select_related(
-            'from_person__user').prefetch_related('replies__from_person__user').order_by('-id')
+            'from_person').prefetch_related('replies__from_person').order_by('-id')
         return parent_comments
 
     def get_context_data(self, **kwargs):
@@ -321,7 +320,7 @@ def create_group_comment(request):
 
 def del_group_comment(request, pk):
     if request.method == 'POST':
-        user_id = request.user.get_profile().id
+        user_id = request.user.id
         comment = GroupComment.objects.filter(pk=pk)
         #TODO some checks
         if len(comment) == 1:
@@ -476,7 +475,7 @@ def favorite_restaurant(request, id):
     if not request.user.is_authenticated():
         return login_required_response(request)
     response = {}
-    profile = request.user.get_profile()
+    profile = request.user
     if request.method == 'POST':
         profile.favorite_restaurants.add(Restaurant.objects.get(id=id))
         profile.save()
@@ -493,7 +492,7 @@ def favorite_restaurants(request):
     if not request.user.is_authenticated():
         return login_required_response(request)
     response = HttpResponse()
-    profile = request.user.get_profile()
+    profile = request.user
     serializer = serializers.get_serializer("json")()
     #serializer.serialize([profile], relations=('favorite_restaurants',), stream=response)
     serializer.serialize(profile.favorite_restaurants.all(), relations=('favorite_restaurants',), ensure_ascii=False,
@@ -586,10 +585,10 @@ def get_restaurants_in_region(request, region_id):
 def get_following(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'GET':
-        return getJsonResponse(user.get_profile().following.all(), {'user': {'fields': ('username',)}})
+        return getJsonResponse(user.following.all(), {'user': {'fields': ('username',)}})
     elif request.method == 'POST':
         following_user = User.objects.get(id=request.POST.get('user_id'))
-        relationship = Relationship(from_person=user.get_profile(), to_person=following_user.get_profile())
+        relationship = Relationship(from_person=user, to_person=following_user)
         relationship.save()
         return createGeneralResponse('OK', 'You are now following %s' % following_user)
     else:
@@ -600,19 +599,19 @@ def remove_following(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
         following_user = User.objects.get(id=request.POST.get('user_id'))
-        relationship = Relationship.objects.get(from_person=user.get_profile(), to_person=following_user.get_profile())
+        relationship = Relationship.objects.get(from_person=user, to_person=following_user)
         relationship.delete()
         return createGeneralResponse('OK', 'You are not following %s anymore' % following_user)
 
 
 def followers(request, user_id):
     user = User.objects.get(id=user_id)
-    return getJsonResponse(user.get_profile().followers.all(), {'user': {'fields': ('username',)}})
+    return getJsonResponse(user.followers.all(), {'user': {'fields': ('username',)}})
 
 
 def get_recommended_following(request, user_id):
     user = User.objects.get(id=user_id)
-    return getJsonResponse(user.get_profile().recommended_following.all(), {'user':
+    return getJsonResponse(user.recommended_following.all(), {'user':
                                                                                 {'fields': ('username',)}
     })
 
@@ -622,13 +621,13 @@ def messages(request, user_id):
     if request.method == 'GET':
         message_type = request.GET.get('type', '0')
         print "message_type: %s" % message_type
-        return getJsonResponse(UserMessage.objects.filter(to_person=user.get_profile(), type=message_type))
+        return getJsonResponse(UserMessage.objects.filter(to_person=user, type=message_type))
     elif request.method == 'POST':
         from_person = User.objects.get(id=request.POST.get('from_user_id'))
         text = request.POST.get('message')
         message_type = request.POST.get('type', '0')
-        message = UserMessage(from_person=from_person.get_profile(),
-            to_person=user.get_profile(),
+        message = UserMessage(from_person=from_person,
+            to_person=user,
             message=text,
             timestamp=datetime.now(),
             type=message_type)
@@ -646,11 +645,11 @@ def meal_participants(request, meal_id):
         meal = Meal.objects.get(id=meal_id)
         if meal.participants.count() >= meal.max_persons:
             return createGeneralResponse('NOK', "No available seat.")
-        if user.get_profile() == meal.host:
+        if user == meal.host:
             return createGeneralResponse('NOK', "You're the host.")
-        if meal.is_participant(user.get_profile()):
+        if meal.is_participant(user):
             return createGeneralResponse('NOK', "You already joined.")
-        meal.participants.add(user.get_profile())
+        meal.participants.add(user)
         meal.actual_persons += 1
         meal.save()
         return createGeneralResponse('OK', "You've just joined the meal")
@@ -665,18 +664,18 @@ def view_or_send_meal_invitations(request, user_id):
     if request.method == 'POST':
         to_user = User.objects.get(id=request.POST.get('to_user_id'))
         meal = Meal.objects.get(id=request.POST.get('meal_id'))
-        #if meal.host != user.get_profile():
+        #if meal.host != user:
         #    return createGeneralResponse('NOK',"You're not the host - do we check this?")
-        if to_user.get_profile() == meal.host or meal.is_participant(to_user.get_profile()):
+        if to_user == meal.host or meal.is_participant(to_user):
             return createGeneralResponse('NOK', "%s already joined." % to_user)
-        if MealInvitation.objects.filter(from_person=user.get_profile(), to_person=to_user.get_profile(), meal=meal):
+        if MealInvitation.objects.filter(from_person=user, to_person=to_user, meal=meal):
             return createGeneralResponse('NOK', "Invitation sent to %s earlier, no new invitation sent." % to_user)
-        i = MealInvitation(from_person=user.get_profile(), to_person=to_user.get_profile(), meal=meal)
+        i = MealInvitation(from_person=user, to_person=to_user, meal=meal)
         i.save()
         return createGeneralResponse('OK', "Invitation sent to %s" % to_user)
     elif request.method == 'GET':
-    #        from_person=user.get_profile()
-        return getJsonResponse(user.get_profile().invitation)
+    #        from_person=user
+        return getJsonResponse(user.invitation)
     else:
         raise
 
@@ -688,7 +687,7 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
     i = MealInvitation.objects.get(id=invitation_id)
 
     if request.method == 'POST':
-        if i.to_person == user.get_profile():
+        if i.to_person == user:
             if i.status == 0: # PENDING
                 accept = request.POST.get("accept").lower()
                 if accept == "yes":
@@ -705,7 +704,7 @@ def accept_or_reject_meal_invitations(request, user_id, invitation_id):
         else:
             return createGeneralResponse('NOK', "Unauthorized: you are not the receiver of this invitation.")
     elif request.method == 'GET':
-        if not i.is_related(user.get_profile()):
+        if not i.is_related(user):
             return createGeneralResponse('NOK',
                 "Unauthorized: you are not either the sender or receiver of the invitation")
         return getJsonResponse([i])

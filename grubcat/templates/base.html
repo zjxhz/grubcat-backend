@@ -47,13 +47,13 @@
                         </div>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="hidden-phone">{% if user.get_profile.name %}
-                                    {{ user.get_profile.name }} {% else %}{{ user.username }}{% endif %} </span>
+                                <span class="hidden-phone">{% if user.name %}
+                                    {{ user.name }} {% else %}{{ user.username }}{% endif %} </span>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{% url 'user_detail' user.get_profile.id %}">我的主页</a></li>
-                                <li><a href="{% url 'user_meal_list' user.get_profile.id %}">我的饭局</a></li>
-                                <li><a href="{% url 'following_list' user.get_profile.id %}">我的好友</a></li>
+                                <li><a href="{% url 'user_detail' user.id %}">我的主页</a></li>
+                                <li><a href="{% url 'user_meal_list' user.id %}">我的饭局</a></li>
+                                <li><a href="{% url 'following_list' user.id %}">我的好友</a></li>
                                 <li class="divider"></li>
                                 <li id="nav-upload-photo" class="hidden-phone">
                                     <a href="{% url 'upload_photo' %}" class="upload-photo-link">上传照片</a>
@@ -92,7 +92,7 @@
         {% endblock %}
     </div>
 
-    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.get_profile.weibo_access_token }}"
+    <div id="common-data" style="display: none" data-uid="{{ request.user.username }}" data-pwd="{{ request.user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
     {% block footer %}
         <div id="footer"></div>
@@ -115,9 +115,9 @@
             </div>
             <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
                  data-get-user-info-url="{% url 'get_user_info' %}"
-                 data-my-avatar="{{ request.user.get_profile.small_avatar }}"
-                 data-my-name="{{ request.user.get_profile.name }}"
-                 data-profile-url="{{ request.user.get_profile.get_absolute_url }}"></div>
+                 data-my-avatar="{{ request.user.small_avatar }}"
+                 data-my-name="{{ request.user.name }}"
+                 data-profile-url="{{ request.user.get_absolute_url }}"></div>
         </div>
     </div>
     {% endif %}

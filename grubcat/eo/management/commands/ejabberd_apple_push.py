@@ -26,8 +26,8 @@ class ProcessProtocol(Protocol):
           
         logger.info("%s->%s: %s" % (fromUser, toUser, message))
           
-        fromUser = User.objects.get(username=util.escape_xmpp_username(fromUser)).get_profile()
-        toUser = User.objects.get(username=util.escape_xmpp_username(toUser)).get_profile()
+        fromUser = User.objects.get(username=util.escape_xmpp_username(fromUser))
+        toUser = User.objects.get(username=util.escape_xmpp_username(toUser))
                
         
         if toUser.apns_token:
