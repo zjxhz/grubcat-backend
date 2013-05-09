@@ -177,8 +177,6 @@ APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Cre
 
 ###################### xmpp chat ######################
 XMPP_SERVER = 'localhost'
-XMPP_PUBSUB_USER = "pubsub" #'pubsub@fanjoin.com'
-XMPP_PUBSUB_PASSWORD = "fan321" #password for pubsub
 XMPP_PUBSUB_SERVICE = 'pubsub.fanjoin.com'
 XMPP_DEBUG = []
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
