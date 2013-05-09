@@ -26,6 +26,9 @@ ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
 )
 
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'eo.exceptions.ProcessExceptionMiddleware',
@@ -34,7 +37,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
 
 ROOT_URLCONF = 'grubcat.urls'
@@ -72,7 +74,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "eo.util.chat_context_processor"
-    )
+)
 
 MANAGERS = ADMINS
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -139,7 +141,7 @@ BIG_AVATAR_SIZE = (220, 220)
 NORMAL_AVATAR_SIZE = (80, 80)
 # NORMAL_AVATAR_SIZE = (100, 100)
 SMALL_AVATAR_SIZE = (50, 50)
-MEDIUM_AVATAR_SIZE = (150,150)
+MEDIUM_AVATAR_SIZE = (150, 150)
 IMAGE_CROPPING_THUMB_SIZE = (360, 360)
 THUMBNAIL_QUALITY = 100
 
@@ -163,12 +165,9 @@ LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
-WEIBO_APP_KEY="4071331500"
-WEIBO_APP_SECERT="5cf4910b217617cee72b2889a8e394eb"
-WEIBO_REDIRECT_URL="http://www.fanjoin.com/login/weibo/"
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
-
+WEIBO_APP_KEY = "4071331500"
+WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
+WEIBO_REDIRECT_URL = "http://www.fanjoin.com/login/weibo/"
 
 ###################### apple push ######################
 APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
@@ -194,7 +193,7 @@ SHOW_EXCEPTION_DETAIL = False
 RAVEN_CONFIG = {
     'register_signals': True,
     'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
-    }
+}
 
 LOGGING_ROOT = SITE_ROOT + "logs/user/"
 
