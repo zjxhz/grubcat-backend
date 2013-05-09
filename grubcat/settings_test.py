@@ -15,6 +15,10 @@ ALIPAY_BACK_DOMAIN = 'http://www.ifunjoin.com/'
 ORDER_PREFIX = 'det'
 PAY_DEBUG = True
 
+WEIBO_APP_KEY = "1086545555"
+WEIBO_APP_SECERT = "edc858db52e5c2bc803010a81b183c5d"
+WEIBO_REDIRECT_URL = "http://www.ifunjoin.com/login/weibo/"
+
 RAVEN_CONFIG = {
     'register_signals': False,
     # 'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
