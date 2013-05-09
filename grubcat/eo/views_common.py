@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from taggit.models import Tag
 import time
 from eo.exceptions import *
-from eo.models import UserProfile, Order, OrderStatus, TransFlow
+from eo.models import User, Order, OrderStatus, TransFlow
 import json
 
 SUCESS = "OK"
@@ -87,7 +87,7 @@ def list_tags(request):
     if query:
         tag_name_qs = Tag.objects.filter(name__icontains=query).values_list('name')
     else:
-        tag_name_qs = UserProfile.tags.most_common().values_list('name', 'num_times')
+        tag_name_qs = User.tags.most_common().values_list('name', 'num_times')
         if len(tag_name_qs) < 10:
             tag_name_qs = [(u'读书',), (u'运动',), (u'K歌',), (u'登山',), (u'骑行',), (u'公益',)]
 
@@ -102,5 +102,5 @@ def list_tags(request):
 def add_tag(request):
     if request.method == 'POST':
         tag = request.POST.get('tag')
-        request.user.get_profile().tags.add(tag)
+        request.user.tags.add(tag)
         return create_sucess_json_response()

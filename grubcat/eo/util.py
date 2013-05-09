@@ -38,12 +38,12 @@ def escape_xmpp_username(username):
     return username    
 
     
-def get_xmpp_username_and_password(user_profile):
-    if user_profile.weibo_access_token:
-        password = user_profile.weibo_access_token
+def get_xmpp_username_and_password(user):
+    if user.weibo_access_token:
+        password = user.weibo_access_token
     else:
-        password = user_profile.user.password
-    return escape_xmpp_node(user_profile.user.username), password
+        password = user.password
+    return escape_xmpp_node(user.username), password
 
 class PyapnsWrapper(object):
  
@@ -69,8 +69,8 @@ class PyapnsWrapper(object):
 #             if user_profile.weibo_access_token:
 #                 password = user_profile.weibo_access_token
 #             else:
-#                 password = user_profile.user.password
-#             dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.user.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
+#                 password = user_profile.password
+#             dic = {'task':"syncprofile",'username':escape_xmpp_node(user_profile.username), "password":password, "name": user_profile.name, "avatar": user_profile.small_avatar_path}
 #             soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #             soc.connect(('localhost',self.PORT))
 #             soc.send(json.dumps(dic))
@@ -90,10 +90,10 @@ class PubSub(object):
             client.auth(str(jid), pw)
         return client, jid
 
-    def createNode(self, user_profile, node_name, client=None):
+    def createNode(self, user, node_name, client=None):
         try:
 
-            cl, jid = self.create_client(user_profile, client)
+            cl, jid = self.create_client(user, client)
             logger.debug("%s is creating node: %s" % (str(jid), node_name))
 
             iq = self.buildIq()

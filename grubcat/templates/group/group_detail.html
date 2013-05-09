@@ -90,7 +90,7 @@
                     {% if participants %}
                         <div class="users">
                             {% for user in participants %}
-                                <img alt="{{ user.user.username }}" width="32" height="32"
+                                <img alt="{{ user.username }}" width="32" height="32"
                                      src="{{ user.avatar_default_if_none }}">
                             {% endfor %}
                         </div>
@@ -125,7 +125,7 @@
                         {% if participants %}
                             <div class="users">
                                 {% for user in participants %}
-                                    <img alt="{{ user.user.username }}" width="32" height="32"
+                                    <img alt="{{ user.username }}" width="32" height="32"
                                          src="{{ user.avatar_default_if_none }}">
                                 {% endfor %}
                             </div>
@@ -178,7 +178,7 @@
                     {% for member in group.members.all|slice:":21" %}
                         <a href="" class="user-avatar" title="{{ member.username }}">
                             <img alt="{{ member.username }}" width="40" height="40"
-                                 src="{{ member.get_profile.avatar_default_if_none }}">
+                                 src="{{ member.avatar_default_if_none }}">
                         </a>
                     {% endfor %}
                 </div>
@@ -194,7 +194,7 @@
                 {% elif group in user.interest_groups.all %}
                     <div class="new-comment clearfix">
                         <img alt="{{ requestr.user.username }}" width="75" height="75"
-                             src="{{ user.get_profile.avatar_default_if_none }}">
+                             src="{{ user.avatar_default_if_none }}">
 
                         <h3>{{ user.username }}</h3>
 
@@ -205,7 +205,7 @@
                                       name="comment" rows="3" cols="10" id="id_comment_content"
                                       style="resize: none;"></textarea>
                             <input type="hidden" name="group" value="{{ group.id }}">
-                            <input type="hidden" name="from_person" value="{{ user.get_profile.id }}">
+                            <input type="hidden" name="from_person" value="{{ user.id }}">
                             <input class="showloading add_comment_submit button" id="id_add_comment_submit"
                                    type="submit" value="发表" style="display: none;">
                         </form>

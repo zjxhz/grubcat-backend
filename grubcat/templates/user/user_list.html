@@ -39,7 +39,7 @@
 
 {% block page_js %}
     <script type="text/javascript">
-        var myTags = [{% for tag in request.user.get_profile.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
+        var myTags = [{% for tag in request.user.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
     </script>
     {% assets "water_fall_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>

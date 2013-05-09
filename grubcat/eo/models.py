@@ -4,7 +4,7 @@ from datetime import time as dtime
 import time
 import threading
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models, IntegrityError
 from django.db.models import Max
@@ -39,12 +39,12 @@ class Region(models.Model):
 
 
 class Restaurant(models.Model):
-    user = models.OneToOneField(User, verbose_name=u'用户', null=True, related_name="restaurant")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=u'用户', null=True, related_name="restaurant")
     name = models.CharField(u'餐厅名称', max_length=135)
     address = models.CharField(u'餐厅地址', max_length=765)
     longitude = models.FloatField(u'经度', null=True, blank=True)
     latitude = models.FloatField(u'纬度', null=True, blank=True)
-    tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
+    tel = models.CharField(u'电话', max_length=60,)
     # tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
     # phone_img_url = models.CharField(max_length=1024, blank=True)
@@ -218,7 +218,7 @@ ORDER_STATUS = (
 
 
 class Order(models.Model):
-    customer = models.ForeignKey('UserProfile', related_name='orders', verbose_name=u'客户')
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', verbose_name=u'客户')
     meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
@@ -233,7 +233,7 @@ class Order(models.Model):
         return 'order_detail', [str(self.meal_id), str(self.id)]
 
     def __unicode__(self):
-        return "%s %s %s" % (self.meal.id, self.id, self.customer.id)
+        return "%s: user%s attend meal%s" % (self.id, self.customer.id, self.meal.id)
 
 
     def set_payed(self):
@@ -247,7 +247,7 @@ class Order(models.Model):
         #set all other unpaid order as "canceld" status
         Order.objects.filter(meal=order.meal,customer=order.customer, status=OrderStatus.CREATED).update(status=OrderStatus.CANCELED)
         meal = order.meal
-        MealParticipants.objects.create(meal=meal, userprofile=order.customer)
+        MealParticipants.objects.create(meal=meal, user=order.customer)
         meal.actual_persons += order.num_persons
         if order.customer == meal.host:
             #创建饭局后，支付
@@ -259,7 +259,7 @@ class Order(models.Model):
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
-            MealParticipants.objects.filter(meal=self.meal, userprofile=self.customer).delete()
+            MealParticipants.objects.filter(meal=self.meal, user=self.customer).delete()
             self.meal.actual_persons -= self.num_persons
             self.meal.save()
             self.status = OrderStatus.CANCELED
@@ -295,9 +295,9 @@ class TransFlow(models.Model):
 
 
 class Relationship(models.Model):
-    from_person = models.ForeignKey("UserProfile", related_name='from_user')
-    to_person = models.ForeignKey("UserProfile", related_name='to_user')
-    status = models.IntegerField(default=0) # FOLLOWING, BLOCKED
+    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='from_user')
+    to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='to_user')
+    status = models.IntegerField(default=0)  # FOLLOWING, BLOCKED
 
     def __unicode__(self):
         return u'%s -> %s: %s' % (self.from_person, self.to_person, self.status)
@@ -309,8 +309,9 @@ class Relationship(models.Model):
 
 
 class Visitor(models.Model):
-    from_person = models.ForeignKey("UserProfile", related_name="host")
-    to_person = models.ForeignKey("UserProfile", related_name="visitor")
+    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="host")
+    to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="visitor")
+
     def __unicode__(self):
         return u'%s -> %s' % (self.from_person, self.to_person)
 
@@ -331,12 +332,14 @@ class UserTag(Tag):
 
     def tagged_users(self):
         return [tagged_user.content_object for tagged_user in self.items.all()[:50] ]
-        
 
+    class Meta:
+        verbose_name = u'兴趣标签'
+        verbose_name_plural = u'兴趣标签'
 
 class TaggedUser(GenericTaggedItemBase):
-    tag = models.ForeignKey(UserTag,
-                            related_name='items') # related_name='items' is needed here or you can't get tags of UserProfile
+    tag = models.ForeignKey(UserTag, related_name='items')
+    # related_name='items' is needed here or you can't get tags of User
 
 
 class Gender:
@@ -370,17 +373,12 @@ INDUSTRY_CHOICE = (
     )
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
-    favorite_restaurants = models.ManyToManyField(Restaurant, blank=True,
-                                                  related_name="user_favorite")
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
-    recommended_following = models.ManyToManyField('self', symmetrical=False,
-        blank=True, null=True)
     gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
-    avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, null=True) # photo
+    avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True) # photo
     cropping = ImageRatioField('avatar', '180x180', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)
     constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
@@ -392,7 +390,7 @@ class UserProfile(models.Model):
     motto = models.CharField(u'签名', max_length=140, null=True, blank=True)
     weibo_id = models.CharField(max_length=20, null=True, blank=True)
     weibo_access_token = models.CharField(max_length=128, null=True, blank=True)
-    tags = TaggableManager(through=TaggedUser)
+    tags = TaggableManager(through=TaggedUser, blank=True)
     apns_token = models.CharField(max_length=255, blank=True)
 
     @models.permalink
@@ -544,8 +542,7 @@ class UserProfile(models.Model):
 
     @property
     def non_restaurant_usres(self):
-        return UserProfile.objects.exclude(user__restaurant__isnull=False)
-
+        return User.objects.exclude(user__restaurant__isnull=False)
 
     def users_nearby(self, lat=None, lng=None):
         distance_user_dict = {}
@@ -650,15 +647,15 @@ class UserProfile(models.Model):
     #        print response
 
     def __unicode__(self):
-        return self.name if self.name is not None else self.user.username
+        return self.name if self.name is not None else self.username
 
     class Meta:
-        verbose_name = u'用户资料'
-        verbose_name_plural = u'用户资料'
+        verbose_name = u'用户'
+        verbose_name_plural = u'用户'
 
 
 class UserPhoto(models.Model):
-    user = models.ForeignKey(UserProfile, related_name="photos")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
 
     def __unicode__(self):
@@ -694,8 +691,8 @@ class UserPhoto(models.Model):
 
 
 class UserMessage(models.Model):
-    from_person = models.ForeignKey(UserProfile, related_name="sent_from_user")
-    to_person = models.ForeignKey(UserProfile, related_name='sent_to_user')
+    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sent_from_user")
+    to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_to_user')
     message = models.CharField(max_length=1024)
     timestamp = models.DateTimeField()
     type = models.IntegerField(default=0) # 0 message, 1 comments
@@ -738,6 +735,7 @@ MEAL_STATUS_CHOICE = (
     (MealStatus.PUBLISHED, u'可以发布')
 )
 
+
 class Meal(models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
@@ -758,10 +756,10 @@ class Meal(models.Model):
                              upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
-    host = models.ForeignKey(UserProfile, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
-    participants = models.ManyToManyField(UserProfile, related_name="meals", verbose_name=u'参加者', blank=True, null=True,
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals", verbose_name=u'参加者', blank=True, null=True,
                                           through="MealParticipants")
-    # likes = models.ManyToManyField(UserProfile, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
+    # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
     #                                null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
@@ -812,14 +810,8 @@ class Meal(models.Model):
         return self.start_date < date.today() or (
             self.start_date == date.today() and self.start_time < datetime.now().time())
 
-    def is_participant(self, user_profile):
-        return self.participants.filter(pk=user_profile.id).exists()
-
-    # def liked(self, user_profile):
-    #     for like in self.likes.all():
-    #         if like == user_profile:
-    #             return True
-    #     return False
+    def is_participant(self, user):
+        return self.participants.filter(pk=user.id).exists()
 
     @property
     def comments(self):
@@ -884,10 +876,10 @@ class Meal(models.Model):
 
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
-    userprofile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     
     def __unicode__(self):
-        return u"%s参加了饭局%s" %(self.userprofile, self.meal)
+        return u"%s参加了饭局%s" %(self.user, self.meal)
         
     class Meta:
         ordering = ['id',]
@@ -896,7 +888,7 @@ class MealParticipants(models.Model):
 
 
 class Comment(models.Model):
-    from_person = models.ForeignKey(UserProfile, verbose_name='作者', blank=True)
+    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者', blank=True)
     comment = models.CharField(u'评论', max_length=300)
     timestamp = models.DateTimeField(blank=True, auto_now_add=True)
 
@@ -931,40 +923,32 @@ class MealComment(Comment):
 #     # size is "width x height"
 #     cropping = ImageRatioField('image', '640x640')
 
-
 ####################################################  POST SAVE   #######################################
-
-# Create a user profile if the profile does not exist
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.get_or_create(user=instance)
-post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_profile")
-
-
-def _pubsub_userprofile_created(instance):
-    user_profile = instance
-    cl, jid = pubsub.create_client(user_profile)
-    node_name = "/user/%d/followers" % user_profile.id
-    pubsub.createNode(user_profile, node_name, client=cl)
-    node_name = "/user/%d/meals" % user_profile.id
-    pubsub.createNode(user_profile, node_name, client=cl)
-    pubsub.unsubscribe(user_profile, node_name,
+def _pubsub_user_created(instance):
+    user = instance
+    cl, jid = pubsub.create_client(user)
+    node_name = "/user/%d/followers" % user.id
+    pubsub.createNode(user, node_name, client=cl)
+    node_name = "/user/%d/meals" % user.id
+    pubsub.createNode(user, node_name, client=cl)
+    pubsub.unsubscribe(user, node_name,
                        client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
-    node_name = "/user/%d/visitors" % user_profile.id
-    pubsub.createNode(user_profile, node_name, client=cl)
-    node_name = "/user/%d/photos" % user_profile.id
-    pubsub.createNode(user_profile, node_name, client=cl)
-    pubsub.unsubscribe(user_profile, node_name,
+    node_name = "/user/%d/visitors" % user.id
+    pubsub.createNode(user, node_name, client=cl)
+    node_name = "/user/%d/photos" % user.id
+    pubsub.createNode(user, node_name, client=cl)
+    pubsub.unsubscribe(user, node_name,
                        client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
     cl.disconnect()
 
 
-def pubsub_userprofile_created(sender, instance, created, **kwargs):
+def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_pubsub_userprofile_created, args=(instance,))
+        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
         t.start()
 
-post_save.connect(pubsub_userprofile_created, sender=UserProfile, dispatch_uid="pubsub_userprofile_created") #dispatch_uid is used here to make it not called more than once
+post_save.connect(pubsub_user_created, sender=User, dispatch_uid="pubsub_user_created") #dispatch_uid is used here to make it not called more than once
+
 
 def user_followed(sender, instance, created, **kwargs):
     if created:
@@ -987,6 +971,7 @@ def user_followed(sender, instance, created, **kwargs):
         cl.disconnect()
 post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
+
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
@@ -1008,7 +993,7 @@ def meal_created(sender, instance, created, **kwargs):
 
 def _meal_joined(meal_participant):
     meal = meal_participant.meal
-    joiner = meal_participant.userprofile
+    joiner = meal_participant.user
     if meal.host and meal.host.id == joiner.id:
         event = u"发起了饭局"
     else:

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from eo.models import Meal, UserProfile
+from eo.models import Meal, User
 from optparse import make_option
 import os
 from random import randint
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 print u"no available avatar under %suploaded_images/" % settings.MEDIA_ROOT
             else:
                 print "checking avatars"
-                for user in UserProfile.objects.all():
+                for user in User.objects.all():
                     if not user.avatar or not os.path.exists(user.avatar.path):
                         print u"user %s has no avatar or the avatar does not exist" % user.id
                         random_index = randint(0, len(available_avatars) - 1)
@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 print u"no available photo under %suploaded_images/" % settings.MEDIA_ROOT
             else:
                 print "checking photo"
-                for user in UserProfile.objects.all():
+                for user in User.objects.all():
                     for p in user.photos.all():
                         if not os.path.exists(p.photo.path):
                             print u"photo %s does not exist" % p.id

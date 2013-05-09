@@ -1,4 +1,4 @@
-from eo.models import UserProfile
+from eo.models import User
 from tastypie.authorization import Authorization
 from tastypie.exceptions import Unauthorized
 
@@ -15,19 +15,19 @@ class UserObjectsOnlyAuthorization(Authorization):
             return "customer"
     
     def is_user_object(self, object_list, bundle):    
-        request_profile = bundle.request.user.get_profile()
-        if isinstance(bundle.obj, UserProfile):
+        request_profile = bundle.request.user
+        if isinstance(bundle.obj, User):
             bundle_user = bundle.obj
         else:
             bundle_user = getattr(bundle.obj, self.user_field(object_list))
         return bundle_user == request_profile
 
     def read_list(self, object_list, bundle):
-        if self.read_other or isinstance(bundle.obj, UserProfile):
+        if self.read_other or isinstance(bundle.obj, User):
             return object_list
         
         user_field = self.user_field(object_list)
-        request_profile = bundle.request.user.get_profile()
+        request_profile = bundle.request.user
         f = {user_field:request_profile}
         return object_list.filter(**f)
     

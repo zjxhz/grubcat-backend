@@ -3,11 +3,10 @@ from datetime import datetime, timedelta, date
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
-from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
 from eo.exceptions import NoAvailableSeatsError
-from eo.models import UserLocation, UserTag, UserPhoto, UserProfile, \
+from eo.models import UserLocation, UserTag, UserPhoto, User, \
     MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
     DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
 from eo.pay.alipay.alipay import create_app_pay
@@ -118,7 +117,7 @@ class UserPhotoResource(EOResource):
         if deleted_ids:
             for deleted_id in deleted_ids.split(","):
                 photo = UserPhoto.objects.get(pk=deleted_id)
-                if photo.user == request.user.get_profile():
+                if photo.user == request.user:
                     photo.delete()
                 else:
                     return HttpResponseForbidden()
@@ -157,7 +156,7 @@ def dehydrate_basic_userinfo(resource, bundle):
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
     
 #    request_user = bundle.request.user
-#    if request_user and request_user.is_authenticated() and request_user.get_profile().is_following(bundle.obj):
+#    if request_user and request_user.is_authenticated() and request_user.is_following(bundle.obj):
 #        bundle.data["following"] = True
 #    else:
 #        bundle.data["following"] = False
@@ -170,12 +169,12 @@ class SimpleUserResource(EOResource):
         return dehydrate_basic_userinfo(self, bundle)
     
     class Meta:
-        queryset = UserProfile.objects.all()
+        queryset = User.objects.all()
         authorization = UserObjectsOnlyAuthorization(True)
         resource_name = 'simple_user'
 
 class MealParticipantResource(EOResource):
-    user = fields.ForeignKey(SimpleUserResource, 'userprofile', full=True)
+    user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
     
     def dehydrate(self, bundle):
         self.mergeOneToOneField(bundle, 'user')
@@ -194,7 +193,7 @@ def readMineOnly(func):
         if not request.user.is_authenticated():
             return http.HttpUnauthorized()
         resource_profile = self.obj(request, **kwargs)
-        request_profile = request.user.get_profile()
+        request_profile = request.user
         if resource_profile == request_profile:
             return func(self, request, **kwargs)
         else:
@@ -209,7 +208,7 @@ def writeMineOnly(func):
         if not request.user.is_authenticated():
             return http.HttpUnauthorized()
         resource_profile = self.obj(request, **kwargs)
-        request_profile = request.user.get_profile()
+        request_profile = request.user
         if not request.method == "GET" and resource_profile != request_profile:
             return http.HttpUnauthorized()
         else:
@@ -269,7 +268,7 @@ class UserResource(EOResource):
 #        nameChanged = False
 #        if bundle.data['name'] != bundle.obj.name:
 #            nameChanged = True
-        request_profile = request.user.get_profile()
+        request_profile = request.user
         updated_profile = self.obj(request,**kwargs)
         if not request_profile == updated_profile:
             return http.HttpUnauthorized()
@@ -316,7 +315,7 @@ class UserResource(EOResource):
     def view_following(self, request, **kwargs):        
         me = self.obj(request, **kwargs)        
         if request.method == 'POST':
-            user_to_be_followed = UserProfile.objects.get(id=request.POST.get('user_id'))
+            user_to_be_followed = User.objects.get(id=request.POST.get('user_id'))
             Relationship.objects.get_or_create(from_person=me, to_person=user_to_be_followed)
             return SuccessResponse()
         else:
@@ -329,7 +328,7 @@ class UserResource(EOResource):
         del(kwargs['following_user_id'])
         me = self.obj(request, **kwargs)        
         if request.method == 'DELETE':
-            user_to_be_not_followed = UserProfile.objects.get(id=to_person_id)
+            user_to_be_not_followed = User.objects.get(id=to_person_id)
             relationship = Relationship.objects.get(from_person=me, to_person=user_to_be_not_followed) 
             relationship.delete()
             return SuccessResponse()
@@ -449,7 +448,7 @@ class UserResource(EOResource):
     def visit(self, request, **kwargs):
         host = self.obj(request, **kwargs)   
         if request.method == "POST":
-            visitor = UserProfile.objects.get(id=request.POST.get('visitor_id'))
+            visitor = User.objects.get(id=request.POST.get('visitor_id'))
             Visitor.objects.get_or_create(from_person=visitor, to_person=host)
             return SuccessResponse()
         else:
@@ -487,7 +486,7 @@ class UserResource(EOResource):
                
     class Meta:
         authorization = Authorization()
-        queryset = UserProfile.objects.all()
+        queryset = User.objects.all()
         resource_name = 'user'
         filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
@@ -608,7 +607,7 @@ class OrderResource(EOResource):
             
 def createLoggedInResponse(loggedInuser):
     user_resource = UserResource()
-    ur_bundle = user_resource.build_bundle(obj=loggedInuser.get_profile())
+    ur_bundle = user_resource.build_bundle(obj=loggedInuser)
     serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
     dic = json.loads(serialized)
     return SuccessResponse(dic)
@@ -673,7 +672,7 @@ def mobile_user_login(request):
     
 def mobile_user_logout(request):
     if request.method == 'POST':
-        profile = request.user.get_profile()
+        profile = request.user
         if profile:
             profile.apns_token = ""
             profile.save()
