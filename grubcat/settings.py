@@ -1,6 +1,9 @@
 import os
 from django.core.urlresolvers import reverse_lazy
 
+#for product server
+
+
 ###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False

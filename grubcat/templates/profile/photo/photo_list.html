@@ -6,14 +6,14 @@
     <div id="photo-list" class="span12">
         {% if is_mine %}
             <div class="actions ">
-                <a class="upload-photo-link fr" href="{% url upload_photo %}">上传照片</a>
+                <a class="upload-photo-link fr" href="{% url 'upload_photo' %}">上传照片</a>
             </div>
         {% endif %}
         {% if photo_list %}
             <ul class="thumbnails">
                 {% for photo in photo_list %}
                     <li class="span3">
-                        <a href="{% url photo_detail photo.id %}" class="thumbnail"> <img
+                        <a href="{% url 'photo_detail' photo.id %}" class="thumbnail"> <img
                                 src="{{ photo.photo_thumbnail }}"
                                 class="photo"
                                 alt="photo"></a>

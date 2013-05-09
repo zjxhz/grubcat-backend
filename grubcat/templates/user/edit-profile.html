@@ -14,7 +14,7 @@
         {% include 'user/avatar_frag.html' %}
 
 
-        <form id="basic-profile-form" action="{% url edit_basic_profile %}" method="post" class="form-horizontal span9">
+        <form id="basic-profile-form" action="{% url 'edit_basic_profile' %}" method="post" class="form-horizontal span9">
             <fieldset>
                 {#                    <legend>基本资料</legend>#}
 
@@ -103,7 +103,7 @@
 
     </div>
 
-    <div id="data" style="display: none" {% if status %}data-noty-msg="资料修改成功"{% endif %} list-tags-url='{% url tag_list %}'></div>
+    <div id="data" style="display: none" {% if status %}data-noty-msg="资料修改成功"{% endif %} list-tags-url='{% url 'tag_list' %}'></div>
 
 {% endblock %}
 

@@ -36,7 +36,7 @@
     {% if not paying_orders and not upcomming_orders and not passed_orders %}
         <div class="no-results span12">
             {% if is_mine %}
-                您还没有参加任何饭局！<a href="{% url meal_list %}">现在就去看看吧</a>
+                您还没有参加任何饭局！<a href="{% url 'meal_list' %}">现在就去看看吧</a>
             {% else %}
                 TA还没有参加任何饭局！
             {% endif %}

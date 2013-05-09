@@ -1,5 +1,7 @@
 from settings import *
 
+#for test server
+
 DEBUG = False
 TEMPLATE_DEBUG = False
 STATIC_URL = '/static/'

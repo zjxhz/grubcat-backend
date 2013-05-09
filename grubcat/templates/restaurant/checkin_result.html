@@ -18,7 +18,7 @@
         <div id="check-in-title" class="span10 check-in-title">
             <div class=" alert alert-success clearfix">
                 <div class="fl order-status"><h3>校验码还未使用过！</h3></div>
-                <form id="use-order-form" action="{% url restaurant_use_order %}" method="post" class="form-inline fl">
+                <form id="use-order-form" action="{% url 'restaurant_use_order' %}" method="post" class="form-inline fl">
                     <input type="hidden" name="code" value="{{ order.code }}">
                     <input type="hidden" name="id" value="{{ order.id }}">
                     <button type="submit" class="btn btn-success pull-right btn-use btn-large">使用</button>
@@ -33,7 +33,7 @@
             <tr>
                 <th>用户名</th>
                 <td>{{ order.customer.name }}</td>
-                <td rowspan="6" class="meal-img">  <a href="{% url meal_detail order.meal.id %}" target="_blank">
+                <td rowspan="6" class="meal-img">  <a href="{% url 'meal_detail' order.meal.id %}" target="_blank">
                     <img alt="{{ order.meal.topic }}" id="meal-photo" src="{{ order.meal.big_cover_url }}" width="360"
                          height="240" ></a></td>
             </tr>

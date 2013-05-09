@@ -7,7 +7,7 @@
         <h4>请选择合适的区域做为套餐封面</h4>
     </div>
     <div class="modal-body">
-        <form action="{% url edit_menu_cover menu.id %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
+        <form action="{% url 'edit_menu_cover' menu.id %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
             <div id="cropping-area" class="">
                 {{ form.photo }}
                 {{ form.cropping }}

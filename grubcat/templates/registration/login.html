@@ -10,7 +10,7 @@
 {% block content %}
     <div class="login-wrapper">
         <div class="login-panel span4 offset4">
-            <form id="login_form" class="login-form" action="{% url login %}" method="post">{% csrf_token %}
+            <form id="login_form" class="login-form" action="{% url 'login' %}" method="post">{% csrf_token %}
                 <fieldset>
                     {{ form.non_field_errors }}
                     {% for field in form %}

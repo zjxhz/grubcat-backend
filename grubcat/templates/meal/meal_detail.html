@@ -37,7 +37,7 @@
                 </div>
                 <div id="meal-grub">
                     {% if order %}
-                        <a href="{% url order_detail meal.id order.id %}"
+                        <a href="{% url 'order_detail' meal.id order.id %}"
                            class="btn btn-primary btn-book btn-booked fr">
                             已预订 查看订单
                         </a>
@@ -60,7 +60,7 @@
                                 </a>
                             {% endif %}
                         {% else %}
-                            <a href="{% url weibo_login %}?next={% url meal_detail meal.id %}"
+                            <a href="{% url 'weibo_login' %}?next={% url 'meal_detail' meal.id %}"
                                class="btn btn-primary btn-book fr">
                                 马上预定
                             </a>
@@ -119,7 +119,7 @@
                     <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加饭局，赶快预定吧！</h3>
                 {% endif %}
                 {% for user in meal.participants.all %}
-                    <a href="{% url user_detail user.id %}" class="user-img-wrapper"
+                    <a href="{% url 'user_detail' user.id %}" class="user-img-wrapper"
                        title="{{ user.name }}">
                         <img alt="{{ user.name }}" width="80"
                              height="80" class=""
@@ -160,5 +160,5 @@
             </div>
         </div>{% endcomment %}
     </div>
-    <div id="data" style="display: none" data-check-order-status-link="{% url check_order_status meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
+    <div id="data" style="display: none" data-check-order-status-link="{% url 'check_order_status' meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
 {% endblock %}

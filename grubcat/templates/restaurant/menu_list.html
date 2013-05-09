@@ -22,18 +22,18 @@
             </div>
         {% endif %}
         <div class="clearfix">
-            <a class="add-category addlink fr" href="{% url add_menu %}" id="add-category-link">添加套餐</a>
+            <a class="add-category addlink fr" href="{% url 'add_menu' %}" id="add-category-link">添加套餐</a>
         </div>
 
         <div id="menu-list">
             {% for menu in menu_list %}
-                <div class="menu-container" data-crop-cover-url="{% url edit_menu_cover  menu.id %}">
+                <div class="menu-container" data-crop-cover-url="{% url 'edit_menu_cover'  menu.id %}">
                     <div class="menu-cover-wrapper {% if menu.photo %}has-cover{% endif %}">
                         <div class="upload-actions-bg"></div>
                         <div class="loading hide">上传中</div>
                         <div class="upload-actions">
                             <form class="upload_menu_cover_form"
-                                  action="{% url edit_menu_cover menu.id %}?action=upload"
+                                  action="{% url 'edit_menu_cover' menu.id %}?action=upload"
                                   method="post" enctype="multipart/form-data">
                                 <input type="file" class="file upload-cover-input" name="photo"/>
                             </form>
@@ -50,15 +50,15 @@
 
                     <div class="menu-info-wrapper">
                         <div class="btn-group actions fr">
-                            <a href="{% url edit_menu menu.id %}" class="btn changelink" title="编辑"
+                            <a href="{% url 'edit_menu' menu.id %}" class="btn changelink" title="编辑"
                                     >编辑</a>
                             <a class="btn dropdown-toggle" data-toggle="dropdown">
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url copy_menu menu.id %}" class="changelink" title="复制"
+                                <li><a href="{% url 'copy_menu' menu.id %}" class="changelink" title="复制"
                                        rel="modal-dialog">复制</a></li>
-                                <li><a href="{% url del_menu menu.id %}" class="dellink">删除</a></li>
+                                <li><a href="{% url 'del_menu' menu.id %}" class="dellink">删除</a></li>
                             </ul>
                         </div>
                         <div class="menu-info">

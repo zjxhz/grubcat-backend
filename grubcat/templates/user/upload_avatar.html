@@ -8,7 +8,7 @@
         <h4>请选择合适的区域作为头像，注意不同尺寸的头像是否清晰</h4>
     </div>
     <div class="modal-body">
-        <form action="{% url upload_avatar %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
+        <form action="{% url 'upload_avatar' %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
             <div id="cropping-area" class="">
                 {{ form.avatar }}
                 {{ form.cropping }}

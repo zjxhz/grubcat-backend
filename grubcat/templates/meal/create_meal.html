@@ -67,7 +67,7 @@
 {% block content %}
     <div id="create-meal-page">
     <div class="form-wrapper span10 offset1">
-        <form id="create_meal_form" action="{% url create_meal %}" method="post"
+        <form id="create_meal_form" action="{% url 'create_meal' %}" method="post"
               class="form form-horizontal"> {% csrf_token %}
             <fieldset>
 
@@ -142,7 +142,7 @@
             左边是热门的餐厅和菜单<br/>您可以选择一个查看详情
         {% endif %}
     </div>
-    <div id="data" data-menu-list-link="{% url menu_list %}"></div>
+    <div id="data" data-menu-list-link="{% url 'menu_list' %}"></div>
 
     <div id="show_map_modal" class="modal fade" tabindex="-1" role="dialog" style="display: none"
          aria-hidden="true">

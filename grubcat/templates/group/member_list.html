@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{% url group_detail group_id %}" class="back">← 回到圈子页面</a>
+    <a href="{% url 'group_detail' group_id %}" class="back">← 回到圈子页面</a>
     <h1>{{ page_obj.paginator.count }}位成员</h1>
     <h2>快来认识些感兴趣的朋友吧！</h2>
     {% include "group/member_container.html"%}
