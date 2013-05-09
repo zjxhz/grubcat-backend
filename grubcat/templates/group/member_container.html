@@ -55,6 +55,6 @@
 
 {% if page_obj.has_next %}
 <div id="page-nav">
-    <a href="{% url more_group_member_list group_id page_obj.next_page_number %}"></a>
+    <a href="{% url 'more_group_member_list' group_id page_obj.next_page_number %}"></a>
 </div>
 {% endif %}

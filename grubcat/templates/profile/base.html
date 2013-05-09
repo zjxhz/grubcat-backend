@@ -14,9 +14,9 @@
                 <div class="btn-group">
                     {% if not is_mine %}
                         {% if profile not in user.get_profile.following.all %}
-                            <a href="{% url  follow profile.id %}" class="btn btn-follow" data-uid="{{ profile.user.username }}"><i class="icon-star"></i> 关注</a>
+                            <a href="{% url 'follow' profile.id %}" class="btn btn-follow" data-uid="{{ profile.user.username }}"><i class="icon-star"></i> 关注</a>
                         {% else %}
-                            <a href="{% url  un_follow profile.id %}" class="btn btn-unfollow">取消关注</a>
+                            <a href="{% url 'un_follow' profile.id %}" class="btn btn-unfollow">取消关注</a>
                         {% endif %}
                         <button class="btn btn-chat" data-uid="{{ profile.user.username }}"><i class="icon-comment"></i> 聊天</button>
                     {% endif %}
@@ -24,12 +24,12 @@
             </li>
 
             {% if is_mine %}
-                <li id="profile_follow" class=""><a href="{% url following_list profile.id %}">关注/粉丝</a></li>
+                <li id="profile_follow" class=""><a href="{% url 'following_list' profile.id %}">关注/粉丝</a></li>
             {% endif %}
-            <li id="profile_meal"><a href="{% url user_meal_list profile.id %}">饭局({{ orders_count }})</a>
+            <li id="profile_meal"><a href="{% url 'user_meal_list' profile.id %}">饭局({{ orders_count }})</a>
             </li>
-            <li id="profile_photo"><a href="{% url photo_list profile.id %}">照片({{ profile.photos.count }})</a></li>
-            <li id="profile_basic_info"><a href="{% url user_detail profile.id %}">资料</a></li>
+            <li id="profile_photo"><a href="{% url 'photo_list' profile.id %}">照片({{ profile.photos.count }})</a></li>
+            <li id="profile_basic_info"><a href="{% url 'user_detail' profile.id %}">资料</a></li>
         </ul>
         {% block profile-main %}
         {% endblock %}

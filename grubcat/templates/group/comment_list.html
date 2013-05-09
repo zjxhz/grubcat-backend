@@ -5,7 +5,7 @@
 </div>
 {% if page_obj.has_next %}
     <div id="comments-pagination">
-        <a id="id_more_comments_link" href="{% url group_comment_list group_id page_obj.next_page_number %}">查看更多</a>
+        <a id="id_more_comments_link" href="{% url 'group_comment_list' group_id page_obj.next_page_number %}">查看更多</a>
     </div>
 {% endif %}
 

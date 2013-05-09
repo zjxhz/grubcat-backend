@@ -13,7 +13,7 @@
                     <tr>
                         <th>饭局主题</th>
                         <td>{{ meal.topic|truncatechars:"20" }}</td>
-                        <td class="meal-img" rowspan="5"><a href="{% url meal_detail meal.id %}" target="_blank">
+                        <td class="meal-img" rowspan="5"><a href="{% url 'meal_detail' meal.id %}" target="_blank">
                             <img alt="{{ meal.topic }}" id="meal-photo" src="{{ meal.big_cover_url }}" width="360"
                                  height="240"></a></td>
                     </tr>
@@ -33,7 +33,7 @@
                     </tr>
                     <tr>
                         <th>菜单</th>
-                        <td>{{ meal.menu.name }}&nbsp;<a href="{% url menu_detail meal.menu.id %}"
+                        <td>{{ meal.menu.name }}&nbsp;<a href="{% url 'menu_detail' meal.menu.id %}"
                                                          class="menu-detail-link">详情</a>
                         </td>
                     </tr>

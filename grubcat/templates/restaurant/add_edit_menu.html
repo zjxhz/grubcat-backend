@@ -68,7 +68,7 @@
 
                     <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
                 </div>
-                <form class="form-horizontal" action="{% url add_menu %}" id="save-menu-form">
+                <form class="form-horizontal" action="{% url 'add_menu' %}" id="save-menu-form">
                     <div class="control-group">
                         <label class="control-label" for="id_num_persons">就餐人数</label>
 
@@ -121,7 +121,7 @@
                 <button class="btn btn-primary btn-large" id="save-menu-btn">保存套餐</button>
             </div>
             <div class="hide" id="add-category-dialog" title="添加分类">
-                <form id="add-dish-category" class="form" action="{% url add_dish_category %}" method="post">
+                <form id="add-dish-category" class="form" action="{% url 'add_dish_category' %}" method="post">
                     <input type="text" id="category-name" name="category-name" class="input" placeholder="请输入分类名称">
                 </form>
             </div>

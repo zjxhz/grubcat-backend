@@ -56,14 +56,14 @@
         <div id="banner" class="shadow">
             <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="{{ group.name }}" width="96" height="96">
             {% if user == group.owner %}
-                <a href="{% url edit_group_logo group.id %}" id="id_edit_logo_link" class="edit-link">
+                <a href="{% url 'edit_group_logo' group.id %}" id="id_edit_logo_link" class="edit-link">
                     <img alt="修改" src="{% static "img/edit-pencil.png" %}">
                 </a>
             {% endif %}
             <h1 class="group-name">{{ group.name }}</h1>
 
             {% if not user.is_authenticated or group not in user.interest_groups.all %}
-                <a href="{% url join_group group.id %}" id="id_join_group_link" class="button">加入圈子</a>
+                <a href="{% url 'join_group' group.id %}" id="id_join_group_link" class="button">加入圈子</a>
             {% else %}
                 <a href="" id="id_invite_friend_link" class="button">邀请好友</a>
             {% endif %}
@@ -71,14 +71,14 @@
     </div>
     <div class="left-column">
         {% if group in user.interest_groups.all %}
-            {% url create_meal as create_meal_url %}
+            {% url 'create_meal' as create_meal_url %}
             <a class="btn-create-meal" href="{{ create_meal_url }}?group={{ group.id }}">发起饭局</a>
         {% endif %}
 
         {% for meal in group.recent_meals %}
 
             <div class="meal-cell">
-                <a href="{% url meal_detail meal.id %} "></a>
+                <a href="{% url 'meal_detail' meal.id %} "></a>
 
                 <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
                      src="{{ meal.big_cover_url }}">
@@ -111,7 +111,7 @@
             {% for meal in group.passed_meals %}
 
                 <div class="meal-cell">
-                    <a href="{% url meal_detail meal.id %} "></a>
+                    <a href="{% url 'meal_detail' meal.id %} "></a>
 
                     <img class="meal-cover" alt="{{ meal.topic }}" height="200" width="228"
                          src="{{ meal.big_cover_url }}">
@@ -152,7 +152,7 @@
                 {{ group.desc }}
             </div>
             {% if user == group.owner %}
-                <a href="{% url edit_group group.id %}" class="edit-link">
+                <a href="{% url 'edit_group' group.id %}" class="edit-link">
                     <img alt="修改" src="{% static "img/edit-pencil.png" %}">
                 </a>
             {% endif %}
@@ -166,10 +166,10 @@
             {% with members_count=group.members.count %}
                 <h3>{{ members_count }} 位成员
                     {#                    {% if members_count > 21 %}#}
-                    <a class="see-all" href="{% url group_member_list group.id %}">(查看详情)</a>
+                    <a class="see-all" href="{% url 'group_member_list' group.id %}">(查看详情)</a>
                     {#                    {% endif %}#}
                     {% if group in user.interest_groups.all and user != group.owner %}
-                        | <a href="{% url leave_group group.id %}" id="id_leave_group_link">离开</a>
+                        | <a href="{% url 'leave_group' group.id %}" id="id_leave_group_link">离开</a>
                     {% endif %}
                 </h3>
 
@@ -198,7 +198,7 @@
 
                         <h3>{{ user.username }}</h3>
 
-                        <form accept-charset="UTF-8" action="{% url create_group_comment %}"
+                        <form accept-charset="UTF-8" action="{% url 'create_group_comment' %}"
                               class="add_comment_form new_comment_form"
                               id="id_add_comment_form" method="post">
                             <textarea class="tag-comment toggleval new_comment_field"
@@ -221,7 +221,7 @@
 
                 {% if has_next %}
                     <div id="comments-pagination">
-                        <a id="id_more_comments_link" href="{% url group_comment_list group.id 2 %}">查看更多</a>
+                        <a id="id_more_comments_link" href="{% url 'group_comment_list' group.id 2 %}">查看更多</a>
                     </div>
                 {% endif %}
             </div>
