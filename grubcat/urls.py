@@ -4,14 +4,14 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
-from eo.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
-from eo.decorators import restaurant_login_required
-from eo.views import upload_app
-from eo.views_common import list_tags, add_tag
-from eo.views import *
+from fanju.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
+from fanju.decorators import restaurant_login_required
+from fanju.views import upload_app
+from fanju.views_common import list_tags, add_tag
+from fanju.views import *
 from django.conf import settings
 
-import eo.views_restaurant as rest
+import fanju.views_restaurant as rest
 
 admin.autodiscover()
 urlpatterns = patterns('',

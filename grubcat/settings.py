@@ -31,7 +31,7 @@ SECRET_KEY = 'v**lqc)i)eeoiv#7=t6r&u-70auneuj#67yz*$%nez3p=)+8_d'
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'eo.exceptions.ProcessExceptionMiddleware',
+    'fanju.exceptions.ProcessExceptionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
     'django.middleware.transaction.TransactionMiddleware',
@@ -48,7 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'eo',
+    'fanju',
     'django.contrib.staticfiles',
     'easy_thumbnails',
     'image_cropping',
@@ -73,7 +73,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "eo.util.chat_context_processor"
+    "fanju.util.chat_context_processor"
 )
 
 MANAGERS = ADMINS
@@ -99,7 +99,7 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-AUTH_USER_MODEL = 'eo.User'
+AUTH_USER_MODEL = 'fanju.User'
 
 ###################### static ######################
 STATIC_URL = '/static/'
@@ -107,7 +107,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = SITE_ROOT + 'static/'
 ASSETS_DEBUG = False
 ASSETS_AUTO_BUILD = False
-ASSETS_ROOT = SITE_ROOT + 'src/grubcat-backend/grubcat/eo/static'
+ASSETS_ROOT = SITE_ROOT + 'src/grubcat-backend/grubcat/fanju/static'
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -160,7 +160,7 @@ ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 #EMAIL_HOST_PASSWORD=''
 
 ###################### acount ######################
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'eo.middlewares.WeiboAuthenticationBackend')
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'fanju.middlewares.WeiboAuthenticationBackend')
 LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 RESTAURANT_LOGIN_URL = reverse_lazy('login')

@@ -72,7 +72,7 @@ LOGGING = {
 
 #INSTALLED_APPS += ('debug_toolbar','devserver')
 MEDIA_ROOT = '/Users/wayne/workspace/media/'
-ASSETS_ROOT = r'/Users/wayne/workspace/grubcat-backend/grubcat/eo/static'
+ASSETS_ROOT = r'/Users/wayne/workspace/grubcat-backend/grubcat/fanju/static'
 LESS_BIN="/usr/local/bin/lessc"
 ASSETS_AUTO_BUILD = True
 XMPP_DEBUG = ["socket"]
