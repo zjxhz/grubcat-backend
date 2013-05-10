@@ -44,7 +44,7 @@ class Restaurant(models.Model):
     address = models.CharField(u'餐厅地址', max_length=765)
     longitude = models.FloatField(u'经度', null=True, blank=True)
     latitude = models.FloatField(u'纬度', null=True, blank=True)
-    tel = models.CharField(u'电话', max_length=60,)
+    tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
     # tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
     # phone_img_url = models.CharField(max_length=1024, blank=True)
@@ -95,7 +95,7 @@ class Dish(models.Model):
     #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前可以提供', default=True)
-    categories = models.ManyToManyField(DishCategory, verbose_name=u'分类')
+    categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', blank=True)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -377,7 +377,7 @@ class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
-    gender = models.IntegerField(u'性别', blank=False, null=True, choices=GENDER_CHOICE)
+    gender = models.IntegerField(u'性别', null=True, choices=GENDER_CHOICE)
     avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True) # photo
     cropping = ImageRatioField('avatar', '180x180', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.contrib.auth import forms as auth_forms
+from django.forms.extras import SelectDateWidget
 from eo.forms import BasicProfileForm
 from eo.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
     DishItem, DishCategoryItem, TransFlow
@@ -13,44 +14,64 @@ from image_cropping.admin import ImageCroppingMixin
 from eo.models import User
 import datetime
 
+
 class UserCreationForm(auth_forms.UserCreationForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
+    def clean_username(self):
+        # Since User.username is unique, this check is redundant,
+        # but it sets a nicer error message than the ORM. See #13147.
+        username = self.cleaned_data["username"]
+        try:
+            User._default_manager.get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(self.error_messages['duplicate_username'])
+
     class Meta:
         model = User
-        fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
-        # widgets = {
-        #     'gender': RadioSelect(choices=GENDER_CHOICE, ),
-        #     'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
-        #
-        # }
+        fields = (
+            'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'apns_token')
+        widgets = {
+            'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
+
+        }
+
 
 class UserChangeForm(auth_forms.UserChangeForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
     class Meta:
         model = User
-        # fields = ('name', 'motto', 'birthday', 'gender', 'college', 'industry', 'work_for', 'occupation', 'tags')
-        # widgets = {
-        #     'gender': RadioSelect(choices=GENDER_CHOICE, ),
-        #     'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
-        #
-        # }
+        fields = (
+            'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'apns_token')
+        widgets = {
+            'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
+
+        }
 
 
-class UserAdmin( UserAdmin):
+class UserAdmin(ImageCroppingMixin, UserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('id', 'name', 'weibo_id', 'avatar', 'cropping')
+    list_display = ('id', 'username', 'name', 'weibo_id', )
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'name', 'gender', 'avatar', 'cropping')}),
-        ('Others', {'fields': ('location', 'constellation', 'birthday',  'last_login',)}),
+        (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
+        ('Others', {'fields': (
+            'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'apns_token')}),
     )
     add_fieldsets = (
-        (None, {'fields': ('username', 'password1', 'password2', 'name', 'gender', 'avatar', 'cropping')}),
-        ('Others', {'fields': ('location', 'constellation', 'birthday',  'last_login',)}),
+        (None, {'fields': ('username', 'password1', 'password2', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
+        ('Others', {'fields': (
+            'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'apns_token')})
     )
     search_fields = ('username',)
     ordering = ('username',)
