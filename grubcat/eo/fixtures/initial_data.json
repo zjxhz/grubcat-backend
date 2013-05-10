@@ -1,9 +1,0 @@
-[
-    {
-        "model": "eo.dishcategory",
-        "pk": 1,
-        "fields": {
-            "name": "其它"
-        }
-    }
-]
