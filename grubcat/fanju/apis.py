@@ -1,16 +1,16 @@
 #coding=utf-8
+from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta, date
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
-from fanju.exceptions import NoAvailableSeatsError
-from fanju.models import UserLocation, UserTag, UserPhoto, User, \
-    MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
-    DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
-from fanju.pay.alipay.alipay import create_app_pay
-from fanju.api_auth import UserObjectsOnlyAuthorization
+from exceptions import NoAvailableSeatsError
+from models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
+    Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
+    DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
+from pay.alipay.alipay import create_app_pay
 from tastypie import fields, http
 from tastypie.api import Api
 from tastypie.authorization import Authorization, ReadOnlyAuthorization
@@ -65,9 +65,9 @@ class EOResource(ModelResource):
         return self.cached_obj_get(basic_bundle, **self.remove_api_resource_names(kwargs))
         
 # compatible with 0.9.11, RelatedField.should_full_dehydrate now checks request which is not always available, let's make it return True as long as "full" presents
-def should_full_dehydrate(relatedField, bundle):
-    return relatedField.full
-RelatedField.should_full_dehydrate = should_full_dehydrate
+#def should_full_dehydrate(relatedField, bundle):
+#    return relatedField.full
+#RelatedField.should_full_dehydrate = should_full_dehydrate
 
 #todo maybe we can use decorator
 def login_required(request):
@@ -82,13 +82,13 @@ class SuccessResponse(HttpResponse):
         content = json.dumps(content)
         super(SuccessResponse, self).__init__(content = content, content_type="application/json")
     
-class DjangoUserResource(EOResource):
-    class Meta:
-        queryset = User.objects.all()
-        resource_name = 'django_user'
-        fields = ['username', 'email', 'date_joined']
-        allowed_methods = ['get']
-        filtering = {'username': ALL, 'email':ALL}
+#class DjangoUserResource(EOResource):
+#    class Meta:
+#        queryset = User.objects.all()
+#        resource_name = 'django_user'
+#        fields = ['username', 'email', 'date_joined']
+#        allowed_methods = ['get']
+#        filtering = {'username': ALL, 'email':ALL}
 
 class UserLocationResource(EOResource):
     class Meta:
@@ -136,23 +136,15 @@ class UserPhotoResource(EOResource):
         filtering={"id":ALL}
         allowed_methods = ['get', 'post', 'delete']
 
-date1970 = date(1970,1,1)
-datetime1970=datetime(1970,1,1)
+
 def dehydrate_basic_userinfo(resource, bundle):
     if not bundle.data['location']:
         # simulate a location. TODO remove these lines in production
         bundle.data['lat'] = 30.275
         bundle.data['lng'] = 120.148
         bundle.data['updated_at'] = "2012-10-16"
-    if bundle.obj.birthday:
-        bundle.data['birthday_interval'] = (bundle.obj.birthday - date1970).total_seconds()
-    if bundle.obj.user.date_joined:
-        bundle.data['date_joined_interval'] = (bundle.obj.user.date_joined - datetime1970).total_seconds() 
-    if bundle.obj.location: 
-        bundle.data['updated_at_interval'] = (bundle.obj.location.updated_at - datetime1970).total_seconds()
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
-    bundle.data['big_avatar'] = bundle.obj.big_avatar  
-    resource.mergeOneToOneField(bundle, 'user', ['id', ])
+    bundle.data['big_avatar'] = bundle.obj.big_avatar
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
     
 #    request_user = bundle.request.user
@@ -163,7 +155,6 @@ def dehydrate_basic_userinfo(resource, bundle):
     return bundle
 
 class SimpleUserResource(EOResource):
-    user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     def dehydrate(self, bundle):
         return dehydrate_basic_userinfo(self, bundle)
@@ -171,6 +162,7 @@ class SimpleUserResource(EOResource):
     class Meta:
         queryset = User.objects.all()
         authorization = UserObjectsOnlyAuthorization(True)
+        excludes=['password','weibo_access_token']
         resource_name = 'simple_user'
 
 class MealParticipantResource(EOResource):
@@ -216,7 +208,6 @@ def writeMineOnly(func):
     return inner
             
 class UserResource(EOResource):
-    user = fields.ForeignKey(DjangoUserResource, 'user', full=True)
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     tags = fields.ToManyField(UserTagResource, 'tags', full=True, null=True)
     photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
@@ -490,6 +481,7 @@ class UserResource(EOResource):
         resource_name = 'user'
         filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
+        excludes=['password','weibo_access_token']
         authorization = UserObjectsOnlyAuthorization(True)
 
 
@@ -540,7 +532,7 @@ class MenuResource(EOResource):
     
 class MealResource(EOResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
-    host = fields.ForeignKey(SimpleUserResource, 'host', full=True)
+    host = fields.ForeignKey(SimpleUserResource, 'host', full=True, null=True)
     participants = fields.ToManyField(MealParticipantResource, 'mealparticipants_set', full=True, null=True)
     
     def hydrate(self, bundle):
@@ -683,7 +675,6 @@ def mobile_user_logout(request):
     
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
-v1_api.register(DjangoUserResource())
 v1_api.register(RestaurantResource())
 v1_api.register(DishCategoryResource())
 v1_api.register(OrderResource())

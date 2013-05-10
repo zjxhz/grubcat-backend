@@ -1,7 +1,7 @@
 # Django settings for grubcat project.
 
 from settings import *
-
+ASSETS_DEBUG=True
 ASSETS_AUTO_BUILD = True
 STATIC_URL = '/static/'
 DEBUG=True
@@ -78,3 +78,6 @@ ASSETS_AUTO_BUILD = True
 XMPP_DEBUG = ["socket"]
 PAY_DEBUG = True
 TASTYPIE_FULL_DEBUG = True
+CHATSERVER = "http://localhost:7070/http-bind/"
+CHATDOMAIN = "wayne.local"
+XMPP_PUBSUB_SERVICE='pubsub.wayne.local'
