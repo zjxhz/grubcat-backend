@@ -4,7 +4,6 @@ from django.core.files.base import ContentFile
 import logging
 import urllib2
 import weibo
-from fanju.exceptions import BusinessException
 from fanju.models import User, Gender
 
 logger = logging.getLogger("api")
@@ -14,8 +13,7 @@ class WeiboAuthenticationBackend(object):
         user_to_authenticate = None # tell Python explicitly this is a local variable
         access_token =credentials.get('access_token')
         if not access_token:
-
-            raise # AuthBackend can't raise error, otherewise will not be handled
+            return None # AuthBackend can't raise error, otherewise will not be handled
         expires_in = credentials.get('expires_in')
         if not expires_in:
             expires_in = str(3600*24*14)
