@@ -340,7 +340,7 @@
     background-color: #94BF17;
     color: white;
     border-radius: 3px;
-    padding: 5px 5px 0 5px;
+    padding: 3px 5px;
     cursor: default;
     overflow: hidden;
     display: inline-block;
@@ -364,13 +364,18 @@
   }
 
   #menu-container dd {
-    margin: 5px 0 5px 30px;
+    margin: 10px 0 10px 30px;
   }
 
   .dish-info {
     float: right;
+    padding-right: 0px;
     a {
       color: #ffffff;
+      &.num{
+        cursor: pointer;
+        padding:0px;
+      }
     }
   }
   .menu-items dd.dish {
@@ -417,11 +422,19 @@
   dl.menu-items {
     margin-bottom: 0;
     min-height: 300px;
+    a.close{
+      margin-right: 7px;
+      font-size: 25px;
+    }
     dd.dish {
       font-size: 14px;
-      padding: 0 0 5px 7px;
+      padding: 3px 0 3px 7px;
       .dish-info {
         float: right;
+      }
+      .dish-name {
+        display: inline-block;
+        width: 104px;
       }
     }
     dt.category {
@@ -446,6 +459,12 @@
   #save-menu-btn {
   }
 
+}
+#change-dish-num-form{
+  margin: 10px 0px 0 0;
+}
+#input-change-num{
+  width:150px;
 }
 
 #check-in-page, #today-meal-list {
