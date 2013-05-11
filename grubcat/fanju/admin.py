@@ -32,7 +32,7 @@ class UserCreationForm(auth_forms.UserCreationForm):
         model = User
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
-            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token','is_staff','is_superuser',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -47,7 +47,7 @@ class UserChangeForm(auth_forms.UserChangeForm):
         model = User
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
-            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token','is_staff','is_superuser',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -65,13 +65,14 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
         (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
         ('Others', {'fields': (
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
-            'apns_token')}),
+            'apns_token', 'is_staff', 'is_superuser',)}),
     )
     add_fieldsets = (
-        (None, {'fields': ('username', 'password1', 'password2', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
+        (None, {
+        'fields': ('username', 'password1', 'password2', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
         ('Others', {'fields': (
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
-            'apns_token')})
+            'apns_token', 'is_staff', 'is_superuser',)})
     )
     search_fields = ('username',)
     ordering = ('username',)

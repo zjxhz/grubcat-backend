@@ -99,6 +99,40 @@ jQuery(function ($) {
             showDishes($($(this).parents("dd")).attr("dish-id"))
         })
 
+        $("#menu-items .dish .num").live('click',function () {
+            var $num = $(this)
+            $("#input-change-num").val('1')
+            $("#change-dish-num-dialog").dialog({
+                autoOpen:true,
+                modal:true,
+                width:200,
+                resizable:false,
+                position:['center', 200],
+                buttons:{
+                    确定:function () {
+                        var $inpuNum = $("#input-change-num");
+                        var num = $inpuNum.val()
+                        if (!num) {
+                            $inpuNum.focus();
+                        } else {
+                            try{
+                                $num.text(parseInt(num))
+                                //submit request
+                                $(this).dialog("close");
+                            }catch(e){
+                                 $inpuNum.focus();
+                            }
+
+                        }
+                    },
+                    取消:function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            return false;
+        })
+
         $("#menu-container,#dish-container").disableSelection();
 
 
