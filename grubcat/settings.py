@@ -232,7 +232,16 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
-        }
+        },
+        'gunicorn_error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
+            'filename': os.path.join(LOGGING_ROOT, 'gunicorn_error.log')
+        },
+
     },
     'loggers': {
         'django.db.backends': {
@@ -259,6 +268,11 @@ LOGGING = {
             'handlers': ['pay', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
+        },
+        'gunicorn.error': {
+            'level': 'ERROR',
+            'handlers': ['gunicorn_error'],
+            'propagate': True,
         },
     }
 }
