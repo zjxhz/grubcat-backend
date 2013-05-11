@@ -11,16 +11,14 @@ logger = logging.getLogger("api")
 class WeiboAuthenticationBackend(object):
     def authenticate(self, **credentials):
         user_to_authenticate = None # tell Python explicitly this is a local variable
-        
         access_token =credentials.get('access_token')
         if not access_token:
-            raise
+            return None # AuthBackend can't raise error, otherewise will not be handled
         expires_in = credentials.get('expires_in')
         if not expires_in:
             expires_in = str(3600*24*14)
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(access_token, expires_in)
-        
         if User.objects.filter(weibo_access_token=access_token).count():
             user_to_authenticate = User.objects.get(weibo_access_token=access_token)
             logger.debug("auth for %s OK" % user_to_authenticate)
@@ -61,7 +59,7 @@ class WeiboAuthenticationBackend(object):
                     user_to_authenticate.delete()
                 logger.exception("failed to auth %s " % user_to_authenticate)
                 return None
-            
+
         return user_to_authenticate
 
     def get_user(self, user_id):
