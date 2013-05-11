@@ -45,3 +45,5 @@ class ProcessExceptionMiddleware(object):
                 return TemplateResponse(request, "500.html", {'exception': exception})
             else:
                 return HttpResponseRedirect("%s?message=%s" % (reverse_lazy('error'), exception.message))
+        else:
+            return None
