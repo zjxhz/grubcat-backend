@@ -123,7 +123,7 @@ class Menu(models.Model):
     photo = models.ImageField(u'套餐封面', null=True, upload_to='uploaded_images/rest/%Y/%m/%d')
     cropping = ImageRatioField('photo', '420x280', adapt_rotation=False)
     num_persons = models.SmallIntegerField(u'就餐人数')
-    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE)
+    average_price = models.DecimalField(u'人均消费', max_digits=6, decimal_places=1)
     created_time = models.DateTimeField(default=datetime.now())
     status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
     dish_items = models.ManyToManyField(Dish, through='DishItem')
