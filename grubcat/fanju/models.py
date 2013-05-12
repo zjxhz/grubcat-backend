@@ -529,7 +529,7 @@ class User(AbstractUser):
 
     @property
     def non_restaurant_usres(self):
-        return User.objects.exclude(user__restaurant__isnull=False)
+        return User.objects.exclude(restaurant__isnull=False)
 
     def users_nearby(self, lat=None, lng=None):
         distance_user_dict = {}
