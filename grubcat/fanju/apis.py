@@ -665,7 +665,7 @@ def mobile_user_login(request):
 def mobile_user_logout(request):
     if request.method == 'POST':
         profile = request.user
-        if profile:
+        if profile.is_authenticated():
             profile.apns_token = ""
             profile.save()
         logout(request)    
