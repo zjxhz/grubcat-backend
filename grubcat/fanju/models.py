@@ -45,11 +45,7 @@ class Restaurant(models.Model):
     longitude = models.FloatField(u'经度', null=True, blank=True)
     latitude = models.FloatField(u'纬度', null=True, blank=True)
     tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
-    # tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
-    # phone_img_url = models.CharField(max_length=1024, blank=True)
-    # average_cost = models.IntegerField()
-    # rating = models.IntegerField()
     regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
 
     def __unicode__(self):
@@ -67,17 +63,14 @@ class Restaurant(models.Model):
 
 
 class DishCategory(models.Model):
-#    menu = models.ForeignKey(Menu, related_name="categories")
-#    TODO unique for restaurant and name
     name = models.CharField(u'菜名', max_length=45, )
-    #    if restaurant is null,it means the category is public, all restaurant can see the category
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True)
-    #    parent_category = models.ForeignKey('self', null=True) #not used temporary
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
 
     def __unicode__(self):
         return u'%s' % self.name
 
     class Meta:
+        unique_together = ('name', 'restaurant')
         verbose_name = u'菜的分类'
         verbose_name_plural = u'菜的分类'
 
@@ -87,12 +80,6 @@ class Dish(models.Model):
     price = models.DecimalField(u'价钱', decimal_places=1, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
     desc = models.CharField(u'描述', max_length=765, blank=True)
-    #    pic = models.CharField(u'图片', max_length=765, blank=True)
-    #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
-    #    cooking = models.CharField(u'烹饪做法',max_length=765, blank=True)
-    #    taste = models.CharField(u'口味',max_length=18)
-    #    is_mandatory = models.BooleanField(default=False)
-    #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前可以提供', default=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', blank=True)
@@ -123,7 +110,7 @@ class Menu(models.Model):
     photo = models.ImageField(u'套餐封面', null=True, upload_to='uploaded_images/rest/%Y/%m/%d')
     cropping = ImageRatioField('photo', '420x280', adapt_rotation=False)
     num_persons = models.SmallIntegerField(u'就餐人数')
-    average_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE)
+    average_price = models.DecimalField(u'人均消费', max_digits=6, decimal_places=1)
     created_time = models.DateTimeField(default=datetime.now())
     status = models.IntegerField(u'状态', choices=MENU_STATUS, default=0)
     dish_items = models.ManyToManyField(Dish, through='DishItem')

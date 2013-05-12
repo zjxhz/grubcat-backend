@@ -25,7 +25,7 @@ import sys
 Authenticate XMPP user.
 """
  
-logger = logging.getLogger('api') 
+logger = logging.getLogger(__name__)
  
 class Command(BaseCommand):
     """

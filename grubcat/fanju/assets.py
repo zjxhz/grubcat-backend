@@ -70,10 +70,11 @@ chat_js = Bundle('js/underscore-1.4.4.js', 'js/backbone-1.0.0.js', 'js/chat/iso8
                  'js/chat/chat.js',
                  filters='yui_js',
                  output="gen/chat.%(version)s.js")
-base_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', noty_js, filters='yui_js',
+bootstrap_js = Bundle('js/bootstrap.js',filters='yui_js', output="gen/bootstrap.%(version)s.js")
+base_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, noty_js, filters='yui_js',
                  output="gen/base.%(version)s.js")
 
-base_main_js = Bundle(jquery_js, 'js/utils.js',  'js/bootstrap.js', 'js/jquery.lazyload.js', filters='yui_js',
+base_main_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, 'js/jquery.lazyload.js', filters='yui_js',
                       output="gen/base.main.%(version)s.js")
 
 module_js = Bundle('js/module.js', filters='yui_js', output="gen/module.%(version)s.js")
@@ -118,6 +119,7 @@ register('profile_css', profile_css)
 #register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 
+register('bootstrap_js', bootstrap_js)
 register('jquery_js', jquery_js)
 register('jquery_dropkick_js', jquery_dropkick_js)
 register('noty_js', noty_js)

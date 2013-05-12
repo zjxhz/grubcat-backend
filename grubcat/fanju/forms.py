@@ -60,12 +60,12 @@ class DishForm(ModelForm):
     def __init__(self, restaurant=None, *args, **kwargs):
         super(DishForm, self).__init__(*args, **kwargs)
         self.fields['categories'].queryset = DishCategory.objects.filter(
-            Q(restaurant=restaurant) | Q(restaurant__isnull=True))
+            Q(restaurant=restaurant))
         self.fields['categories'].help_text = ''
 
     class Meta:
         model = Dish
-        exclude = ("restaurant", "menu")
+        exclude = ("restaurant",)
 
 
 class DishCategoryForm(ModelForm):
@@ -79,7 +79,7 @@ class MenuForm(ModelForm):
         model = Menu
         fields = ('num_persons', 'average_price', 'name',)
         widgets = {
-            'average_price': Select(attrs={'class': 'input-small'})
+            # /'average_price': Select(attrs={'class': 'input-small'})
         }
 
 

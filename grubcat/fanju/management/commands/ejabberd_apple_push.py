@@ -5,7 +5,7 @@ from fanju import util
 from erlport import Port, Protocol, String
 import logging
  
-logger = logging.getLogger('api') 
+logger = logging.getLogger(__name__)
 pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
                             settings.APP_ID,
                             settings.APNS_CERTIFICATE_LOCATION)

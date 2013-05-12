@@ -6,8 +6,7 @@ import pyapns
 import socket
 import xmpp
 
-api_logger = logging.getLogger("api")
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 def escape_xmpp_node(node):
         node.strip()

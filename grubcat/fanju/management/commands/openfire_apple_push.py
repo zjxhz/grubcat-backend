@@ -6,7 +6,7 @@ import logging
 import os
 import json
 
-logger = logging.getLogger('api')
+logger = logging.getLogger(__name__)
 pyapns_wrapper = util.PyapnsWrapper(settings.APNS_HOST,
                             settings.APP_ID,
                             settings.APNS_CERTIFICATE_LOCATION)

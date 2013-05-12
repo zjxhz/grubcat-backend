@@ -57,7 +57,7 @@ INSTALLED_APPS = (
     'south',
     'django_forms_bootstrap',
     'taggit',
-    'raven.contrib.django',
+    'raven.contrib.django.raven_compat',
 )
 
 SERIALIZATION_MODULES = {
@@ -148,8 +148,8 @@ THUMBNAIL_QUALITY = 100
 ###################### pay ######################
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
-PAY_DEBUG = True
-ORDER_PREFIX = 'po'
+PAY_DEBUG = False
+ORDER_PREFIX = 'po1'
 ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 
 ###################### email ######################
@@ -189,8 +189,7 @@ SHOW_EXCEPTION_DETAIL = False
 
 ###################### log ######################
 RAVEN_CONFIG = {
-    'register_signals': True,
-    'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
+    'dsn': 'http://0110aabffb89455db2b86848b0694351:c2cd2b4d540e47baa418ebe1d4249fad@fanjoin.com:9000/2',
 }
 
 LOGGING_ROOT = SITE_ROOT + "logs/user/"
@@ -198,10 +197,6 @@ LOGGING_ROOT = SITE_ROOT + "logs/user/"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
-    'root': {
-        'level': 'WARNING',
-        'handlers': ['sentry'],
-    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
@@ -216,6 +211,14 @@ LOGGING = {
             'backupCount': 7,
             'formatter': 'verbose',
         },
+        'api': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_ROOT, 'api.log'),
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
+            },
         'pay': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -226,39 +229,48 @@ LOGGING = {
             },
         'sentry': {
             'level': 'ERROR',
-            'class': 'raven.contrib.django.handlers.SentryHandler',
+            'class': 'raven.handlers.logging.SentryHandler',
         },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
-        }
+        },
+        'gunicorn_error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 2, # 5 MB
+            'backupCount': 7,
+            'formatter': 'verbose',
+            'filename': os.path.join(LOGGING_ROOT, 'gunicorn_error.log')
+        },
+
     },
     'loggers': {
-        'django.db.backends': {
-            'level': 'ERROR',
-            'handlers': ['default'],
-            'propagate': False,
-        },
-        'raven': {
-            'level': 'ERROR',
-            'handlers': ['default'],
-            'propagate': False,
-        },
-        'sentry.errors': {
-            'level': 'DEBUG',
-            'handlers': ['default'],
-            'propagate': False,
-        },
-        'api': {
+        '': {
             'handlers': ['default', 'sentry'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'fanju': {
+            'level': 'INFO',
+            'propagate': True
+        },
+        'fanju.apis': {
+            'handlers': ['api'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'fanju.pay': {
+            'handlers': ['pay','sentry'],
             'level': 'DEBUG',
             'propagate': False
         },
-        'pay': {
-            'handlers': ['pay', 'sentry'],
-            'level': 'DEBUG',
-            'propagate': False
+
+        'gunicorn.error': {
+            'level': 'ERROR',
+            'handlers': ['gunicorn_error'],
+            'propagate': True,
         },
     }
 }

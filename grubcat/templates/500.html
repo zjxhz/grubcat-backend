@@ -12,7 +12,7 @@
 
     <div class="error-page">
     {% if exception  %}
-        <h3>{{ exception.message }}</h3>
+        <h3>{{ exception.message|default:'系统异常' }}</h3>
     {% elif request.GET.message  %}
         <h3>{{ request.GET.message }}</h3>
     {% else %}

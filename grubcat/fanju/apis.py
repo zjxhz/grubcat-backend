@@ -24,7 +24,7 @@ import logging
 import os
 import re
 
-logger = logging.getLogger('api')
+logger = logging.getLogger(__name__)
 
 class EOResource(ModelResource):
     def determine_format(self, request):
@@ -266,8 +266,8 @@ class UserResource(EOResource):
         bundle = self.full_hydrate(bundle)
         self.save_related(bundle)
         if 'email' in bundle.data:
-            bundle.obj.user.email = bundle.data['email']
-            bundle.obj.user.save()
+            bundle.obj.email = bundle.data['email']
+            bundle.obj.save()
         bundle.obj.save()
         # if nameChanged:
         #     logger.debug('sync name to xmpp server')
@@ -665,10 +665,10 @@ def mobile_user_login(request):
 def mobile_user_logout(request):
     if request.method == 'POST':
         profile = request.user
-        if profile:
+        if profile.is_authenticated():
             profile.apns_token = ""
             profile.save()
-        logout(request)    
+            logout(request)
         return SuccessResponse()
     else:
         return http.HttpBadRequest() 
