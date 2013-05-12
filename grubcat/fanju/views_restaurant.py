@@ -86,13 +86,10 @@ class TodayMealListView(ListView):
 def add_dish_category(request):
     if request.method == 'POST':
         category_name = request.POST.get('category-name')
-        result = DishCategory.objects.get_or_create(name=category_name)
+        result = DishCategory.objects.get_or_create(name=category_name, restaurant=request.user.restaurant)
         category = result[0]
         created = result[1]
-        if created:
-            category.restaurant_id = request.user.restaurant.id
-            category.save()
-        return create_sucess_json_response('成功', {'id': category.id, 'name': category.name, 'created': created})
+        return create_sucess_json_response(extra_dict={'id': category.id, 'name': category.name, 'created': created})
 
 
 class DishListView(ListView):

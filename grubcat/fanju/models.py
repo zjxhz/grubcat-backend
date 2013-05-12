@@ -78,6 +78,7 @@ class DishCategory(models.Model):
         return u'%s' % self.name
 
     class Meta:
+        unique_together = ('name', 'restaurant')
         verbose_name = u'菜的分类'
         verbose_name_plural = u'菜的分类'
 
@@ -87,12 +88,6 @@ class Dish(models.Model):
     price = models.DecimalField(u'价钱', decimal_places=1, max_digits=6)
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
     desc = models.CharField(u'描述', max_length=765, blank=True)
-    #    pic = models.CharField(u'图片', max_length=765, blank=True)
-    #    ingredient = models.CharField(u'原料',max_length=765, blank=True)
-    #    cooking = models.CharField(u'烹饪做法',max_length=765, blank=True)
-    #    taste = models.CharField(u'口味',max_length=18)
-    #    is_mandatory = models.BooleanField(default=False)
-    #    is_recommended = models.BooleanField(u'是否推荐菜', default=False)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
     available = models.BooleanField(u'目前可以提供', default=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', blank=True)
