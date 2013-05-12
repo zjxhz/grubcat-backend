@@ -262,9 +262,9 @@ LOGGING = {
             'propagate': True
         },
         'fanju.pay': {
-            'handlers': ['pay'],
+            'handlers': ['pay','sentry'],
             'level': 'DEBUG',
-            'propagate': True
+            'propagate': False
         },
 
         'gunicorn.error': {
