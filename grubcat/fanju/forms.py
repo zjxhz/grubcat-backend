@@ -79,7 +79,7 @@ class MenuForm(ModelForm):
         model = Menu
         fields = ('num_persons', 'average_price', 'name',)
         widgets = {
-            'average_price': Select(attrs={'class': 'input-small'})
+            # /'average_price': Select(attrs={'class': 'input-small'})
         }
 
 

@@ -73,7 +73,9 @@ jQuery(function ($) {
             forcePlaceholderSize:true,
             containment:"#menu-items",
             receive:function (e, ui) {
+                calculatePrice()
                 hideDishes(ui.sender.attr("dish-id"));
+                $(this).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}})
             }
         });
 
@@ -81,27 +83,34 @@ jQuery(function ($) {
         $("#dish-container dd,#dish-container dt").live('dblclick', function (e) {
             $(this).clone().appendTo($("#menu-items")).hide().fadeIn(1000);
             hideDishes($(this).attr("dish-id"))
+            calculatePrice()
         })
 
+        //remove category
         $("#menu-items dt").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
         })
+        //remove category
         $("#menu-items dt .close").live('click', function (e) {
             $(this).parents("dt").fadeOut(1000).remove();
             return false;
         })
+        //remove dish
         $("#menu-items dd").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
+            calculatePrice()
             showDishes($(this).attr("dish-id"))
         });
+        //remove dish
         $("#menu-items dd .close").live('click', function (e) {
             $(this).parents("dd").fadeOut(1000).remove();
+            calculatePrice()
             showDishes($($(this).parents("dd")).attr("dish-id"))
         })
 
         $("#menu-items .dish .num").live('click',function () {
             var $num = $(this)
-            $("#input-change-num").val('1')
+            $("#input-change-num").val($num.text())
             $("#change-dish-num-dialog").dialog({
                 autoOpen:true,
                 modal:true,
@@ -118,6 +127,7 @@ jQuery(function ($) {
                             try{
                                 $num.text(parseInt(num))
                                 //submit request
+                                calculatePrice()
                                 $(this).dialog("close");
                             }catch(e){
                                  $inpuNum.focus();
@@ -131,10 +141,20 @@ jQuery(function ($) {
                 }
             });
             return false;
-        })
+        }).tooltip({title:'修改',selector:true, delay:{show:300}})
 
         $("#menu-container,#dish-container").disableSelection();
-
+        $("#id_num_persons").change(calculatePrice).keyup(calculatePrice).focus(function(){
+            var $tip = $(this).siblings(".help-inline")
+            if($tip.html()){
+                $tip.html("")
+            }
+        }).blur(function(){
+                var $tip = $(this).siblings(".help-inline")
+            if(!$(this).val() && !$tip.html()){
+                $tip.html("输入后自动计算人均消费")
+            }
+            })
 
         $("#add-category-link").click(function () {
             $("#add-category-dialog").dialog({
@@ -190,7 +210,7 @@ jQuery(function ($) {
             }
 
             if (!$("#id_average_price").val()) {
-                alert("请输入均价")
+                alert("请输入人均消费")
                 return false;
             }
 
@@ -228,6 +248,13 @@ jQuery(function ($) {
             }, "json")
             return false;
         })
+        calculatePrice()
+        var $tip = $("#id_num_persons").siblings(".help-inline")
+        if (!$("#id_num_persons").val() && !$tip.html()) {
+            $tip.html("输入后自动计算人均消费")
+        } else {
+            $tip.html("")
+        }
     }
 //end of add menu page
 
@@ -338,6 +365,22 @@ function hideDishes(dishId) {
 function showDishes(dishId) {
     $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
 }
+
+ function calculatePrice(){
+     var $totalPrice = $("#total-price"), $menuContainer = $("#menu-container"), totalPrice = 0
+     //calculate total price
+
+     $menuContainer.find(".dish").each(function () {
+         totalPrice += parseFloat($(this).data('price')) * parseFloat($(this).find('.num').text())
+     })
+     $totalPrice.text(totalPrice).fadeOut(50).fadeIn(1000)
+
+     //calculate average price
+     var $numPersons = $("#id_num_persons"), numPersons = parseInt($numPersons.val())
+     if(numPersons > 0){
+         $("#id_average_price").val((Math.round(totalPrice*10/numPersons)/10).toFixed(1))
+     }
+ }
 
 function showPreview() {
 
