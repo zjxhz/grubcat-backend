@@ -9,7 +9,7 @@ from fanju.models import User, Relationship, \
     pubsub_user_created, user_followed, Meal, meal_created, MealParticipants, \
     meal_joined
 import logging
-logger = logging.getLogger('api')
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):    
     def handle(self, *args, **options):

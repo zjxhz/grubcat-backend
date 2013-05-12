@@ -13,7 +13,7 @@ import json
 
 SUCESS = "OK"
 ERROR = 'NOK'
-pay_logger = logging.getLogger("pay")
+pay_logger = logging.getLogger("fanju.pay")
 order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
 

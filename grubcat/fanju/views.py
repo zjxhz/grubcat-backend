@@ -24,8 +24,8 @@ from django.conf import settings
 import json
 from datetime import datetime, date, timedelta
 
-logger = logging.getLogger()
-pay_logger = logging.getLogger("pay")
+logger = logging.getLogger(__name__)
+pay_logger = logging.getLogger("fanju.pay")
 
 ###Photo related views ###
 class PhotoCreateView(CreateView):

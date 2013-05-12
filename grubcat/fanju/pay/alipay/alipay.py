@@ -14,7 +14,7 @@ from hashcompat import md5_constructor as md5
 from config import settings
 
 
-pay_logger = logging.getLogger("pay")
+pay_logger = logging.getLogger("fanju.pay")
 order_prefix = getattr(django_settings, 'ORDER_PREFIX', '')
 # 网关地址
 _WEB_GATEWAY = 'https://www.alipay.com/cooperate/gateway.do?'

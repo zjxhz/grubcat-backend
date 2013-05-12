@@ -24,7 +24,7 @@ import logging
 import os
 import re
 
-logger = logging.getLogger('api')
+logger = logging.getLogger(__name__)
 
 class EOResource(ModelResource):
     def determine_format(self, request):

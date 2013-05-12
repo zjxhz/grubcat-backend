@@ -6,7 +6,7 @@ import urllib2
 import weibo
 from fanju.models import User, Gender
 
-logger = logging.getLogger("api")
+logger = logging.getLogger(__name__)
 
 class WeiboAuthenticationBackend(object):
     def authenticate(self, **credentials):
