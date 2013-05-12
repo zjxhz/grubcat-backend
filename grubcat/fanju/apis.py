@@ -479,7 +479,7 @@ class UserResource(EOResource):
         authorization = Authorization()
         queryset = User.objects.all()
         resource_name = 'user'
-        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL}
+        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL, "username":ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
         excludes=['password','weibo_access_token']
         authorization = UserObjectsOnlyAuthorization(True)
