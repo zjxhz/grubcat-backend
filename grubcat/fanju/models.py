@@ -45,11 +45,7 @@ class Restaurant(models.Model):
     longitude = models.FloatField(u'经度', null=True, blank=True)
     latitude = models.FloatField(u'纬度', null=True, blank=True)
     tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
-    # tel2 = models.CharField(max_length=60, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
-    # phone_img_url = models.CharField(max_length=1024, blank=True)
-    # average_cost = models.IntegerField()
-    # rating = models.IntegerField()
     regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
 
     def __unicode__(self):
@@ -67,12 +63,8 @@ class Restaurant(models.Model):
 
 
 class DishCategory(models.Model):
-#    menu = models.ForeignKey(Menu, related_name="categories")
-#    TODO unique for restaurant and name
     name = models.CharField(u'菜名', max_length=45, )
-    #    if restaurant is null,it means the category is public, all restaurant can see the category
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', null=True, blank=True)
-    #    parent_category = models.ForeignKey('self', null=True) #not used temporary
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
 
     def __unicode__(self):
         return u'%s' % self.name

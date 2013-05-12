@@ -97,7 +97,7 @@ class DishAdmin(AjaxSelectAdmin):
 
 
 class DishCategoryAdmin(admin.ModelAdmin):
-    list_display =('name', 'restaurant')
+    list_display =('id', 'name', 'restaurant')
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -138,7 +138,7 @@ class DishCategoryItemInline(admin.StackedInline):
 
 
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('name','latitude','longitude','address')
+    list_display = ('id', 'name','latitude','longitude','address')
 
 
 class MenuAdmin(ImageCroppingMixin, admin.ModelAdmin):

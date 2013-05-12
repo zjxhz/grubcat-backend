@@ -28,13 +28,10 @@ CHATSERVER = "http://localhost:7070/http-bind/"
 CHATDOMAIN = "wayne.local"
 XMPP_PUBSUB_SERVICE='pubsub.wayne.local'
 
-
-
-
 RAVEN_CONFIG = {
     'register_signals': False,
     # 'dsn': 'http://e113732a1ddc462f9183b1038e4af184:58a864b1292a40179f900fffc8d02b9e@www.fanjoin.com:9000/2',
-    }
+}
 
 LOGGING = {
     'version': 1,
