@@ -668,7 +668,7 @@ def mobile_user_logout(request):
         if profile.is_authenticated():
             profile.apns_token = ""
             profile.save()
-        logout(request)    
+            logout(request)
         return SuccessResponse()
     else:
         return http.HttpBadRequest() 
