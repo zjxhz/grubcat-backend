@@ -423,7 +423,7 @@ def weibo_login(request):
         try:
             data = weibo_client.request_access_token(code)
         except:
-            raise Exception(u'微博接口异常')
+            raise Exception(u'对不起，现在是内测阶段未开放注册！')
             #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
