@@ -734,7 +734,7 @@ class Meal(models.Model):
                                   choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
-    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1,  default=30.0,
                                      blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
