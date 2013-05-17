@@ -59,19 +59,20 @@ class OrderCreateForm(ModelForm):
 class DishForm(ModelForm):
     def __init__(self, restaurant=None, *args, **kwargs):
         super(DishForm, self).__init__(*args, **kwargs)
-        self.fields['categories'].queryset = DishCategory.objects.filter(
-            Q(restaurant=restaurant))
-        self.fields['categories'].help_text = ''
+        self.fields['categories'].queryset = DishCategory.objects.filter(restaurant=kwargs['initial']['restaurant'])
+        self.fields['categories'].help_text = '按住Ctrl键可以选择多个分类'
 
     class Meta:
         model = Dish
-        exclude = ("restaurant",)
+        exclude = ("available", )
+        widgets = {
+            'restaurant': HiddenInput
+        }
 
 
 class DishCategoryForm(ModelForm):
     class Meta:
         model = DishCategory
-
 
 
 class MenuForm(ModelForm):

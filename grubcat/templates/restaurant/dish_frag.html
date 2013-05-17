@@ -1,0 +1,20 @@
+<tr id='dish-{{ dish.id }}'>
+    <td>{{ dish.name }}</td>
+    <td class="tr">{{ dish.price }}</td>
+    <td class="tc">{{ dish.unit }}</td>
+    <td>{% for cat in dish.categories.all %}{{ cat.name }}&nbsp;{% endfor %}</td>
+
+    {#                    <td class="tc">#}
+    {#                        {% if dish.available %}#}
+    {#                            <img src="{% static 'img/icon-yes.gif' %}" alt="目前可以供应">&nbsp;可供#}
+    {#                        {% else %}#}
+    {#                            <img src="{% static 'img/icon-no.gif' %}" alt="目前不可以供应">&nbsp;不可供#}
+    {#                        {% endif %}#}
+    {#                    <td/>#}
+
+    <td class="tc">
+        <a href="{% url 'restaurant_dish_edit' dish.id %}" data-remote="{% url 'restaurant_dish_edit' dish.id %}"
+           data-toggle="modal" data-target="#add-edit-dish-modal" class="changelink">编辑</a>
+        <a href="{% url 'restaurant_dish_del' dish.id %}" class="dellink">删除</a>
+    </td>
+</tr>

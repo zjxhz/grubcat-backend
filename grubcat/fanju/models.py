@@ -42,8 +42,8 @@ class Restaurant(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=u'用户', null=True, related_name="restaurant")
     name = models.CharField(u'餐厅名称', max_length=135)
     address = models.CharField(u'餐厅地址', max_length=765)
-    longitude = models.FloatField(u'经度', null=True, blank=True)
-    latitude = models.FloatField(u'纬度', null=True, blank=True)
+    longitude = models.FloatField(u'经度', null=True)
+    latitude = models.FloatField(u'纬度', null=True)
     tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
     regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
@@ -63,7 +63,7 @@ class Restaurant(models.Model):
 
 
 class DishCategory(models.Model):
-    name = models.CharField(u'菜名', max_length=45, )
+    name = models.CharField(u'分类', max_length=45, )
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
 
     def __unicode__(self):
@@ -78,16 +78,20 @@ class DishCategory(models.Model):
 class Dish(models.Model):
     name = models.CharField(u'菜名', max_length=135)
     price = models.DecimalField(u'价钱', decimal_places=1, max_digits=6)
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
-    desc = models.CharField(u'描述', max_length=765, blank=True)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
-    available = models.BooleanField(u'目前可以提供', default=True)
+    desc = models.CharField(u'描述', max_length=765, blank=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', blank=True)
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
+    available = models.BooleanField(u'目前可以提供', default=True)
+
+    def unique_error_message(self, model_class, unique_check):
+        return u'菜名重复！'
 
     def __unicode__(self):
         return u'%s' % self.name
 
     class Meta:
+        unique_together = ('name', 'restaurant')
         verbose_name = u'菜'
         verbose_name_plural = u'菜'
 

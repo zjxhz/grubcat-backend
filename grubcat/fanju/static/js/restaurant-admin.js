@@ -1,7 +1,11 @@
 jQuery(function ($) {
+    var $data = $("#data")
 
     $("#restaurant-nav li").removeClass("active");
     $("#" + $("#data").data("nav-active-id")).addClass("active");
+
+
+    /************************** 客人就餐 ****************************/
     // bind form using 'ajaxForm'
     $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
         var code = $("#id_code").val();
@@ -12,56 +16,207 @@ jQuery(function ($) {
         $("#result").html("");
     } });
 
-    $("#modal-dialog").live("dialog2.content-update", function (e, data) {
-        // got the dialog as this object. Do something with it!
-        var e = $(this);
-        var autoclose = e.find("a.auto-close");
-        if (autoclose.length > 0) {
-            e.dialog2('close');
-            var href = autoclose.attr('href');
-            if (href) {
-                window.location.href = href;
-            }
-        }
-    });
-    //dish list page
-    if ($("#dish-list")[0]) {
 
-        $("a.dellink").click(function () {
-            var $link = $(this);
-            var href = $link.attr('href');
-            $.fn.dialog2.helpers.confirm("确定要删除这道菜吗？", {
-                title:'确认',
-                confirm:function () {
-                    $.post(href, function () {
-                        $link.parents("tr").fadeOut(300);
-                    })
+
+    /************************** dish list pag ****************************/
+    var $dishListPage = $("#dish-list-page")
+    if ($dishListPage[0]) {
+        var $addOrEditDishModal = $("#add-edit-dish-modal"),
+            $addOrEditDishModalBody = $addOrEditDishModal.find(".modal-body"),
+            $addDishLink = $("#add-dish-link")
+
+        $addDishLink.click(function(){
+            $addOrEditDishModal.data('dish-action','add')
+        })
+        $(".changelink").live('click',function(){
+            $addOrEditDishModal.data('dish-action','edit')
+        })
+
+        $("#add-dish-link,.changelink").live('click', function () {
+            $.get($(this).attr('href'), function (html) {
+                $addOrEditDishModalBody.html(html)
+                if ($addOrEditDishModal.data('dish-action') == 'add') {
+                    $("#id_categories").val($addOrEditDishModal.data('last-dish-categories')).find("option:selected").prependTo($("#id_categories"))
+                }
+                $addOrEditDishModal.modal({show:true,backdrop:'static'})
+            })
+            return false
+        })
+
+        //make sure each time edit using a different dialog model
+        $addOrEditDishModal.on('hidden',function(){
+
+            $addOrEditDishModal.removeData("modal")
+            $addOrEditDishModalBody.empty()
+        })
+
+        $("#add-category-link").live('click', function () {
+
+            bootbox.prompt({
+                text:'添加分类',
+                confirm: function(categoryName) {
+                    if (!categoryName) {
+                        return false
+                    } else {
+                        //submit request
+                        $.post($data.data("add-dish-category-link"), {'category-name': categoryName}, function (data) {
+                            //create category
+                            var $catgegoryOption
+                            if (Boolean(data.created)) {
+                                $catgegoryOption = $("<option value='" + data.id +"'>" + data.name + "</option>")
+                                $catgegoryOption.prependTo("#id_categories")
+                            }
+
+                        })
+                    }
                 }
             });
-            return false;
-        });
 
+            return false
+        })
+
+        //add or edit a dish
+        $("#btn-add-edit-dish").click(function(){
+            $("#form-add-edit-dish").ajaxSubmit({
+                success:function(html){
+                    var $res = $(html)
+                    if($res.is("tr")){
+                        //success
+                        if($addOrEditDishModal.data('dish-action')=='add'){
+                            $addOrEditDishModal.data('last-dish-categories', $("#id_categories").val())
+                        }
+                        $addOrEditDishModal.modal('hide')
+
+                        var id = $res.attr("id")
+                        if($dishListPage.find("#"+id)[0]){
+                            //update a dish
+                            $res.hide().replaceAll($dishListPage.find("#" + id)).fadeIn()
+                        } else {
+                            //a new dish
+                            $res.hide().prependTo($dishListPage.find("tbody")).fadeIn()
+                        }
+                    } else {
+                        $addOrEditDishModalBody.html($res)
+                    }
+                }
+            })
+        })
+
+
+        $("a.dellink").live('click', function(){
+            var $link = $(this);
+
+            bootbox.confirm({
+                text: "确定要删除 “" + $link.parents("tr").find("td:first").text() + "” 这道菜吗？",
+                confirmClass: 'btn-danger',
+                confirmLabel: '删除',
+                confirm: function () {
+                    $.post($link.attr('href'), function () {
+                        $link.parents("tr").fadeOut(300, function(){
+                            $(this).remove()
+                        });
+
+                    })
+                }})
+            return false;
+        })
     }
 
-//    for add menu page
-    if ($("#dish-container")[0]) {
+    /**************************  add or edit menu page ****************************/
+    if ($("#add-edit-menu-page")[0]) {
+        var $menuItems = $("#menu-items"), $dishList = $("#dish-list")
 
-        var $menuItems = $("#menu-items")
-        $("#add-menu-help-link").click(function () {
-            $("#add-menu-help-dialog").dialog({
-                autoOpen:true,
-                title:"操作帮助",
-                modal:true,
-                width:550,
-                position:['center', 100]
+
+        function helperMasker() {
+            return $(this).clone().addClass("helper").css("width", $(this).width())
+        }
+
+        function hideDishes(dishId) {
+            $dishList.find(".dish[dish-id=" + dishId + "]").hide();
+        }
+
+        function showDishes(dishId) {
+            $dishList.find(".dish[dish-id=" + dishId + "]").fadeIn(1000);
+        }
+
+
+        function calculatePrice() {
+            calculateTotalPrice()
+            calculateAveragePrice()
+        }
+
+        function calculateTotalPrice() {
+            var $totalPrice = $("#total-price"), $menuContainer = $("#menu-items"), totalPrice = parseFloat($totalPrice.text())
+            totalPrice = 0
+            $menuContainer.find(".dish").each(function () {
+                totalPrice += parseFloat($(this).data('price')) * parseFloat($(this).find('.num').text())
+            })
+            $totalPrice.text(totalPrice).fadeOut(50).fadeIn(1000)
+        }
+
+        function calculateAveragePrice() {
+            var totalPrice = parseFloat($("#total-price").text())
+            //calculate average price
+            var $numPersons = $("#id_num_persons"), numPersons = parseInt($numPersons.val())
+            if (numPersons > 0) {
+                $("#id_average_price").val((Math.floor(totalPrice * 10 / numPersons) / 10).toFixed(1))
+            }
+        }
+
+        function calculateDishNumPerCategory(){
+            $menuItems.find(".category").each(function(){
+                var $category = $(this)
+                $category.find(".dish-num-per-category").text("(" + $category.nextUntil(".category").length + ")")
+            })
+        }
+        calculateDishNumPerCategory()
+        $("#add-category-link").click(function () {
+
+            bootbox.prompt({
+                text:'添加分类',
+                confirm: function(categoryName) {
+                    if (!categoryName) {
+                        return false
+                    } else {
+                        //submit request
+                        $.post($data.data("add-dish-category-link"), {'category-name': categoryName}, function (data) {
+                            //create category
+                            var $category_dt;
+                            if (Boolean(data.created)) {
+                                $category_dt = $('<dt class="category ui-draggable" category-id="' + data.id + '">' + data.name + '<span class="dish-num-per-category"></span><a href="#" class="close cb">×</a></dt>')
+                                $category_dt.hide().appendTo($("#dish-list")).draggable({
+                                    connectToSortable: "#menu-items",
+                                    revert: "invalid",
+                                    helper: helperMasker,
+                                    cursor: "move",
+                                    opacity: 0.35
+                                }).show();
+                            } else {
+                                $category_dt = $("#dish-list [category-id=" + data.id + "]")
+                            }
+                            $category_dt.dblclick();
+                        })
+                    }
+                }
             });
+
+            return false
+        })
+
+        //remove existing dishes in left column if edit a menu
+        $menuItems.find(".dish").each(function(){
+            $dishList.find(".dish[dish-id=" + $(this).attr('dish-id') + "]").hide()
+        })
+
+        $("#add-menu-help-link").click(function () {
+
+            $("#add-menu-help-modal").modal('show')
             return false;
         })
 
         //drag category
-        $("#dish-container dt, #dish-container dd").draggable({
+        $dishList.find(".dish, .category").draggable({
             connectToSortable:"#menu-items",
-            revert:"invalid",
             helper:helperMasker,
             cursor:"move",
             opacity:0.35
@@ -74,91 +229,81 @@ jQuery(function ($) {
             containment:"#menu-items",
             receive:function (e, ui) {
                 calculatePrice()
+                calculateDishNumPerCategory()
                 hideDishes(ui.sender.attr("dish-id"));
                 $(this).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}})
+            },
+            update:function(){
+                calculateDishNumPerCategory()
             }
         });
 
 
-        $("#dish-container dd,#dish-container dt").live('dblclick', function (e) {
-            $(this).clone().appendTo($("#menu-items")).hide().fadeIn(1000).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}});
+        //add dish and category
+        $("#dish-list .category, #dish-list .dish").live('dblclick', function (e) {
+            $(this).clone().appendTo($menuItems).hide().fadeIn(1000).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}});
             hideDishes($(this).attr("dish-id"))
             calculatePrice()
+            calculateDishNumPerCategory()
         })
 
         //remove category
-        $menuItems.find("dt").live('dblclick', function (e) {
+        $menuItems.find(".category").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
+            calculateDishNumPerCategory()
+            e.preventDefault()
         })
         //remove category
-        $menuItems.find("dt .close").live('click', function (e) {
-            $(this).parents("dt").fadeOut(1000).remove();
-            return false;
+        $menuItems.find(".category .close").live('click', function (e) {
+            $(this).parents(".category").fadeOut(1000).remove();
+            calculateDishNumPerCategory()
+            e.preventDefault()
         })
         //remove dish
-        $menuItems.find("dd").live('dblclick', function (e) {
+        $menuItems.find(".dish").live('dblclick', function (e) {
             $(this).fadeOut(1000).remove();
             calculatePrice()
+            calculateDishNumPerCategory()
             showDishes($(this).attr("dish-id"))
+             e.preventDefault()
         });
         //remove dish
-        $menuItems.find("dd .close").live('click', function (e) {
-            $(this).parents("dd").fadeOut(1000).remove();
+        $menuItems.find(".dish .close").live('click', function (e) {
+            $(this).parents(".dish").fadeOut(1000).remove();
             calculatePrice()
-            showDishes($($(this).parents("dd")).attr("dish-id"))
+            calculateDishNumPerCategory()
+            showDishes($($(this).parents(".dish")).attr("dish-id"))
+            e.preventDefault()
         })
 
-        var $changeDishNumDialog = $("#change-dish-num-dialog")
-        function changeDishNum() {
-            var $inpuNum = $("#input-change-num");
-            var $dishNum = $menuItems.find(".dish[dish-id=" + $changeDishNumDialog.data('dish-id') +"]").find(".num")
-            var num = $inpuNum.val()
-            if (!num) {
-                $inpuNum.focus();
-            } else {
-                try {
-                    $dishNum.text(parseInt(num))
-                    //submit request
-                    calculatePrice()
-                    $changeDishNumDialog.dialog("close");
-                } catch (e) {
-                    $inpuNum.focus();
-                }
 
-            }
-        }
-
-
-        $("#menu-items .dish .num").live('click',function () {
+        $menuItems.find(".dish .num").live('click',function () {
             var $dishNum = $(this)
-            $changeDishNumDialog.data('dish-id', $dishNum.parents('.dish').attr('dish-id'))
-            $("#input-change-num").val($dishNum.text())
-            $changeDishNumDialog.dialog({
-                autoOpen:true,
-                modal:true,
-                width:200,
-                resizable:false,
-                position:['center', 200],
-                buttons:{
-                    确定:function(){
-                        changeDishNum()
-                    },
-                    取消:function () {
-                        $(this).dialog("close");
+            bootbox.prompt({
+                text:'更改份数',
+                default: $dishNum.text(),
+                confirm: function (num) {
+                    try {
+                        num = parseInt(num)
+                        //todo reg check
+                    } catch (e) {
+                        return false
+                    }
+
+                    if (!num) {
+                        return false
+                    } else {
+                        $dishNum.text(num)
+                        calculatePrice()
                     }
                 }
-            });
+
+            })
             return false;
         }).tooltip({title:'修改',selector:true, delay:{show:300}})
 
-        $("#input-change-num").keydown(function(e){
-            if(e.keyCode==13){
-                changeDishNum()
-                return false;
-            }
-        })
 
-        $("#menu-container,#dish-container").disableSelection();
+        $("#menu-items,#dish-list").disableSelection();
 
         $("#id_num_persons").change(function () {
             calculateAveragePrice()
@@ -176,57 +321,6 @@ jQuery(function ($) {
                 }
             })
 
-        $("#add-category-link").click(function () {
-            $("#add-category-dialog").dialog({
-                autoOpen:true,
-                modal:true,
-                width:250,
-                resizable:false,
-                position:['center', 100],
-                buttons:{
-                    确定:addCategory,
-                    取消:function () {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-            return false;
-        })
-
-        function addCategory() {
-            var $category = $("#category-name");
-            if (!$category.val()) {
-                $category.focus();
-            } else {
-                //submit request
-                $("#add-dish-category").ajaxSubmit(function (data) {
-                    //create category
-                    var $category_dt;
-                    if (Boolean(data.created)) {
-                        $category_dt = $('<dt class="category tag ui-draggable" category-id="' + data.id + '">' + data.name + '<a href="#" class="close cb">×</a></dt>')
-                        $category_dt.hide().appendTo($("#dish-list")).draggable({
-                            connectToSortable: "#menu-items",
-                            revert: "invalid",
-                            helper: helperMasker,
-                            cursor: "move",
-                            opacity: 0.35
-                        }).show();
-                    } else {
-                        $category_dt = $("#dish-list [category-id=" + data.id + "]")
-                    }
-                    $category_dt.dblclick();
-                    $category.val("");
-                    $("#add-category-dialog").dialog("close");
-                })
-            }
-        }
-
-        $("#category-name").keydown(function(e){
-            if (e.keyCode == 13 ) {
-                addCategory()
-                return false;
-            }
-        })
 
         $("#save-menu-btn").click(function () {
             $("#save-menu-form").submit();
@@ -296,7 +390,7 @@ jQuery(function ($) {
 //end of add menu page
 
 //for menu list page
-    if ($("#menu-list")[0]) {
+    if ($("#menu-list-page")[0]) {
         var $container = $('#menu-list');
 
         $container.masonry({
@@ -348,6 +442,9 @@ jQuery(function ($) {
                         $(this).find(".upload-actions, .upload-actions-bg").hide();
                     })
                     $menuCoverWrapper.find(".btn-crop-cover").click();
+                    if(!$(".menu-cover-wrapper:not(.has-cover)")[0]){
+                        $("#no-cover-tip").remove()
+                    }
                     return false;
                 }
             };
@@ -358,20 +455,23 @@ jQuery(function ($) {
         $(".dellink").click(function (e) {
             var $menuContainer = $(this).parents(".menu-container");
             var delUrl = $(this).attr('href');
-            var $delMenuModal = $("#del-menu-modal");
-            $("#btn-del").unbind("click").click(function () {
-                $.post(delUrl, function () {
-                    $delMenuModal.modal("hide");
-                    $menuContainer.fadeOut(1000).remove();
-                    noty({text:"套餐删除成功"});
-                    if ($(".menu-container").length) {
-                        $container.masonry('reload');
-                    } else {
-                        window.location.reload();
-                    }
-                })
+            bootbox.confirm({
+                text:'确定要删除该套餐吗？',
+                confirmClass: 'btn-danger',
+                confirmLabel: '删除',
+                confirm: function () {
+                    $.post(delUrl, function () {
+                        $menuContainer.fadeOut(1000).remove();
+                        noty({text: "套餐删除成功"});
+                        if ($(".menu-container").length) {
+                            $container.masonry('reload');
+                        } else {
+                            window.location.reload();
+                        }
+                    })
+                }
             })
-            $delMenuModal.modal();
+
             return false;
         })
 
@@ -379,7 +479,7 @@ jQuery(function ($) {
 
 
     //for today meal list
-    if ($("#today-meal-list")[0]) {
+    if ($("#today-meal-list-page")[0]) {
         $(".menu-detail-link").click(function () {
 
             $("#menu-detail-modal-wrapper").load($(this).attr("href"), function (html) {
@@ -390,41 +490,6 @@ jQuery(function ($) {
     }
 
 });
-
-function helperMasker() {
-    return $(this).clone().addClass("helper").css("width", $(this).width())
-}
-
-function hideDishes(dishId) {
-    $("#dish-container [dish-id=" + dishId + "]").hide();
-}
-
-function showDishes(dishId) {
-    $("#dish-container [dish-id=" + dishId + "]").fadeIn(1000);
-}
-
- function calculatePrice(){
-     calculateTotalPrice()
-     calculateAveragePrice()
- }
-
-function calculateTotalPrice() {
-    var $totalPrice = $("#total-price"), $menuContainer = $("#menu-container"), totalPrice = parseFloat($totalPrice.text())
-    totalPrice = 0
-    $menuContainer.find(".dish").each(function () {
-        totalPrice += parseFloat($(this).data('price')) * parseFloat($(this).find('.num').text())
-    })
-    $totalPrice.text(totalPrice).fadeOut(50).fadeIn(1000)
-}
-
- function calculateAveragePrice(){
-     var totalPrice = parseFloat($("#total-price").text())
-     //calculate average price
-     var $numPersons = $("#id_num_persons"), numPersons = parseInt($numPersons.val())
-     if(numPersons > 0){
-         $("#id_average_price").val((Math.floor(totalPrice*10/numPersons)/10).toFixed(1))
-     }
- }
 
 function showPreview() {
 
