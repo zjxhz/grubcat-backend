@@ -70,7 +70,8 @@ chat_js = Bundle('js/underscore-1.4.4.js', 'js/backbone-1.0.0.js', 'js/chat/iso8
                  'js/chat/chat.js',
                  filters='yui_js',
                  output="gen/chat.%(version)s.js")
-bootstrap_js = Bundle('js/bootstrap.js',filters='yui_js', output="gen/bootstrap.%(version)s.js")
+bootstrap_js = Bundle('js/bootstrap.js', filters='yui_js', output="gen/bootstrap.%(version)s.js")
+bootstrap_box_js = Bundle('js/bootstrap-box.js', filters='yui_js', output="gen/bootstrap-box.%(version)s.js")
 base_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, noty_js, filters='yui_js',
                  output="gen/base.%(version)s.js")
 
@@ -87,16 +88,11 @@ water_fall_js = Bundle(
 jquery_form_js = Bundle('js/jquery.form.js', filters='yui_js', output='gen/jquery.form.%(version)s.js')
 validate_js = Bundle('js/jqBootstrapValidation.js', filters='yui_js', output='gen/validate.%(version)s.js')
 restaurant_admin_js = Bundle(
-    'js/restaurant-admin.js', filters='yui_js', output='gen/restaurant-admin.%(version)s.js'
+    bootstrap_box_js, 'js/restaurant-admin.js', filters='yui_js', output='gen/restaurant-admin.%(version)s.js'
 )
-create_meal_js = Bundle('js/bootstrap/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
+create_meal_js = Bundle('js/bootstrap-datepicker.js', 'js/jquery.lionbars.0.3.js', jquery_dropkick_js,
                         validate_js, 'js/gmap3.v5.0b.min.js', filters='yui_js',
                         output="gen/create-meal.%(version)s.js")
-
-jquery_ajax_bootstrap_js = Bundle(
-    'js/jquery.controls.js', 'js/jquery.dialog2.js', 'js/jquery.dialog2.helpers.js', filters='yui_js',
-    output='gen/jquery.ajax.bootstrap.%(version)s.js'
-)
 
 jquery_ui_js = Bundle('js/jquery-ui-1.8.21.custom.js', filters='yui_js',
                       output='gen/jquery-ui-1.8.21.custom.%(version)s.js')
@@ -120,6 +116,7 @@ register('profile_css', profile_css)
 register('restaurant_admin_css', restaurant_admin_css)
 
 register('bootstrap_js', bootstrap_js)
+register('bootstrap_box_js', bootstrap_box_js)
 register('jquery_js', jquery_js)
 register('jquery_dropkick_js', jquery_dropkick_js)
 register('noty_js', noty_js)
@@ -133,7 +130,6 @@ register('restaurant_admin_js', restaurant_admin_js)
 register('water_fall_js', water_fall_js)
 register('jquery_form_js', jquery_form_js)
 register('validate_js', validate_js)
-register('jquery_ajax_bootstrap_js', jquery_ajax_bootstrap_js)
 register('jquery_ui_js', jquery_ui_js)
 register('image_cropping_js', image_cropping_js)
 

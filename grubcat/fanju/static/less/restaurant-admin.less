@@ -16,7 +16,7 @@
       width: 700px;
     }
 
-    #save-menu-form, #menu-container {
+    #save-menu-form, #menu-items {
       width: 328px;
     }
 
@@ -36,16 +36,17 @@
 
 /**common for restaurant pages**/
 
-
 .addlink {
   padding-left: 12px;
   background: url(../img/icon_addlink.gif) 0 5px no-repeat;
   float: right;
   margin-bottom: 10px;
+  margin-left: 12px;
 }
 
 /** end for common **/
 
+/************* dish list page*******************/
 #dish-list-page {
   .changelink, .dellink {
     padding-left: 12px;
@@ -64,28 +65,25 @@
       padding-right: 10px;
     }
   }
+
 }
 
-/*menu list */
-#TODO refactor
-.confirm {
-  .ui-dialog-titlebar {
-    display: none;
-  }
-  .ui-dialog-content {
-    margin-top: 15px;
-  }
-  .ui-widget-header {
-    display: none;
+#form-add-edit-dish {
+  position: relative;
+  #add-category-link {
+    position: absolute;
+    right: 45px;
+    top: 230px;
   }
 }
 
-#check-in-page, #menu-list-page{
+/********************** menu list page **********************/
+#check-in-page, #menu-list-page {
   dl.menu-items {
     color: #666666;
     padding-left: 5px;
 
-    dd,dt {
+    dd, dt {
       background-color: white;
       color: #666;
       margin: 5px 7px 7px 20px;
@@ -123,11 +121,11 @@
     color: #666;
     line-height: 25px;
     border-bottom: 1px dashed #CCCCCC;
-    p.name-wrapper{
+    p.name-wrapper {
       width: 274px;
       .clearfix;
     }
-    .name-label{
+    .name-label {
       display: block;
       float: left;
     }
@@ -144,7 +142,7 @@
     margin-bottom: 25px;
     width: 370px;
     margin-left: 5px;
-    ul.dropdown-menu{
+    ul.dropdown-menu {
       min-width: 77px;
     }
   }
@@ -211,13 +209,13 @@
     }
 
     &.has-cover {
-      .upload-actions, .upload-actions-bg{
+      .upload-actions, .upload-actions-bg {
         display: none;
       }
       border: none;
       background-color: #fff;
       .upload-actions-bg {
-      //        display: none;
+        //        display: none;
         background-color: #000000;
         bottom: 18px;
         height: 34px;
@@ -227,10 +225,10 @@
         width: 360px;
       }
 
-      form{
-        left:27px;
+      form {
+        left: 27px;
       }
-      .btn-wrapper{
+      .btn-wrapper {
         width: 200px;
       }
       .btn-crop-cover, img {
@@ -240,29 +238,29 @@
     }
   }
 
-  #crop_menu_cover_wrapper{
-    .jcrop-image{
+  #crop_menu_cover_wrapper {
+    .jcrop-image {
       margin: auto;
     }
-    #crop_cover_modal{
+    #crop_cover_modal {
       width: 630px;
       margin-left: -315px;
     }
-    form{
+    form {
       margin-bottom: 0;
     }
-    #cropping-area img{
+    #cropping-area img {
       max-width: none;
     }
-    .file-upload, #id_cropping{
+    .file-upload, #id_cropping {
       display: none;
     }
   }
-  #del-menu-modal{
+  #del-menu-modal {
     margin-left: -200px;
     top: 20%;
     width: 400px;
-    .modal-body p{
+    .modal-body p {
       font-size: 16px;
       margin-top: 10px;
     }
@@ -270,7 +268,7 @@
 
 }
 
-/*添加套餐*/
+/****************** 添加或修改套餐 ************************/
 #add-edit-menu-page {
   margin-top: 10px;
 
@@ -292,16 +290,16 @@
     margin: 11px 0 20px 91px;
   }
   .control-group.average-price {
-    .controls{
+    .controls {
       margin-left: 90px;
-      width:240px;
+      width: 240px;
     }
     .help-inline {
-      font-size:  14px;
+      font-size: 14px;
       margin-left: 10px;
     }
-    #id_average_price{
-      width:55px;
+    #id_average_price {
+      width: 55px;
     }
   }
   .control-label {
@@ -320,34 +318,11 @@
   input[type="text"], input[type="password"], textarea {
     color: #555;
   }
-  #add-menu-help-link {
-    padding: 5px 20px;
-    background: url(../img/help.png) 2px 5px no-repeat;
-    background-size: 18px 18px;
-  }
 
-  #dish-container, #menu-container { //  border: 1px solid #DDD;
+  #dish-list, #menu-items {
     min-height: 100px;
     border: 1px solid #ddd;
     .border-radius(4px);
-  }
-
-  #menu-container{
-    .dish-info {
-//      position: absolute;
-    }
-  }
-
-  dt, dd {
-    height: 20px;
-    line-height: 20px;
-  }
-
-  dt {
-    margin-top: 10px;
-  }
-
-  #menu-items {
   }
 
   .helper {
@@ -355,7 +330,7 @@
     padding: 2px;
   }
 
-  .tag {
+  .dish, .category {
     background-color: #94BF17;
     color: white;
     border-radius: 3px;
@@ -364,102 +339,85 @@
     overflow: hidden;
     display: inline-block;
     margin: 0 15px 5px 0;
+    height: 20px;
+    line-height: 20px;
   }
 
-  #menu-container .tag {
-    display: block;
-  }
-
-  dt.tag {
+  .category {
     display: block;
     color: #666;
     background: #e4ff4e;
     border: 1px solid #DDD;
   }
 
-  #menu-container dt {
-    width: 290px;
-    margin: 5px 0 5px 5px;
-  }
-
-  #menu-container dd {
-    margin: 10px 0 10px 30px;
-  }
-
   .dish-info {
     float: right;
     padding-right: 0px;
-    a {
-      color: #ffffff;
-      &.num{
-        cursor: pointer;
-        padding:0px;
-      }
-    }
-  }
-  .menu-items dd.dish {
-    width: 240px;
+
   }
 
-  #dish-container {
-
+  #dish-list {
+    margin-top: 0;
     padding: 10px 0 10px 10px;
-    #dish-list {
-      margin-top: 0;
-    }
-    dt {
+    .category {
       width: 180px;
+      margin-bottom: 10px;
     }
     .dish-info {
       float: none;
+      .price {
+        float: right;
+      }
+      .unit, .num {
+        display: none;
+      }
     }
     .close {
       display: none;
     }
-    .unit, .num {
-      display: none;
-    }
-    .price {
-      float: right;
-    }
-  }
-  .menu-container {
-    margin-bottom: 25px;
-    width: 378px;
-  }
-  .help-title {
-    margin: 5px 2px;
-    float: right;
   }
 
-  .help-content {
-    color: #555;
-    margin: 5px 2px;
-
-  }
-
-  dl.menu-items {
+  #menu-items {
     margin-bottom: 0;
+    padding: 5px 0;
     min-height: 300px;
-    a.close{
+    .category {
+      width: 290px;
+      margin: 5px 0 5px 5px;
+      .dish-num-per-category {
+        margin-left: 10px;
+        color: #888;
+        font-weight: lighter;
+      }
+    }
+    .dish {
+      width: 250px;
+      margin: 5px 0 5px 30px;
+      padding: 3px 0 3px 7px;
+      font-size: 14px;
+      .dish-name {
+        display: inline-block;
+        width: 100px;
+      }
+      .dish-info {
+        display: inline-block;
+        .price {
+          display: inline-block;
+        }
+        a.num {
+          color: #ffffff;
+          cursor: pointer;
+          padding: 0px;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .close {
       margin-right: 7px;
       font-size: 25px;
     }
-    dd.dish {
-      font-size: 14px;
-      padding: 3px 0 3px 7px;
-      .dish-info {
-        float: right;
-      }
-      .dish-name {
-        display: inline-block;
-        width: 104px;
-      }
-    }
-    dt.category {
-      margin-bottom: 6px;
-      margin-top: 10px;
-    }
+
   }
 
   .hide-link {
@@ -475,18 +433,27 @@
     margin-top: 20px;
   }
 
-  #save-menu-btn {
+   #add-menu-help-link {
+    padding: 5px 20px;
+    background: url(../img/help.png) 2px 5px no-repeat;
+    background-size: 18px 18px;
+  }
+  .help-title {
+    margin: 5px 2px;
+    float: right;
+  }
+
+  .help-content {
+    color: #555;
+    margin: 5px 2px;
+
   }
 
 }
-#change-dish-num-form{
-  margin: 10px 0px 0 0;
-}
-#input-change-num{
-  width:150px;
-}
 
-#check-in-page, #today-meal-list {
+
+/**********************************************************/
+#check-in-page, #today-meal-list-page {
   table {
     margin-bottom: 20px;
   }
@@ -536,7 +503,7 @@
 }
 
 /*今日饭局*/
-#today-meal-list {
+#today-meal-list-page {
   #menu-detail-modal {
     width: 400px;
     top: 20%;

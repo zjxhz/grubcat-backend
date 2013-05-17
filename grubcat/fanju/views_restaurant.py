@@ -1,4 +1,5 @@
 #coding=utf-8
+from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponse
@@ -6,6 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from fanju.exceptions import NoRightException
 from fanju.models import Dish, Order
 from fanju.forms import *
 import json
@@ -93,11 +95,11 @@ def add_dish_category(request):
 
 
 class DishListView(ListView):
-    template_name = "restaurant/dish.html"
+    template_name = "restaurant/dish_list.html"
     context_object_name = "dish_list"
 
     def get_queryset(self):
-        return Dish.objects.filter(restaurant=self.request.user.restaurant).prefetch_related('categories')
+        return Dish.objects.filter(restaurant=self.request.user.restaurant).order_by('categories').prefetch_related('categories')
 
 
 class DishCreateView(CreateView):
@@ -105,17 +107,15 @@ class DishCreateView(CreateView):
     template_name = "restaurant/add_edit_dish.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
-    def get_form_kwargs(self):
-        kwargs = super(DishCreateView, self).get_form_kwargs()
-        kwargs.update({"restaurant": self.request.user.restaurant})
-        return kwargs
+    def get_initial(self):
+        return {'restaurant': self.request.user.restaurant}
 
     def form_valid(self, form):
         dish = form.save(False)
-        dish.restaurant = self.request.user.restaurant
+        if self.request.user.restaurant != dish.restaurant:
+            raise NoRightException
         super(DishCreateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
-        return HttpResponse(content=content)
+        return render_to_response('restaurant/dish_frag.html', {'dish': dish})
 
 
 class DishUpdateView(UpdateView):
@@ -124,32 +124,20 @@ class DishUpdateView(UpdateView):
     template_name = "restaurant/add_edit_dish.html"
     success_url = reverse_lazy("restaurant_dish_list")
 
+    def get_initial(self):
+        return {'restaurant': self.request.user.restaurant}
+
     def form_valid(self, form):
+        if self.request.user.restaurant != self.object.restaurant:
+            raise NoRightException
         super(DishUpdateView, self).form_valid(form)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
-        return HttpResponse(content=content)
-
-    def get_form_kwargs(self):
-        kwargs = super(DishUpdateView, self).get_form_kwargs()
-        kwargs.update({"restaurant": self.request.user.restaurant})
-        return kwargs
+        return render_to_response('restaurant/dish_frag.html', {'dish': self.object})
 
 
-class DishDeleteView(DeleteView):
-    model = Dish
-    context_object_name = "dish"
-    template_name = "restaurant/dish_confirm_delete.html"
-    success_url = reverse_lazy("restaurant_dish_list")
-
-    def get_object(self, queryset=None):
-        dish = get_object_or_404(Dish, pk=self.kwargs['pk'],
-            restaurant=self.request.user.restaurant)
-        return dish
-
-    def delete(self, request, *args, **kwargs):
-        super(DishDeleteView, self).delete(request, *args, **kwargs)
-        content = r'<a class="auto-close" href="%s"></a>' % reverse_lazy('restaurant_dish_list')
-        return HttpResponse(content=content)
+def del_dish(request, dish_id):
+    if request.method == 'POST':
+        Dish.objects.get(pk=dish_id, restaurant=request.user.restaurant).delete()
+        return create_sucess_json_response()
 
 
 class MenuListView(ListView):
@@ -239,21 +227,17 @@ def add_edit_menu(request, pk=None, is_copy=False):
                 category_item.save()
         return create_sucess_json_response(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
-        categories = DishCategory.objects.filter(dish__restaurant=request.user.restaurant).order_by("-id").distinct()
+        rest = request.user.restaurant
+        categories = DishCategory.objects.filter(restaurant=rest).order_by("-id").distinct()
 
-        for cat in categories:
-            cat.my_dishes = cat.dish_set.filter(restaurant=request.user.restaurant)
-
-        dishes_with_no_category = Dish.objects.filter(restaurant=request.user.restaurant,
-            categories__isnull=True).order_by("-id")
-        categories_with_no_dish = DishCategory.objects.filter(Q(dish__isnull=True),
-            Q(restaurant=request.user.restaurant) | Q(restaurant__isnull=True)
-        ).order_by("-id")
+        dishes_with_no_category = Dish.objects.filter(restaurant=rest,categories__isnull=True).order_by("-id")
+        categories_with_no_dish = categories.filter(dish__isnull=True)
+        categories_with_dish = categories.filter(dish__isnull=False)
         menu = None
         if pk:
             #edit menu
             try:
-                menu = Menu.objects.get(pk=pk, restaurant=request.user.restaurant)
+                menu = Menu.objects.get(pk=pk, restaurant=rest)
                 if is_copy:
                     menu.name = ""
             except ObjectDoesNotExist:
@@ -262,7 +246,7 @@ def add_edit_menu(request, pk=None, is_copy=False):
         menu_form = MenuForm(instance=menu)
         category_form = DishCategoryForm()
         return render_to_response("restaurant/add_edit_menu.html",
-            {'request': request, 'categories': categories, 'category_form': category_form,
+            {'request': request, 'categories_with_dish': categories_with_dish, 'category_form': category_form,
              'dishes_with_no_category': dishes_with_no_category,
              'categories_with_no_dish': categories_with_no_dish,
              'menu': menu, 'menu_form': menu_form})

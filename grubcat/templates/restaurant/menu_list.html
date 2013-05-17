@@ -17,7 +17,7 @@
     <div id="menu-list-page" class="span10 content">
 
         {% if need_upload_cover %}
-            <div class="alert">
+            <div class="alert" id='no-cover-tip'>
                 您还有套餐未上传封面，请上传封面！
             </div>
         {% endif %}
@@ -91,21 +91,6 @@
                 <div class="alert">现在还没有套餐！</div>
             {% endfor %}
             <div id="crop_menu_cover_wrapper"></div>
-            <div id="del-menu-modal" class="modal hide fade" tabindex="-1" role="dialog">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4>确认</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="">您确定要删除该套餐吗？</p>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">取消</button>
-                    <button id="btn-del" type="submit" class="btn  btn-primary">确定</button>
-                </div>
-
-            </div>
         </div>
     </div>
     <div id="data" data-nav-active-id="nav-menu" style="display: none"></div>
