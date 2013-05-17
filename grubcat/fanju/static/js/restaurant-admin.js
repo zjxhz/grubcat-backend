@@ -281,7 +281,7 @@ jQuery(function ($) {
             var $dishNum = $(this)
             bootbox.prompt({
                 text:'更改份数',
-                default: $dishNum.text(),
+                defaultValue: $dishNum.text(),
                 confirm: function (num) {
                     try {
                         num = parseInt(num)

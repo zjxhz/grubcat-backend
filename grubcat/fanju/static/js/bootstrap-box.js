@@ -132,12 +132,12 @@ var bootbox = window.bootbox || (function(document, $) {
     };
 
 
-    //{text:'', confirm:function(){}, cancel:function(){}, default:'}
+    //{text:'', confirm:function(){}, cancel:function(){}, defaultEx:'}
     that.prompt = function(options) {
         var headText = options.text || "",
             confirmCallback = options.confirm,
             cancelCallback = options.cancel,
-            defaultVal = options.default || "",
+            defaultVal = options.defaultValue || "",
             labelCancel = _translate('CANCEL'),
             labelOk = _translate('CONFIRM')
 
