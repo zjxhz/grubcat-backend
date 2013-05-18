@@ -48,7 +48,9 @@ jQuery(function ($) {
 
             $addOrEditDishModal.removeData("modal")
             $addOrEditDishModalBody.empty()
-        })
+        }).on('shown',function(){
+                $("#id_name").focus()
+            })
 
         $("#add-category-link").live('click', function () {
 
