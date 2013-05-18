@@ -228,9 +228,9 @@ def add_edit_menu(request, pk=None, is_copy=False):
         return create_sucess_json_response(u'保存套餐成功', extra_dict={'url': reverse('restaurant_menu_list'), })
     elif request.method == 'GET':
         rest = request.user.restaurant
-        categories = DishCategory.objects.filter(restaurant=rest).order_by("-id").distinct()
+        categories = DishCategory.objects.filter(restaurant=rest).order_by("id").distinct()
 
-        dishes_with_no_category = Dish.objects.filter(restaurant=rest,categories__isnull=True).order_by("-id")
+        dishes_with_no_category = Dish.objects.filter(restaurant=rest, categories__isnull=True).order_by("id")
         categories_with_no_dish = categories.filter(dish__isnull=True)
         categories_with_dish = categories.filter(dish__isnull=False)
         menu = None
