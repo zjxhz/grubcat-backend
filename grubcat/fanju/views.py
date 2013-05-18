@@ -171,10 +171,11 @@ class MealCreateView(CreateView):
 
 
 class MealListView(ListView):
-    queryset = Meal.get_default_upcomming_meals()
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
+    def get_queryset(self):
+        return Meal.get_default_upcomming_meals()
 
 
 ### User related views ###
