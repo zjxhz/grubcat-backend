@@ -188,12 +188,12 @@ jQuery(function ($) {
             })
         }
 
-        function rePositionRightColumn(){
-             if ($document.scrollTop() >= 129) {
-                    $("#right-column").css({'position': 'fixed', 'top': '5px', 'left': $("#left-column").position().left + $("#left-column").width() + 20})
-                } else {
-                    $("#right-column").css({'position': 'static'})
-                }
+        function rePositionRightColumn() {
+            if ($document.scrollTop() >= 129) {
+                $("#right-column").css({'position': 'fixed', 'top': '5px', 'left': $("#left-column").position().left + $("#left-column").width() + 20})
+            } else {
+                $("#right-column").css({'position': 'static'})
+            }
         }
 
         var $document = $(document)
