@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load thumbnail %}
 <div id="choose-menu" class="row">
     <div id="choose-restaurant" class="fl">
         <div id="restaurant-list">
@@ -6,9 +7,9 @@
                 <ul>
                     {% for menu in menu_list %}
                         <li class="restaurant-item" menu-id="{{ menu.id }}">
-                            <img alt="8人套餐 25元/人" src="{% static "img/menu-cover.png" %}">
+                            <div class="menu-cover"><img alt="8人套餐 25元/人" src="{{ menu.mini_cover_url }}"></div>
+                             <span class="rest-address">{{ menu.restaurant.name }}</span>
                             <span class="rest-price">{{ menu.average_price }}元/人</span>
-                            <span class="rest-address">{{ menu.restaurant.name }}</span>
                             {#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
                         </li>
                     {% endfor %}
