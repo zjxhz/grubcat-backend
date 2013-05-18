@@ -85,7 +85,7 @@ class Dish(models.Model):
     available = models.BooleanField(u'目前可以提供', default=True)
 
     def unique_error_message(self, model_class, unique_check):
-        return u'菜名重复！'
+        return u'菜名重复，如果已经添加过这道菜，您可以选择编辑！'
 
     def __unicode__(self):
         return u'%s' % self.name
