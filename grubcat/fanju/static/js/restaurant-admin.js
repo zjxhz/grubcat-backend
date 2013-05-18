@@ -25,6 +25,12 @@ jQuery(function ($) {
             $addOrEditDishModalBody = $addOrEditDishModal.find(".modal-body"),
             $addDishLink = $("#add-dish-link")
 
+        $(document).keyup(function (e) {
+            if (e.which == 78 || e.which == 110) {
+                $addDishLink.click()
+            }
+        })
+
         $addDishLink.click(function(){
             $addOrEditDishModal.data('dish-action','add')
         })
@@ -51,6 +57,12 @@ jQuery(function ($) {
         }).on('shown',function(){
                 $("#id_name").focus()
             })
+
+        $addOrEditDishModal.keyup(function(e){
+            if(e.which == 13){
+                $("#btn-add-edit-dish").click()
+            }
+        })
 
         $("#add-category-link").live('click', function () {
 
