@@ -707,7 +707,7 @@ MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
     )
 
-MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(2, 13)]
+MEAL_PERSON_CHOICE = [(2*x, "%s 人" % (2*x)) for x in range(1, 5)]
 START_TIME_CHOICE = (
     (dtime(9, 00), "9:00"), (dtime(9, 30), "9:30"), (dtime(10, 00), "10:00"), (dtime(10, 30), "10:30"),
     (dtime(11, 00), "11:00"), (dtime(11, 30), "11:30"), (dtime(12, 00), "12:00"), (dtime(12, 30), "12:30"),

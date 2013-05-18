@@ -187,6 +187,19 @@ jQuery(function ($) {
                 $category.find(".dish-num-per-category").text("(" + $category.nextUntil(".category").length + ")")
             })
         }
+
+        function rePositionRightColumn(){
+             if ($document.scrollTop() >= 129) {
+                    $("#right-column").css({'position': 'fixed', 'top': '5px', 'left': $("#left-column").position().left + $("#left-column").width() + 20})
+                } else {
+                    $("#right-column").css({'position': 'static'})
+                }
+        }
+
+        var $document = $(document)
+        $document.scroll(rePositionRightColumn)
+        $(window).resize(rePositionRightColumn).resize()
+
         calculateDishNumPerCategory()
         $("#add-category-link").click(function () {
 
