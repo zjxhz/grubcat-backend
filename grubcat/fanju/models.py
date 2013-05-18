@@ -170,6 +170,20 @@ class Menu(models.Model):
             url = staticfiles_storage.url("img/default/meal_cover.jpg")
         return url
 
+    @property
+    def mini_cover_url(self):
+        if self.photo:
+            url = get_thumbnailer(self.photo).get_thumbnail({
+                'size': (60, 40),
+                'crop': True,
+                'box': self.cropping,
+                #                'quality':85,
+                'detail': True,
+            }).url
+        else:
+            url = staticfiles_storage.url("img/default/meal_cover.jpg")
+        return url
+
 
     def __unicode__(self):
         return u'套餐%s' % self.id
@@ -482,14 +496,6 @@ class User(AbstractUser):
             return self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
         else:
             return None
-
-    #    To Be Deleted, checked in group pages
-    @property
-    def avatar_default_if_none(self):
-        if self.avatar:
-            return self.avatar.url
-        else:
-            return settings.MEDIA_URL + "uploaded_images/anno.png"
 
     @property
     def followers(self):
@@ -818,7 +824,6 @@ class Meal(models.Model):
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (420, 280),
                 'crop': True,
-                #                'quality':85,
                 'detail': True,
             }).url
         else:
@@ -831,8 +836,6 @@ class Meal(models.Model):
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (360, 240),
                 'crop': True,
-                #                'box': self.cropping,
-                #                'quality':85,
                 'detail': True,
             }).url
         else:
@@ -845,8 +848,6 @@ class Meal(models.Model):
             url = get_thumbnailer(self.photo).get_thumbnail({
                 'size': (150, 100),
                 'crop': True,
-                #                'box': self.cropping,
-                #                'quality':85,
                 'detail': True,
             }).url
         else:
