@@ -17,6 +17,12 @@ class Command(BaseCommand):
                                               make_option('--photo', action="store_true", dest="photo"),)
     
     def handle(self, *args, **options):
+
+        # symlink from media default to static default
+        if not os.path.exists(settings.MEDIA_ROOT + 'default'):
+            default_img = os.path.abspath('%s/../../static/img/default' % os.path.dirname(__file__))
+            os.symlink(default_img, settings.MEDIA_ROOT + 'default')
+
         meal_photo = options.get("meal_photo")
         if meal_photo:
             meal_photo_path = "%suploaded_images/%s" % (settings.MEDIA_ROOT, meal_photo) 

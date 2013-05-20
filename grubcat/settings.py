@@ -137,12 +137,20 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
+THUMBNAIL_QUALITY = 100
 BIG_AVATAR_SIZE = (180, 180)
 MEDIUM_AVATAR_SIZE = (150, 150)
 NORMAL_AVATAR_SIZE = (80, 80)
 SMALL_AVATAR_SIZE = (50, 50)
 IMAGE_CROPPING_THUMB_SIZE = (360, 360)
-THUMBNAIL_QUALITY = 100
+BIG_MENU_COVER_SIZE = (420, 280)
+NORMAL_MENU_COVER_SIZE = (360, 240)
+SMALL_MENU_COVER_SIZE = (150, 100)
+MINI_MENU_COVER_SIZE = (60, 40)
+
+#relative to media root
+DEFAULT_MALE_AVATAR = 'default/male.png'
+DEFAULT_FEMALE_AVATAR = 'default/female.png'
 
 ###################### pay ######################
 PAY_OVERTIME = 35

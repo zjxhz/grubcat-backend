@@ -1,6 +1,7 @@
 # coding=utf-8
 from datetime import datetime, date, timedelta
 from datetime import time as dtime
+import logging
 import time
 import threading
 from django.conf import settings
@@ -24,7 +25,7 @@ import os
 import random
 #import redis
 # Create your models here.
-
+logger = logging.getLogger(__name__)
 
 class Privacy:
     PUBLIC = 0
@@ -128,61 +129,29 @@ class Menu(models.Model):
         items.sort(key=lambda item: item.order_no)
         return items
 
+    def get_cover_thumbnail(self, size):
+        return get_thumbnailer(self.photo).get_thumbnail({
+            'size': size,
+            'crop': True,
+            'box': self.cropping,
+            'detail': True,
+        }).url
+
     @property
     def big_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (420, 280),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.BIG_MENU_COVER_SIZE)
 
     @property
     def normal_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (360, 240),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
 
     @property
     def small_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (150, 100),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.SMALL_MENU_COVER_SIZE)
 
     @property
     def mini_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (60, 40),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.MINI_MENU_COVER_SIZE)
 
 
     def __unicode__(self):
@@ -410,7 +379,10 @@ class User(AbstractUser):
             relationship.save()
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
-    
+
+    def is_default_avatar(self):
+        return self.avatar in (settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)
+
     def is_following(self, another):
         if another.followers.filter(pk=self.pk):
             return True
@@ -447,37 +419,25 @@ class User(AbstractUser):
         paying_orders_per_meal = all_paying_orders.values('meal').annotate(latest_order_id=Max('id'))
         return paying_orders_per_meal
 
-
-    
-    def avatar_thumbnailer(self, avatar_size):
-        try:
-            if self.avatar and os.path.exists(self.avatar.path):
-                return get_thumbnailer(self.avatar).get_thumbnail({
-                    'size': avatar_size,
-                    'box': self.cropping,
-                    'quality': 90,
-                    'crop': True,
-                    'detail': True,
-                })
-        except Exception:
-            pass
-
-    def avatar_thumbnail(self, width, height):
-        return self.avatar_thumbnail_for_size((width, height))
-            
     @property
     def age(self):
         if self.birthday:
             return date.today().year - self.birthday.year
         else:
             return None
+    
+    def avatar_thumbnail_for_size(self, avatar_size):
+        return get_thumbnailer(self.avatar).get_thumbnail({
+            'size': avatar_size,
+            'box': self.cropping,
+            'quality': 90,
+            'crop': True,
+            'detail': True,
+        }).url
 
-    def avatar_thumbnail_for_size(self, size):
-        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(size):
-            return self.avatar_thumbnailer(size).url
-        else:
-            return staticfiles_storage.url("img/default/big_avatar.png")
-        
+    def avatar_thumbnail(self, width, height):
+        return self.avatar_thumbnail_for_size((width, height))
+
     @property
     def big_avatar(self):
         return self.avatar_thumbnail_for_size(settings.BIG_AVATAR_SIZE)
@@ -488,15 +448,8 @@ class User(AbstractUser):
 
     @property
     def small_avatar(self):
-        return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)        
+        return '' #self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)
     
-    @property
-    def small_avatar_path(self):
-        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE):
-            return self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
-        else:
-            return None
-
     @property
     def followers(self):
         return self.followers.all()
@@ -671,7 +624,7 @@ class UserPhoto(models.Model):
     @property
     def large_photo(self):
         try:
-            return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (710, 1400 ),
                                                               'crop': False,
                                                               'detail': True
                                                               }).url
@@ -818,14 +771,17 @@ class Meal(models.Model):
     def left_persons(self):
         return self.max_persons - self.actual_persons
 
+    def get_cover_thumbnail(self, size):
+        return get_thumbnailer(self.photo).get_thumbnail({
+            'size': size,
+            'crop': True,
+            'detail': True,
+        }).url
+
     @property
     def big_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (420, 280),
-                'crop': True,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.BIG_MENU_COVER_SIZE)
         else:
             url = self.menu.big_cover_url
         return url
@@ -833,11 +789,7 @@ class Meal(models.Model):
     @property
     def normal_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (360, 240),
-                'crop': True,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
         else:
             url = self.menu.normal_cover_url
         return url
@@ -845,11 +797,7 @@ class Meal(models.Model):
     @property
     def small_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (150, 100),
-                'crop': True,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.SMALL_MENU_COVER_SIZE)
         else:
             url = self.menu.small_cover_url
         return url
@@ -916,6 +864,27 @@ class MealComment(Comment):
 #     cropping = ImageRatioField('image', '640x640')
 
 ####################################################  POST SAVE   #######################################
+
+@receiver(post_save, sender=User, dispatch_uid='set_default_avatar')
+def set_default_avatar(sender, instance, created, **kwargs):
+    user = instance
+    need_set_default_avatar = False
+    if not user.avatar:
+        need_set_default_avatar = True
+    elif user.gender == Gender.FEMALE and user.avatar == settings.DEFAULT_MALE_AVATAR:
+        need_set_default_avatar = True
+    elif user.gender != Gender.FEMALE and user.avatar == settings.DEFAULT_FEMALE_AVATAR:
+        need_set_default_avatar = True
+
+    if need_set_default_avatar:
+        if user.gender == Gender.FEMALE:
+            user.avatar = settings.DEFAULT_FEMALE_AVATAR
+        else:
+            user.avatar = settings.DEFAULT_MALE_AVATAR
+        user.cropping = ''
+        user.save(update_fields=('avatar', 'cropping'))
+
+
 def _pubsub_user_created(instance):
     user = instance
     cl, jid = pubsub.create_client(user)
