@@ -335,10 +335,17 @@ class MealDetailView(OrderCreateView):
             pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         context['avaliable_seats'] = range(meal.left_persons)
-        if self.request.user.is_authenticated() and self.request.user in meal.participants.all():
-            orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=self.request.user)
-            if len(orders):
-                context['order'] = orders[0]
+
+        payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+        context['payed_orders'] = payed_orders
+
+        if self.request.user.is_authenticated():
+            my_orders = payed_orders.filter(customer=self.request.user)
+            if len(my_orders) == 1 :
+                context['order'] = my_orders[0]
+            else:
+                logger.error('user %s has %s orders for meal %s' % (self.request.user.id, len(my_orders), meal.id ))
+
         if self.request.user.is_authenticated() and self.request.user == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
         else:
@@ -397,7 +404,7 @@ class UserMealListView(TemplateView):
             context['paying_orders'] = user.get_paying_orders()
             context['pay_overtime'] = settings.PAY_OVERTIME_FOR_PAY_OR_USER
         context['upcomming_orders'] = user.get_upcomming_orders()
-        context['passed_orders'] = user.get_passedd_orders()
+        context['passed_orders'] = user.get_passed_orders()
         return context
 
 

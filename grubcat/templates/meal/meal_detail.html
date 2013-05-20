@@ -118,13 +118,21 @@
                 {% else %}
                     <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加饭局，赶快预定吧！</h3>
                 {% endif %}
-                {% for user in meal.participants.all %}
-                    <a href="{% url 'user_detail' user.id %}" class="user-img-wrapper"
-                       title="{{ user.name }}">
-                        <img alt="{{ user.name }}" width="80"
+                {% for order in payed_orders %}
+                    <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
+                       title="{{ order.customer.name }}">
+                        <img alt="{{ order.customer.name }}" width="80"
                              height="80" class=""
-                             src="{{ user.normal_avatar }}">
+                             src="{{ order.customer.normal_avatar }}">
                     </a>
+                    {% if order.num_persons > 1 %}
+                        <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
+                           title="{{ order.customer.name }}邀请的朋友">
+                            <img alt="{{ order.customer.name }}邀请的朋友" width="80"
+                                 height="80" class=""
+                                 src="{% static 'img/default/normal_avatar.png' %}">
+                        </a>
+                    {% endif %}
                 {% endfor %}
 
                 {% for empty_user in avaliable_seats %}

@@ -417,7 +417,7 @@ class User(AbstractUser):
         else:
             return False
         
-    def get_passedd_orders(self):
+    def get_passed_orders(self):
         return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
                                                      meal__start_time__lt=datetime.now().time())).order_by(

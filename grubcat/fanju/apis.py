@@ -299,7 +299,7 @@ class UserResource(EOResource):
                 return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
-            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
+            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passed_orders()
             return self.get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     @writeMineOnly
