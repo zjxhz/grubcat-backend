@@ -934,14 +934,13 @@ def _pubsub_user_created(instance):
     cl.disconnect()
 
 
+@receiver(post_save, sender=User, dispatch_uid="pubsub_user_created")
 def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
         t = threading.Thread(target=_pubsub_user_created, args=(instance,))
         t.start()
 
-post_save.connect(pubsub_user_created, sender=User, dispatch_uid="pubsub_user_created") #dispatch_uid is used here to make it not called more than once
-
-
+@receiver(post_save, sender=Relationship, dispatch_uid="user_followed")
 def user_followed(sender, instance, created, **kwargs):
     if created:
         followee = instance.to_person
@@ -961,9 +960,9 @@ def user_followed(sender, instance, created, **kwargs):
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
         pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
         cl.disconnect()
-post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 
+@receiver(post_delete, sender=Relationship, dispatch_uid="user_unfollowed")
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
@@ -972,7 +971,6 @@ def user_unfollowed(sender, instance, **kwargs):
     pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
     cl.disconnect()
     
-post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 @receiver(post_save, sender=Meal, dispatch_uid="meal_created")
 def meal_created(sender, instance, created, **kwargs):
