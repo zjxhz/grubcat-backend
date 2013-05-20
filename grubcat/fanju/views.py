@@ -115,11 +115,10 @@ class MenuListView(ListView):
     def get_queryset(self):
         #TODO filter by  date and time
         num_persons = self.request.GET.get("num_persons", 8)
-        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons).select_related('restaurant', )
+        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons,).exclude(photo='').select_related('restaurant', )
         if hasattr(self.request.user, 'restaurant'):
             #餐厅用户只显示本餐厅的菜单
-            qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,
-                num_persons=num_persons).select_related('restaurant', )
+            qs = qs.filter(restaurant=self.request.user.restaurant)
         return qs
 
 
@@ -271,9 +270,8 @@ class UserListView(ListView):
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.tags.similar_objects()
         else:
-            return User.objects.exclude(avatar="").exclude(
-                restaurant__isnull=False).select_related('tags').order_by(
-                '-id')
+            return User.objects.exclude(avatar__in=('', settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR))\
+                .exclude(restaurant__isnull=False).select_related('tags').order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
@@ -281,8 +279,7 @@ class UserListView(ListView):
         if user.is_authenticated():
             if not user.tags.all():
                 context['need_edit_tags'] = True
-            if not user.avatar:
-                context['need_upload_avatar'] = True
+            context['need_upload_avatar'] = user.is_default_avatar()
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
             elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
@@ -378,8 +375,7 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
-        if not self.request.user.avatar:
-            context['avatar_tip'] = True
+        context['avatar_tip'] = self.request.user.is_default_avatar()
         return context
 
 

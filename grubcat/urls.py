@@ -152,8 +152,6 @@ urlpatterns = patterns('',
     url(r'^restaurant/menu/cover/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.EditMenuCoverView.as_view()),
         name="edit_menu_cover"),
 
-    #chat
-    url(r'^chat/$', TemplateView.as_view(template_name="chat.html"), name="chat"),
 
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),

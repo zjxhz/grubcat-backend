@@ -113,7 +113,7 @@
                 <div id="no-avatar-tip" class="alert hide">您现在还没有上传头像，无法使用聊天功能，现在就去 <a
                         href="{% url 'edit_basic_profile' %} ">上传头像</a></div>
             </div>
-            <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
+            <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/male.png' %}"
                  data-get-user-info-url="{% url 'get_user_info' %}"
                  data-my-avatar="{{ request.user.small_avatar }}"
                  data-my-name="{{ request.user.name }}"
