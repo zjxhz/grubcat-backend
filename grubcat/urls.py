@@ -92,8 +92,8 @@ urlpatterns = patterns('',
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
 #    url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
-    url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url': "/"}, name="logout"),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url': "/"}, name="logout"),
 
 
     #account

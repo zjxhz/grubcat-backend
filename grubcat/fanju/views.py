@@ -460,7 +460,8 @@ def weibo_login(request):
             #            else:
             return HttpResponseRedirect(next_url)
         else:
-            raise Exception(u'微博接口异常')
+            # raise Exception(u'微博接口异常')
+            raise Exception(u'对不起，现在是内测阶段未开放注册！')
 
 
 #class BindProfileView(UpdateView):
