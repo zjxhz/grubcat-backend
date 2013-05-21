@@ -362,7 +362,7 @@ class MealDetailView(OrderCreateView):
             my_orders = payed_orders.filter(customer=self.request.user)
             if len(my_orders) == 1 :
                 context['order'] = my_orders[0]
-            else:
+            elif len(my_orders) > 1:
                 logger.error('user %s has %s orders for meal %s' % (self.request.user.id, len(my_orders), meal.id ))
 
         if self.request.user.is_authenticated() and self.request.user == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu

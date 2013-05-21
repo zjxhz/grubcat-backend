@@ -259,6 +259,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django': {
+            'level': 'ERROR',
+            'propagate': True
+        },
         'fanju': {
             'level': 'INFO',
             'propagate': True
@@ -269,7 +273,7 @@ LOGGING = {
             'propagate': True
         },
         'fanju.pay': {
-            'handlers': ['pay','sentry'],
+            'handlers': ['pay', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
         },
