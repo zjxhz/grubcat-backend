@@ -448,6 +448,7 @@ def weibo_login(request):
     #        after weibo auth
         try:
             data = weibo_client.request_access_token(code)
+            logger.debug(data)
         except:
             raise Exception(u'对不起，现在是内测阶段未开放注册！')
             #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
