@@ -196,7 +196,7 @@ class Order(models.Model):
     meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
-    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=2)
+    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=1)
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)

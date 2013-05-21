@@ -177,7 +177,7 @@ jQuery(function ($) {
             //calculate average price
             var $numPersons = $("#id_num_persons"), numPersons = parseInt($numPersons.val())
             if (numPersons > 0) {
-                $("#id_average_price").val((Math.floor(totalPrice * 10 / numPersons) / 10).toFixed(1))
+                $("#id_average_price").val((Math.floor(totalPrice * 10 / numPersons) / 10))
             }
         }
 

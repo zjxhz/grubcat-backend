@@ -29,7 +29,7 @@
                     </tr>
                     <tr>
                         <th>总共消费</th>
-                        <td>{{ meal.list_price }} * {{ meal.actual_persons }} = {{ meal.total_price }} 元</td>
+                        <td>{{ meal.list_price|floatformat }} * {{ meal.actual_persons }} = {{ meal.total_price|floatformat }} 元</td>
                     </tr>
                     <tr>
                         <th>菜单</th>

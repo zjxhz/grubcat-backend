@@ -9,7 +9,7 @@
                         <li class="restaurant-item" menu-id="{{ menu.id }}">
                             <div class="menu-cover"><img alt="8人套餐 25元/人" src="{{ menu.mini_cover_url }}"></div>
                              <span class="rest-address">{{ menu.restaurant.name }}</span>
-                            <span class="rest-price">{{ menu.average_price }}元/人</span>
+                            <span class="rest-price">{{ menu.average_price|floatformat }}元/人</span>
                             {#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
                         </li>
                     {% endfor %}
@@ -34,19 +34,6 @@
                 </div>
 
                 {% include 'meal/menu_frag.html' %}
-                {% comment %}<dl class="menu-items">
-                    {% for item in menu.items %}
-                        {% if item.num %}
-                            <dd class="dish"><span class="dish-name">{{ item.dish.name }}</span>
-                                <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
-                                        class="unit"> /{{ item.dish.unit }} &times; </span><span
-                                        class="num">{{ item.num }}</span></span>
-                            </dd>
-                        {% else %}
-                            <dt class="category">{{ item.category.name }}  </dt>
-                        {% endif %}
-                    {% endfor %}
-                </dl>{% endcomment %}
             </div>
         {% endfor %}
     </div>

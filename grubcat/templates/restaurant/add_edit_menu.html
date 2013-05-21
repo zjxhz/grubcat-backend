@@ -20,43 +20,18 @@
 {% endblock %}
 {% block content %}
     <div id="add-edit-menu-page" class="span10 content">
-{#        <div class="hide" id="add-menu-help-dialog">#}
-{#            <div class="help-content">#}
-{#                <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧#}
-{#                </p>#}
-{##}
-{#                <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>#}
-{##}
-{#                <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>#}
-{##}
-{#                <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>#}
-{##}
-{#                <p>4.如何改变菜的份数？<br/>&nbsp;&nbsp;&nbsp;&nbsp;鼠标点击后，在弹出的对话框中修改</p></div>#}
-{#        </div>#}
-
         <div class="row">
             <div id="left-column" class="span6">
 {#                <div id="dish-container" class="">#}
                     <dl id="dish-list">
                         {% for dish in dishes_with_no_category %}
-                            <dd class="dish" dish-id="{{ dish.id }}" data-price='{{ dish.price }}'><span
-                                    class="dish-name">{{ dish.name }}</span>
-                                <a href="#" class="close">&times;</a>
-
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
+                            {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
                         {% endfor %}
                         {% for category in categories_with_dish %}
                             <dt class="category" category-id="{{ category.id }}">{{ category.name }}<span class="dish-num-per-category"></span><a
                                     href="#" class="close cb">&times;</a></dt>
                             {% for dish in category.dish_set.all %}
-                                <dd class="dish" dish-id="{{ dish.id }}" data-price='{{ dish.price }}'><span
-                                        class="dish-name">{{ dish.name }}</span>
-                                    <a href="#" class="close">&times;</a>
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
+                                {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
                             {% endfor %}
                         {% endfor %}
                         {% for category in categories_with_no_dish %}
@@ -88,7 +63,7 @@
 
                         <div class="controls">
                             {#                            <span class="add-on">¥</span>#}
-                            {{ menu_form.average_price }}
+                            <input id="id_average_price" name="average_price" type="text" value="{{ menu_form.average_price.value|floatformat }}">
                             <span class="help-inline" id='total-price-tip'>目前总共消费 <span
                                     id='total-price'>0</span> 元</span>
                         </div>
@@ -107,15 +82,7 @@
                     <dl class="menu-items" id="menu-items">
                         {% for item in menu.items %}
                             {% if item.num %}
-                                <dd class="dish" dish-id="{{ item.dish.id }}"
-                                    data-price='{{ item.dish.price }}'><span
-                                        class="dish-name">{{ item.dish.name }}</span>
-                                    <a href="#" class="close">&times;</a>
-
-                                <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
-                                        class="unit"> /{{ item.dish.unit }} &times; </span><a
-                                        class="num">{{ item.num }}</a>&nbsp;&nbsp; </span>
-                                </dd>
+                                {% include 'restaurant/menu_dish_frag.html' with dish=item.dish num=item.num %}
                             {% else %}
                                 <dt class="category" category-id="{{ item.category.id }}">{{ item.category.name }}<span class="dish-num-per-category"></span>
                                     <a href="#" class="close cb">&times;</a>

@@ -1,6 +1,7 @@
+{#used in dish list page#}
 <tr id='dish-{{ dish.id }}'>
     <td>{{ dish.name }}</td>
-    <td class="tr">{{ dish.price }}</td>
+    <td class="tr">{{ dish.price|floatformat }}</td>
     <td class="tc">{{ dish.unit }}</td>
     <td>{% for cat in dish.categories.all %}{{ cat.name }}&nbsp;{% endfor %}</td>
 
