@@ -20,7 +20,7 @@
                         <ul class="tags">
 
                             {% for tag in user.tags.all %}
-                                <a href=""><li>{{ tag.name }}</li></a>
+                                <li>{{ tag.name }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -34,12 +34,12 @@
 {% if need_edit_tags_again %}
     <div class="alert hide" id="need_edit_tags_again_tip">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        这么少？不会吧！再去完善下你的兴趣爱好，这样就能找到更多和你有共同喜好的朋友哦~ 赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>！
+        这么少？再去完善下你的兴趣爱好，这样就能找到更多和你有共同喜好的朋友哦~ 赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>！
     </div>
 {% endif %}
 <div id="page-nav">
-{% if page_obj.has_next %}
-    <a href="{% url 'more_user' page_obj.next_page_number %}{% if 'show' in request.GET %}?show=common{% endif %}"></a>
+{% if next_page_url %}
+    <a href="{{ next_page_url }}"></a>
 {% endif %}
 </div>
 

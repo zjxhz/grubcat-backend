@@ -29,9 +29,7 @@
                             <ul class="tags  as-selections">
                                 {% with my_tags=user.tags.all %}
                                     {% for tag in tags %}
-                                        <a href="">
-                                            <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag.name }}</li>
-                                        </a>
+                                        <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag.name }}</li>
                                     {% endfor %}
                                 {% endwith %}
                             </ul>
@@ -133,7 +131,5 @@
         </div>
 
     </div>
-    <div id="data" style="display: none" data-add-tag-url="{% url 'add_tag' %}"
-         {% if user.is_authenticated %}data-is-login="true"{% endif %}
-         {% if is_mine %}data-is-mine="true"{% endif %} data-active-nav-id="profile_basic_info"></div>
+    <div id="data" style="display: none" data-add-tag-url="{% url 'add_tag' %}"  data-user-list-url='{% url "user_list" %}' data-active-nav-id="profile_basic_info"></div>
 {% endblock %}
