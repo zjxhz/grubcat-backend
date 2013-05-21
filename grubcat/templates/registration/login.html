@@ -22,14 +22,15 @@
                     <input type="hidden" name="next" value="{{ next }}"/>
                 </fieldset>
 
-                <p class="remember-wrapper">
-                    <input name="user[remember_me]" type="hidden" value="0">
-                    <input checked="checked" checked_value="1"
-                           id="user_remember_me"
-                           name="user[remember_me]" type="checkbox"
-                           unchecked_value="0" value="1"> <span>下次自动登录</span>
-                    <a href="/user/password/forget" class="hover-link forget-password fr">忘记密码</a>
-                </p>
+{#                <p class="remember-wrapper">#}
+{#                    <input name="user[remember_me]" type="hidden" value="0">#}
+{#                    <input checked="checked" checked_value="1"#}
+{#                           id="user_remember_me"#}
+{#                           name="user[remember_me]" type="checkbox"#}
+{#                           unchecked_value="0" value="1">#}
+{#                    <span>下次自动登录</span>#}
+{#                    <a href="/user/password/forget" class="hover-link forget-password fr">忘记密码</a>#}
+{#                </p>#}
 
                 <p class="sign-up-button">
                     <input class="btn-signup" name="commit" type="submit" value="登录">
@@ -38,7 +39,7 @@
             </form>
         </div>
 
-        {% include "registration/social_login.html" %}
+{#        {% include "registration/social_login.html" %}#}
     </div>
 {% endblock %}
 

@@ -55,7 +55,6 @@ input {
 .login-panel,.register-panel {
     width: 190px;
     padding-right: 36px;
-    border-right: 1px solid #bbb;
 }
 
 .login-form input {
