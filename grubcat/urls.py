@@ -99,7 +99,7 @@ urlpatterns = patterns('',
     #account
     #    url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
+    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="profile/user_container.html"),
         name="more_user"),
     url(r'^profile/edit/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
     url(r'^user/(?P<pk>\d+)/$', login_required(ProfileDetailView.as_view()), name='user_detail'),

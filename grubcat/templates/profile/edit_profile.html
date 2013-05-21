@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "profile/base.html" %}
 {% load static from staticfiles %}{% load assets %}{% load static_asset %}
 {% block title %}修改个人资料{% endblock %}
 {% block page_css %}
@@ -9,16 +9,16 @@
 {% endblock %}
 
 
-{% block content %}
+{% block profile-main %}
     <div id="edit-profile" class="row">
-        {% include 'user/avatar_frag.html' %}
+        {% include 'profile/avatar_frag.html' %}
 
 
         <form id="basic-profile-form" action="{% url 'edit_basic_profile' %}" method="post" class="form-horizontal span9">
             <fieldset>
                 {#                    <legend>基本资料</legend>#}
 
-    {% include "user/mandatory_profile_elements.html" with form=form %}
+    {% include "profile/mandatory_profile_elements.html" with form=form %}
 
 
                 <div class="control-group ">
@@ -103,7 +103,8 @@
 
     </div>
 
-    <div id="data" style="display: none" {% if status %}data-noty-msg="资料修改成功"{% endif %} list-tags-url='{% url 'tag_list' %}'></div>
+    <div id="data" style="display: none" {% if status %}data-noty-msg="资料修改成功"{% endif %} list-tags-url='{% url 'tag_list' %}'
+         data-active-nav-id="profile_basic_info" ></div>
 
 {% endblock %}
 

@@ -16,3 +16,5 @@ requirements.txt~
 grubcat/fanju/static/gen/*
 grubcat/fanju/static/.webassets*
 .DS_Store
+grubcat/fanju/static/img/default/male.png*
+grubcat/fanju/static/img/default/female.png*
