@@ -448,7 +448,7 @@ class User(AbstractUser):
 
     @property
     def small_avatar(self):
-        return '' #self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)
+        return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)
     
     @property
     def followers(self):
