@@ -21,13 +21,15 @@ from fanju.util import isMobileRequest
 from fanju.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from fanju.forms import *
 from django.conf import settings
-import json
 from datetime import datetime, date, timedelta
+import json
 
 logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
 
 ###Photo related views ###
+
+
 class PhotoCreateView(CreateView):
     form_class = PhotoForm
     template_name = 'profile/photo/upload_photo.html'
@@ -74,7 +76,7 @@ def set_profile_common_attrs(context, request):
     used in all profile pages:basic_profile, photo_list, photo_detail, upload_photo, user_meals, follower/followees
     '''
     context['is_mine'] = context['profile'] == request.user
-    context['orders_count'] = context['profile'].orders.filter(status=OrderStatus.PAYIED).count()
+    context['orders_count'] = context['profile'].orders.filter(status__in=(OrderStatus.PAYIED,OrderStatus.USED )).count()
     if context['is_mine']:
         context['orders_count'] += context['profile'].get_paying_orders_count()
 
@@ -203,7 +205,7 @@ def get_user_info(request):
 class UploadAvatarView(UpdateView):
     form_class = UploadAvatarForm
     model = User
-    template_name = "user/upload_avatar.html"
+    template_name = "profile/upload_avatar.html"
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -223,10 +225,17 @@ class UploadAvatarView(UpdateView):
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
     model = User
-    template_name = 'user/edit-profile.html'
+    template_name = 'profile/edit_profile.html'
 
     def get_object(self, queryset=None):
+
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        context['profile'] = self.request.user
+        set_profile_common_attrs(context, self.request)
+        return context
 
     def get_success_url(self):
         return reverse('user_detail', kwargs={'pk': self.object.id})
@@ -258,11 +267,9 @@ class ProfileDetailView(DetailView):
         return context
 
 
-
-
 class UserListView(ListView):
 #    queryset = User.objects.all().select_related('tags')
-    template_name = "user/user_list.html"
+    template_name = "profile/user_list.html"
     context_object_name = "user_list"
     paginate_by = 20
 
