@@ -27,14 +27,27 @@
         </div>
     {% endif %}
 
-    {% if show_common_tags_link %}
-        <div class="show-users-actions clearfix">
-            <a href="{% url 'user_list' %}?show=common" class="fr">寻找志同道合的朋友</a>
-        </div>
-    {% endif %}
+    <div class="users-actions clearfix">
+
+        {% if request.GET.tags %}
+            <ul class="tags">
+                <li class="showing-tag">{{ request.GET.tags }}</li>
+            </ul>
+        {% endif %}
+        {% if show_add_tag %}
+            <a  class="btn-link add-tag-link" href="#" data-tags='{{ request.GET.tags }}'>添加到我的兴趣</a>
+       {% endif %}
+        {% if show_common_tags_link %}
+            <a class='show-common-link' href="{% url 'user_list' %}?show=common" class="fr">寻找志同道合的朋友</a>
+        {% endif %}
+
+    </div>
 
     {% include "profile/user_container.html" %}
-    <div id="data" data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}" {% if user.is_authenticated %}data-is-login="true"{% endif %} data-add-tag-url="{% url 'add_tag' %}" style="display: none"></div>
+    <div id="data" data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}"
+         data-user-list-url='{% url "user_list" %}'
+         data-add-tag-url="{% url 'add_tag' %}"
+         style="display: none"></div>
 {% endblock %}
 
 {% block page_js %}

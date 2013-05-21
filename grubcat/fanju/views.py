@@ -274,15 +274,28 @@ class UserListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
+        tags = self.request.GET.get('tags')
+        users = User.objects.exclude(
+            avatar__in=('', settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)).exclude(
+            restaurant__isnull=False).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.tags.similar_objects()
+        elif tags:
+            return users.filter(tags__name__in=(tags, )).distinct()
         else:
-            return User.objects.exclude(avatar__in=('', settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR))\
-                .exclude(restaurant__isnull=False).select_related('tags').order_by('-id')
+            return users
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
         user = self.request.user
+
+        if context['page_obj'].has_next():
+            next_page_url = reverse_lazy('more_user',kwargs={'page': context['page_obj'].next_page_number()})+"?"
+            for arg in ('show', 'tags'):
+                if self.request.GET.get(arg):
+                    next_page_url += ("%s=%s&" % (arg, self.request.GET.get(arg)))
+            context['next_page_url'] = next_page_url
+
         if user.is_authenticated():
             if not user.tags.all():
                 context['need_edit_tags'] = True
@@ -291,6 +304,8 @@ class UserListView(ListView):
                 context['show_common_tags_link'] = True
             elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
+            if self.request.GET.get('tags') and not self.request.user.tags.filter(name=self.request.GET.get('tags')).exists():
+                context['show_add_tag'] = True
         return context
 
 

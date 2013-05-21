@@ -463,36 +463,29 @@
 
     var $container = $('#user-container');
     var $profile_basic_info_page = $("#profile_basic_info_page");
-    var $tagItems = $(".tags li");
+    var $tagItems = $(".tags li:not(.showing-tag)")
     if (($container[0] || $profile_basic_info_page[0])) {
-        if ($data.data("isLogin") && !$data.data("isMine")) {
-
-            $(".tags li.common").live('click', function () {
-                return false;
-            });
-            $(".tags li[class!=common]").live("mouseenter",function () {
-                $(this).attr("title", "点击复制到我的兴趣");
-            }).live("click", function () {
-                    var $item = $(this);
-                    $.post($data.data("add-tag-url"), {'tag': $(this).text()}, function () {
-                        noty({text: $item.text() + " 已经复制到我的兴趣", timeout: 500});
-                        $(".tags li:contains(" + $item.text() + ")").each(function () {
-                            if ($(this).text() == $item.text()) {
-                                $(this).addClass("common").removeAttr("title");
-                            }
-                        })
-                    });
-                    return false;
-                });
-        } else {
-            $tagItems.click(function () {
-                return false;
-            });
-        }
+        $tagItems.live("mouseenter",function () {
+            $(this).attr("title", '点击查看该标签下的用户');
+        }).live('click', function () {
+                window.location.href= $data.data('userListUrl')+"?tags=" + $(this).text()
+            })
     }
 
     if ($container[0]) {
-
+        $(".add-tag-link").click(function () {
+            var tag = $(this).data('tags')
+            $.post($data.data("add-tag-url"), {'tag': tag}, function () {
+                noty({text: tag + " 已经添加到我的兴趣", timeout: 500});
+                $(".add-tag-link").remove()
+                $(".tags li:contains(" + tag + ")").not('.showing-tag').each(function () {
+                    if ($(this).text() == tag) {
+                        $(this).addClass("common")
+                    }
+                })
+            });
+            return false
+        })
         $tagItems.each(function () {
             //noinspection JSUnresolvedVariable
             if ($.inArray($(this).html(), myTags) > -1) {
