@@ -115,7 +115,7 @@ class DishCreateView(CreateView):
         if self.request.user.restaurant != dish.restaurant:
             raise NoRightException
         super(DishCreateView, self).form_valid(form)
-        return render_to_response('restaurant/dish_frag.html', {'dish': dish})
+        return render_to_response('restaurant/dish_list_dish_frag.html', {'dish': dish})
 
 
 class DishUpdateView(UpdateView):
@@ -131,7 +131,7 @@ class DishUpdateView(UpdateView):
         if self.request.user.restaurant != self.object.restaurant:
             raise NoRightException
         super(DishUpdateView, self).form_valid(form)
-        return render_to_response('restaurant/dish_frag.html', {'dish': self.object})
+        return render_to_response('restaurant/dish_list_dish_frag.html', {'dish': self.object})
 
 
 def del_dish(request, dish_id):
