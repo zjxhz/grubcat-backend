@@ -327,17 +327,14 @@
         $("#id_avatar_for_upload").change(function () {
             $("#avatar_alert").remove();
             var options = {
-                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
+//                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
                 beforeSubmit: function () {
                     $(".avatar .loading").show();
                 }, // pre-submit callback
                 success: function () {
                     $(".avatar .loading").hide();
-                    $("#avatar-wrapper").find("img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'));
-                    setChatAvatar( $("#data-avatar-page").data('small-avatar-url'))
-                    $('#crop-avatar-link').show();
-                    submit_crop_form();
-                    $("#crop_avatar_modal").modal();
+
+                    $('#crop-avatar-link').show().click();
                     return false;
                 }  // post-submit callback
             };
@@ -348,14 +345,8 @@
         $("#crop-avatar-link").click(function () {
 
             $("#crop_avatar_wrapper").load($('#crop-avatar-link').attr('href'), function () {
-                submit_crop_form();
-                $("#crop_avatar_modal").modal();
-            });
-            return false;
-        });
+                $("#crop_submit").click(function () {
 
-        function submit_crop_form() {
-            $("#crop_submit").click(function () {
                 $("#id_crop_form").ajaxSubmit({
                     success: function (data) {
                         //noinspection JSUnresolvedVariable
@@ -367,7 +358,11 @@
                 });
                 return false;
             })
-        }
+                $("#crop_avatar_modal").modal();
+            });
+            return false;
+        });
+
 
         //crop avatar
 
