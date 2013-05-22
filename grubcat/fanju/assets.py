@@ -5,6 +5,10 @@ bootstrap_css = Bundle(
     'less/bootstrap/bootstrap.less', 'less/bootstrap/responsive.less', filters='less,cssmin',
     output='gen/bootstrap.%(version)s.css', depends='less/bootstrap/*.less'
 )
+bootstrap_ie6_css = Bundle(
+    'less/bootstrap/bootstrap_ie6.less',filters='less,cssmin',
+    output='gen/bootstrap.ie6.%(version)s.css', depends='less/bootstrap/*.less'
+)
 dropkick_css = Bundle('css/dropkick.css', filters='cssmin', output='gen/dropkick.%(version)s.css')
 common_css = Bundle(dropkick_css, 'less/common.less', filters='less,cssmin', output='gen/common.%(version)s.css')
 responsive_css = Bundle('less/responsive.less', filters='less,cssmin', output='gen/responsive.%(version)s.css')
@@ -72,10 +76,10 @@ chat_js = Bundle('js/underscore_1.4.4.js', 'js/backbone_1.0.0.js', 'js/chat/iso8
                  output="gen/chat.%(version)s.js")
 bootstrap_js = Bundle('js/bootstrap.js', filters='yui_js', output="gen/bootstrap.%(version)s.js")
 bootstrap_box_js = Bundle('js/bootstrap_box.js', filters='yui_js', output="gen/bootstrap-box.%(version)s.js")
-base_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, noty_js, filters='yui_js',
+base_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, noty_js, 'js/common.js', filters='yui_js',
                  output="gen/base.%(version)s.js")
 
-base_main_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, 'js/jquery.lazyload.js', filters='yui_js',
+base_main_js = Bundle(jquery_js, 'js/utils.js',  bootstrap_js, 'js/jquery.lazyload.js','js/common.js', filters='yui_js',
                       output="gen/base.main.%(version)s.js")
 
 module_js = Bundle('js/module.js', filters='yui_js', output="gen/module.%(version)s.js")
@@ -103,6 +107,7 @@ image_cropping_js = Bundle('js/jquery.Jcrop.js', 'js/image_cropping.js', filters
 register('common_css', common_css)
 register('base_css', base_css)
 register('bootstrap_css', bootstrap_css)
+register('bootstrap_ie6_css', bootstrap_ie6_css)
 register('dropkick_css', dropkick_css)
 register('module_css', module_css)
 #register('group_list_css', group_list_css)
