@@ -49,9 +49,6 @@ profile_css = Bundle(
     filters='less,cssmin', output='gen/profile.%(version)s.css'
 )
 
-#order_css = Bundle(
-#     common_css, 'css/order.css', filters='cssmin', output='gen/order.%(version)s.css'
-#)
 
 restaurant_admin_css = Bundle(
     'css/jquery.Jcrop.css', 'less/restaurant_admin.less', responsive_css, filters='less,cssmin',
@@ -117,7 +114,6 @@ register('error_css', error_css)
 register('account_css', account_css)
 register('user_list_css', user_list_css)
 register('profile_css', profile_css)
-#register('order_css', order_css)
 register('restaurant_admin_css', restaurant_admin_css)
 
 register('bootstrap_js', bootstrap_js)
