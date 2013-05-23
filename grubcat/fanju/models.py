@@ -655,8 +655,8 @@ class UserPhoto(models.Model):
                                                               'crop': True,
                                                               'detail': True
             }).url
-        except Exception:
-            return None
+        except Exception, e:
+            raise e
 
     @property
     def large_photo(self):
@@ -931,8 +931,9 @@ def _pubsub_user_created(instance):
 
 def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
-        t.start()
+#        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
+#        t.start()
+        _pubsub_user_created(instance)
 
 post_save.connect(pubsub_user_created, sender=User, dispatch_uid="pubsub_user_created") #dispatch_uid is used here to make it not called more than once
 
@@ -943,7 +944,7 @@ def user_followed(sender, instance, created, **kwargs):
         follower = instance.from_person
         event = u'关注了你'
 
-        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"follower": follower.id,
+        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"user": follower.id,
                                                                                  "message": u"%s%s" % (
                                                                                  follower.name, event),
                                                                                  "event": event,
@@ -986,7 +987,7 @@ def _meal_joined(meal_participant):
     else:
         event = u"参加了饭局"
     payload = json.dumps({"meal": meal.id,
-                          "participant": joiner.id,
+                          "user": joiner.id,
                           "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
                           "event": event,
                           "avatar": joiner.normal_avatar,
@@ -1016,8 +1017,9 @@ def _meal_joined(meal_participant):
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_meal_joined, args=(instance,))
-        t.start()
+#        t = threading.Thread(target=_meal_joined, args=(instance,))
+#        t.start()
+        _meal_joined(instance)
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
 def user_visited(sender, instance, created, **kwargs):
@@ -1026,7 +1028,7 @@ def user_visited(sender, instance, created, **kwargs):
         if visitor.id != instance.to_person.id:
             node_name = "/user/%d/visitors" % instance.to_person.id
             event = u"查看了你的个人资料"
-            payload = json.dumps({"visitor":visitor.id, 
+            payload = json.dumps({"user":visitor.id, 
                                   "message":u"%s%s" % (visitor.name, event),
                                   "event": event,
                                   "avatar":visitor.normal_avatar,
