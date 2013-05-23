@@ -172,9 +172,12 @@ LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
-WEIBO_APP_KEY = "4071331500"
-WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
+WEIBO_APP_KEY = "2295468526"
+WEIBO_APP_SECERT = "5991184a22eaff8d2b1149bcf1b1ff91"
 WEIBO_REDIRECT_URL = "http://www.fanjoin.com/login/weibo/"
+
+# WEIBO_APP_KEY = "4071331500"
+# WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
 
 ###################### apple push ######################
 APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
