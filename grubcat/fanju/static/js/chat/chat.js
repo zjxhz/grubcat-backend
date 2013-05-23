@@ -823,12 +823,12 @@ var notyApp = {
                     attrs.target_pic = attrs.photo
                 } else if (node.indexOf('/followers') > 0) {
                     // follow me
-                    attrs.url = '/user/' + attrs.follower + '/'
+                    attrs.url = '/user/' + attrs.user + '/'
                     attrs.type = 'follower'
 
                 } else if (node.indexOf('visitors') > 0) {
                     // view my profile
-                    attrs.url = '/user/' + attrs.visitor + '/'
+                    attrs.url = '/user/' + attrs.user + '/'
                     attrs.type = 'visitor'
                 }
 
