@@ -1,0 +1,22 @@
+<div class="avatar span3 hidden-phone" id="avatar-wrapper">
+    <img alt="{{ user.name }}" class="img-polaroid" src="{{ user.big_avatar }}" width="180"
+         height="180">
+
+    <form id="upload_avatar_form" action="{% url 'upload_avatar' %}?action=upload" enctype="multipart/form-data"
+          method="post">
+        <input type="file" id="id_avatar_for_upload" name="avatar">
+        <a id="upload-avatar-link" class="btn btn-primary fl " href="{% url 'upload_avatar' %}?action=upload">上传头像</a>
+        <a id="crop-avatar-link" class="btn fl {% if not user.avatar %}hide{% endif %} "
+           href="{% url 'upload_avatar' %}">裁剪头像</a>
+    </form>
+    <div class="loading hide">上传中</div>
+    {% if not user.avatar %}
+        <div class="alert" id="avatar_alert">你还没有上传头像，其他朋友无法寻找到你哦！</div>
+    {% endif %}
+
+
+</div>
+
+{#    for uplaod avatar#}
+
+<div id="crop_avatar_wrapper"></div>

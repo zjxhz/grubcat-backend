@@ -1,0 +1,45 @@
+{% extends "profile/base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}我的关注/粉丝{% endblock %}
+{% block profile-main %}
+    <div id="following-list" class="span12">
+        {% with followings=profile.following.all followers=profile.followers.all %}
+            {% if followings %}
+                <h3>我的关注：</h3>
+                <div class="row">
+                    {% for following in followings %}
+                        <div class="span3 following-cell">
+                            <a href="{% url 'user_detail' following.id %}" class="fl" target="_blank">
+                                <img src="{{ following.normal_avatar }}" title="{{ following.name|default:'' }}">
+                            </a>
+                            <a class="name" href="{% url 'user_detail' following.id %}" target="_blank">{{ following.name }}</a>
+
+                            <a href="{% url 'un_follow' following.id %}" class="btn btn-unfollow">取消关注</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if followers %}
+                <h3>我的粉丝：</h3>
+                <div class="row">
+                    {% for follower in followers %}
+                        <div class="span3 follower-cell">
+                            <a href="{% url 'user_detail' follower.id %}" class="fl" target="_blank">
+                                <img src="{{ follower.normal_avatar }}" title="{{ follower.name|default:'' }}">
+                            </a>
+                            <a class="name" href="{% url 'user_detail' follower.id %}" target="_blank">{{ follower.name }}</a>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if not followers and not followings %}
+                <div class="no-results">你现在还没有关注任何人，也没有人关注你哦！赶快去看看哪些人你会感兴趣吧！<a href="{% url 'user_list' %}">去看看</a></div>
+            {% endif %}
+        {% endwith %}
+
+    </div>
+    <div id="data" style="display: none" data-active-nav-id="profile_follow"></div>
+{% endblock %}

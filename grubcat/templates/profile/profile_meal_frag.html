@@ -1,0 +1,30 @@
+{% load static from staticfiles %}
+{% load thumbnail %}
+{% with order.meal as meal %}
+
+    <div class="meal-cell span4 fl">
+        <h3 class="meal-topic"><a href="{{ meal.get_absolute_url }}" target="_blank">{{ meal.topic }}</a></h3>
+        {% if is_mine %}
+            {% if order.code %}
+                <a href="{% url 'order_detail' meal.id order.id %}" target="_blank" class="order-detail-link">订单详情</a>
+            {% else %}
+                <a href="{% url 'pay_order' order.id %}" target="_blank" class="go-to-pay-link">去支付</a>
+            {% endif %}
+        {% endif %}
+
+        <div class="meal-img-wrapper ">
+            <a href="{{ meal.get_absolute_url }}" target="_blank">
+                <img width="285" height="190" src="{{ meal.normal_cover_url }}"
+                     class="img-polaroid">
+            </a>
+
+            <div class="date-wrapper">
+                <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+            </div>
+            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
+        </div>
+    </div>
+
+{% endwith %}

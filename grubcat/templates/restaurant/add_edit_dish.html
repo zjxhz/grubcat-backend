@@ -1,0 +1,16 @@
+{#{% extends "restaurant/base.html" %}#}
+{% load bootstrap_tags %}
+{#{% block title %}菜单管理{% endblock %}#}
+
+{#{% block content %}#}
+{#    <div id="inner-content">#}
+        <form id="add_dish_form" action="{{ request.path }}" method="post" class="ajax form-horizontal"> {% csrf_token %}
+            {{ form|as_bootstrap }}
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary" value="确定"/>
+                <a href="{% url 'restaurant_dish_list' %}" class="btn close-dialog">取消</a>
+            </div>
+        </form>
+{#    </div>#}
+{#    <div id="nav-active-id" style="display: none">nav-dish</div>#}
+{#{% endblock %}#}
