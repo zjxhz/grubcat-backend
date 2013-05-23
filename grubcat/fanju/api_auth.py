@@ -13,6 +13,8 @@ class UserObjectsOnlyAuthorization(Authorization):
             return "user"
         elif hasattr(queryset.model, "customer"):
             return "customer"
+        elif hasattr(queryset.model, "from_person"):
+            return "from_person"
     
     def is_user_object(self, object_list, bundle):    
         request_profile = bundle.request.user
