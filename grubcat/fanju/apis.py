@@ -1,6 +1,6 @@
 #coding=utf-8
 from api_auth import UserObjectsOnlyAuthorization
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from django.conf.urls.defaults import url
 from django.conf import settings
 from django.contrib import auth
