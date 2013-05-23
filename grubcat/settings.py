@@ -190,6 +190,7 @@ CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
 
 
+
 ###################### msic ######################
 SHOW_EXCEPTION_DETAIL = False
 
