@@ -11,14 +11,18 @@ from models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
     Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
     DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
 from pay.alipay.alipay import create_app_pay
+from taggit.models import Tag
 from tastypie import fields, http
 from tastypie.api import Api
 from tastypie.authorization import Authorization, ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.fields import RelatedField
 from tastypie.http import HttpUnauthorized
+from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
+from tastypie.utils.dict import dict_strip_unicode_keys
+from urllib import urlencode
 import json
 import logging
 import os
@@ -26,7 +30,36 @@ import re
 
 logger = logging.getLogger(__name__)
 
+# page starts from 1
+class PageNumberPaginator(Paginator):
+    def page(self):
+        output = super(PageNumberPaginator, self).page()
+        meta = output['meta']
+        meta['page_number'] = self.get_page()
+        if self.get_count() % self.get_limit() == 0:
+            meta['tatal_pages'] = self.get_count() / self.get_limit()
+        else:
+            meta['tatal_pages'] = self.get_count() / self.get_limit() + 1
+        del meta['offset']
+        
+        return output
+               
+    def get_offset(self):
+        self.offset = self.get_limit() * (self.get_page() - 1)
+        return self.offset 
+    
+    def get_page(self):
+        page = self.request_data.get('page')
+        if page:
+            return int(page)
+        return 1    
+
 class EOResource(ModelResource):
+    def __init__(self):
+        super(EOResource, self).__init__()
+        self._meta.paginator_class = PageNumberPaginator
+        
+        
     def determine_format(self, request):
         return 'application/json'
         
@@ -164,6 +197,7 @@ class SimpleUserResource(EOResource):
         authorization = UserObjectsOnlyAuthorization(True)
         excludes=['password','weibo_access_token']
         resource_name = 'simple_user'
+        filtering = {'id':ALL, 'username':ALL, 'name':ALL}
 
 class MealParticipantResource(EOResource):
     user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
@@ -360,7 +394,14 @@ class UserResource(EOResource):
                 return SuccessResponse()
             elif request.POST.get('tag'):
                 user.tags.add(request.POST.get('tag'))
-                return SuccessResponse()
+                return SuccessResponse()   
+            elif request.POST.get('deleted_tag'):
+                user.tags.remove(request.POST.get('deleted_tag'))
+                return SuccessResponse()      
+            elif request.POST.get('create_tag'):
+                t = Tag(name=request.POST.get('create_tag'))
+                t.save()
+                return SuccessResponse({"id":t.id})   
             else:
                 return http.HttpBadRequest()
         else:
@@ -485,6 +526,35 @@ class UserResource(EOResource):
         authorization = UserObjectsOnlyAuthorization(True)
 
 
+class RelationshipResource(EOResource):
+    from_person = fields.ForeignKey(SimpleUserResource, 'from_person', full=True) #TODO maybe we don't need "full" for from_person
+    to_person = fields.ForeignKey(SimpleUserResource, 'to_person', full=True )
+    
+
+    def post_list(self, request, **kwargs):
+        if not request.user.is_authenticated():
+            return http.HttpUnauthorized()
+        from_person = request.user
+        to_person_id = request.POST.get("to_person_id")
+        to_person = User.objects.get(pk=to_person_id)
+        relation, created = Relationship.objects.get_or_create(from_person=from_person, to_person=to_person)
+#        
+#        user_resource = RelationshipResource()
+#        relationship_bundle = self.build_bundle(obj=relation)
+#        serialized = user_resource.serialize(None, user_resource.full_dehydrate(relationship_bundle),  'application/json')
+#        dic = {"objects": [json.loads(serialized)]}
+        
+        dic = {"id":relation.pk, "created": created}
+        return SuccessResponse(dic)
+            
+    class Meta:
+        queryset = Relationship.objects.all()
+#        authorization = UserObjectsOnlyAuthorization()
+        authorization = Authorization()
+        resource_name="relationship"
+        filtering = {'from_person':ALL_WITH_RELATIONS,'to_person': ALL_WITH_RELATIONS, 'status': ALL}
+        allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        
 #TODO what if pagination is needed for comments?
 class RestaurantResource(EOResource):
     class Meta:
@@ -684,3 +754,4 @@ v1_api.register(MealCommentResource())
 v1_api.register(UserTagResource())
 v1_api.register(UserPhotoResource())
 v1_api.register(SimpleUserResource())
+v1_api.register(RelationshipResource())
