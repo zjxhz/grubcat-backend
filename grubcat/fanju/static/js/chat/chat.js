@@ -44,11 +44,6 @@ var myTemplate = {
         "</div></a></li>"
 }
 $(function () {
-    $(document).trigger('connect', {
-        jid: $commonData.data("uid") + chatServerDomain,
-        password: $commonData.data("pwd")
-    });
-
 
     Strophe.log = function (level, msg) {
 //    chatApp.log(msg)
@@ -85,6 +80,11 @@ $(function () {
 
         chatApp.connection = conn;
     });
+    $(document).trigger('connect', {
+        jid: $commonData.data("uid") + chatServerDomain,
+        password: $commonData.data("pwd")
+    });
+
 })
 
 var $chatData = $("#chat-data");
