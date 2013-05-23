@@ -2,6 +2,7 @@
 from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta, date
 from django.conf.urls.defaults import url
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import logout
 from django.db.utils import IntegrityError
@@ -333,7 +334,7 @@ class UserResource(EOResource):
                 return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
-            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passedd_orders()
+            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passed_orders()
             return self.get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     @writeMineOnly
@@ -505,7 +506,8 @@ class UserResource(EOResource):
             filename = contentFile.name
             user_to_query.cropping = "" #cropping is not supported by app yet so clear it
             user_to_query.avatar.save(filename, contentFile)
-            if os.path.exists(old_avatar_path) and user_to_query.avatar.path != old_avatar_path:
+            if os.path.exists(
+                    old_avatar_path) and user_to_query.avatar.path != old_avatar_path and settings.DEFAULT_FEMALE_AVATAR not in old_avatar_path and settings.DEFAULT_MALE_AVATAR not in old_avatar_path:
                 os.remove(old_avatar_path)
             # xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()

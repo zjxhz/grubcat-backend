@@ -2,11 +2,9 @@
 {% load static from staticfiles %}
 {% load assets %}
 {% load static_asset %}
-{% load bootstrap_tags %}
 {% block title %}套餐管理{% endblock %}
 {% block page_css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
 {% endblock %}
 {% block page_js %}
     {% assets "bootstrap_js" %}
@@ -22,51 +20,26 @@
 {% endblock %}
 {% block content %}
     <div id="add-edit-menu-page" class="span10 content">
-        <div class="hide" id="add-menu-help-dialog">
-            <div class="help-content">
-                <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
-                </p>
-
-                <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
-
-                <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
-
-                <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
-
-                <p>4.如何改变菜的份数？<br/>&nbsp;&nbsp;&nbsp;&nbsp;鼠标点击后，在弹出的对话框中修改</p></div>
-        </div>
-
         <div class="row">
             <div id="left-column" class="span6">
-                <div id="dish-container" class="">
+{#                <div id="dish-container" class="">#}
                     <dl id="dish-list">
                         {% for dish in dishes_with_no_category %}
-                            <dd class="tag dish" dish-id="{{ dish.id }}" data-price='{{ dish.price }}'><span
-                                    class="dish-name">{{ dish.name }}</span>
-                                <a href="#" class="close">&times;</a>
-
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
+                            {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
                         {% endfor %}
-                        {% for category in categories %}
-                            <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
+                        {% for category in categories_with_dish %}
+                            <dt class="category" category-id="{{ category.id }}">{{ category.name }}<span class="dish-num-per-category"></span><a
                                     href="#" class="close cb">&times;</a></dt>
-                            {% for dish in category.my_dishes %}
-                                <dd class="tag dish" dish-id="{{ dish.id }}" data-price='{{ dish.price }}'><span
-                                        class="dish-name">{{ dish.name }}</span>
-                                    <a href="#" class="close">&times;</a>
-                                <span class="dish-info"> <span class="price">{{ dish.price }} 元</span><span
-                                        class="unit"> /{{ dish.unit }} &times; </span><a
-                                        class="num">1</a>&nbsp;&nbsp; </span></dd>
+                            {% for dish in category.dish_set.all %}
+                                {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
                             {% endfor %}
                         {% endfor %}
                         {% for category in categories_with_no_dish %}
-                            <dt class="category tag" category-id="{{ category.id }}">{{ category.name }} <a
+                            <dt class="category" category-id="{{ category.id }}">{{ category.name }}<span class="dish-num-per-category"></span> <a
                                     href="#" class="close cb">&times;</a></dt>
                         {% endfor %}
                     </dl>
-                </div>
+{#                </div>#}
             </div>
             <div id="right-column" class="span4">
                 <div class="well">
@@ -90,7 +63,7 @@
 
                         <div class="controls">
                             {#                            <span class="add-on">¥</span>#}
-                            {{ menu_form.average_price }}
+                            <input id="id_average_price" name="average_price" type="text" value="{{ menu_form.average_price.value|floatformat }}">
                             <span class="help-inline" id='total-price-tip'>目前总共消费 <span
                                     id='total-price'>0</span> 元</span>
                         </div>
@@ -106,41 +79,41 @@
 
                 </form>
 
-                <div id="menu-container" class="">
-
                     <dl class="menu-items" id="menu-items">
                         {% for item in menu.items %}
                             {% if item.num %}
-                                <dd class="tag dish" dish-id="{{ item.dish.id }}"
-                                    data-price='{{ item.dish.price }}'><span
-                                        class="dish-name">{{ item.dish.name }}</span>
-                                    <a href="#" class="close">&times;</a>
-
-                                <span class="dish-info"> <span class="price">{{ item.dish.price }} 元</span><span
-                                        class="unit"> /{{ item.dish.unit }} &times; </span><a
-                                        class="num">{{ item.num }}</a>&nbsp;&nbsp; </span>
-                                </dd>
+                                {% include 'restaurant/menu_dish_frag.html' with dish=item.dish num=item.num %}
                             {% else %}
-                                <dt class="category tag" category-id="{{ item.category.id }}">{{ item.category.name }}
+                                <dt class="category" category-id="{{ item.category.id }}">{{ item.category.name }}<span class="dish-num-per-category"></span>
                                     <a href="#" class="close cb">&times;</a>
                                 </dt>
                             {% endif %}
                         {% endfor %}
                     </dl>
-
-                </div>
                 <button class="btn btn-primary btn-large" id="save-menu-btn">保存套餐</button>
             </div>
-            <div class="hide" id="add-category-dialog" title="添加分类">
-                <form id="add-dish-category" class="form" action="{% url 'add_dish_category' %}" method="post">
-                    <input type="text" id="category-name" name="category-name" class="input" placeholder="请输入分类名称">
-                </form>
+        </div>
+        <div class="modal hide" tabindex="-1" role="dialog" id="add-menu-help-modal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>操作帮助</h4>
             </div>
-            <div class="hide" id="change-dish-num-dialog" title="更改份数">
-                <form id="change-dish-num-form" class="form" method="post">
-                    <input type="text" id="input-change-num" name="change-num" class="input" placeholder="请输入分类份数">
-                </form>
+            <div class="modal-body">
+                <div class="help-content">
+                    <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
+                    </p>
+
+                    <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
+
+                    <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+
+                    <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+
+                    <p>4.如何改变菜的份数？<br/>&nbsp;&nbsp;&nbsp;&nbsp;鼠标点击右侧菜的份数后，在弹出的对话框中修改</p></div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" data-dismiss="modal">关闭</a>
             </div>
         </div>
-        <div id="data" data-nav-active-id="nav-menu" style="display: none"></div>
+        <div id="data" data-nav-active-id="nav-menu" data-add-dish-category-link="{% url 'add_dish_category' %}" style="display: none"></div>
 {% endblock %}

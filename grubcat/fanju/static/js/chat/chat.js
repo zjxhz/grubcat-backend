@@ -45,46 +45,47 @@ var myTemplate = {
 }
 $(function () {
     $(document).trigger('connect', {
-        jid: $commonData.data("uid")+chatServerDomain,
+        jid: $commonData.data("uid") + chatServerDomain,
         password: $commonData.data("pwd")
     });
 
-})
-Strophe.log = function (level, msg) {
+
+    Strophe.log = function (level, msg) {
 //    chatApp.log(msg)
-}
-$(document).bind('connect', function (ev, data) {
-    var conn = new Strophe.Connection(chatServer);
+    }
+    $(document).bind('connect', function (ev, data) {
+        var conn = new Strophe.Connection(chatServer);
 
-    conn.xmlInput = function (elem) {
-        if($(elem).find("chat")[0] || $(elem).find("message")[0]){
-            chatApp.debug(elem)
+        conn.xmlInput = function (elem) {
+            if ($(elem).find("chat")[0] || $(elem).find("message")[0]) {
+                chatApp.debug(elem)
+            }
         }
-    }
-    conn.xmlOutput = function (elem) {
-        if($(elem).find("retrieve")[0]){
-            chatApp.debug(elem)
+        conn.xmlOutput = function (elem) {
+            if ($(elem).find("retrieve")[0]) {
+                chatApp.debug(elem)
+            }
         }
-    }
-    conn.rawInput = function(data){
+        conn.rawInput = function (data) {
 //        chatApp.debug("in----" + data)
-    }
-
-    conn.rawOutput= function(data){
-//        chatApp.debug("out++" + data)
-    }
-
-    conn.connect(data.jid, data.password, function (status) {
-        if (status === Strophe.Status.CONNECTED) {
-            $(document).trigger('connected');
-        } else if (status === Strophe.Status.DISCONNECTED) {
-            $(document).trigger('disconnected');
-            chatApp.connection = null;
         }
-    });
 
-    chatApp.connection = conn;
-});
+        conn.rawOutput = function (data) {
+//        chatApp.debug("out++" + data)
+        }
+
+        conn.connect(data.jid, data.password, function (status) {
+            if (status === Strophe.Status.CONNECTED) {
+                $(document).trigger('connected');
+            } else if (status === Strophe.Status.DISCONNECTED) {
+                $(document).trigger('disconnected');
+                chatApp.connection = null;
+            }
+        });
+
+        chatApp.connection = conn;
+    });
+})
 
 var $chatData = $("#chat-data");
 

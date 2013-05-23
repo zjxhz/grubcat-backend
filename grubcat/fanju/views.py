@@ -21,13 +21,15 @@ from fanju.util import isMobileRequest
 from fanju.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from fanju.forms import *
 from django.conf import settings
-import json
 from datetime import datetime, date, timedelta
+import json
 
 logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
 
 ###Photo related views ###
+
+
 class PhotoCreateView(CreateView):
     form_class = PhotoForm
     template_name = 'profile/photo/upload_photo.html'
@@ -74,7 +76,7 @@ def set_profile_common_attrs(context, request):
     used in all profile pages:basic_profile, photo_list, photo_detail, upload_photo, user_meals, follower/followees
     '''
     context['is_mine'] = context['profile'] == request.user
-    context['orders_count'] = context['profile'].orders.filter(status=OrderStatus.PAYIED).count()
+    context['orders_count'] = context['profile'].orders.filter(status__in=(OrderStatus.PAYIED,OrderStatus.USED )).count()
     if context['is_mine']:
         context['orders_count'] += context['profile'].get_paying_orders_count()
 
@@ -115,11 +117,10 @@ class MenuListView(ListView):
     def get_queryset(self):
         #TODO filter by  date and time
         num_persons = self.request.GET.get("num_persons", 8)
-        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons).select_related('restaurant', )
+        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons,).exclude(photo='').select_related('restaurant', )
         if hasattr(self.request.user, 'restaurant'):
             #餐厅用户只显示本餐厅的菜单
-            qs = Menu.objects.filter(restaurant=self.request.user.restaurant, status=MenuStatus.PUBLISHED,
-                num_persons=num_persons).select_related('restaurant', )
+            qs = qs.filter(restaurant=self.request.user.restaurant)
         return qs
 
 
@@ -171,10 +172,11 @@ class MealCreateView(CreateView):
 
 
 class MealListView(ListView):
-    queryset = Meal.get_default_upcomming_meals()
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
     #TODO add filter to queyset
+    def get_queryset(self):
+        return Meal.get_default_upcomming_meals()
 
 
 ### User related views ###
@@ -203,7 +205,7 @@ def get_user_info(request):
 class UploadAvatarView(UpdateView):
     form_class = UploadAvatarForm
     model = User
-    template_name = "user/upload_avatar.html"
+    template_name = "profile/upload_avatar.html"
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -214,7 +216,7 @@ class UploadAvatarView(UpdateView):
     def form_valid(self, form):
         super(UploadAvatarView, self).form_valid(form)
         if self.request.GET.get('action') == 'upload':
-            return HttpResponseRedirect(reverse('upload_avatar'))
+            return HttpResponse() #return text/html type, not json, hack for IE ajax upload file
         else:
             data = {'big_avatar_url': self.object.big_avatar, 'small_avatar_url': self.object.small_avatar}
             return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
@@ -223,10 +225,17 @@ class UploadAvatarView(UpdateView):
 class ProfileUpdateView(UpdateView):
     form_class = BasicProfileForm
     model = User
-    template_name = 'user/edit-profile.html'
+    template_name = 'profile/edit_profile.html'
 
     def get_object(self, queryset=None):
+
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        context['profile'] = self.request.user
+        set_profile_common_attrs(context, self.request)
+        return context
 
     def get_success_url(self):
         return reverse('user_detail', kwargs={'pk': self.object.id})
@@ -258,34 +267,45 @@ class ProfileDetailView(DetailView):
         return context
 
 
-
-
 class UserListView(ListView):
 #    queryset = User.objects.all().select_related('tags')
-    template_name = "user/user_list.html"
+    template_name = "profile/user_list.html"
     context_object_name = "user_list"
     paginate_by = 20
 
     def get_queryset(self):
+        tags = self.request.GET.get('tags')
+        users = User.objects.exclude(
+            avatar__in=('', settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)).exclude(
+            restaurant__isnull=False).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.tags.similar_objects()
+        elif tags:
+            return users.filter(tags__name__in=(tags, )).distinct()
         else:
-            return User.objects.exclude(avatar="").exclude(
-                restaurant__isnull=False).select_related('tags').order_by(
-                '-id')
+            return users
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
         user = self.request.user
+
+        if context['page_obj'].has_next():
+            next_page_url = reverse_lazy('more_user',kwargs={'page': context['page_obj'].next_page_number()})+"?"
+            for arg in ('show', 'tags'):
+                if self.request.GET.get(arg):
+                    next_page_url += ("%s=%s&" % (arg, self.request.GET.get(arg)))
+            context['next_page_url'] = next_page_url
+
         if user.is_authenticated():
             if not user.tags.all():
                 context['need_edit_tags'] = True
-            if not user.avatar:
-                context['need_upload_avatar'] = True
+            context['need_upload_avatar'] = user.is_default_avatar()
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
             elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
                 context['need_edit_tags_again'] = True
+            if self.request.GET.get('tags') and not self.request.user.tags.filter(name=self.request.GET.get('tags')).exists():
+                context['show_add_tag'] = True
         return context
 
 
@@ -334,10 +354,17 @@ class MealDetailView(OrderCreateView):
             pk=self.kwargs.get('meal_id'))
         context['meal'] = meal
         context['avaliable_seats'] = range(meal.left_persons)
-        if self.request.user.is_authenticated() and self.request.user in meal.participants.all():
-            orders = Order.objects.filter(meal=meal, status=OrderStatus.PAYIED, customer=self.request.user)
-            if len(orders):
-                context['order'] = orders[0]
+
+        payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+        context['payed_orders'] = payed_orders
+
+        if self.request.user.is_authenticated():
+            my_orders = payed_orders.filter(customer=self.request.user)
+            if len(my_orders) == 1 :
+                context['order'] = my_orders[0]
+            elif len(my_orders) > 1:
+                logger.error('user %s has %s orders for meal %s' % (self.request.user.id, len(my_orders), meal.id ))
+
         if self.request.user.is_authenticated() and self.request.user == meal.host and meal.status == MealStatus.CREATED_WITH_MENU: #NO menu
             context['just_created'] = True
         else:
@@ -370,8 +397,7 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
-        if not self.request.user.avatar:
-            context['avatar_tip'] = True
+        context['avatar_tip'] = self.request.user.is_default_avatar()
         return context
 
 
@@ -396,7 +422,7 @@ class UserMealListView(TemplateView):
             context['paying_orders'] = user.get_paying_orders()
             context['pay_overtime'] = settings.PAY_OVERTIME_FOR_PAY_OR_USER
         context['upcomming_orders'] = user.get_upcomming_orders()
-        context['passed_orders'] = user.get_passedd_orders()
+        context['passed_orders'] = user.get_passed_orders()
         return context
 
 
@@ -422,8 +448,9 @@ def weibo_login(request):
     #        after weibo auth
         try:
             data = weibo_client.request_access_token(code)
+            logger.debug(data)
         except:
-            raise Exception(u'微博接口异常')
+            raise Exception(u'对不起，现在是内测阶段未开放注册！')
             #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
@@ -433,7 +460,8 @@ def weibo_login(request):
             #            else:
             return HttpResponseRedirect(next_url)
         else:
-            raise Exception(u'微博接口异常')
+            # raise Exception(u'微博接口异常')
+            raise Exception(u'对不起，现在是内测阶段未开放注册！')
 
 
 #class BindProfileView(UpdateView):

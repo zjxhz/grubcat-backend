@@ -92,14 +92,14 @@ urlpatterns = patterns('',
 
     url(r'^login/weibo/$', weibo_login, name='weibo_login'),
 #    url(r'^bind/$', login_required(BindProfileView.as_view()), name='bind'),
-    url(r'^user/login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^user/logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url': "/"}, name="logout"),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', kwargs={'login_url': "/"}, name="logout"),
 
 
     #account
     #    url(r'^user/register/$', RegisterView.as_view(), name='register'),
     url(r'^user/$', UserListView.as_view(), name="user_list"),
-    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="user/user_container.html"),
+    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="profile/user_container.html"),
         name="more_user"),
     url(r'^profile/edit/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
     url(r'^user/(?P<pk>\d+)/$', login_required(ProfileDetailView.as_view()), name='user_detail'),
@@ -135,7 +135,7 @@ urlpatterns = patterns('',
         name="restaurant_dish_add"),
     url(r'^restaurant/dish/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.DishUpdateView.as_view()),
         name="restaurant_dish_edit"),
-    url(r'^restaurant/dish/del/(?P<pk>\d+)/$', restaurant_login_required(rest.DishDeleteView.as_view()),
+    url(r'^restaurant/dish/del/(?P<dish_id>\d+)/$', restaurant_login_required(rest.del_dish),
         name="restaurant_dish_del"),
     url(r'^restaurant/dish_category/add/$', restaurant_login_required(rest.add_dish_category),
         name="add_dish_category"),
@@ -152,8 +152,6 @@ urlpatterns = patterns('',
     url(r'^restaurant/menu/cover/edit/(?P<pk>\d+)/$', restaurant_login_required(rest.EditMenuCoverView.as_view()),
         name="edit_menu_cover"),
 
-    #chat
-    url(r'^chat/$', TemplateView.as_view(template_name="chat.html"), name="chat"),
 
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),

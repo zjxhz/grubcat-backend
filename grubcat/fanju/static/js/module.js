@@ -1,4 +1,5 @@
-(function ($) {
+jQuery(function($){
+
     var $data = $("#data");
 
     $("#nav-chat").click(function(){
@@ -327,17 +328,14 @@
         $("#id_avatar_for_upload").change(function () {
             $("#avatar_alert").remove();
             var options = {
-                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
+//                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
                 beforeSubmit: function () {
                     $(".avatar .loading").show();
                 }, // pre-submit callback
                 success: function () {
                     $(".avatar .loading").hide();
-                    $("#avatar-wrapper").find("img").attr('src', $("#data-avatar-page").attr('data-big-avatar-url'));
-                    setChatAvatar( $("#data-avatar-page").data('small-avatar-url'))
-                    $('#crop-avatar-link').show();
-                    submit_crop_form();
-                    $("#crop_avatar_modal").modal();
+
+                    $('#crop-avatar-link').show().click();
                     return false;
                 }  // post-submit callback
             };
@@ -348,14 +346,8 @@
         $("#crop-avatar-link").click(function () {
 
             $("#crop_avatar_wrapper").load($('#crop-avatar-link').attr('href'), function () {
-                submit_crop_form();
-                $("#crop_avatar_modal").modal();
-            });
-            return false;
-        });
+                $("#crop_submit").click(function () {
 
-        function submit_crop_form() {
-            $("#crop_submit").click(function () {
                 $("#id_crop_form").ajaxSubmit({
                     success: function (data) {
                         //noinspection JSUnresolvedVariable
@@ -367,7 +359,11 @@
                 });
                 return false;
             })
-        }
+                $("#crop_avatar_modal").modal();
+            });
+            return false;
+        });
+
 
         //crop avatar
 
@@ -463,36 +459,29 @@
 
     var $container = $('#user-container');
     var $profile_basic_info_page = $("#profile_basic_info_page");
-    var $tagItems = $(".tags li");
+    var $tagItems = $(".tags li:not(.showing-tag)")
     if (($container[0] || $profile_basic_info_page[0])) {
-        if ($data.data("isLogin") && !$data.data("isMine")) {
-
-            $(".tags li.common").live('click', function () {
-                return false;
-            });
-            $(".tags li[class!=common]").live("mouseenter",function () {
-                $(this).attr("title", "点击复制到我的兴趣");
-            }).live("click", function () {
-                    var $item = $(this);
-                    $.post($data.data("add-tag-url"), {'tag': $(this).text()}, function () {
-                        noty({text: $item.text() + " 已经复制到我的兴趣", timeout: 500});
-                        $(".tags li:contains(" + $item.text() + ")").each(function () {
-                            if ($(this).text() == $item.text()) {
-                                $(this).addClass("common").removeAttr("title");
-                            }
-                        })
-                    });
-                    return false;
-                });
-        } else {
-            $tagItems.click(function () {
-                return false;
-            });
-        }
+        $tagItems.live("mouseenter",function () {
+            $(this).attr("title", '点击查看该标签下的用户');
+        }).live('click', function () {
+                window.location.href= $data.data('userListUrl')+"?tags=" + $(this).text()
+            })
     }
 
     if ($container[0]) {
-
+        $(".add-tag-link").click(function () {
+            var tag = $(this).data('tags')
+            $.post($data.data("add-tag-url"), {'tag': tag}, function () {
+                noty({text: tag + " 已经添加到我的兴趣", timeout: 500});
+                $(".add-tag-link").remove()
+                $(".tags li:contains(" + tag + ")").not('.showing-tag').each(function () {
+                    if ($(this).text() == tag) {
+                        $(this).addClass("common")
+                    }
+                })
+            });
+            return false
+        })
         $tagItems.each(function () {
             //noinspection JSUnresolvedVariable
             if ($.inArray($(this).html(), myTags) > -1) {
@@ -565,7 +554,6 @@
         noty({text: notyMsg})
     }
 })
-    (jQuery);
 
 function showPreview(coords) {
     var rxBig = 180 / coords.w;

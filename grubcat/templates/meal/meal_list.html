@@ -31,7 +31,7 @@
                                     <img width="360" height="240" class="img-polaroid"
                                          src="{{ meal.normal_cover_url }}">
                                 {% else %}
-                                    <img width="360" height="240" src="{% static 'img/meal-placeholder.png' %}"
+                                    <img width="360" height="240" src="{% static 'img/meal_placeholder.png' %}"
                                          class="lazy img-polaroid"
                                          data-original="{{ meal.normal_cover_url }}">
                                 {% endif %}
@@ -48,7 +48,7 @@
                             <p class="introduction">
                                 {{ meal.introduction|truncatechars:"100" }}
                             </p>
-                            <a class="btn btn-primary btn-block btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>
+                            <a class="btn btn-primary  btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>
                         </div>
                     </div>
                 </div>

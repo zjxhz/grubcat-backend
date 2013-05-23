@@ -17,14 +17,22 @@
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
     {% endblock %}
+{#        {% assets "bootstrap_ie6_css" %}#}
+{#    <!--[if IE 6]>#}
+{#            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">#}
+{#    <![endif]-->#}
+{#        {% endassets %}#}
+    <!--[if lt IE 9]>
+{#      <script src="js/html5shiv.js"></script>#}
+    <![endif]-->
 </head>
 <body>
 <!--[if IE 6]>
 <div id="ie6-warning">您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用 <a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div>
 <![endif]-->
 {% block nav %}
-    <div class="navbar navbar-static-top" id="main-nav">
-        <div class="navbar-inner stat  ">
+    <div class="navbar navbar-fixed-top" id="main-nav">
+        <div class="navbar-inner  ">
             <div class="container">
                 <a class="brand " href="/">饭聚</a><a class="brand city" href="/">@杭州</a>
                 <ul class="nav ">
@@ -32,7 +40,7 @@
                     <li id="nav-user"><a href="{% url 'user_list' %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
                     {% if user.is_authenticated %}
-                    <li id="nav-chat"><a href="#">聊天</a><span id="total-unread-count" class="unread-count" style="display: none">0</span></li>
+                    <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count" style="display: none">0</span></li>
                     {% endif %}
                 </ul>
                 <ul class="nav pull-right">
@@ -47,8 +55,7 @@
                         </div>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="hidden-phone">{% if user.name %}
-                                    {{ user.name }} {% else %}{{ user.username }}{% endif %} </span>
+                                <span class="hidden-phone">{{  user.name|default:'用户' }}</span>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{% url 'user_detail' user.id %}">我的主页</a></li>
@@ -65,16 +72,9 @@
                             </ul>
                         </li>
                     {% else %}
-                        {#                        {% if request.path_info == "/user/login/" or request.path_info == "/user/register/" %}#}
-                        {#                            <li><a href="#}
-                        {#                                    {% url 'weibo_login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"#}
-                        {#                                   id="login_link"#}
-                        {#                                    >登录</a></li>#}
-                        {#                        {% else %}#}
                         <li>
                             <a id="login_link" class="login" href="{% url 'weibo_login' %}?next={{ request.path_info }}">登录</a>
                         </li>
-                        {#                        {% endif %}#}
 
                     {% endif %}
                 </ul>
@@ -113,7 +113,7 @@
                 <div id="no-avatar-tip" class="alert hide">您现在还没有上传头像，无法使用聊天功能，现在就去 <a
                         href="{% url 'edit_basic_profile' %} ">上传头像</a></div>
             </div>
-            <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/small_avatar.png' %}"
+            <div id="chat-data" style="display: none" data-default-avatar="{% static 'img/default/male.png' %}"
                  data-get-user-info-url="{% url 'get_user_info' %}"
                  data-my-avatar="{{ request.user.small_avatar }}"
                  data-my-name="{{ request.user.name }}"
@@ -127,23 +127,11 @@
     {% include "ga.html" %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
     {% endassets %}
 {% endblock %}
-<script type="text/javascript">
-    $(document).ready(function ($) {
-
-        $("#main-nav ul.nav li").removeClass("active");
-        var $active = $("#" + $("#nav-active-id").html());
-        $active.addClass("active");
-        $("#main-nav ul.nav  li").not(".active").hover(function () {
-            $active.removeClass("active");
-            $(this).addClass("active");
-        }, function () {
-            $(this).removeClass("active");
-            $active.addClass("active");
-        });
-    })
-</script>
 {% block page_js %}
     {% assets "module_js" %}
     <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
