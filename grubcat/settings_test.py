@@ -15,6 +15,9 @@ ALIPAY_BACK_DOMAIN = 'http://www.ifunjoin.com/'
 ORDER_PREFIX = 'det'
 PAY_DEBUG = True
 
+#WEIBO_APP_KEY = "4071331500"
+#WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
+
 WEIBO_APP_KEY = "1086545555"
 WEIBO_APP_SECERT = "edc858db52e5c2bc803010a81b183c5d"
 WEIBO_REDIRECT_URL = "http://www.ifunjoin.com/login/weibo/"
