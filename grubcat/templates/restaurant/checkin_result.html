@@ -1,0 +1,83 @@
+{% if order %}
+    {% if order.is_used %}
+        <div class="span10">
+            <h3 class="alert alert-waringing">
+                校验码已经使用过！使用时间：{{ order.completed_time|date:"n" }}月{{ order.completed_time|date:"j" }}日 {{ order.completed_time|date:"G:i " }}</h3>
+        </div>
+    {% elif is_passed %}
+        <div class="span10">
+            <h3 class="alert alert-error">
+                校验码未使用过，但已经过期！
+        </div>
+    {% elif is_upcomming %}
+        <div class="span10">
+            <h3 class="alert alert-error">
+                饭局还没有开始，校验码不可以使用！
+        </div>
+    {% else %}
+        <div id="check-in-title" class="span10 check-in-title">
+            <div class=" alert alert-success clearfix">
+                <div class="fl order-status"><h3>校验码还未使用过！</h3></div>
+                <form id="use-order-form" action="{% url 'restaurant_use_order' %}" method="post" class="form-inline fl">
+                    <input type="hidden" name="code" value="{{ order.code }}">
+                    <input type="hidden" name="id" value="{{ order.id }}">
+                    <button type="submit" class="btn btn-success pull-right btn-use btn-large">使用</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="span10">
+        <table class="table table-striped table-bordered table-condensed">
+            <tbody>
+            <tr>
+                <th>用户名</th>
+                <td>{{ order.customer.name }}</td>
+                <td rowspan="6" class="meal-img">  <a href="{% url 'meal_detail' order.meal.id %}" target="_blank">
+                    <img alt="{{ order.meal.topic }}" id="meal-photo" src="{{ order.meal.big_cover_url }}" width="360"
+                         height="240" ></a></td>
+            </tr>
+            <tr>
+                <th>饭局主题</th>
+                <td>{{ order.meal.topic|truncatechars:"20" }}</td>
+            </tr>
+            <tr>
+                <th>开始时间</th>
+                <td>{% if is_today %}今天{% else %}
+                    {{ order.meal.start_date|date:"n" }}月{{ order.meal.start_date|date:"j" }}日
+                    {{ order.meal.start_date|date:"D" }}{% endif %}
+                    {{ order.meal.start_time|date:"G:i " }}</td>
+            </tr>
+            <tr>
+                <th>已付预订金额</th>
+                <td>{{ order.total_price|floatformat }} 元</td>
+            </tr>
+            <tr>
+                <th>可供几人使用</th>
+                <td>{{ order.num_persons }} 人</td>
+            </tr>
+            <tr>
+                <th>饭局就绪情况</th>
+                <td>计划 {{ order.meal.min_persons }} 人，预定 {{ order.meal.actual_persons }} 人<br/>已到 {{ checked_persons }} 人，未到 {{ unchecked_persons }} 人</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="menu" class="span5">
+        <h4>菜单:  {{ order.meal.menu.name }}</h4>
+        <hr/>
+        {% include 'meal/menu_frag.html' with menu=order.meal.menu %}
+    </div>
+{% else %}
+    <div class="span10"><h3 class="alert alert-error">订单不存在！</h3></div>
+{% endif %}
+
+<script type="text/javascript">
+    $("#use-order-form").ajaxForm({
+        dataType:'html',
+        success:function (data) {
+            $("#result").html(data)
+        }
+    })
+</script>
