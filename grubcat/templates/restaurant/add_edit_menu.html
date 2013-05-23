@@ -1,0 +1,119 @@
+{% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
+{% load assets %}
+{% load static_asset %}
+{% block title %}套餐管理{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+{% endblock %}
+{% block page_js %}
+    {% assets "bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_ui_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+    <div id="add-edit-menu-page" class="span10 content">
+        <div class="row">
+            <div id="left-column" class="span6">
+{#                <div id="dish-container" class="">#}
+                    <dl id="dish-list">
+                        {% for dish in dishes_with_no_category %}
+                            {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
+                        {% endfor %}
+                        {% for category in categories_with_dish %}
+                            <dt class="category" category-id="{{ category.id }}">{{ category.name }}<span class="dish-num-per-category"></span><a
+                                    href="#" class="close cb">&times;</a></dt>
+                            {% for dish in category.dish_set.all %}
+                                {% include 'restaurant/menu_dish_frag.html' with dish=dish %}
+                            {% endfor %}
+                        {% endfor %}
+                        {% for category in categories_with_no_dish %}
+                            <dt class="category" category-id="{{ category.id }}">{{ category.name }}<span class="dish-num-per-category"></span> <a
+                                    href="#" class="close cb">&times;</a></dt>
+                        {% endfor %}
+                    </dl>
+{#                </div>#}
+            </div>
+            <div id="right-column" class="span4">
+                <div class="well">
+                    <a class="fl" href="#" id="add-menu-help-link">操作帮助</a>
+
+                    <a class="add-category fr" href="#" id="add-category-link">添加分类</a>
+                </div>
+                <form class="form-horizontal" action="{% url 'add_menu' %}" id="save-menu-form">
+                    <div class="control-group">
+                        <label class="control-label" for="id_num_persons">就餐人数</label>
+
+                        <div class="controls">
+                            <input type="text" name="num_persons" class="input-small" id="id_num_persons"
+                                   value="{{ menu.num_persons }}">
+                            <span class="help-inline">输入后自动计算人均消费</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group average-price">
+                        <label class="control-label" for="id_average_price">人均消费</label>
+
+                        <div class="controls">
+                            {#                            <span class="add-on">¥</span>#}
+                            <input id="id_average_price" name="average_price" type="text" value="{{ menu_form.average_price.value|floatformat }}">
+                            <span class="help-inline" id='total-price-tip'>目前总共消费 <span
+                                    id='total-price'>0</span> 元</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="id_name">套餐名称</label>
+
+                        <div class="controls">
+                            {{ menu_form.name }}
+                        </div>
+                    </div>
+
+                </form>
+
+                    <dl class="menu-items" id="menu-items">
+                        {% for item in menu.items %}
+                            {% if item.num %}
+                                {% include 'restaurant/menu_dish_frag.html' with dish=item.dish num=item.num %}
+                            {% else %}
+                                <dt class="category" category-id="{{ item.category.id }}">{{ item.category.name }}<span class="dish-num-per-category"></span>
+                                    <a href="#" class="close cb">&times;</a>
+                                </dt>
+                            {% endif %}
+                        {% endfor %}
+                    </dl>
+                <button class="btn btn-primary btn-large" id="save-menu-btn">保存套餐</button>
+            </div>
+        </div>
+        <div class="modal hide" tabindex="-1" role="dialog" id="add-menu-help-modal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>操作帮助</h4>
+            </div>
+            <div class="modal-body">
+                <div class="help-content">
+                    <p>1.如何添加一道菜或者一个分类到套餐中？<br/>&nbsp;&nbsp;&nbsp;&nbsp;拖动左边的菜或分类到右边的框中，或者双击左边的菜或分类，会自动添加到右侧
+                    </p>
+
+                    <p>2.如何从套餐中删除一道菜或者一个分类？<br/>&nbsp;&nbsp;&nbsp;&nbsp; 双击右侧的菜或分类或者点击最右边的关闭按钮</p>
+
+                    <p>3.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+
+                    <p>4.如何调整菜或者分类在套餐中的显示顺序？<br/>&nbsp;&nbsp;&nbsp;&nbsp;在右侧可以上下拖动菜或者分类调整显示顺序</p>
+
+                    <p>4.如何改变菜的份数？<br/>&nbsp;&nbsp;&nbsp;&nbsp;鼠标点击右侧菜的份数后，在弹出的对话框中修改</p></div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" data-dismiss="modal">关闭</a>
+            </div>
+        </div>
+        <div id="data" data-nav-active-id="nav-menu" data-add-dish-category-link="{% url 'add_dish_category' %}" style="display: none"></div>
+{% endblock %}
