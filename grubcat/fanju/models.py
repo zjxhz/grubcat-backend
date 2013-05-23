@@ -655,8 +655,8 @@ class UserPhoto(models.Model):
                                                               'crop': True,
                                                               'detail': True
             }).url
-        except Exception, e:
-            raise e
+        except Exception:
+            return None
 
     @property
     def large_photo(self):
@@ -931,9 +931,8 @@ def _pubsub_user_created(instance):
 
 def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
-#        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
-#        t.start()
-        _pubsub_user_created(instance)
+        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
+        t.start()
 
 post_save.connect(pubsub_user_created, sender=User, dispatch_uid="pubsub_user_created") #dispatch_uid is used here to make it not called more than once
 
@@ -1017,9 +1016,8 @@ def _meal_joined(meal_participant):
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
-#        t = threading.Thread(target=_meal_joined, args=(instance,))
-#        t.start()
-        _meal_joined(instance)
+        t = threading.Thread(target=_meal_joined, args=(instance,))
+        t.start()
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
 def user_visited(sender, instance, created, **kwargs):
