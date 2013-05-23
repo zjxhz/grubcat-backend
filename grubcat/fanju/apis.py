@@ -538,11 +538,6 @@ class RelationshipResource(EOResource):
         to_person_id = request.POST.get("to_person_id")
         to_person = User.objects.get(pk=to_person_id)
         relation, created = Relationship.objects.get_or_create(from_person=from_person, to_person=to_person)
-#        
-#        user_resource = RelationshipResource()
-#        relationship_bundle = self.build_bundle(obj=relation)
-#        serialized = user_resource.serialize(None, user_resource.full_dehydrate(relationship_bundle),  'application/json')
-#        dic = {"objects": [json.loads(serialized)]}
         
         dic = {"id":relation.pk, "created": created}
         return SuccessResponse(dic)
