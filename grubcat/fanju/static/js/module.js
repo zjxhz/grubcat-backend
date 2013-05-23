@@ -1,4 +1,5 @@
-(function ($) {
+jQuery(function($){
+
     var $data = $("#data");
 
     $("#nav-chat").click(function(){
@@ -553,7 +554,6 @@
         noty({text: notyMsg})
     }
 })
-    (jQuery);
 
 function showPreview(coords) {
     var rxBig = 180 / coords.w;
