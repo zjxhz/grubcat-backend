@@ -20,7 +20,7 @@
             {% endif %}
             <div class="meal-simple-info box-seperator clearfix">
 
-                <h1>{{ meal.topic }}</h1>
+                <h1 class="meal-topic">{{ meal.topic }}</h1>
                 <span id="restaurant-location"><a href="http://maps.google.com.hk?q={{ meal.menu.restaurant.name }}"
                                                   target="_blank"
                                                   class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}</span>
@@ -118,20 +118,26 @@
                 {% else %}
                     <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加饭局，赶快预定吧！</h3>
                 {% endif %}
-                {% for user in meal.participants.all %}
-                    <a href="{% url 'user_detail' user.id %}" class="user-img-wrapper"
-                       title="{{ user.name }}">
-                        <img alt="{{ user.name }}" width="80"
-                             height="80" class=""
-                             src="{{ user.normal_avatar }}">
+                {% for order in payed_orders %}
+                    <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
+                       title="{{ order.customer.name }}">
+                        <img alt="{{ order.customer.name }}" width="80"
+                             height="80" src="{{ order.customer.normal_avatar }}">
                     </a>
+                    {% if order.num_persons > 1 %}
+                        <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
+                           title="{{ order.customer.name }}邀请的朋友">
+                            <img alt="{{ order.customer.name }}邀请的朋友" width="80" height="80"
+                                 src="{% static 'img/guest.png' %}">
+                        </a>
+                    {% endif %}
                 {% endfor %}
 
                 {% for empty_user in avaliable_seats %}
                     <div class="empty-user-wrapper">
                         <img class="seat-placeholder " width="80"
                              height="80"
-                             src="{% static 'img/default/seat-placeholder.png' %}">
+                             src="{% static 'img/default/seat_placeholder.png' %}">
                     </div>
                 {% endfor %}
 
@@ -143,22 +149,12 @@
 
             <div id="menu" class="menu sidebar-box">
                 <div class="sidebar-box-title">
-                    菜单 {% comment %}{{ meal.menu.name|default:"8人套餐 40元/人" }}{% endcomment %}</div>
+                    菜单<span class="menu-name">（{{ meal.menu.name|default:"" }}）</span></div>
                 <div class="sidebar-box-content">
                     {% include 'meal/menu_frag.html' with menu=meal.menu %}
                 </div>
             </div>
         </div>
-{% comment %}        <div id="pay_result_dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4>支付</h4>
-            </div>
-            <div class="modal-body">
-                <a id="btn-pay-fail" class="btn" href="">支付遇到问题</a>
-                <a id="btn-pay-sucess" class="btn btn-primary btn-large" href="">支付成功</a>
-            </div>
-        </div>{% endcomment %}
     </div>
     <div id="data" style="display: none" data-check-order-status-link="{% url 'check_order_status' meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
 {% endblock %}

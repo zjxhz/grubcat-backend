@@ -3,7 +3,7 @@
 @import "bootstrap/mixins.less";
 
 #main-container {
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .actions {
@@ -11,7 +11,7 @@
   .clearfix();
   margin-bottom: 10px;
   .upload-photo-link {
-    background: url("../img/upload-photo.png") no-repeat scroll -24px 1px transparent;
+    background: url("../img/upload_photo.png") no-repeat scroll -24px 1px transparent;
     padding-left: 24px;
     margin-left: 10px;
   }
@@ -309,8 +309,8 @@ div.control-group.interest-tags {
     cursor: pointer;
   }
   .add-icon {
-    font-weight: bold;
-    color: #555;
+//    font-weight: bold;
+    color: #666;
     font-size: 16px;
   }
 }
@@ -397,9 +397,12 @@ div.control-group.interest-tags {
   .meal-cell {
     border-bottom: none;
     padding-bottom: 0px;
-    .meal-img-wrapper img {
-      width: 285px;
-      height: 190px;
+    .meal-img-wrapper {
+      float: none;
+      img {
+        width: 285px;
+        height: 190px;
+      }
     }
   }
   .meal-topic {
@@ -416,7 +419,6 @@ div.control-group.interest-tags {
   .order-detail-link, .go-to-pay-link {
     margin: 12px 4px 12px 0;
     display: block;
-    float: right;
   }
   .date-wrapper {
     width: 60px;
@@ -511,12 +513,13 @@ div.control-group.interest-tags {
     }
   }
 
-  .tags {
+  ul.tags {
     border: none;
     margin-bottom: 0px;
     padding: 4px 0;
     .box-shadow(none);
     li {
+      cursor: pointer;
       border: 1px solid #DDDDDD;
       border-radius: 12px 12px 12px 12px;
       color: #555;
@@ -563,8 +566,6 @@ div.control-group.interest-tags {
     position: relative;
     background: none repeat scroll 0 0 #f1f1f1;
     text-align: left;
-//    font-size: 120%;
-//    line-height: 130%;
     overflow: hidden;
   }
 

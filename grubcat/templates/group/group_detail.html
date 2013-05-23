@@ -10,7 +10,6 @@
     {% assets "group_detail_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
-    <link rel="stylesheet" href="{% static 'css/ui/jquery-ui-bootstrap/jquery-ui-1.8.16.bootstrap.css' %}">
     <style type="text/css">
 
         #div_id_logo .controls label {
@@ -57,7 +56,7 @@
             <img class="fl" src="{{ group.logo_url_default_if_none }}" alt="{{ group.name }}" width="96" height="96">
             {% if user == group.owner %}
                 <a href="{% url 'edit_group_logo' group.id %}" id="id_edit_logo_link" class="edit-link">
-                    <img alt="修改" src="{% static "img/edit-pencil.png" %}">
+                    <img alt="修改" src="{% static "img/edit_pencil.png" %}">
                 </a>
             {% endif %}
             <h1 class="group-name">{{ group.name }}</h1>
@@ -153,7 +152,7 @@
             </div>
             {% if user == group.owner %}
                 <a href="{% url 'edit_group' group.id %}" class="edit-link">
-                    <img alt="修改" src="{% static "img/edit-pencil.png" %}">
+                    <img alt="修改" src="{% static "img/edit_pencil.png" %}">
                 </a>
             {% endif %}
             {% if group.category %}

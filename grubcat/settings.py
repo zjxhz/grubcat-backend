@@ -137,19 +137,26 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
-BIG_AVATAR_SIZE = (220, 220)
-NORMAL_AVATAR_SIZE = (80, 80)
-# NORMAL_AVATAR_SIZE = (100, 100)
-SMALL_AVATAR_SIZE = (50, 50)
-MEDIUM_AVATAR_SIZE = (150, 150)
-IMAGE_CROPPING_THUMB_SIZE = (360, 360)
 THUMBNAIL_QUALITY = 100
+BIG_AVATAR_SIZE = (180, 180)
+MEDIUM_AVATAR_SIZE = (150, 150)
+NORMAL_AVATAR_SIZE = (80, 80)
+SMALL_AVATAR_SIZE = (50, 50)
+IMAGE_CROPPING_THUMB_SIZE = (360, 360)
+BIG_MENU_COVER_SIZE = (420, 280)
+NORMAL_MENU_COVER_SIZE = (360, 240)
+SMALL_MENU_COVER_SIZE = (150, 100)
+MINI_MENU_COVER_SIZE = (60, 40)
+
+#relative to media root
+DEFAULT_MALE_AVATAR = 'default/male.png'
+DEFAULT_FEMALE_AVATAR = 'default/female.png'
 
 ###################### pay ######################
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
 PAY_DEBUG = False
-ORDER_PREFIX = 'po1'
+ORDER_PREFIX = 'po2'
 ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
 
 ###################### email ######################
@@ -165,8 +172,8 @@ LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
-WEIBO_APP_KEY = "4071331500"
-WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
+WEIBO_APP_KEY = "2295468526"
+WEIBO_APP_SECERT = "5991184a22eaff8d2b1149bcf1b1ff91"
 WEIBO_REDIRECT_URL = "http://www.fanjoin.com/login/weibo/"
 
 ###################### apple push ######################
@@ -181,6 +188,7 @@ XMPP_PUBSUB_SERVICE = 'pubsub.fanjoin.com'
 XMPP_DEBUG = []
 CHATSERVER = "http://www.fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
+
 
 
 ###################### msic ######################
@@ -252,6 +260,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django': {
+            'level': 'ERROR',
+            'propagate': True
+        },
         'fanju': {
             'level': 'INFO',
             'propagate': True
@@ -262,7 +274,7 @@ LOGGING = {
             'propagate': True
         },
         'fanju.pay': {
-            'handlers': ['pay','sentry'],
+            'handlers': ['pay', 'sentry'],
             'level': 'DEBUG',
             'propagate': False
         },

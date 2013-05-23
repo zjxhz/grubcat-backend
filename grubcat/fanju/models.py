@@ -1,6 +1,7 @@
 # coding=utf-8
 from datetime import datetime, date, timedelta
 from datetime import time as dtime
+import logging
 import time
 import threading
 from django.conf import settings
@@ -24,7 +25,7 @@ import os
 import random
 #import redis
 # Create your models here.
-
+logger = logging.getLogger(__name__)
 
 class Privacy:
     PUBLIC = 0
@@ -42,8 +43,8 @@ class Restaurant(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=u'用户', null=True, related_name="restaurant")
     name = models.CharField(u'餐厅名称', max_length=135)
     address = models.CharField(u'餐厅地址', max_length=765)
-    longitude = models.FloatField(u'经度', null=True, blank=True)
-    latitude = models.FloatField(u'纬度', null=True, blank=True)
+    longitude = models.FloatField(u'经度', null=True)
+    latitude = models.FloatField(u'纬度', null=True)
     tel = models.CharField(u'电话', max_length=60, null=True, blank=True)
     introduction = models.CharField(u'简介', max_length=6000, blank=True)
     regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
@@ -63,7 +64,7 @@ class Restaurant(models.Model):
 
 
 class DishCategory(models.Model):
-    name = models.CharField(u'菜名', max_length=45, )
+    name = models.CharField(u'分类', max_length=45, )
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅')
 
     def __unicode__(self):
@@ -78,16 +79,20 @@ class DishCategory(models.Model):
 class Dish(models.Model):
     name = models.CharField(u'菜名', max_length=135)
     price = models.DecimalField(u'价钱', decimal_places=1, max_digits=6)
-    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
-    desc = models.CharField(u'描述', max_length=765, blank=True)
     unit = models.CharField(u'单位', max_length=30, default=u'份')
-    available = models.BooleanField(u'目前可以提供', default=True)
+    desc = models.CharField(u'描述', max_length=765, blank=True)
     categories = models.ManyToManyField(DishCategory, verbose_name=u'分类', blank=True)
+    restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', )
+    available = models.BooleanField(u'目前可以提供', default=True)
+
+    def unique_error_message(self, model_class, unique_check):
+        return u'菜名重复，如果已经添加过这道菜，您可以选择编辑！'
 
     def __unicode__(self):
         return u'%s' % self.name
 
     class Meta:
+        unique_together = ('name', 'restaurant')
         verbose_name = u'菜'
         verbose_name_plural = u'菜'
 
@@ -124,47 +129,29 @@ class Menu(models.Model):
         items.sort(key=lambda item: item.order_no)
         return items
 
+    def get_cover_thumbnail(self, size):
+        return get_thumbnailer(self.photo).get_thumbnail({
+            'size': size,
+            'crop': True,
+            'box': self.cropping,
+            'detail': True,
+        }).url
+
     @property
     def big_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (420, 280),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.BIG_MENU_COVER_SIZE)
 
     @property
     def normal_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (360, 240),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
 
     @property
     def small_cover_url(self):
-        if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (150, 100),
-                'crop': True,
-                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
-        else:
-            url = staticfiles_storage.url("img/default/meal_cover.jpg")
-        return url
+        return self.get_cover_thumbnail(settings.SMALL_MENU_COVER_SIZE)
+
+    @property
+    def mini_cover_url(self):
+        return self.get_cover_thumbnail(settings.MINI_MENU_COVER_SIZE)
 
 
     def __unicode__(self):
@@ -209,7 +196,7 @@ class Order(models.Model):
     meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
-    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=2)
+    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=1)
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
@@ -392,14 +379,17 @@ class User(AbstractUser):
             relationship.save()
         except IntegrityError:
             raise BusinessException(u'你已经关注了对方！')
-    
+
+    def is_default_avatar(self):
+        return self.avatar in (settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)
+
     def is_following(self, another):
         if another.followers.filter(pk=self.pk):
             return True
         else:
             return False
         
-    def get_passedd_orders(self):
+    def get_passed_orders(self):
         return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
                                                      meal__start_time__lt=datetime.now().time())).order_by(
@@ -429,37 +419,25 @@ class User(AbstractUser):
         paying_orders_per_meal = all_paying_orders.values('meal').annotate(latest_order_id=Max('id'))
         return paying_orders_per_meal
 
-
-    
-    def avatar_thumbnailer(self, avatar_size):
-        try:
-            if self.avatar and os.path.exists(self.avatar.path):
-                return get_thumbnailer(self.avatar).get_thumbnail({
-                    'size': avatar_size,
-                    'box': self.cropping,
-                    'quality': 90,
-                    'crop': True,
-                    'detail': True,
-                })
-        except Exception:
-            pass
-
-    def avatar_thumbnail(self, width, height):
-        return self.avatar_thumbnail_for_size((width, height))
-            
     @property
     def age(self):
         if self.birthday:
             return date.today().year - self.birthday.year
         else:
             return None
+    
+    def avatar_thumbnail_for_size(self, avatar_size):
+        return get_thumbnailer(self.avatar).get_thumbnail({
+            'size': avatar_size,
+            'box': self.cropping,
+            'quality': 90,
+            'crop': True,
+            'detail': True,
+        }).url
 
-    def avatar_thumbnail_for_size(self, size):
-        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(size):
-            return self.avatar_thumbnailer(size).url
-        else:
-            return staticfiles_storage.url("img/default/big_avatar.png")
-        
+    def avatar_thumbnail(self, width, height):
+        return self.avatar_thumbnail_for_size((width, height))
+
     @property
     def big_avatar(self):
         return self.avatar_thumbnail_for_size(settings.BIG_AVATAR_SIZE)
@@ -470,23 +448,8 @@ class User(AbstractUser):
 
     @property
     def small_avatar(self):
-        return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)        
+        return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)
     
-    @property
-    def small_avatar_path(self):
-        if self.avatar and os.path.exists(self.avatar.path) and self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE):
-            return self.avatar_thumbnailer(settings.SMALL_AVATAR_SIZE).path
-        else:
-            return None
-
-    #    To Be Deleted, checked in group pages
-    @property
-    def avatar_default_if_none(self):
-        if self.avatar:
-            return self.avatar.url
-        else:
-            return settings.MEDIA_URL + "uploaded_images/anno.png"
-
     @property
     def followers(self):
         return self.followers.all()
@@ -661,7 +624,7 @@ class UserPhoto(models.Model):
     @property
     def large_photo(self):
         try:
-            return get_thumbnailer(self.photo).get_thumbnail({'size': (700, 1400 ),
+            return get_thumbnailer(self.photo).get_thumbnail({'size': (710, 1400 ),
                                                               'crop': False,
                                                               'detail': True
                                                               }).url
@@ -697,7 +660,7 @@ MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
     )
 
-MEAL_PERSON_CHOICE = [(x, "%s 人" % x) for x in range(2, 13)]
+MEAL_PERSON_CHOICE = [(2*x, "%s 人" % (2*x)) for x in range(1, 5)]
 START_TIME_CHOICE = (
     (dtime(9, 00), "9:00"), (dtime(9, 30), "9:30"), (dtime(10, 00), "10:00"), (dtime(10, 30), "10:30"),
     (dtime(11, 00), "11:00"), (dtime(11, 30), "11:30"), (dtime(12, 00), "12:00"), (dtime(12, 30), "12:30"),
@@ -734,7 +697,7 @@ class Meal(models.Model):
                                   choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
-    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, choices=LIST_PRICE_CHOICE, default=30.0,
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1,  default=30.0,
                                      blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
@@ -808,15 +771,17 @@ class Meal(models.Model):
     def left_persons(self):
         return self.max_persons - self.actual_persons
 
+    def get_cover_thumbnail(self, size):
+        return get_thumbnailer(self.photo).get_thumbnail({
+            'size': size,
+            'crop': True,
+            'detail': True,
+        }).url
+
     @property
     def big_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (420, 280),
-                'crop': True,
-                #                'quality':85,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.BIG_MENU_COVER_SIZE)
         else:
             url = self.menu.big_cover_url
         return url
@@ -824,13 +789,7 @@ class Meal(models.Model):
     @property
     def normal_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (360, 240),
-                'crop': True,
-                #                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
         else:
             url = self.menu.normal_cover_url
         return url
@@ -838,13 +797,7 @@ class Meal(models.Model):
     @property
     def small_cover_url(self):
         if self.photo:
-            url = get_thumbnailer(self.photo).get_thumbnail({
-                'size': (150, 100),
-                'crop': True,
-                #                'box': self.cropping,
-                #                'quality':85,
-                'detail': True,
-            }).url
+            url = self.get_cover_thumbnail(settings.SMALL_MENU_COVER_SIZE)
         else:
             url = self.menu.small_cover_url
         return url
@@ -911,6 +864,27 @@ class MealComment(Comment):
 #     cropping = ImageRatioField('image', '640x640')
 
 ####################################################  POST SAVE   #######################################
+
+@receiver(post_save, sender=User, dispatch_uid='set_default_avatar')
+def set_default_avatar(sender, instance, created, **kwargs):
+    user = instance
+    need_set_default_avatar = False
+    if not user.avatar:
+        need_set_default_avatar = True
+    elif user.gender == Gender.FEMALE and user.avatar == settings.DEFAULT_MALE_AVATAR:
+        need_set_default_avatar = True
+    elif user.gender != Gender.FEMALE and user.avatar == settings.DEFAULT_FEMALE_AVATAR:
+        need_set_default_avatar = True
+
+    if need_set_default_avatar:
+        if user.gender == Gender.FEMALE:
+            user.avatar = settings.DEFAULT_FEMALE_AVATAR
+        else:
+            user.avatar = settings.DEFAULT_MALE_AVATAR
+        user.cropping = ''
+        user.save(update_fields=('avatar', 'cropping'))
+
+
 def _pubsub_user_created(instance):
     user = instance
     cl, jid = pubsub.create_client(user)
@@ -929,14 +903,13 @@ def _pubsub_user_created(instance):
     cl.disconnect()
 
 
+@receiver(post_save, sender=User, dispatch_uid="pubsub_user_created")
 def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
         t = threading.Thread(target=_pubsub_user_created, args=(instance,))
         t.start()
 
-post_save.connect(pubsub_user_created, sender=User, dispatch_uid="pubsub_user_created") #dispatch_uid is used here to make it not called more than once
-
-
+@receiver(post_save, sender=Relationship, dispatch_uid="user_followed")
 def user_followed(sender, instance, created, **kwargs):
     if created:
         followee = instance.to_person
@@ -956,9 +929,9 @@ def user_followed(sender, instance, created, **kwargs):
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
         pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
         cl.disconnect()
-post_save.connect(user_followed, sender=Relationship, dispatch_uid="user_followed")
 
 
+@receiver(post_delete, sender=Relationship, dispatch_uid="user_unfollowed")
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
@@ -967,7 +940,6 @@ def user_unfollowed(sender, instance, **kwargs):
     pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
     cl.disconnect()
     
-post_delete.connect(user_unfollowed, sender=Relationship, dispatch_uid="user_unfollowed")
 
 @receiver(post_save, sender=Meal, dispatch_uid="meal_created")
 def meal_created(sender, instance, created, **kwargs):
