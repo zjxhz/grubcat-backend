@@ -48,7 +48,7 @@
                        }
                    }
                }
-           }
+           }a
        )
        var $current_group = $("#dk_container_id_group li.dk_option_current a");
        if($current_group.attr("data-dk-dropdown-value"))
@@ -65,7 +65,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="create-meal-page">
+    <div id="create-meal-page" class="">
     <div class="form-wrapper span10 offset1">
         <form id="create_meal_form" action="{% url 'create_meal' %}" method="post"
               class="form form-horizontal"> {% csrf_token %}
