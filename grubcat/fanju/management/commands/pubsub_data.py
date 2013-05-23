@@ -4,23 +4,22 @@ Created on Mar 9, 2013
 @author: wayne
 '''
 from django.core.management.base import BaseCommand
+from fanju.models import User, Relationship, pubsub_user_created, user_followed, \
+    Meal, meal_created, MealParticipants, meal_joined
 from fanju.util import pubsub
-from fanju.models import User, Relationship, \
-    pubsub_user_created, user_followed, Meal, meal_created, MealParticipants, \
-    meal_joined
+from optparse import make_option
 import logging
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):    
+    option_list = BaseCommand.option_list + ( make_option('--dry-run', action="store_true", dest="dry_run", default=False),
+                                              make_option('--unsubscribe_owner_meal', action="store_true", dest="unsubscribe_own", default=False),)
+    
     def handle(self, *args, **options):
         logger.debug("Handle pubsub data")
-        if args and args[0] == "dry-run":
-            self.dry_run = True
-        elif args and args[0] == "unsubscribe-owner-meal":
-            self.dry_run = False
+        self.dry_run = options.get("dry_run")
+        if options.get("unsubscribe_own"):
             self.unsubscribe_owner_meal()
-        else:
-            self.dry_run = False
         self.signal_profile_created()
         self.signal_profile_followed()
         self.signal_meal_created()
@@ -48,7 +47,7 @@ class Command(BaseCommand):
     def signal_meal_created(self):
         for meal in Meal.objects.all():
             if self.dry_run:
-                print u"creating nodes for meal %s, and host %s is subscribing " % (meal.id, meal.host.id)
+                print u"creating nodes for meal %s" % (meal.id)
             else:
                 meal_created(self, meal, True)
                 
