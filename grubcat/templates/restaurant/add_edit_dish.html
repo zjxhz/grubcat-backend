@@ -1,0 +1,77 @@
+{#{% load bootstrap_tags %}#}
+<form id="form-add-edit-dish" action="{{ request.path }}" method="post" class="form-horizontal">
+{#    {{ form|as_bootstrap }}#}
+
+{#form.non_field_errors means duplicated  names in the restaurant#}
+    <div id="div_id_name" class="control-group  {% if form.name.errors or form.non_field_errors %}error{% endif %}">
+        <label for="id_name" class="control-label required-field">
+            {{ form.name.label }}
+        </label>
+
+        <div class="controls">
+            {{ form.name }}
+            {% for error in form.name.errors %}
+                <p class="help-block">{{ error }}</p>
+            {% endfor %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="div_id_price" class="control-group   {% if form.price.errors %}error{% endif %}">
+
+        <label for="id_price" class="control-label required-field">
+            {{ form.price.label }}
+        </label>
+
+        <div class="controls">
+            <input id="id_price" name="price" type="text" value="{{ form.price.value|floatformat }}">
+            {% for error in form.price.errors %}
+                <p  class="help-block">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div id="div_id_unit" class="control-group  ">
+        <label for="id_unit" class="control-label required-field">
+            {{ form.unit.label }}
+        </label>
+
+        <div class="controls">
+            {{ form.unit }}
+        </div>
+    </div>
+
+    <div class="control-group  ">
+
+        <label for="id_desc" class="control-label ">
+            {{ form.desc.label }}
+        </label>
+
+        <div class="controls">
+            {{ form.desc }}
+        </div>
+    </div>
+
+    <div id="div_id_categories" class="control-group  ">
+
+        <label for="id_categories" class="control-label ">
+            {{ form.categories.label }}
+        </label>
+
+        <div class="controls">
+            {{ form.categories }}
+            <p class="help-block">{{ form.categories.help_text }}</p>
+
+        </div>
+    </div>
+
+
+     {{ form.restaurant }}
+
+    <a class="addlink add-category " href="#" id="add-category-link">添加分类</a>
+</form>

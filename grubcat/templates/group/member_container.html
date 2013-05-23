@@ -1,0 +1,60 @@
+<div id="user-container" class="transitions-enabled infinite-scroll clearfix">
+    {% for user in user_list %}
+            <div class="box">
+                <div class="user-img">
+                    <a href="" title="{{ user.username }}"><img class="shadow-small"
+                                                                src="{{ user.avatar_default_if_none  }}"
+                                                                alt="{{ user.username }}"
+                                                                width="219" height="219"></a>
+                </div>
+                <div class="speech-outer">
+                    <div class="speech-arrow"></div>
+                    <div class="speech-inner">
+                        <p>"一起出去公益吧！"</p>
+
+                        <p class="common-interst">我和TA的共同兴趣：公益</p>
+
+                        <div class="comments-wrapper">
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/matt-lowell-08fde25166ef"><img class="shadow-small"
+                                                                               alt="Matt-lowell-08fde25166ef-4740928"
+                                                                               height="30"
+                                                                               src="https://s3.amazonaws.com/grub_user_pics/8025/thumb/matt-lowell-08fde25166ef-4740928.jpg?2012"
+                                                                               width="30"></a>
+
+                                <div class="post-meal-comment-content">
+
+                                    <b><a href="/users/matt-lowell-08fde25166ef">Peter</a></b>
+                                    <span class="post-meal-comment-time">28 days ago</span><br>
+                                    有爱心的人，记得下次出去做公益活动的时候叫上我啊~
+                                </div>
+                            </div>
+
+                            <div class="post-meal-comment clearfix">
+                                <a href="/users/mihir-shah-22caa50fdc22"><img class="shadow-small" alt="Aalia_dinner1"
+                                                                              height="30"
+                                                                              src="https://s3.amazonaws.com/grub_user_pics/3503/thumb/aalia_dinner1.jpg?2011"
+                                                                              width="30"></a>
+
+                                <div class="post-meal-comment-content">
+
+                                    <b><a href="/users/mihir-shah-22caa50fdc22">Bill</a></b>
+                                    <span class="post-meal-comment-time">13 days ago</span><br>
+                                    和你聊天很开心，大家互相学习！
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+
+</div>
+
+{% if page_obj.has_next %}
+<div id="page-nav">
+    <a href="{% url 'more_group_member_list' group_id page_obj.next_page_number %}"></a>
+</div>
+{% endif %}
