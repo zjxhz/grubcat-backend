@@ -22,12 +22,12 @@ SENTRY_PUBLIC = False
 
 # You should configure the absolute URI to Sentry. It will attempt to guess it if you don't
 # but proxies may interfere with this.
-SENTRY_URL_PREFIX = 'http://42.121.34.164:9000'
+SENTRY_URL_PREFIX = 'www.fanjoin.com:9000'
 
-SENTRY_WEB_HOST = '42.121.34.164'
+SENTRY_WEB_HOST = '0.0.0.0'
 SENTRY_WEB_PORT = 9000
 SENTRY_WEB_OPTIONS = {
-    'workers': 3,  # the number of gunicorn workers
+    'workers': 2,  # the number of gunicorn workers
     # 'worker_class': 'gevent',
 }
 
