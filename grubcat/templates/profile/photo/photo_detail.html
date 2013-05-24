@@ -1,0 +1,27 @@
+{% extends "profile/base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
+
+
+{% block profile-main %}
+    <div id="photo-detail" class="span12">
+        <div class="actions">
+            <a href="{% url 'photo_list' photo.user.id %}" class="fl">
+                << 返回相册
+            </a>
+            {% if is_mine %}<a class="upload-photo-link fr" href="{% url 'upload_photo' %}">上传照片</a>
+                <a class="del-photo-link fr" href="{% url 'del_photo' photo.id %}"><i
+                        class="icon-remove"></i>删除照片</a> {% endif %}
+        </div>
+        <div id="photo-wrapper">
+            <a href="{% url 'photo_detail' photo.id %}">
+                <img id="photo" src="{{ photo.large_photo }}">
+            </a>
+            <span class="photo-direction photo-prev " url='{% url 'photo_detail' pre_photo.id %}' title="上一张"></span>
+            <span class="photo-direction photo-next " url='{% url 'photo_detail' next_photo.id %}' title="下一张"></span>
+        </div>
+    </div>
+
+    <div id="data" style="display: none" data-active-nav-id="profile_photo"></div>
+{% endblock %}
