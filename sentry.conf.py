@@ -3,6 +3,7 @@ import os.path
 
 CONF_ROOT = os.path.dirname(__file__)
 
+
 DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
