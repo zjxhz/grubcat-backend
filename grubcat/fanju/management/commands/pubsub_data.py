@@ -4,6 +4,7 @@ Created on Mar 9, 2013
 @author: wayne
 '''
 from django.core.management.base import BaseCommand
+import time
 from fanju.models import User, Relationship, pubsub_user_created, user_followed, \
     Meal, meal_created, MealParticipants, meal_joined
 from fanju.util import pubsub
@@ -21,6 +22,7 @@ class Command(BaseCommand):
         if options.get("unsubscribe_own"):
             self.unsubscribe_owner_meal()
         self.signal_profile_created()
+        time.sleep(5)
         self.signal_profile_followed()
         self.signal_meal_created()
         self.signal_meal_joined()
