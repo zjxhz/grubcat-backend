@@ -189,14 +189,14 @@ jQuery(function ($) {
         }
 
         function rePositionRightColumn() {
-            if ($document.scrollTop() >= 129) {
+            if ($document.scrollTop() >= 129 && $rightColumn.height() < $window.height()) {
                 $("#right-column").css({'position': 'fixed', 'top': '5px', 'left': $("#left-column").position().left + $("#left-column").width() + 20})
             } else {
                 $("#right-column").css({'position': 'static'})
             }
         }
 
-        var $document = $(document)
+        var $document = $(document), $window = $(window), $rightColumn=$("#right-column")
         $document.scroll(rePositionRightColumn)
         $(window).resize(rePositionRightColumn).resize()
 
