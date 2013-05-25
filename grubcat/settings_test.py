@@ -15,6 +15,8 @@ ALIPAY_BACK_DOMAIN = 'http://www.ifunjoin.com/'
 ORDER_PREFIX = 'det'
 PAY_DEBUG = True
 
+SESSION_COOKIE_DOMAIN = 'ifunjoin.com'
+
 #WEIBO_APP_KEY = "4071331500"
 #WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
 
