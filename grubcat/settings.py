@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 ###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False
+SESSION_COOKIE_DOMAIN = 'www.fanjoin.com'
 ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com')
 SITE_ROOT = '/home/fanju/'
 
