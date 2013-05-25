@@ -19,26 +19,18 @@ jQuery(function($){
         return false;
     })
 
-    var $notiWrapper = $("#notification-wrapper")
-    $notiWrapper.click(function (e) {
-        e.stopPropagation();
-    })
+    var $notiWrapper = $("#notification-wrapper"), $notiList = $("#notification-list")
 
     $("#nav-notification").click(function (e) {
+        $notiWrapper.toggleClass('hide')
+        var maxHeight = Math.min(700, ($(window).height() > 200 ? $(window).height()-100 : 100))
+        $notiList.css('maxHeight',maxHeight)
+        return false
+    })
+    $(document).bind('click', function () {
         if ($notiWrapper.is(":visible")) {
-            $notiWrapper.hide()
-            $(document).unbind("click.notification")
-            e.stopPropagation()
-        } else {
-            $notiWrapper.show()
-            e.stopPropagation()
-            $(document).bind('click.notification', function () {
-                $notiWrapper.hide();
-                $(document).unbind("click.notification")
-            })
+            $notiWrapper.toggleClass('hide')
         }
-        e.preventDefault()
-
     })
 
 
