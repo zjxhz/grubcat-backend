@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse_lazy
 ###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False
-SESSION_COOKIE_DOMAIN = 'www.fanjoin.com'
 ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com')
 SITE_ROOT = '/home/fanju/'
 
@@ -158,7 +157,7 @@ PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
 PAY_DEBUG = False
 ORDER_PREFIX = 'po2'
-ALIPAY_BACK_DOMAIN = 'http://www.fanjoin.com/'
+ALIPAY_BACK_DOMAIN = 'http://fanjoin.com/'
 
 ###################### email ######################
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -175,7 +174,7 @@ RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
 WEIBO_APP_KEY = "2295468526"
 WEIBO_APP_SECERT = "5991184a22eaff8d2b1149bcf1b1ff91"
-WEIBO_REDIRECT_URL = "http://www.fanjoin.com/login/weibo/"
+WEIBO_REDIRECT_URL = "http://fanjoin.com/login/weibo/"
 
 ###################### apple push ######################
 APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
@@ -187,7 +186,7 @@ APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" # Cre
 XMPP_SERVER = 'localhost'
 XMPP_PUBSUB_SERVICE = 'pubsub.fanjoin.com'
 XMPP_DEBUG = []
-CHATSERVER = "http://www.fanjoin.com/http-bind/"
+CHATSERVER = "http://fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
 
 
