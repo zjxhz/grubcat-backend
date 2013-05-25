@@ -8,12 +8,12 @@ STATIC_URL = '/static/'
 ASSETS_DEBUG = False
 ASSETS_AUTO_BUILD = False
 
-CHATSERVER = "http://www.ifunjoin.com/http-bind/"
+CHATSERVER = "http://ifunjoin.com/http-bind/"
 CHATDOMAIN = "ifunjoin.com"
 XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
-ALIPAY_BACK_DOMAIN = 'http://www.ifunjoin.com/'
-ORDER_PREFIX = 'det'
-PAY_DEBUG = True
+ALIPAY_BACK_DOMAIN = 'http://ifunjoin.com/'
+ORDER_PREFIX = 'det1'
+PAY_DEBUG = False
 
 SESSION_COOKIE_DOMAIN = 'ifunjoin.com'
 
@@ -26,7 +26,7 @@ WEIBO_REDIRECT_URL = "http://www.ifunjoin.com/login/weibo/"
 
 RAVEN_CONFIG = {
     'register_signals': True,
-    'dsn': 'http://66a385f77d6a4fa3ab75db245d66695a:0d7f487d06a74dbaa634d894f77703d6@www.ifunjoin.com:9000/2',
+    'dsn': 'http://66a385f77d6a4fa3ab75db245d66695a:0d7f487d06a74dbaa634d894f77703d6@ifunjoin.com:9000/2',
     }
 
 
