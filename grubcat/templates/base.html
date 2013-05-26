@@ -36,7 +36,7 @@
             <div class="container">
                 <a class="brand " href="/">饭聚</a><a class="brand city" href="/">@杭州</a>
                 <ul class="nav ">
-                    <li id="nav-meal"><a href="{% url 'meal_list' %}" class="hidden-phone">首页</a></li>
+                    <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url 'user_list' %}">成员</a></li>
                     <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
                     {% if user.is_authenticated %}
