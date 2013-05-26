@@ -388,7 +388,10 @@ jQuery(function($){
                     var $restaurantList = $("#restaurant-list");
                     if ($restaurantList.find("ul li").length >= 5) {
                         $restaurantList.find("ul li:last").css('border-bottom-width', '0');
-                        $restaurantList.lionbars();
+                        if(!$.browser.msie  || parseInt($.browser.version,10)>7){
+                            $restaurantList.lionbars();
+                        }
+
                         $("#lb-wrap-0-restaurant-list").css('height', 377)
                     }
 
@@ -397,7 +400,7 @@ jQuery(function($){
             })
         }
 
-        $("#id_privacy").dropkick({width: 313, startSpeed: 0});
+//        $("#id_privacy").dropkick({width: 313, startSpeed: 0});
 
         var $startDateInput = $("#id_start_date");
         $startDateInput.css('visibility', 'visible').datepicker({

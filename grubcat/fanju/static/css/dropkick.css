@@ -39,10 +39,8 @@
    * Help: Arrow image not appearing
    * Try updating this property to your correct dk_arrows.png path
    */
-  background-image: url('../img/dk_arrows.png');
-  background-repeat: no-repeat;
-  background-position: 95% center;
-  border: 1px solid #ccc;
+    background: url('../img/dk_arrows.png') no-repeat 95% center;
+    border: 1px solid #ccc;
   color: #333;
   padding: 7px 45px 7px 10px;
   text-shadow: #fff 1px 1px 0;
@@ -204,5 +202,3 @@ ul.dk_options_inner{
 .dk_container a:hover{
     text-decoration: none;
 }
-
-/***** End Critical to the continued enjoyment of working dropdowns ******/

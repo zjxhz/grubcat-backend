@@ -43,49 +43,6 @@ var myTemplate = {
             "<%}%>"  +
         "</div></a></li>"
 }
-$(function () {
-
-    Strophe.log = function (level, msg) {
-//    chatApp.log(msg)
-    }
-    $(document).bind('connect', function (ev, data) {
-        var conn = new Strophe.Connection(chatServer);
-
-        conn.xmlInput = function (elem) {
-            if ($(elem).find("chat")[0] || $(elem).find("message")[0]) {
-                chatApp.debug(elem)
-            }
-        }
-        conn.xmlOutput = function (elem) {
-            if ($(elem).find("retrieve")[0]) {
-                chatApp.debug(elem)
-            }
-        }
-        conn.rawInput = function (data) {
-//        chatApp.debug("in----" + data)
-        }
-
-        conn.rawOutput = function (data) {
-//        chatApp.debug("out++" + data)
-        }
-
-        conn.connect(data.jid, data.password, function (status) {
-            if (status === Strophe.Status.CONNECTED) {
-                $(document).trigger('connected');
-            } else if (status === Strophe.Status.DISCONNECTED) {
-                $(document).trigger('disconnected');
-                chatApp.connection = null;
-            }
-        });
-
-        chatApp.connection = conn;
-    });
-    $(document).trigger('connect', {
-        jid: $commonData.data("uid") + chatServerDomain,
-        password: $commonData.data("pwd")
-    });
-
-})
 
 var $chatData = $("#chat-data");
 
@@ -639,8 +596,17 @@ var chatApp = {
 
     initialize: function () {
         this.initialized = true
+        $("#chat-dialog").on("shown",chatApp.setRead)
     },
 
+    setRead: function () {
+        try {
+            if (chatApp.isVisible() && chatApp.contactList.getCurrentUser() && chatApp.contactList.getCurrentUser().get("unReadCount") > 0) {
+                chatApp.contactListView.$el.find(".current").click();
+            }
+        } catch (e) {
+        }
+    },
     checkConnection: function(){
         if (!this.connection){
             alert("连接已断开，点击确认后自动刷新页面")
@@ -950,149 +916,186 @@ var notyApp = {
     }
 }
 
-$(document).bind('connected', function () {
-    if(chatApp.initialized){
-        return;
+
+$(function () {
+
+    Strophe.log = function (level, msg) {
+//    chatApp.log(msg)
     }
-    notyApp.initialize();
+    $(document).bind('connect', function (ev, data) {
+        var conn = new Strophe.Connection(chatServer);
 
-    chatApp.initialize();
+        conn.xmlInput = function (elem) {
+            if ($(elem).find("chat")[0] || $(elem).find("message")[0]) {
+                chatApp.debug(elem)
+            }
+        }
+        conn.xmlOutput = function (elem) {
+            if ($(elem).find("retrieve")[0]) {
+                chatApp.debug(elem)
+            }
+        }
+        conn.rawInput = function (data) {
+//        chatApp.debug("in----" + data)
+        }
 
-    notyApp.retrieveNoty(chatApp.UNREAD_MSG)
+        conn.rawOutput = function (data) {
+//        chatApp.debug("out++" + data)
+        }
 
-    chatApp.connection.roster.get().done(function (roster) {
-        chatApp.listContacts(roster)
-        chatApp.connection.send($pres());
-        $("#chat-dialog").on("show", function () {
-            if (chatApp.contactList.length == 0) {
-                location.href = $("#nav-user").find("a").attr("href") + "?showChatTip=1"
-                return false;
-            } else{
-                return true
+        conn.connect(data.jid, data.password, function (status) {
+            if (status === Strophe.Status.CONNECTED) {
+                $(document).trigger('connected');
+            } else if (status === Strophe.Status.DISCONNECTED) {
+                $(document).trigger('disconnected');
+                chatApp.connection = null;
+            }
+        });
+
+        chatApp.connection = conn;
+    });
+
+
+    $(document).bind('connected', function () {
+        if (chatApp.initialized) {
+            return;
+        }
+        notyApp.initialize();
+
+        chatApp.initialize();
+
+        notyApp.retrieveNoty(chatApp.UNREAD_MSG)
+
+        chatApp.connection.roster.get().done(function (roster) {
+            chatApp.listContacts(roster)
+            chatApp.connection.send($pres());
+            $("#chat-dialog").on("show", function () {
+                if (chatApp.contactList.length == 0) {
+                    location.href = $("#nav-user").find("a").attr("href") + "?showChatTip=1"
+                    return false;
+                } else {
+                    return true
+                }
+            })
+            if (chatApp.isVisible()) {
+                $("#chat-dialog").trigger("show")
             }
         })
-        if(chatApp.isVisible()){
-            $("#chat-dialog").trigger("show")
-        }
-    })
 
-    $(".btn-follow").live("click", function(){
-        chatApp.connection.roster.subscribe($(this).data("uid")+chatServerDomain);
-    })
-    $(".btn-chat").click(function(){
-        var toUID = $(this).data("uid");
-        var toJID = toUID + chatServerDomain;
-
-        if (!chatApp.contactList.get( toUID)) {
-            chatApp.createContact(toJID).retrieveMessages();
-            chatApp.connection.roster.subscribe(toJID);
-        }
-        //show chat dialog
-        $("#chat-dialog").modal({
-            show: true
+        $(".btn-follow").live("click", function () {
+            chatApp.connection.roster.subscribe($(this).data("uid") + chatServerDomain);
         })
-        chatApp.contactListView.$el.find("#contact-" + toUID).click();
-        //add to roster
+        $(".btn-chat").click(function () {
+            var toUID = $(this).data("uid");
+            var toJID = toUID + chatServerDomain;
 
-        return false;
-    })
+            if (!chatApp.contactList.get(toUID)) {
+                chatApp.createContact(toJID).retrieveMessages();
+                chatApp.connection.roster.subscribe(toJID);
+            }
+            //show chat dialog
+            $("#chat-dialog").modal({
+                show: true
+            })
+            chatApp.contactListView.$el.find("#contact-" + toUID).click();
+            //add to roster
 
-    chatApp.connection.roster.on("xmpp:presence:available",function (data) {
+            return false;
+        })
 
-        var contact = chatApp.contactList.get(Strophe.getNodeFromJid(data.jid));
-        contact && contact.set('show', "online")
-
-    }).on("xmpp:presence:unavailable",function (data) {
+        chatApp.connection.roster.on("xmpp:presence:available",function (data) {
 
             var contact = chatApp.contactList.get(Strophe.getNodeFromJid(data.jid));
-            contact && contact.set('show', "offline")
+            contact && contact.set('show', "online")
 
-        }).on("xmpp:presence:subscriptionrequest", function (data) {
+        }).on("xmpp:presence:unavailable",function (data) {
 
-            chatApp.connection.roster.authorize(data.jid);
-            chatApp.connection.roster.subscribe(data.jid);
+                var contact = chatApp.contactList.get(Strophe.getNodeFromJid(data.jid));
+                contact && contact.set('show', "offline")
 
-        }).on("xmpp:roster:set", function(items){
-            //add new contacts
-            _.each(items, function (item) {
-                if (item.subscription != 'remove' && !chatApp.contactList.get(Strophe.getNodeFromJid(item.jid))) {
-                    chatApp.createContact(item.jid).retrieveMessages();
-                }
-            });
+            }).on("xmpp:presence:subscriptionrequest",function (data) {
 
-        })
-    chatApp.connection.message.on("xmpp:message", function (data) {
+                chatApp.connection.roster.authorize(data.jid);
+                chatApp.connection.roster.subscribe(data.jid);
 
-        // data = {jid: "", type:"" , body:"" , html_body: ""}
-        var fromUID = Strophe.getNodeFromJid(data.jid);
-        if (fromUID != chatApp.myProfile.id) { //come from others
-            var isNewContact = !chatApp.contactList.get(fromUID)
-            var msg = new Message({
-                from: fromUID, //who I am chatting with
-                to: chatApp.myProfile.id,
-                body: data.body,
-                timestamp: new ServerDate()
+            }).on("xmpp:roster:set", function (items) {
+                //add new contacts
+                _.each(items, function (item) {
+                    if (item.subscription != 'remove' && !chatApp.contactList.get(Strophe.getNodeFromJid(item.jid))) {
+                        chatApp.createContact(item.jid).retrieveMessages();
+                    }
+                });
+
             })
-            if(msg.sender.messages.where({body: data.body}).length){
-                chatApp.log("duplicate msg")
+        chatApp.connection.message.on("xmpp:message", function (data) {
+
+            // data = {jid: "", type:"" , body:"" , html_body: ""}
+            var fromUID = Strophe.getNodeFromJid(data.jid);
+            if (fromUID != chatApp.myProfile.id) { //come from others
+                var isNewContact = !chatApp.contactList.get(fromUID)
+                var msg = new Message({
+                    from: fromUID, //who I am chatting with
+                    to: chatApp.myProfile.id,
+                    body: data.body,
+                    timestamp: new ServerDate()
+                })
+                if (msg.sender.messages.where({body: data.body}).length) {
+                    chatApp.log("duplicate msg")
+                }
+                !isNewContact && msg.sender.addMessage(msg)
+                msg.sender.set("isTyping", false)
             }
-            !isNewContact && msg.sender.addMessage(msg)
-            msg.sender.set("isTyping", false)
+        });
+
+        $(document).bind("composing.chatstates",function (ev, jid) {
+
+            var contact = chatApp.contactList.get(Strophe.getNodeFromJid(jid));
+            contact && contact.set("isTyping", true)
+
+        }).bind("paused.chatstates", function (ev, jid) {
+
+                var contact = chatApp.contactList.get(Strophe.getNodeFromJid(jid));
+                contact && contact.set("isTyping", false)
+
+            })
+    });
+
+    $(window).bind("beforeunload", function () {
+        if (chatApp.connection) {
+            chatApp.connection.disconnect();
+            chatApp.connection = null;
+//            chatApp.log("reload")
         }
     });
 
-    $(document).bind("composing.chatstates", function(ev, jid){
 
-        var contact = chatApp.contactList.get(Strophe.getNodeFromJid(jid));
-        contact && contact.set("isTyping", true)
+    $(window).focus(function () {
+        chatApp.isWindowFocused = true;
+        chatApp.setRead()
+    }).blur(function () {
+            chatApp.isWindowFocused = false;
+        })
 
-    }).bind("paused.chatstates", function(ev, jid){
-
-            var contact = chatApp.contactList.get(Strophe.getNodeFromJid(jid));
-            contact && contact.set("isTyping", false)
-
+    $(window).resize(function () {
+        if ($("#chat-container")) {
+            var windowHeight = $(window).height();
+            if (windowHeight > 700) {
+                $("#chat-dialog").height(630)
+                $("#chat-container").height(590)
+                $(".message-list").height(470)
+            } else if (windowHeight < 250) {
+                $("#chat-dialog").height(180)
+                $("#chat-container").height(140)
+                $(".message-list").height(20)
+            } else {
+                $("#chat-dialog").height(windowHeight - 70)
+                $("#chat-container").height(windowHeight - 110)
+                $(".message-list").height(windowHeight - 230)
+            }
+        }
     })
-});
-
-$(window).bind("beforeunload", function(){
-    if (chatApp.connection) {
-        chatApp.connection.disconnect();
-        chatApp.connection = null;
-        chatApp.log("reload")
-    }
-});
-
-function setRead(){
-    try {
-        if (chatApp.isVisible() && chatApp.contactList.getCurrentUser() && chatApp.contactList.getCurrentUser().get("unReadCount") > 0) {
-            chatApp.contactListView.$el.find(".current").click();
-        }
-    } catch (e) {
-    }
-}
-$("#chat-dialog").on("shown",setRead)
-$(window).focus(function(){
-    chatApp.isWindowFocused = true;
-    setRead()
-}).blur(function(){
-    chatApp.isWindowFocused = false;
-})
-
-$(window).resize(function(){
-    if($("#chat-container")){
-        var windowHeight = $(window).height();
-        if(windowHeight > 700 ){
-            $("#chat-dialog").height(630)
-            $("#chat-container").height(590)
-            $(".message-list").height( 470)
-        } else if(windowHeight < 250 ){
-            $("#chat-dialog").height(180)
-            $("#chat-container").height(140)
-            $(".message-list").height( 20)
-        } else {
-            $("#chat-dialog").height(windowHeight - 70)
-            $("#chat-container").height(windowHeight - 110)
-            $(".message-list").height( windowHeight - 230)
-        }
-    }
+    $(document).trigger('connect', {
+        jid: $commonData.data("uid") + chatServerDomain,
+        password: $commonData.data("pwd")
+    });
 })
