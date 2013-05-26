@@ -1,10 +1,11 @@
 #coding=utf-8
 import logging
+from tortoisehg.util.i18n import _
 import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
@@ -350,9 +351,12 @@ class MealDetailView(OrderCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
-        meal = Meal.objects.select_related('menu__restaurant', ).prefetch_related('participants').get(
-            pk=self.kwargs.get('meal_id'))
-        context['meal'] = meal
+        try:
+            meal = Meal.objects.select_related('menu__restaurant', ).prefetch_related('participants').get(
+                pk=self.kwargs.get('meal_id'))
+            context['meal'] = meal
+        except ObjectDoesNotExist:
+            raise Http404(u'对不起，该饭局不存在！')
         context['avaliable_seats'] = range(meal.left_persons)
 
         payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED))
