@@ -34,18 +34,14 @@ input {
     margin-top: 10px;
 }
 
-.sign-up-button {
-    text-align: center;
-    float: left;
-    width: 100%;
-}
 
-.sign-up-button input[type="submit"] {
+#login_form .btn.btn-signup {
     display: block;
     margin: 10px 10px 4px 0;
     font-size: 120%;
-    padding: 10px 15px;
-    width: 190px;
+    padding:   10px 15px;
+    width: 205px;
+    zoom:1;
 }
 
 .register-wrapper, .login-wrapper{
