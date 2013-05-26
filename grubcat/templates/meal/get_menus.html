@@ -7,9 +7,9 @@
                 <ul>
                     {% for menu in menu_list %}
                         <li class="restaurant-item" menu-id="{{ menu.id }}">
-                            <div class="menu-cover"><img alt="8人套餐 25元/人" src="{{ menu.mini_cover_url }}"></div>
-                             <span class="rest-address">{{ menu.restaurant.name }}</span>
-                            <span class="rest-price">{{ menu.average_price|floatformat }}元/人</span>
+                            <div class="menu-cover"><div class="helper"><img alt="8人套餐 25元/人" src="{{ menu.mini_cover_url }}"></div></div>
+                             <div class="rest-address"><div class="helper">{{ menu.restaurant.name }}</div> </div>
+                            <div class="rest-price"><div class="helper">{{ menu.average_price|floatformat }}元/人</div> </div>
                             {#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
                         </li>
                     {% endfor %}

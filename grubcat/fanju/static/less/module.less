@@ -24,6 +24,7 @@
   #faq-how-to-book-meal, #faq-how-to-book-meal +p, #faq-how-to-cancel-meal {
     display: block;
   }
+
 }
 
 h3 {
@@ -44,6 +45,7 @@ h3 {
   background-repeat: repeat-y;
   background-position: -10px 0px;
   font-size: 22px;
+  text-align: left;
   line-height: 30px;
   a {
     color: #555;
@@ -90,7 +92,6 @@ h3 {
   .day-text {
     margin-top: -3px;
   }
-
 }
 
 .time {
@@ -166,6 +167,7 @@ h3 {
     img {
       width: 420px;
       height: 280px;
+      max-width: none\9;
     }
   }
   #create_meal_alert {
@@ -180,7 +182,11 @@ h3 {
     color: #555;
     font-size: 14px;
   }
-
+  .dish-info {
+    display: block;
+    width: 40px;
+    text-align: right;
+  }
 }
 
 /*meal list page*/
@@ -416,23 +422,24 @@ a.user-img-wrapper, div.empty-user-wrapper {
     margin: 0 0 10px 0;
   }
 
-  #create_meal_form fieldset {
-    background: white;
-    border-bottom: 1px solid #CCC;
-    width: 100%;
-    position: relative;
-    font-size: 16px;
-    padding: 0 0px 5px 1px;
-    margin-bottom: 30px;
-  }
-
-  #create_meal_form legend {
-    padding: 12px;
-    font-size: 140%;
-    font-weight: bold;
-    color: #222;
-    border: none;
-    margin-bottom: 0px;
+  #create_meal_form {
+    fieldset {
+      background: white;
+      border-bottom: 1px solid #CCC;
+      width: 100%;
+      position: relative;
+      font-size: 16px;
+      padding: 0 0px 5px 1px;
+      margin-bottom: 30px;
+    }
+    legend {
+      padding: 12px;
+      font-size: 140%;
+      font-weight: bold;
+      color: #222;
+      border: none;
+      margin-bottom: 0px;
+    }
   }
 
   .control-group label {
@@ -466,26 +473,28 @@ a.user-img-wrapper, div.empty-user-wrapper {
     padding: 12px 10px 9px 45px;
   }
 
-  #id_start_date {
+  #div_start_date{
+    .clearfix();
+    display: block;
     float: left;
-    font-size: 16px;
-    padding: 5px 5px 5px 43px;
-    width: 139px;
+    position: relative;
     margin-right: 10px;
     margin-bottom: 20px;
-    visibility: hidden;
-    background: url(../img/calendar.png), -webkit-gradient(linear, left top, left bottom, from(white), to(whiteSmoke));
-    background: url(../img/calendar.png), -moz-linear-gradient(top, white, whiteSmoke);
-    background: url(../img/calendar.png), -o-linear-gradient(top, white, whiteSmoke);
-    background: url(../img/calendar.png), linear-gradient(top, white, whiteSmoke);
-    background-repeat: no-repeat;
-    background-position: 6% center;
-    font-weight: bold;
-    line-height: 14px;
     .border-radius(5px);
+    #gradient > .vertical(#fff,#f5f5f5);
+  }
+
+  #id_start_date {
+    width:140px;
+    line-height: 36px;
+height: 36px;
+    float: left;
+    padding: 0 0 0 45px;
+    background: url(../img/calendar.png) no-repeat 12px center;
+    font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
     color: #666;
-    box-shadow: none;
   }
 
   #choose-menu {
@@ -507,12 +516,18 @@ a.user-img-wrapper, div.empty-user-wrapper {
     border-bottom: 1px solid #DDD;
     padding: 0 5px 0 10px;
     cursor: pointer;
-    _position:relative;
+    position:relative;
+    .helper{
+      *position: relative;
+      *top: -50%
+
+    }
     .menu-cover, .rest-price, .rest-address {
       display: table-cell;
       vertical-align: middle;
-      _position:absolute;
-      _top:50%;
+      *position: absolute;
+      *top: 50%;
+
     }
     .menu-cover {
       width: 60px;
@@ -526,6 +541,10 @@ a.user-img-wrapper, div.empty-user-wrapper {
       font-size: 88%;
       color: black;
       padding: 0 10px;
+      *left: 70px;
+    }
+    .rest-price {
+      *right: 10px;
     }
     &.selected {
       background-color: white;
@@ -553,6 +572,7 @@ a.user-img-wrapper, div.empty-user-wrapper {
 
   .btn-create-meal {
     width: 150px;
+    margin: 0 auto;
     display: block;
   }
 
@@ -568,7 +588,7 @@ a.user-img-wrapper, div.empty-user-wrapper {
 
   .form-horizontal .controls {
     margin-left: 140px;
-    margin-left: 0px\9;
+    *margin-left: 0px;
   }
 
   .menu-info {
@@ -664,8 +684,8 @@ a.user-img-wrapper, div.empty-user-wrapper {
 
 dl.menu-items {
   margin-bottom: 20px;
-  .clearfix();
   dd.dish {
+    .clearfix();
     font-size: 14px;
     padding: 0 0 5px 7px;
     .dish-name{
