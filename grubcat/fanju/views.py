@@ -1,6 +1,5 @@
 #coding=utf-8
 import logging
-from tortoisehg.util.i18n import _
 import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
