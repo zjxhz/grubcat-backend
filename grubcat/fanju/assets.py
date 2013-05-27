@@ -70,7 +70,7 @@ module_js = Bundle('js/module.js', filters='yui_js', output="gen/module.%(versio
 
 
 water_fall_js = Bundle(
-    'js/jquery.infinitescroll.js', 'js/jquery.masonry.js', 'js/modernizr_transitions.js', 'js/jquery.lazyload.min.js',
+    'js/jquery.infinitescroll.js', 'js/jquery.masonry.js', 'js/modernizr_transitions.js', 'js/jquery.lazyload.js',
     filters='yui_js', output='gen/water-fall.%(version)s.js'
 )
 jquery_form_js = Bundle('js/jquery.form.js', filters='yui_js', output='gen/jquery.form.%(version)s.js')
