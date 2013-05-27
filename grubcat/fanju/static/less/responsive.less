@@ -159,12 +159,21 @@
   }
 
   #meal-detail {
+    #desc{
+      margin-left: 0;
+    }
     #meal-container {
       text-align: center;
     }
     #meal-grub {
-      margin: 10px auto;
+      margin: 20px auto 10px auto;
       float: none;
+      .btn-book{
+        float: none;
+      }
+    }
+    #order_info_form{
+      margin: 20px auto;
     }
     .user-wrapper {
       float: left;
@@ -192,6 +201,9 @@
 //      width: 46%;
 //    }
   }
+  #notification-wrapper{
+    left: -215px;
+  }
 
   .container, {
     max-width: 375px;
@@ -217,6 +229,18 @@
       img{
         width: auto;
         height: auto;
+      }
+    }
+  }
+
+  #meal-detail-page {
+    .control-label {
+      float: left;
+      padding-top: 5px;
+    }
+    .meal-img-wrapper {
+      img {
+        max-width: 98%;
       }
     }
   }
