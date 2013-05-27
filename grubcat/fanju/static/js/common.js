@@ -1,7 +1,7 @@
 $(document).ready(function ($) {
 
     $("#main-nav ul.nav li").removeClass("active");
-    var $active = $("#" + $("#nav-active-id").html());
+    var $active = $("#" + $("#data").data('navActiveId'))
     $active.addClass("active");
     $("#main-nav ul.nav  li").not(".active").hover(function () {
         $active.removeClass("active");

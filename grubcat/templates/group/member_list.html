@@ -36,6 +36,7 @@
     <h1>{{ page_obj.paginator.count }}位成员</h1>
     <h2>快来认识些感兴趣的朋友吧！</h2>
     {% include "group/member_container.html"%}
+<div id="data" data-nav-active-id="nav-group" class='hide'/>
 {% endblock %}
 
 {% block page_js %}
@@ -44,5 +45,3 @@
     {% endassets %}
         {{ block.super }}
 {% endblock %}
-
-{% block active-nav-id %}nav-group{% endblock %}

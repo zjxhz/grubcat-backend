@@ -8,7 +8,6 @@
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
-{#{% block active-nav-id %}nav-meal{% endblock %}#}
 {% block content %}
     <div class="row" id="meal-detail-page">
         <div id="meal-detail" class="span9">
@@ -156,5 +155,5 @@
             </div>
         </div>
     </div>
-    <div id="data" style="display: none" data-check-order-status-link="{% url 'check_order_status' meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}{% endif %}"></div>
+    <div id="data" class='hide' data-check-order-status-link="{% url 'check_order_status' meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}"{% endif %}></div>
 {% endblock %}

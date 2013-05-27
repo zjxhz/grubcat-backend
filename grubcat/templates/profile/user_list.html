@@ -44,10 +44,9 @@
     </div>
 
     {% include "profile/user_container.html" %}
-    <div id="data" data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}"
-         data-user-list-url='{% url "user_list" %}'
-         data-add-tag-url="{% url 'add_tag' %}"
-         style="display: none"></div>
+    <div id="data" class='hide' data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}"
+         data-user-list-url='{% url "user_list" %}' data-add-tag-url="{% url 'add_tag' %}"
+         data-nav-active-id='nav-user'></div>
 {% endblock %}
 
 {% block page_js %}
@@ -60,5 +59,3 @@
     <script type="text/javascript" src="{% static 'js/jquery.lazyload.min.js' %}"></script>
  {{ block.super }}
 {% endblock %}
-
-{% block active-nav-id %}nav-user{% endblock %}
