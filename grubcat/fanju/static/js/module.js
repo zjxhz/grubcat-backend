@@ -494,6 +494,12 @@ jQuery(function($){
                 $("#need_edit_tags_again_tip").show();
             });
         });
+        $(window).resize(function(){
+            $container.masonry( 'destroy').masonry( {
+                itemSelector: '.box',
+                isAnimated: !Modernizr.csstransitions
+            })
+        })
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
         $container.infinitescroll({
