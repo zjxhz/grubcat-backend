@@ -7,7 +7,16 @@
   .navbar-fixed-bottom .navbar-inner {
     padding: 0px 10px;
   }
-
+#user-container {
+    .box {
+      .user-img {
+        img {
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+  }
 }
 
 //pad
@@ -41,7 +50,7 @@
 
   #user-container {
     .box {
-      margin-right: 8px;
+      width: 22%;
     }
   }
 
@@ -186,23 +195,44 @@
       }
     }
   }
+
+  #user-container{
+    .box{
+      max-width: 176px;
+      .user-img{
+        img{
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+  }
 }
 
 @media (min-width: 480px) and (max-width: 767px) {
   .container, {
     max-width: 500px;
   }
+
+  #user-container {
+    .box {
+      width: 30%;
+    }
+  }
 }
 
 //phones
 @media (max-width: 479px) {
   #user-container {
-//    .box {
-//      width: 46%;
-//    }
+    .box {
+      width: 45%;
+    }
   }
   #notification-wrapper{
-    left: -215px;
+    left: -216px;
+    .unread-count{
+      left: 40px;
+    }
   }
 
   .container, {
