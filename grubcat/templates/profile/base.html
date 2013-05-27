@@ -1,14 +1,16 @@
 {% extends "base.html" %}
+
 {% load static from staticfiles %}{% load assets %}{% load static_asset %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "profile_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+
+{% block page_js %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
+    {{ block.super }}
 {% endblock %}
 
 {% block content %}
-    <div class="row" id="profile-page">
+    <div class="row profile-page">
         <ul id="profile-nav" class="nav nav-tabs span12 ">
             <li id="profile_actions">
                 <div class="btn-group">
@@ -34,13 +36,4 @@
         {% block profile-main %}
         {% endblock %}
     </div>
-
-{% endblock %}
-
-
-{% block page_js %}
-    {% assets "jquery_form_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-    {{ block.super }}
 {% endblock %}

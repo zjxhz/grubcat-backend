@@ -46,7 +46,7 @@ jQuery(function($){
             },100)
         })
 
-    if ($("#upload-photo-wrapper")[0]) {
+    if ($("#upload-photo-page")[0]) {
         $("#id_photo").change(function () {
             $("#id_upload_photo_form").ajaxSubmit({
                 beforeSubmit: function () {
@@ -156,7 +156,7 @@ jQuery(function($){
 
     }
 
-    if ($("#profile-page")[0]) {
+    if ($(".profile-page")[0]) {
 
         $("#profile-nav").find("li.active").removeClass("active");
         $("#" + $data.data("activeNavId")).addClass("active");
@@ -177,9 +177,9 @@ jQuery(function($){
     }
 
 
-    var $followingList = $("#following-list");
-    if ($followingList[0]) {
-        $followingList.find(".btn-unfollow").live('click', function () {
+    var $followListPage = $("#follow-list-page");
+    if ($followListPage[0]) {
+        $followListPage.find(".btn-unfollow").live('click', function () {
             var $btn = $(this);
             $.post($(this).attr('href'), function () {
                 $btn.parents(".following-cell").remove();
@@ -188,7 +188,7 @@ jQuery(function($){
         })
     }
 
-    if ($("#edit-profile")[0] || $("#bind-edit-profile")[0]) {
+    if ($("#edit-profile-page")[0] || $("#bind-profile-page")[0]) {
         $("#profile-nav-info").addClass("active");
 
         var $originalTagInput = $("#id_tags");

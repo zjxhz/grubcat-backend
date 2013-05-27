@@ -4,10 +4,6 @@
 {% load assets %}
 {% block title %}菜单管理{% endblock %}
 
-{% block page_css %}
-    {{ block.super }}
-{% endblock %}
-
 {% block page_js %}
     {% assets "jquery_form_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>

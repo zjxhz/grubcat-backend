@@ -351,9 +351,6 @@ ul.as-selections {
 
       .avatar {
         float: left;
-        img {
-          .square(50px);
-        }
       }
       .nickname {
         float: left;
@@ -550,4 +547,53 @@ ul.as-selections {
 
 #ie6-warning {
   padding: 8px 0;
+}
+
+
+.date-time-wrapper {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 65px;
+  text-align: center;
+  .date {
+    background: white;
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
+
+    span {
+      display: block;
+      padding: 3px;
+      color: #666;
+      font-size: 13px;
+    }
+    .month {
+      background: #EEE;
+      border-bottom: 1px solid #CCC;
+      color: #777;
+      padding-top: 5px;
+      .border-top-radius(3px);
+    }
+
+    .day-num {
+      font-size: 230%;
+      margin-top: 3px;
+      font-weight: bold;
+    }
+
+    .day-text {
+      margin-top: -3px;
+    }
+  }
+
+  .time {
+    margin-top: 10px;
+
+    color: white;
+    background: black;
+    padding: 3px 0 3px 0;
+    .opacity(70);
+    .border-radius(3px);
+    .box-shadow(0 0 10px #000);
+  }
 }

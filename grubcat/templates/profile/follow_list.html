@@ -1,17 +1,20 @@
 {% extends "profile/base.html" %}
+
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
+
 {% block title %}我的关注/粉丝{% endblock %}
+
 {% block profile-main %}
-    <div id="following-list" class="span12">
+    <div id="follow-list-page" class="span12">
         {% with followings=profile.following.all followers=profile.followers.all %}
             {% if followings %}
-                <h3>我的关注：</h3>
+                <h4>我的关注：</h4>
                 <div class="row">
                     {% for following in followings %}
                         <div class="span3 following-cell">
                             <a href="{% url 'user_detail' following.id %}" class="fl" target="_blank">
-                                <img src="{{ following.normal_avatar }}" title="{{ following.name|default:'' }}">
+                                <img src="{{ following.normal_avatar }}" title="{{ following.name|default:'' }}" width="80" height="80">
                             </a>
                             <a class="name" href="{% url 'user_detail' following.id %}" target="_blank">{{ following.name }}</a>
 
@@ -22,12 +25,12 @@
             {% endif %}
 
             {% if followers %}
-                <h3>我的粉丝：</h3>
+                <h4>我的粉丝：</h4>
                 <div class="row">
                     {% for follower in followers %}
                         <div class="span3 follower-cell">
                             <a href="{% url 'user_detail' follower.id %}" class="fl" target="_blank">
-                                <img src="{{ follower.normal_avatar }}" title="{{ follower.name|default:'' }}">
+                                <img src="{{ follower.normal_avatar }}" title="{{ follower.name|default:'' }}"  width="80" height="80">
                             </a>
                             <a class="name" href="{% url 'user_detail' follower.id %}" target="_blank">{{ follower.name }}</a>
                         </div>

@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% load static_asset %}
-{% load bootstrap_tags %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}发起饭局{% endblock %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "module_css" %}
+
+{% block extra_base_css %}
+    {% assets "create_meal_css" %}
         <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
     {% endassets %}
 {% endblock %}
 
 {% block page_js %}
-    <script type="text/javascript" src="http://maps.google.com.hk/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://ditu.google.com/maps/api/js?sensor=false"></script>
     {% assets "create_meal_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
@@ -65,7 +64,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="create-meal-page" class="">
+    <div id="create-meal-page" class="row">
         <div class="form-wrapper span10 offset1">
             <form id="create_meal_form" action="{% url 'create_meal' %}" method="post"
                   class="form form-horizontal"> {% csrf_token %}

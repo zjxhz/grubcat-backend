@@ -4,18 +4,13 @@
 {% load cache %}
 {% load assets %}
 {% block title %}杭州的饭局{% endblock %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "module_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
-    {% endassets %}
-{% endblock %}
+
 {% block base_js %}
-    {% include "ga.html" %}
     {% assets "base_main_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
+
 {% block content %}
 {#    {% cache 900 meal_list_frag %}#}
     <div class="row" id="meal-list-page">
@@ -37,12 +32,14 @@
                                 {% endif %}
                             </a>
 
-                            <div class="date-wrapper">
-                                <span class="month">{{ meal.start_date|date:"n" }}月</span>
-                                <span class="day-num">{{ meal.start_date|date:"d" }}</span>
-                                <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                            <div class="date-time-wrapper">
+                                <div class="date">
+                                    <span class="month">{{ meal.start_date|date:"n" }}月</span>
+                                    <span class="day-num">{{ meal.start_date|date:"d" }}</span>
+                                    <span class="day-text">{{ meal.start_date|date:"D" }}</span>
+                                </div>
+                                <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                             </div>
-                            <div class="time">{{ meal.start_time|date:"G:i " }}</div>
                         </div>
                         <div class="meal-info span4">
                             <p class="introduction">
