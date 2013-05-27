@@ -2,10 +2,11 @@
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
+
 {% block profile-main %}
-    <div id="photo-list" class="span12">
+    <div id="photo-list-page" class="span12">
         {% if is_mine %}
-            <div class="actions ">
+            <div class="photo-actions ">
                 <a class="upload-photo-link fr" href="{% url 'upload_photo' %}">上传照片</a>
             </div>
         {% endif %}
@@ -24,9 +25,9 @@
         {% else %}
             <div class="no-results">
                 {% if is_mine %}
-                    还没有任何照片，现在就上传吧。可以是你的靓照，也可以是你的兴趣爱好，比如你喜欢的书。
+                    还没有任何照片，现在就上传吧！
                 {% else %}
-                    TA还没上传照片，邀请TA上传吧。
+                    TA还没上传照片，邀请TA上传吧！
                 {% endif %}
             </div>
         {% endif %}

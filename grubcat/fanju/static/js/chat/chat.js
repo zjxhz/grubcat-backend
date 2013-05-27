@@ -3,7 +3,7 @@ var chatServer = $commonData.data("chat-server")
 var chatServerDomain ="@" + $commonData.data("chat-domain")
 var pubsubService = 'pubsub.' + $commonData.data("chat-domain")
 var myTemplate = {
-    tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>"></div>' +
+    tplContactItem: '<div class="avatar"><img src="<%= avatarUrl%>" alt="<%= name %>" title="<%= name %>" width="50" height="50"></div>' +
         '<div class="nickname"><%= name %></div>' +
         '<div class="unread-count"><%=unReadCount%></div>' +
         '<% if( typeof body != "undefined" ) { %><div class="last-message"><%- body %></div><% } %>',
@@ -855,7 +855,7 @@ var notyApp = {
             messages.reverse()
             _.each(messages, function (oldMsg) { //from old to new
                 try{
-                    notyApp.createNoty($(oldMsg.body).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
+                    notyApp.createNoty($($.parseXML(oldMsg.body)).find("items"), oldMsg.id, oldMsg.timestamp, oldMsg.isRead, false)
                 } catch(e){
 
                 }
@@ -1061,10 +1061,14 @@ $(function () {
     });
 
     $(window).bind("beforeunload", function () {
-        if (chatApp.connection) {
-            chatApp.connection.disconnect();
-            chatApp.connection = null;
+        try {
+
+            if (chatApp.connection) {
+                chatApp.connection.disconnect();
+                chatApp.connection = null;
 //            chatApp.log("reload")
+            }
+        } catch (e) {
         }
     });
 

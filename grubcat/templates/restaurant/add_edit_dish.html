@@ -1,8 +1,5 @@
-{#{% load bootstrap_tags %}#}
 <form id="form-add-edit-dish" action="{{ request.path }}" method="post" class="form-horizontal">
-{#    {{ form|as_bootstrap }}#}
 
-{#form.non_field_errors means duplicated  names in the restaurant#}
     <div id="div_id_name" class="control-group  {% if form.name.errors or form.non_field_errors %}error{% endif %}">
         <label for="id_name" class="control-label required-field">
             {{ form.name.label }}

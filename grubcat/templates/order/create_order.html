@@ -3,12 +3,6 @@
 {% load static from staticfiles %}
 {% load assets %}
 {% block title %}预定{% endblock %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "order_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
-    {% endassets %}
-{% endblock %}
 {% block content %}
     <div class="create-order clearfix">
         <div class="meal-info ">

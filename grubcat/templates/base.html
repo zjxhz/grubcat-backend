@@ -1,9 +1,6 @@
 {% load static_asset %}
 {% load static from staticfiles %}
 {% load assets %}
-
-{#PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"#}
-{#"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"#}
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -12,10 +9,13 @@
     <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
     <meta content="饭聚，饭局，杭州的饭聚，fanju,杭州的饭局,美食社交，社交晚餐" name="keywords">
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    {% include "ga.html" %}
     {% block page_css %}
+        {% block extra_base_css %}{% endblock %}
         {% assets "base_css" %}
             <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
         {% endassets %}
+        {% block module_css %}{% endblock %}
     {% endblock %}
 {#        {% assets "bootstrap_ie6_css" %}#}
 {#    <!--[if IE 6]>#}
@@ -24,7 +24,7 @@
 {#        {% endassets %}#}
 </head>
 <body>
-        <!--[if lte IE 7]>
+<!--[if lte IE 7]>
 <div id="ie6-warning" class='alert'>
 <div class='container'>您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用
 <a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div></div>
@@ -44,7 +44,7 @@
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}
-                        <li id="nav-notification"><a href="#">通知</a><span id="total-noty-unread-count" class="unread-count" class='hide'>0</span></li>
+                        <li id="nav-notification"><a href="#">通知</a><span id="total-noty-unread-count" class="unread-count hide">0</span></li>
                         <div id="notification-wrapper" class="hide">
                             <ul id="notification-list">
                             </ul>
@@ -84,17 +84,16 @@
 
 {% block page-container %}
     <div class="container" id="main-container">
-        {% block container-inner %}
-            {% block content %}{% endblock %}
-            {#    use for active nav item, see example on meal_list page#}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </div>
 
     <div id="common-data" class="hide" data-uid="{{ user.username }}" data-pwd="{{ user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
+
     {% block footer %}
         <div id="footer"></div>
     {% endblock %}
+
     {% if user.is_authenticated %}
     <div id="chat-dialog" class="modal fade hide">
         <div class="modal-header">
@@ -122,18 +121,14 @@
 {% endblock %}
 
 {% block base_js %}
-    {% include "ga.html" %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    <!--[if lt IE 9]>
-{#      <script src="js/html5shiv.js"></script>#}
-    <![endif]-->
     {% endassets %}
 {% endblock %}
 {% block page_js %}
     {% assets "module_js" %}
-    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-{% endassets %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
 {% endblock %}
 {% if user.is_authenticated %}
     {% assets "chat_js" %}

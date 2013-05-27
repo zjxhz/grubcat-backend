@@ -2,12 +2,7 @@
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ meal.topic }}{% endblock %}
-{% block page_css %}
-    {{ block.super }}
-    {% assets "module_css" %}
-        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
-    {% endassets %}
-{% endblock %}
+
 {% block content %}
     <div class="row" id="meal-detail-page">
         <div id="meal-detail" class="span9">
