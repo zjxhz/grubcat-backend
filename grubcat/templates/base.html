@@ -16,7 +16,6 @@
         {% endassets %}
         {% block module_css %}{% endblock %}
     {% endblock %}
-    {% include "ga.html" %}
 {#        {% assets "bootstrap_ie6_css" %}#}
 {#    <!--[if IE 6]>#}
 {#            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">#}
@@ -120,6 +119,7 @@
     {% endif %}
 {% endblock %}
 
+{% include "ga.html" %}
 {% block base_js %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
