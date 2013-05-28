@@ -133,7 +133,7 @@ h3 {
   }
   .dish-info {
     display: block;
-    width: 40px;
+    max-width: 100px;
     text-align: right;
   }
 }
@@ -345,6 +345,7 @@ a.user-img-wrapper, div.empty-user-wrapper {
     width: 100%;
   }
   #restaurant-list {
+    position: relative;
     height: 377px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -636,27 +637,6 @@ a.user-img-wrapper, div.empty-user-wrapper {
   }
 }
 
-dl.menu-items {
-  margin-bottom: 20px;
-  dd.dish {
-    .clearfix();
-    font-size: 14px;
-    padding: 0 0 5px 7px;
-    .dish-name{
-      width: 125px;
-      display: block;
-      float: left;
-      overflow: hidden
-    }
-    .dish-info {
-      float: right;
-    }
-  }
-  dt.category {
-    margin-bottom: 6px;
-    margin-top: 10px;
-  }
-}
 
 //maybe also for register page
 #login-page {

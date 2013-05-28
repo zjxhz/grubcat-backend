@@ -166,26 +166,26 @@ body{
     }
   }
   .menu-info-wrapper {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid #ccc;
     border-top: none;
     min-height: 400px;
     position: relative;
   }
 
   .menu-cover-wrapper {
+
+    height: 248px;
+    border: 1px dashed #aaa;
+    position: relative;
+    margin: auto;
     .loading {
-      background: url("../img/loader.gif") no-repeat scroll right center transparent;
+      background: url("../img/loader.gif") right center no-repeat  transparent;
       margin: 4px 0 0 21px;
       padding-right: 25px;
       position: absolute;
       right: 150px;
       top: 165px;
     }
-    height: 248px;
-    border: 1px dashed #aaa;
-    position: relative;
-    margin: auto;
-
     img {
       width: 360px;
       height: 240px;
@@ -399,6 +399,7 @@ body{
       margin-bottom: 10px;
     }
     .dish-info {
+
       float: none;
       .price {
         float: right;
@@ -436,6 +437,7 @@ body{
       }
       .dish-info {
         display: inline-block;
+        max-width: 100px;
         .price {
           display: inline-block;
         }
@@ -469,9 +471,10 @@ body{
   }
 
    #add-menu-help-link {
-    padding: 5px 20px;
-    background: url(../img/help.png) 2px 5px no-repeat;
+    padding-left:20px;
+    background: url(../img/help.png) 0 50% no-repeat;
     background-size: 18px 18px;
+     display: block;
   }
   .help-title {
     margin: 5px 2px;
@@ -510,6 +513,7 @@ body{
   td.meal-img {
     background-color: #ffffff;
   }
+
 }
 
 /** 今日就餐 **/
@@ -534,6 +538,9 @@ body{
     hr {
       margin: 10px 0;
     }
+  }
+  #result{
+//    display: block;
   }
 }
 
@@ -561,6 +568,12 @@ body{
     .dish-info{
       float: right;
     }
+  }
+    .modal-body {
+    max-height: 100%;
+  }
+  dl.menu-items{
+    margin-left: 10px;
   }
 }
 

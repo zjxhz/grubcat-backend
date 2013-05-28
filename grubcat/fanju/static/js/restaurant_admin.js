@@ -7,14 +7,20 @@ jQuery(function ($) {
 
     /************************** 客人就餐 ****************************/
     // bind form using 'ajaxForm'
-    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({target:'#result', beforeSubmit:function () {
-        var code = $("#id_code").val();
-        if (!code || code.length != 8) {
-            alert('请输入8位验证码！')
-            return false;
+    $('#checkin-form')[0] && $('#checkin-form').ajaxForm({
+        target: '#result',
+        beforeSubmit: function () {
+            var code = $("#id_code").val();
+            if (!code || code.length != 8) {
+                alert('请输入8位验证码！')
+                return false;
+            }
+            $("#result").html("");
+        },
+        success: function () {
+            $("#result").hide().show()
         }
-        $("#result").html("");
-    } });
+    });
 
 
 
@@ -197,8 +203,7 @@ jQuery(function ($) {
         }
 
         var $document = $(document), $window = $(window), $rightColumn=$("#right-column")
-        $document.scroll(rePositionRightColumn)
-        $(window).resize(rePositionRightColumn).resize()
+        $window.scroll(rePositionRightColumn).resize(rePositionRightColumn).resize()
 
         calculateDishNumPerCategory()
         $("#add-category-link").click(function () {
@@ -262,7 +267,7 @@ jQuery(function ($) {
                 calculatePrice()
                 calculateDishNumPerCategory()
                 hideDishes(ui.sender.attr("dish-id"));
-                $(this).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}})
+                $(this).find(".num").tooltip({title:'修改',delay:{show:300}})
             },
             update:function(){
                 calculateDishNumPerCategory()
@@ -272,7 +277,7 @@ jQuery(function ($) {
 
         //add dish and category
         $("#dish-list .category, #dish-list .dish").live('dblclick', function (e) {
-            $(this).clone().appendTo($menuItems).hide().fadeIn(1000).find(".num").tooltip({title:'修改',selector:true, delay:{show:300}});
+            $(this).clone().appendTo($menuItems).hide().fadeIn(1000).find(".num") .tooltip({title:'修改', delay:{show:300}});
             hideDishes($(this).attr("dish-id"))
             calculatePrice()
             calculateDishNumPerCategory()
@@ -331,7 +336,7 @@ jQuery(function ($) {
 
             })
             return false;
-        }).tooltip({title:'修改',selector:true, delay:{show:300}})
+        }) .tooltip({title:'修改', delay:{show:300}})
 
 
         $("#menu-items,#dish-list").disableSelection();
@@ -444,7 +449,7 @@ jQuery(function ($) {
                     $("#id_crop_form").ajaxSubmit({
                         success:function (data) {
                             //noinspection JSUnresolvedVariable
-                            $menuContainer.find(".menu-cover-wrapper img").attr("src", data.normal_cover_url);
+                            $menuContainer.find(".menu-cover-wrapper img").attr("src", $.parseJSON(data).normal_cover_url);
                             $("#crop_cover_modal").modal('hide')
                         }
                     })
@@ -463,7 +468,7 @@ jQuery(function ($) {
                 success:function (data) {
                     $menuCoverWrapper.find(".loading").hide();
                     //noinspection JSUnresolvedVariable
-                    $menuCoverWrapper.find("img").attr('src', data.normal_cover_url);
+                    $menuCoverWrapper.find("img").attr('src', $.parseJSON(data).normal_cover_url);
                     $menuCoverWrapper.addClass("has-cover");
                     $menuCoverWrapper.find(".btn-upload-cover").removeClass("btn-danger").addClass("btn-primary");
                     $menuCoverWrapper.find(".upload-actions, .upload-actions-bg").show();
