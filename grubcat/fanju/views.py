@@ -271,7 +271,7 @@ class UserListView(ListView):
 #    queryset = User.objects.all().select_related('tags')
     template_name = "profile/user_list.html"
     context_object_name = "user_list"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         tags = self.request.GET.get('tags')

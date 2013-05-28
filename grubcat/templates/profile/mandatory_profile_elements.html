@@ -5,7 +5,7 @@
     <div class="controls">
         <input type="text" name="name" id="id_name"
                value="{{ form.name.value|default_if_none:'' }}"
-               required data-validation-required-message="请输入姓名！"
+               required data-validation-required-message="请输入姓名"
                 >
         {{ form.name.errors }}
     </div>
@@ -40,8 +40,10 @@
         {{ form.tags }}{{ form.tags.errors }}
     </div>
     <ul class="hot-tags  as-selections" id="hot-tags">
-        <span class="fl">你可能喜欢：</span>
-        <a id="change_hot_tags" href="{% url 'tag_list' %}" page="1" class="fr">换一换</a>
+        <div class="tags-head clearfix">
+            <span class="fl">你可能喜欢：</span>
+            <a id="change_hot_tags" href="{% url 'tag_list' %}" page="1" class="fr">换一换</a>
+        </div>
     </ul>
 
 </div>
