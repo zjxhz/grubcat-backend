@@ -535,9 +535,9 @@ jQuery(function($){
                     $newElems.animate({ opacity: 1 });
                     $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
-//                        if($(document).height() <= $(window).height()){
-//                        $(window).scroll();
-//                        }
+                        if($(document).height() <= $(window).height()){
+                        $(window).scroll();
+                        }
                     });
                 });
                 $(newElements).find(".tags li").each(function () {
