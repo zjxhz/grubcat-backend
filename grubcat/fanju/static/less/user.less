@@ -269,6 +269,7 @@
 
 #edit-profile-page{
 
+  .clearfix;
   .avatar {
 
     img {
@@ -293,13 +294,14 @@
     }
   }
 
-  #id_name, #id_college, #id_industry, #id_work_for, #id_occupation {
+  #id_name, #id_college, #id_industry, #id_work_for, #id_occupation,  #id_motto{
     width: 270px;
   }
 
   #id_industry {
     width: 283px;
   }
+
 
   #id_birthday_year, #id_birthday_month, #id_birthday_day {
     margin-right: 3px;
@@ -566,16 +568,15 @@
     text-align: center;
     z-index: 100;
     position: fixed;
-    left: 45%;
+    left: 50%;
     bottom: 40px;
-    width: 200px;
+    width: 100px;
+    margin-left:-50px;
     padding: 10px;
-    background: black;
-    opacity: 0.8;
     color: white;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
+    background: black;
+    .opacity(80);
+    .border-radius(10px);
   }
 
   .box {
