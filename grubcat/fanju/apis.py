@@ -282,6 +282,8 @@ class UserResource(EOResource):
                 self.wrap_view('update_location'), name="api_update_location"),   
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/avatar%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('avatar'), name="api_avatar"),  
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/background%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('background'), name="api_background"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('visit'), name="api_visit"),            
         ]
@@ -291,22 +293,18 @@ class UserResource(EOResource):
         A quick and dirty fix as tastypie seems to have problems with even simple PATCH request.
         By overwritting this method, PUT request may not work, and any PATCH request that tries to update foreign keys or m2m relations will not work either.
         """
-#        nameChanged = False
-#        if bundle.data['name'] != bundle.obj.name:
-#            nameChanged = True
         request_profile = request.user
+#        if 'apns_token' in bundle.data: # same apns_token should be valid only for one user
+#            apns_token = bundle.data['apns_token']
+#            for user in User.objects.filter(apns_token=apns_token):
+#                user.apns_token = ""
+#                user.save()
         updated_profile = self.obj(request,**kwargs)
         if not request_profile == updated_profile:
             return http.HttpUnauthorized()
         bundle = self.full_hydrate(bundle)
         self.save_related(bundle)
-        if 'email' in bundle.data:
-            bundle.obj.email = bundle.data['email']
-            bundle.obj.save()
         bundle.obj.save()
-        # if nameChanged:
-        #     logger.debug('sync name to xmpp server')
-        #     xmpp_client.syncProfile(bundle.obj )
         return bundle
     
     @readMineOnly
@@ -517,7 +515,28 @@ class UserResource(EOResource):
             return SuccessResponse(dic)
         else:
             raise http.HttpBadRequest()
-               
+    
+    @writeMineOnly
+    def background(self, request, **kwargs):
+        user_to_query = request.user  
+        if request.method == 'POST':
+            if user_to_query.background_image:
+                old_background = user_to_query.background_image.path
+            else:
+                old_background = None
+            contentFile = request.FILES.values()[0]
+            filename = contentFile.name
+            user_to_query.background_image.save(filename, contentFile)
+            if old_background and os.path.exists(old_background) and user_to_query.background_image.path != old_background:
+                os.remove(old_background)
+            user_resource = UserResource()
+            ur_bundle = user_resource.build_bundle(obj=user_to_query)
+            serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
+            dic = json.loads(serialized)
+            return SuccessResponse(dic)
+        else:
+            raise http.HttpBadRequest()
+                   
     class Meta:
         authorization = Authorization()
         queryset = User.objects.all()

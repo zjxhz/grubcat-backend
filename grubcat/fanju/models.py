@@ -365,7 +365,7 @@ class User(AbstractUser):
     weibo_id = models.CharField(max_length=20, null=True, blank=True)
     weibo_access_token = models.CharField(max_length=128, null=True, blank=True)
     tags = TaggableManager(through=TaggedUser, blank=True)
-    apns_token = models.CharField(max_length=255, blank=True)
+    apns_token = models.CharField(max_length=255, blank=True, null=True)
     background_image = models.ImageField(u'背景图片', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True)
 
     @models.permalink
