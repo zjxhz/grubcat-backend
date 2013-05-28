@@ -388,7 +388,7 @@ jQuery(function($){
                     var $restaurantList = $("#restaurant-list");
                     if ($restaurantList.find("ul li").length >= 5) {
                         $restaurantList.find("ul li:last").css('border-bottom-width', '0');
-                        if(!$.browser.msie  || parseInt($.browser.version,10)>7){
+                        if(!$.browser.msie  || parseInt($.browser.version,10)>8){
                             $restaurantList.lionbars();
                         }
 

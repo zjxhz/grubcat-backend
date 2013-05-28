@@ -1,18 +1,20 @@
-{% if order %}
+{% if order and user.resaurant == order.meal.restaurant %}
     {% if order.is_used %}
         <div class="span10">
             <h3 class="alert alert-waringing">
-                校验码已经使用过！使用时间：{{ order.completed_time|date:"n" }}月{{ order.completed_time|date:"j" }}日 {{ order.completed_time|date:"G:i " }}</h3>
+                校验码已经使用过！使用时间：{{ order.completed_time|date:"n" }}月{{ order.completed_time|date:"j" }}日 {{ order.completed_time|date:"G:i " }}
+            </h3>
         </div>
     {% elif is_passed %}
         <div class="span10">
             <h3 class="alert alert-error">
                 校验码未使用过，但已经过期！
+            </h3>
         </div>
     {% elif is_upcomming %}
         <div class="span10">
             <h3 class="alert alert-error">
-                饭局还没有开始，校验码不可以使用！
+                饭局还没有开始，校验码不可以使用！</h3>
         </div>
     {% else %}
         <div id="check-in-title" class="span10 check-in-title">
@@ -69,6 +71,8 @@
         <hr/>
         {% include 'meal/menu_frag.html' with menu=order.meal.menu %}
     </div>
+{% elif order %}
+    <div class="span10"><h3 class="alert alert-error">订单不属于本餐厅，属于 {{ order.meal.restaurant.name }}！</h3></div>
 {% else %}
     <div class="span10"><h3 class="alert alert-error">订单不存在！</h3></div>
 {% endif %}

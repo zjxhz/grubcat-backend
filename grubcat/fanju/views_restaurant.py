@@ -15,6 +15,7 @@ import json
 #restaurant admin related views
 from fanju.views_common import create_sucess_json_response, create_failure_json_response
 
+
 class OrderCheckInView(FormView):
     template_name = "restaurant/checkin.html"
     form_class = OrderCheckInForm
@@ -173,8 +174,7 @@ class EditMenuCoverView(UpdateView):
             data = {'normal_cover_url': self.object.normal_cover_url}
         else:
             data = {'normal_cover_url': self.object.normal_cover_url}
-        return create_sucess_json_response(
-            extra_dict=data) #return text/html type, not json, hack for IE ajax upload file
+        return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
 
 def add_edit_menu(request, pk=None, is_copy=False):

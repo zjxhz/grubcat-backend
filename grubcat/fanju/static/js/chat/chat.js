@@ -1084,15 +1084,15 @@ $(function () {
         if ($("#chat-container")) {
             var windowHeight = $(window).height();
             if (windowHeight > 700) {
-                $("#chat-dialog").height(630)
+                $("#chat-dialog").height(640)
                 $("#chat-container").height(590)
                 $(".message-list").height(470)
-            } else if (windowHeight < 250) {
-                $("#chat-dialog").height(180)
+            } else if (windowHeight < 260) {
+                $("#chat-dialog").height(190)
                 $("#chat-container").height(140)
                 $(".message-list").height(20)
             } else {
-                $("#chat-dialog").height(windowHeight - 70)
+                $("#chat-dialog").height(windowHeight - 60)
                 $("#chat-container").height(windowHeight - 110)
                 $(".message-list").height(windowHeight - 230)
             }
