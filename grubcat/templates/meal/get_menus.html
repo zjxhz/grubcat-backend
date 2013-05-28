@@ -1,0 +1,41 @@
+{% load static from staticfiles %}
+<div id="choose-menu" class="row">
+    <div id="choose-restaurant" class="fl">
+        <div id="restaurant-list">
+            {% if menu_list %}
+                <ul>
+                    {% for menu in menu_list %}
+                        <li class="restaurant-item" menu-id="{{ menu.id }}">
+                            <div class="menu-cover"><div class="helper"><img alt="8人套餐 25元/人" src="{{ menu.mini_cover_url }}"></div></div>
+                             <div class="rest-address"><div class="helper">{{ menu.restaurant.name }}</div> </div>
+                            <div class="rest-price"><div class="helper">{{ menu.average_price|floatformat }}元/人</div> </div>
+                            {#                        <span class="rest-location">{{ menu.restaurant.address }}</span>#}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-menu-info">对不起，目前没有适合的餐厅，您可以改变就餐人数或者就餐时间，查看是否有合适的餐厅。</div>
+            {% endif %}
+        </div>
+    </div>
+    <div id="choose-restaurant-info" class="fl span4">
+
+    </div>
+    <div id="menu-info-wrapper" class="fl">
+        {% for menu in menu_list %}
+            <div id="menu-{{ menu.id }}" class="hide menu-info">
+                <div class="title">
+                    <div class="rest-address">{{ menu.restaurant.address }}
+                        <a  href="#" class="map-link"  lat="{{ menu.restaurant.latitude }}"
+                           long="{{ menu.restaurant.longitude }}">地图</a>
+                    </div>
+                    <div class="menu-name">{{ menu.name|default:"8人套餐 40元/人" }}</div>
+                </div>
+
+                {% include 'meal/menu_frag.html' %}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+   
