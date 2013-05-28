@@ -18,6 +18,20 @@
       }
     }
   }
+
+  #edit-profile-page {
+    #interst-tags-wrapper .hot-tags {
+      float: left;
+      width: 275px;
+      position: static;
+      margin-left: 100px;
+    }
+    .avatar #crop-avatar-link {
+      margin-left: 11px;
+      padding: 4px 5px;
+    }
+  }
+
 }
 
 //pad
@@ -107,12 +121,7 @@
     }
   }
 
-
   #edit-profile-page {
-    #crop-avatar-link {
-      margin-left: 11px;
-      padding: 4px 5px;
-    }
     #avatar-wrapper {
       img {
         .square(160px)
@@ -120,12 +129,6 @@
     }
     #basic-profile-form {
       width: 514px;
-    }
-    .hot-tags {
-      float: left;
-      width: 275px;
-      position: static;
-      margin-left: 100px;
     }
   }
 
@@ -141,41 +144,54 @@
 
 }
 
+//all phones
 @media (max-width: 767px) {
   body {
     padding-top: 0;
   }
+
   .container, {
     margin: 0 auto;
   }
-  #profile-nav {
-    margin-left: 0;
+
+  .profile-page #profile-nav {
+    margin-left: 0px;
+    .btn-follow, .btn-unfollow {
+      .border-radius(4px)
+    }
+    .btn-chat {
+      display: none;
+    }
   }
+
   #meal-list {
     .btn-book {
       display: none;
     }
-    .meal-info{
+    .meal-info {
       float: left;
       margin-top: 10px;
-      .introduction{
+      .introduction {
         min-height: 10px;
       }
     }
   }
+
   #notification-wrapper {
     left: initial;
-    right:0px;
+    right: 0px;
   }
+
   img {
-//    width: auto;
-//    height: auto;
     max-width: 100%;
-    //        max-height: 100%;
   }
 
   #meal-detail {
-    #desc{
+    .control-label {
+      float: left;
+      padding-top: 5px;
+    }
+    #desc {
       margin-left: 0;
     }
     #meal-container {
@@ -184,11 +200,11 @@
     #meal-grub {
       margin: 20px auto 10px auto;
       float: none;
-      .btn-book{
+      .btn-book {
         float: none;
       }
     }
-    #order_info_form{
+    #order_info_form {
       margin: 20px auto;
     }
     .user-wrapper {
@@ -203,11 +219,11 @@
     }
   }
 
-  #user-container{
-    .box{
+  #user-container {
+    .box {
       max-width: 176px;
-      .user-img{
-        img{
+      .user-img {
+        img {
           width: auto;
           height: auto;
         }
@@ -236,7 +252,7 @@
     }
   }
 
-  .container{
+  .container {
     max-width: 375px;
   }
 
@@ -244,7 +260,7 @@
     padding: 15px 10px 15px;
   }
 
-  .profile-nav{
+  .profile-nav {
     li {
       float: left;
     }
@@ -256,8 +272,8 @@
       min-height: 30px;
       margin-top: 10px;
     }
-    .meal-img-wrapper{
-      img{
+    .meal-img-wrapper {
+      img {
         width: auto;
         height: auto;
         width: 96%;
@@ -266,13 +282,23 @@
   }
 
   #meal-detail-page {
-    .control-label {
-      float: left;
-      padding-top: 5px;
-    }
+
     .meal-img-wrapper {
       img {
         max-width: 96%;
+      }
+    }
+  }
+
+  .profile-page{
+    #profile-nav{
+        li a{
+          padding: 5px;
+        }
+      }
+    #profile_basic_info_page{
+      .profile-actions{
+        display: none;
       }
     }
   }
