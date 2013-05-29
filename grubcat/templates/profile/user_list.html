@@ -51,6 +51,6 @@
         {% include "profile/user_container.html" %}
         <div id="data" class='hide' data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}"
              data-user-list-url='{% url "user_list" %}' data-add-tag-url="{% url 'add_tag' %}"
-             data-nav-active-id='nav-user'></div>
+             data-nav-active-id='nav-user' data-max-page="{{ paginator.num_pages }}"></div>
     </div>
 {% endblock %}
