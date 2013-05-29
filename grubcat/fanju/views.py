@@ -188,14 +188,14 @@ def get_user_info(request):
             users = User.objects.filter(username__in=usernames)
             result = []
             for user in users:
-                result.append({"id": user.username, "name": user.name, "avatarUrl": user.small_avatar,
+                result.append({"id": user.username.lower(), "name": user.name, "avatarUrl": user.small_avatar,
                                'profileUrl': user.get_absolute_url()})
         elif request.POST.get("id"):
             username = request.POST.get("id")
             user = User.objects.filter(username=username)
             if len(user):
                 user = user[0]
-                result = {"id": user.username, "name": user.name, "avatarUrl": user.small_avatar,
+                result = {"id": user.username.lower(), "name": user.name, "avatarUrl": user.small_avatar,
                           'profileUrl': user.get_absolute_url()}
             else:
                 result = {}
