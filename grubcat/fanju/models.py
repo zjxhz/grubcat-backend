@@ -433,7 +433,7 @@ class User(AbstractUser):
             'box': self.cropping,
             # 'quality': 90,
             'crop': True,
-            'detail': True,
+            # 'detail': True,
         }).url
 
     def avatar_thumbnail(self, width, height):
