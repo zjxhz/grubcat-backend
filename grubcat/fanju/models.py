@@ -134,7 +134,6 @@ class Menu(models.Model):
             'size': size,
             'crop': True,
             'box': self.cropping,
-            'detail': True,
         }).url
 
     @property
@@ -431,9 +430,7 @@ class User(AbstractUser):
         return get_thumbnailer(self.avatar).get_thumbnail({
             'size': avatar_size,
             'box': self.cropping,
-            # 'quality': 90,
             'crop': True,
-            # 'detail': True,
         }).url
 
     def avatar_thumbnail(self, width, height):
@@ -617,7 +614,6 @@ class UserPhoto(models.Model):
         try:
             return get_thumbnailer(self.photo).get_thumbnail({'size': (210, 210),
                                                               'crop': True,
-                                                              'detail': True
             }).url
         except Exception:
             return None
@@ -627,7 +623,6 @@ class UserPhoto(models.Model):
         try:
             return get_thumbnailer(self.photo).get_thumbnail({'size': (710, 1400 ),
                                                               'crop': False,
-                                                              'detail': True
                                                               }).url
         except Exception:
             return None
@@ -775,8 +770,7 @@ class Meal(models.Model):
     def get_cover_thumbnail(self, size):
         return get_thumbnailer(self.photo).get_thumbnail({
             'size': size,
-            'crop': True,
-            'detail': True,
+            'crop': True
         }).url
 
     @property
