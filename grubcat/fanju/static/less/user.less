@@ -514,8 +514,13 @@
 
   #crop_avatar_modal.modal {
     width: auto;
+    *max-width: 650px;
     padding-top: 10px; /* -1 * (width / 2) */
-
+    .modal-footer{
+      *width:auto;
+      *position: relative;
+      *zoom: normal;
+    }
     .modal-body {
       max-height: 800px;
       padding: 30px 30px;
