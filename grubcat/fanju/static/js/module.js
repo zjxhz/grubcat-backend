@@ -470,7 +470,7 @@ jQuery(function($){
                 noty({text: tag + " 已经添加到我的兴趣", timeout: 500});
                 $(".add-tag-link").remove()
                 $(".tags li:contains(" + tag + ")").not('.showing-tag').each(function () {
-                    if ($(this).text() == tag) {
+                    if ($(this).text().trim() == tag) {
                         $(this).addClass("common")
                     }
                 })
@@ -479,7 +479,7 @@ jQuery(function($){
         })
         $tagItems.each(function () {
             //noinspection JSUnresolvedVariable
-            if ($.inArray($(this).html(), myTags) > -1) {
+            if ($.inArray($(this).text().trim(), myTags) > -1) {
                 $(this).addClass('common');
             }
         });
