@@ -515,7 +515,10 @@ jQuery(function($){
                 nextSelector: '#page-nav a', // selector for the NEXT link (to page 2)
                 itemSelector: '.box', // selector for all items you'll retrieve
                 animate: false,
-                errorCallback: function () {
+//                debug:true,
+//                path: $data.data("next-page-url"),
+                maxPage: $data.data("maxPage"),
+                errorCallback: function (a, b, c) {
 
                     var $need_edit_tags_again_tip = $("#need_edit_tags_again_tip");
                     if ($need_edit_tags_again_tip[0]) {
@@ -542,9 +545,8 @@ jQuery(function($){
                 var $newElems = $(newElements).css({ opacity: 0 });
                 // ensure that images load before adding to masonry layout
                 $newElems.imagesLoaded(function () {
-                    // show elems now they're ready
                     $newElems.animate({ opacity: 1 });
-                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
+//                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
                         if ($(document).height() <= $(window).height()) {
                             $(window).scroll();

@@ -181,6 +181,7 @@ class MealListView(ListView):
 
 ### User related views ###
 def get_user_info(request):
+    result = {}
     if request.method == 'POST':
         if request.POST.get("ids"):
             usernames = request.POST.get("ids").split(",")
@@ -198,7 +199,7 @@ def get_user_info(request):
                           'profileUrl': user.get_absolute_url()}
             else:
                 result = {}
-        return HttpResponse(json.dumps(result), content_type='application/json', )
+    return HttpResponse(json.dumps(result), content_type='application/json', )
 
 
 #User related
