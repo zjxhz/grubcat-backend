@@ -292,7 +292,7 @@ option {
   #chat-left-column {
     float: left;
     width: 230px;
-    overflow: auto;
+    overflow-y: scroll;
   }
   #no-roster-tip {
     width: 70%;
@@ -303,6 +303,7 @@ option {
   }
   #chat-left-column, #chat-right-column {
     height: 100%;
+    position: relative;
   }
   #roster {
     padding: 0px;
@@ -334,6 +335,7 @@ option {
 
       .avatar {
         float: left;
+        .square(50px);
       }
       .nickname {
         float: left;
@@ -366,6 +368,7 @@ option {
 
   #chat-right-column {
     width: 599px;
+    *width: 577px;
     float: left;
     border-left: 1px solid #aaa;
 
@@ -420,11 +423,14 @@ option {
     .message-list {
       overflow: auto;
       height: 470px;
+      position: relative;
     }
     .message-item {
+      position: relative;
       .clearfix;
       margin: 16px 15px;
       .avatar {
+        display: block;
         float: left;
         .square(38px);
       }
@@ -437,12 +443,14 @@ option {
           position: relative;
           padding: 0 25px;
           display: inline-block;
+          .ie7-inline-block();
         }
         .message-time {
           _display: inline;
         }
         .time-span {
           width: 20px;
+          height: 1px;
           background: #B4B8BD;
           margin: 0;
           position: absolute;
