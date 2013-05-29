@@ -431,7 +431,7 @@ class User(AbstractUser):
         return get_thumbnailer(self.avatar).get_thumbnail({
             'size': avatar_size,
             'box': self.cropping,
-            'quality': 90,
+            # 'quality': 90,
             'crop': True,
             'detail': True,
         }).url
