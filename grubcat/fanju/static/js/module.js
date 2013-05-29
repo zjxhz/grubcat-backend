@@ -485,8 +485,8 @@ jQuery(function($){
         });
         $container.imagesLoaded(function () {
             $container.masonry({
-                itemSelector: '.box',
-                isAnimated: !Modernizr.csstransitions
+                itemSelector: '.box'
+//                isAnimated: !Modernizr.csstransitions
             }, function () {
                 if ($(document).height() <= $(window).height()) {
                     $(window).scroll();
@@ -495,10 +495,18 @@ jQuery(function($){
             });
         });
         $(window).resize(function(){
-            $container.masonry( 'destroy').masonry( {
-                itemSelector: '.box',
-                isAnimated: !Modernizr.csstransitions
-            })
+            var orginalWindowWidth = $data.data("windowWidth"), currentWindowWidth = $(window).width()
+            if (orginalWindowWidth && orginalWindowWidth != currentWindowWidth) {
+                $data.data("windowWidth", currentWindowWidth)
+                if ($container.data("masonry")) {
+                    $container.masonry('destroy').masonry({
+                        itemSelector: '.box'
+//                        isAnimated: !Modernizr.csstransitions
+                    })
+                }
+            } else if(! orginalWindowWidth){
+                $data.data("windowWidth", currentWindowWidth)
+            }
         })
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
@@ -517,7 +525,10 @@ jQuery(function($){
                     }
                 },
                 extendFinished: function (responseText) {
-                    $("#main-container").append($(responseText).siblings("div.alert"));
+                    var $alert = $(responseText).siblings("div.alert")
+                    if ($alert[0]) {
+                        $("#main-container").append($alert);
+                    }
                 },
                 loading: {
                     msgText: '加载中...',
@@ -535,8 +546,8 @@ jQuery(function($){
                     $newElems.animate({ opacity: 1 });
                     $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
-                        if($(document).height() <= $(window).height()){
-                        $(window).scroll();
+                        if ($(document).height() <= $(window).height()) {
+                            $(window).scroll();
                         }
                     });
                 });
