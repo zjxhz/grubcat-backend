@@ -20,7 +20,7 @@
                         {% else %}
                             <a href="{% url 'un_follow' profile.id %}" class="btn btn-unfollow">取消关注</a>
                         {% endif %}
-                        <button class="btn btn-chat" data-uid="{{ profile.username }}"><i class="icon-comment"></i> 聊天</button>
+                        <a class="btn btn-chat" data-uid="{{ profile.username }}"><i class="icon-comment"></i> 聊天</a>
                     {% endif %}
                 </div>
             </li>

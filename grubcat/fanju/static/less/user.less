@@ -293,11 +293,20 @@
   .clearfix();
 
   .control-group {
+     display: block;
     .control-label {
       width: 80px;
     }
-    .controls {
-      margin-left: 100px;
+    .controls{
+     margin-left: 100px;
+      input, textarea {
+        *margin-left: -100px;
+      }
+      #id_gender_1, #id_gender_2 {
+        *margin-left: -20px;
+      }
+
+
       textarea {
         height: auto;
         resize: none;
@@ -317,6 +326,8 @@
 
   #id_name, #id_college, #id_industry, #id_work_for, #id_occupation,  #id_motto{
     width: 270px;
+    float: left;
+
   }
 
   #id_industry {
@@ -378,7 +389,8 @@
       }
       }
       li {
-        padding-top: 2px;
+        padding-top: 4px;
+        padding-right: 7px;
         color: #777;
         cursor: pointer;
       }
