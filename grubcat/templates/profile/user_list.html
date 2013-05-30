@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+
+{% block page_js %}
+    <script type="text/javascript">
+        var myTags = [{% for tag in request.user.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
+    </script>
+    {% assets "water_fall_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+ {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div id="user-list-page" class="">
+        {% if request.GET.showChatTip %}
+            <div class="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                您现在还没有好友可以聊天，看看有没有感兴趣的朋友吧！
+            </div>
+        {% endif %}
+        {% if need_edit_tags %}
+            <div class="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                请完善你的兴趣爱好，这样便可以找到那些和你有着共同喜好的朋友了！赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>吧！
+            </div>
+        {% endif %}
+        {% if need_upload_avatar %}
+            <div class="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                你还没有上传头像，其他朋友无法在这里看到你哦！赶快去 <a href="{% url 'edit_basic_profile' %}">上传头像</a> 吧！
+            </div>
+        {% endif %}
+
+        <div class="users-actions clearfix">
+            {% if request.GET.tags %}
+                <ul class="tags">
+                    <li class="showing-tag">{{ request.GET.tags }}</li>
+                </ul>
+            {% endif %}
+            {% if show_add_tag %}
+                <a class="btn-link add-tag-link" href="#" data-tags='{{ request.GET.tags }}'>添加到我的兴趣</a>
+            {% endif %}
+            {% if show_common_tags_link %}
+                <a class='show-common-link' href="{% url 'user_list' %}?show=common" class="fr">寻找志同道合的朋友</a>
+            {% endif %}
+
+        </div>
+
+        {% include "profile/user_container.html" %}
+        <div id="data" class='hide' data-ajax-load-image-id="{% static 'img/ajax_loader.gif' %}"
+             data-user-list-url='{% url "user_list" %}' data-add-tag-url="{% url 'add_tag' %}"
+             data-nav-active-id='nav-user'></div>
+    </div>
+{% endblock %}

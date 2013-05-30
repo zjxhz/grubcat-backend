@@ -1,0 +1,19 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+{% assets "base_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+{% assets "jquery_ui_js" %}
+    <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+{% endassets %}
+</body>
+</html>
