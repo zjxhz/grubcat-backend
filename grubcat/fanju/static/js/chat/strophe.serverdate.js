@@ -50,11 +50,14 @@ Strophe.addConnectionPlugin('serverdate', {
     
       xhr.onreadystatechange = function(){
         if(this.readyState == 2){
-          var header = this.getResponseHeader('Date');
-          var server_date = new Date(header);
-          if ( header && server_date != 'Invalid Date' ){
-            ServerDate.skew = server_date -  new Date()
-          }
+            try {
+
+                var header = this.getResponseHeader('Date');
+                var server_date = new Date(header);
+                if (header && server_date != 'Invalid Date') {
+                    ServerDate.skew = server_date - new Date()
+                }
+            } catch(e){}
         }
         handler();
       };

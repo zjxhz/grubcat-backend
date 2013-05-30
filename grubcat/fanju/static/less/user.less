@@ -35,6 +35,7 @@
   font-size: 14px;
   .box-shadow(none);
   li {
+    white-space: nowrap;
     list-style: none;
     cursor: pointer;
     border: 1px solid #DDDDDD;
@@ -44,10 +45,10 @@
     margin: 0 6px 6px 0;
     padding: 2px 9px;
     padding-bottom: 0\9;
-    background: none repeat scroll 0 0 #F7F7F7;
+    background-color: #F7F7F7;
 
     &.common {
-      background: none repeat scroll 0 0 #588A00;
+      background-color: #588A00;
       border-color: #588A00;
       color: #FFFFFF;
     }
@@ -293,11 +294,23 @@
   .clearfix();
 
   .control-group {
+     display: block;
     .control-label {
       width: 80px;
     }
-    .controls {
-      margin-left: 100px;
+    .controls{
+     margin-left: 100px;
+      input, textarea {
+        *margin-left: -100px;
+      }
+      #id_gender_1, #id_gender_2 {
+        *margin-left: -20px;
+      }
+      #tags{
+        *margin-left: 0;
+      }
+
+
       textarea {
         height: auto;
         resize: none;
@@ -317,6 +330,8 @@
 
   #id_name, #id_college, #id_industry, #id_work_for, #id_occupation,  #id_motto{
     width: 270px;
+    float: left;
+
   }
 
   #id_industry {
@@ -358,6 +373,9 @@
     }
     ul.as-selections {
       width: 274px;
+      border: 1px solid @inputBorder;
+      margin-bottom: @baseLineHeight / 2;
+      vertical-align: middle;
     }
 
     ul.hot-tags {
@@ -375,6 +393,8 @@
       }
       }
       li {
+        padding-top: 4px;
+        padding-right: 7px;
         color: #777;
         cursor: pointer;
       }
@@ -494,8 +514,13 @@
 
   #crop_avatar_modal.modal {
     width: auto;
+    *max-width: 650px;
     padding-top: 10px; /* -1 * (width / 2) */
-
+    .modal-footer{
+      *width:auto;
+      *position: relative;
+      *zoom: normal;
+    }
     .modal-body {
       max-height: 800px;
       padding: 30px 30px;
@@ -530,7 +555,7 @@
 
 //user list page
 #user-list-page {
-
+  padding-top: 10px;
   .users-actions {
 
     .tags {
@@ -584,6 +609,8 @@
   }
 
   .box {
+    position: absolute;
+    left:-1000px;
     width: 176px;
     margin: 10px 0 5px 12px;
     font-size: 11px;
@@ -602,12 +629,10 @@
     }
   }
 
-
   .user-info {
     float: left;
     position: relative;
-//    width: 175px;
-      width: 95%;
+    width: 95%;
     padding: 5px 5px 0;
     margin-left: 0;
     .border-radius(5px);

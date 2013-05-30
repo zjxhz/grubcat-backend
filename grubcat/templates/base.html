@@ -35,7 +35,7 @@
                 <a class="brand " href="/">饭聚</a><a class="brand city" href="/">@杭州</a>
                 <ul class="nav ">
                     <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
-                    <li id="nav-user"><a href="{% url 'user_list' %}">成员</a></li>
+                    <li id="nav-user"><a href="{% url 'user_list' %}">朋友</a></li>
                     <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
                     {% if user.is_authenticated %}
                     <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">0</span></li>
@@ -86,7 +86,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <div id="common-data" class="hide" data-uid="{{ user.username }}" data-pwd="{{ user.weibo_access_token }}"
+    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
 
     {% block footer %}
