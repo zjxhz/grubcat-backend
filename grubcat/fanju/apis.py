@@ -520,15 +520,9 @@ class UserResource(EOResource):
     def background(self, request, **kwargs):
         user_to_query = request.user  
         if request.method == 'POST':
-            if user_to_query.background_image:
-                old_background = user_to_query.background_image.path
-            else:
-                old_background = None
             contentFile = request.FILES.values()[0]
             filename = contentFile.name
             user_to_query.background_image.save(filename, contentFile)
-            if old_background and os.path.exists(old_background) and user_to_query.background_image.path != old_background:
-                os.remove(old_background)
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user_to_query)
             serialized = user_resource.serialize(None, user_resource.full_dehydrate(ur_bundle),  'application/json')
