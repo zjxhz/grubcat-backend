@@ -9,9 +9,7 @@ def thumbnail(image_path, thumbnail_size):
         thumbnail_size = ADMIN_THUMBNAIL_SIZE
     thumbnailer = get_thumbnailer(image_path)
     thumbnail_options = {
-        'detail': True,
         'size': thumbnail_size,
-        #        'upscale':True
     }
     thumb = thumbnailer.get_thumbnail(thumbnail_options)
     return thumb.url
@@ -22,7 +20,6 @@ def get_attrs(image, name, thumbnail_size):
             thumbnail_size = ADMIN_THUMBNAIL_SIZE
         thumbnailer = get_thumbnailer(image)
         thumbnail_options = {
-            'detail': True,
             'size': thumbnail_size,
         }
         thumb = thumbnailer.get_thumbnail(thumbnail_options)

@@ -470,7 +470,7 @@ jQuery(function($){
                 noty({text: tag + " 已经添加到我的兴趣", timeout: 500});
                 $(".add-tag-link").remove()
                 $(".tags li:contains(" + tag + ")").not('.showing-tag').each(function () {
-                    if ($(this).text() == tag) {
+                    if ($(this).text().trim() == tag) {
                         $(this).addClass("common")
                     }
                 })
@@ -479,14 +479,14 @@ jQuery(function($){
         })
         $tagItems.each(function () {
             //noinspection JSUnresolvedVariable
-            if ($.inArray($(this).html(), myTags) > -1) {
+            if ($.inArray($(this).text().trim(), myTags) > -1) {
                 $(this).addClass('common');
             }
         });
         $container.imagesLoaded(function () {
             $container.masonry({
-                itemSelector: '.box',
-                isAnimated: !Modernizr.csstransitions
+                itemSelector: '.box'
+//                isAnimated: !Modernizr.csstransitions
             }, function () {
                 if ($(document).height() <= $(window).height()) {
                     $(window).scroll();
@@ -495,10 +495,18 @@ jQuery(function($){
             });
         });
         $(window).resize(function(){
-            $container.masonry( 'destroy').masonry( {
-                itemSelector: '.box',
-                isAnimated: !Modernizr.csstransitions
-            })
+            var orginalWindowWidth = $data.data("windowWidth"), currentWindowWidth = $(window).width()
+            if (orginalWindowWidth && orginalWindowWidth != currentWindowWidth) {
+                $data.data("windowWidth", currentWindowWidth)
+                if ($container.data("masonry")) {
+                    $container.masonry('destroy').masonry({
+                        itemSelector: '.box'
+//                        isAnimated: !Modernizr.csstransitions
+                    })
+                }
+            } else if(! orginalWindowWidth){
+                $data.data("windowWidth", currentWindowWidth)
+            }
         })
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
@@ -507,7 +515,10 @@ jQuery(function($){
                 nextSelector: '#page-nav a', // selector for the NEXT link (to page 2)
                 itemSelector: '.box', // selector for all items you'll retrieve
                 animate: false,
-                errorCallback: function () {
+//                debug:true,
+//                path: $data.data("next-page-url"),
+                maxPage: $data.data("maxPage"),
+                errorCallback: function (a, b, c) {
 
                     var $need_edit_tags_again_tip = $("#need_edit_tags_again_tip");
                     if ($need_edit_tags_again_tip[0]) {
@@ -517,7 +528,10 @@ jQuery(function($){
                     }
                 },
                 extendFinished: function (responseText) {
-                    $("#main-container").append($(responseText).siblings("div.alert"));
+                    var $alert = $(responseText).siblings("div.alert")
+                    if ($alert[0]) {
+                        $("#main-container").append($alert);
+                    }
                 },
                 loading: {
                     msgText: '加载中...',
@@ -531,12 +545,11 @@ jQuery(function($){
                 var $newElems = $(newElements).css({ opacity: 0 });
                 // ensure that images load before adding to masonry layout
                 $newElems.imagesLoaded(function () {
-                    // show elems now they're ready
                     $newElems.animate({ opacity: 1 });
-                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
+//                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
                     $container.masonry('appended', $newElems, true, function () {
-                        if($(document).height() <= $(window).height()){
-                        $(window).scroll();
+                        if ($(document).height() <= $(window).height()) {
+                            $(window).scroll();
                         }
                     });
                 });
