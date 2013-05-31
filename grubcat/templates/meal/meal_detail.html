@@ -119,11 +119,14 @@
                              height="80" src="{{ order.customer.normal_avatar }}">
                     </a>
                     {% if order.num_persons > 1 %}
-                        <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
-                           title="{{ order.customer.name }}邀请的朋友">
-                            <img alt="{{ order.customer.name }}邀请的朋友" width="80" height="80"
-                                 src="{% static 'img/guest.png' %}">
-                        </a>
+                        {% for x in ""|ljust:order.num_persons %}
+
+                            <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
+                               title="{{ order.customer.name }}邀请的朋友">
+                                <img alt="{{ order.customer.name }}邀请的朋友" width="80" height="80"
+                                     src="{% static 'img/guest.png' %}">
+                            </a>
+                        {% endfor %}
                     {% endif %}
                 {% endfor %}
 
