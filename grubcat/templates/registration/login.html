@@ -2,16 +2,38 @@
 
 {% block content %}
     <div class="login-wrapper" id='login-page'>
-        <div class="login-panel span4 offset4">
-            <form id="login_form" class="login-form" action="{% url 'login' %}" method="post">{% csrf_token %}
+        <div class="login-panel span8 offset2">
+            <form id="login_form" class="form form-horizontal login-form" action="{% url 'login' %}" method="post">{% csrf_token %}
                 <fieldset>
-                    {{ form.non_field_errors }}
-                    {% for field in form %}
-                        <p class="fieldWrapper">
-                            {{ field.errors }}
-                            {{ field.label_tag }} {{ field }}
-                        </p>
-                    {% endfor %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                    <div class="control-group">
+
+                        <label class="control-label" for="id_username">{{ form.username.label_tag }}</label>
+
+                        <div class="controls">
+                             {{ form.username }}
+                            {{ form.username.errors }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+
+                        <label class="control-label" for="id_password">{{ form.password.label_tag }}</label>
+
+                        <div class="controls">
+                            {{ form.password }}
+                            {{ form.password.errors }}
+                        </div>
+                    </div>
+
+{#                    {% for field in form %}#}
+{#                        <p class="fieldWrapper">#}
+{##}
+{#                             {{ field }}  {{ field.errors }}#}
+{#                        </p>#}
+{#                    {% endfor %}#}
                     <input type="hidden" name="next" value="{{ next }}"/>
                 </fieldset>
 
@@ -24,9 +46,9 @@
 {#                    <span>下次自动登录</span>#}
 {#                    <a href="/user/password/forget" class="hover-link forget-password fr">忘记密码</a>#}
 {#                </p>#}
-
+                <div class="form-actions">
                     <input class="btn btn-primary btn-signup" name="commit" type="submit" value="登录">
-
+                </div>
             </form>
         </div>
 

@@ -119,6 +119,7 @@ jQuery(function($){
 
     if ($("#meal-list")[0]) {
         $("img.lazy").lazyload({ threshold: 200, effect: 'fadeIn' });
+        $("#restaurant-login-link").show()
     }
 
     if ($("#meal-detail")[0]) {
