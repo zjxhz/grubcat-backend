@@ -32,8 +32,8 @@
     <div class="navbar navbar-fixed-top" id="main-nav">
         <div class="navbar-inner  ">
             <div class="container">
-                <a class="brand " href="/">饭聚</a><a class="brand city" href="/">@杭州</a>
-                <ul class="nav ">
+                <a class="brand logo" href="/">饭聚</a><a class="brand city" href="/">@杭州</a>
+                <ul class="nav main">
                     <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url 'user_list' %}">朋友</a></li>
                     <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
@@ -90,7 +90,7 @@
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
 
     {% block footer %}
-        <div id="footer"></div>
+        <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号</div></div>
     {% endblock %}
 
     {% if user.is_authenticated %}
@@ -99,8 +99,6 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         </div>
         <div id="chat-container" class="modal-body">
-{% comment %}            <div id="no-roster-tip" class="alert hide">您现在还没有好友， <a href="{% url 'user_list' %} "> 去看看您可能感兴趣的用户吧！</a>
-            </div>{% endcomment %}
             <div id="chat-left-column">
                 <div id="roster"></div>
             </div>
@@ -119,7 +117,6 @@
     {% endif %}
 {% endblock %}
 
-{% include "ga.html" %}
 {% block base_js %}
     {% assets "base_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
@@ -135,5 +132,6 @@
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
 {% endif %}
+{% include "ga.html" %}
 </body>
 </html>
