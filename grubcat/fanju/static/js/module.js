@@ -452,10 +452,10 @@ jQuery(function($){
         })
     }
 
-    var $container = $('#user-container');
+    var $userContainer = $('#user-container');
     var $profile_basic_info_page = $("#profile_basic_info_page");
     var $tagItems = $(".tags li:not(.showing-tag)")
-    if (($container[0] || $profile_basic_info_page[0])) {
+    if (($userContainer[0] || $profile_basic_info_page[0])) {
         $tagItems.live("mouseenter",function () {
             $(this).attr("title", '点击查看该标签下的用户');
         }).live('click', function () {
@@ -463,7 +463,7 @@ jQuery(function($){
             })
     }
 
-    if ($container[0]) {
+    if ($userContainer[0]) {
         $(".add-tag-link").click(function () {
             var tag = $(this).data('tags')
             $.post($data.data("add-tag-url"), {'tag': tag}, function () {
@@ -483,8 +483,8 @@ jQuery(function($){
                 $(this).addClass('common');
             }
         });
-        $container.imagesLoaded(function () {
-            $container.masonry({
+        $userContainer.imagesLoaded(function () {
+            $userContainer.masonry({
                 itemSelector: '.box'
 //                isAnimated: !Modernizr.csstransitions
             }, function () {
@@ -498,8 +498,8 @@ jQuery(function($){
             var orginalWindowWidth = $data.data("windowWidth"), currentWindowWidth = $(window).width()
             if (orginalWindowWidth && orginalWindowWidth != currentWindowWidth) {
                 $data.data("windowWidth", currentWindowWidth)
-                if ($container.data("masonry")) {
-                    $container.masonry('destroy').masonry({
+                if ($userContainer.data("masonry")) {
+                    $userContainer.masonry('destroy').masonry({
                         itemSelector: '.box'
 //                        isAnimated: !Modernizr.csstransitions
                     })
@@ -510,7 +510,7 @@ jQuery(function($){
         })
 
         var ajaxLoaderImageId = $data.data("ajax-load-image-id");
-        $container.infinitescroll({
+        $userContainer.infinitescroll({
                 navSelector: '#page-nav', // selector for the paged navigation
                 nextSelector: '#page-nav a', // selector for the NEXT link (to page 2)
                 itemSelector: '.box', // selector for all items you'll retrieve
@@ -547,7 +547,7 @@ jQuery(function($){
                 $newElems.imagesLoaded(function () {
                     $newElems.animate({ opacity: 1 });
 //                    $(newElements).find("img.lazy").lazyload({ threshold: 400, effect: 'fadeIn' });
-                    $container.masonry('appended', $newElems, true, function () {
+                    $userContainer.masonry('appended', $newElems, true, function () {
                         if ($(document).height() <= $(window).height()) {
                             $(window).scroll();
                         }

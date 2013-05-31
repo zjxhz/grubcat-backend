@@ -23,11 +23,6 @@
 {#        {% endassets %}#}
 </head>
 <body>
-<!--[if lte IE 7]>
-<div id="ie6-warning" class='alert'>
-<div class='container'>您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用
-<a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div></div>
-<![endif]-->
 {% block nav %}
     <div class="navbar navbar-fixed-top" id="main-nav">
         <div class="navbar-inner  ">
@@ -82,17 +77,21 @@
 {% endblock %}
 
 {% block page-container %}
-    <div class="container" id="main-container">
-        {% block content %}{% endblock %}
+    <div id="main-wrap">
+        <div class="container" id="main-container">
+        <!--[if lte IE 7]>
+<div id="ie6-warning" class='alert'>
+<div class='container'>您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用
+<a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div></div>
+<![endif]-->
+            {% block content %}{% endblock %}
+        </div>
     </div>
-
-    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
-            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
-
     {% block footer %}
         <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号</div></div>
     {% endblock %}
-
+    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
+            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
     {% if user.is_authenticated %}
     <div id="chat-dialog" class="modal fade hide">
         <div class="modal-header">
