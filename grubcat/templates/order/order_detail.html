@@ -38,7 +38,7 @@
 
             <h1 class="meal-topic"><a href="{% url 'meal_detail' order.meal.id %}">{{ order.meal.topic }}</a></h1>
                 <span id="restaurant-location"><a
-                        href="http://maps.google.com.hk?q={{ order.meal.menu.restaurant.name }}"
+                        href="http://ditu.google.cn?q={{order.meal.restaurant.latitude }},{{ order.meal.restaurant.longitude }}({{ order.meal.restaurant.name  }})"
                         target="_blank"
                         class="restaurant-name">{{ order.meal.menu.restaurant.name }}</a> {{ order.meal.menu.restaurant.address }}</span>
            <span class="date fr">{{ order.meal.start_date|date:"n" }}月{{ order.meal.start_date|date:"j" }}日 {{ order.meal.start_date|date:"D" }}
