@@ -715,8 +715,8 @@ var notyApp = {
             notyApp.sendNotyReadReceipt()
 
             notyApp.decreaseNotyUnReadCount(notyApp.totalNotyUnReadCount)
-            notyApp.$notyList.children().fadeOut(300, function(){
-                notyApp.$notyList.html("")
+            notyApp.$notyList.fadeOut(300, function(){
+                notyApp.$notyList.empty()
                 notyApp.showNoNotyTip()
             })
 
@@ -813,6 +813,7 @@ var notyApp = {
                 } else {
                     notyApp.$notyList.append($newNoty)
                 }
+                notyApp.$notyList.show()
             } catch (e) {
             }
 
