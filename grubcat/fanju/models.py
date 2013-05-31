@@ -241,6 +241,9 @@ class Order(models.Model):
     def is_used(self):
         return self.status == OrderStatus.USED
 
+    def guest_num(self):
+        return self.num_persons - 1
+
     def get_random_code(self):
         return random.randint(10000000, 99999999)
 
