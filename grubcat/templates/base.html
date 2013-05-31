@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
-    <meta content="饭聚，饭局，杭州的饭聚，fanju,杭州的饭局,美食社交，社交晚餐" name="keywords">
+    <meta content="饭聚,饭局,杭州的饭聚,fanju,杭州的饭局,美食社交,社交晚餐" name="keywords">
     <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
     {% block page_css %}
         {% block extra_base_css %}{% endblock %}
@@ -88,7 +88,7 @@
         </div>
     </div>
     {% block footer %}
-        <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号</div></div>
+        <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号 <a id="restaurant-login-link" href="{% url 'restaurant_admin' %}">餐厅登录</a></div></div>
     {% endblock %}
     <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
