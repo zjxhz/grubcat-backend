@@ -1,18 +1,35 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
+@footerHeight: 100px;
 
 html,body{
   height: 100%;
 }
 
-#main-container{
-//  height: auto !important;
-//  padding-bottom: 60px;
+#main-wrap{
+  min-height: 100%;
 }
-body{
-  padding-top: 60px;
+
+#main-container {
+  overflow:auto;
+  padding-top: @navbarHeight+10 ;
+  padding-bottom: @footerHeight;
 }
+
+
+#footer {
+  position: relative;
+  margin-top: -@footerHeight; /* negative value of footer height */
+  height: @footerHeight;
+  clear: both;
+  color: #777;
+  text-align: center;
+  .container{
+    padding-top: 50px;
+  }
+}
+
 .navbar {
   margin-bottom: 15px;
   font-size: 16px;
@@ -30,21 +47,6 @@ body{
   }
   .nav.main{
     margin-left: 30px;
-  }
-}
-
-#footer{
-  height: 40px;
-  text-align: center;
-  font-size: 13px;
-//  border-top: 1px solid #ddd;
-  color: #999;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  .container{
-
   }
 }
 
