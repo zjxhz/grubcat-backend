@@ -88,7 +88,9 @@
         </div>
     </div>
     {% block footer %}
-        <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号 <a id="restaurant-login-link" href="{% url 'restaurant_admin' %}">餐厅登录</a></div></div>
+        <div id="footer">
+            <div class="container">{% if not user.is_authenticated or user.restaurant %}   <span id="restaurant-login-link"><a href="{% url 'restaurant_admin' %}">餐厅登录</a> |</span>  {% endif %}  ©2013 饭聚 浙ICP备13002509号</div>
+        </div>
     {% endblock %}
     <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
