@@ -3,6 +3,11 @@
 
 //phone and pad
 @media (max-width: 979px) {
+
+  #main-container{
+    padding-top: 0;
+  }
+
   .navbar-fixed-top .navbar-inner,
   .navbar-fixed-bottom .navbar-inner {
     padding: 0px 10px;
@@ -39,9 +44,6 @@
 
 //pad
 @media (min-width: 768px) and (max-width: 979px) {
-  body {
-    padding-top: 0;
-  }
 
   .navbar .container, {
     width: 710px;
@@ -161,9 +163,6 @@
 
 //all phones
 @media (max-width: 767px) {
-  body {
-    padding-top: 0;
-  }
   .navbar .nav.main{
     margin-left: 0px;
   }
@@ -319,7 +318,23 @@
   .container, {
     max-width: 500px;
   }
+  @footerHeight: 60px;
+  #main-container {
+    padding-bottom: @footerHeight + 20;
+  }
 
+
+  #footer {
+    position: relative;
+    margin-top: -@footerHeight; /* negative value of footer height */
+    height: @footerHeight;
+    clear: both;
+    color: #777;
+    text-align: center;
+    .container{
+      padding-top: 50px;
+    }
+  }
   #user-container {
     .box {
       width: 30%;
