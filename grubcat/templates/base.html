@@ -82,17 +82,16 @@
 {% endblock %}
 
 {% block page-container %}
-    <div class="container" id="main-container">
-        {% block content %}{% endblock %}
+    <div id="main-wrap">
+        <div class="container" id="main-container">
+            {% block content %}{% endblock %}
+        </div>
     </div>
-
-    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
-            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
-
     {% block footer %}
         <div id="footer"><div class="container">©2013 饭聚 浙ICP备13002509号</div></div>
     {% endblock %}
-
+    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
+            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
     {% if user.is_authenticated %}
     <div id="chat-dialog" class="modal fade hide">
         <div class="modal-header">
