@@ -609,11 +609,17 @@ class MenuResource(EOResource):
     class Meta:
         queryset = Menu.objects.all()
         authorization = ReadOnlyAuthorization()
-    
+
+class SimpleOrderResource(EOResource):        
+    customer = fields.ToOneField(SimpleUserResource, 'customer', full=True)
+    class Meta:
+        queryset = Order.objects.all()
+        ordering = ['created_time','meal']
+        authorization = UserObjectsOnlyAuthorization()
+            
 class MealResource(EOResource):
     restaurant = fields.ForeignKey(RestaurantResource, 'restaurant', full=True)
-    host = fields.ForeignKey(SimpleUserResource, 'host', full=True, null=True)
-    participants = fields.ToManyField(MealParticipantResource, 'mealparticipants_set', full=True, null=True)
+    orders = fields.ToManyField(SimpleOrderResource, attribute=lambda bundle: bundle.obj.paid_orders, full=True, null=True)
     
     def hydrate(self, bundle):
         bundle.data['actual_persons']=1
@@ -630,10 +636,18 @@ class MealResource(EOResource):
                 self.wrap_view('get_comments'), name="api_get_comments"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/menu%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_menu'), name="api_get_menu"),
+            url(r"^(?P<resource_name>%s)/upcoming%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('get_upcoming'), name="api_get_upcoming"),
             # url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/likes%s$" % (self._meta.resource_name, trailing_slash()),
             #     self.wrap_view('like'), name="api_like"),
         ]
     
+    def get_upcoming(self, request, **kwargs):
+        if request.method == "GET":
+            return self.get_my_list(self, Meal.get_default_upcomming_meals(), request)
+        else:
+            return http.HttpBadRequest()
+        
     def get_menu(self, request, **kwargs):
         if request.method == "GET":
             obj = self.obj(request, **kwargs)

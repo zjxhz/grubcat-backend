@@ -755,7 +755,11 @@ class Meal(models.Model):
     def is_passed(self):
         return self.start_date < date.today() or (
             self.start_date == date.today() and self.start_time < datetime.now().time())
-
+    
+    @property
+    def paid_orders(self):
+        return Order.objects.filter(meal=self).filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+    
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
 
