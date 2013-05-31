@@ -119,8 +119,7 @@
                              height="80" src="{{ order.customer.normal_avatar }}">
                     </a>
                     {% if order.num_persons > 1 %}
-                        {% for x in ""|ljust:order.num_persons %}
-
+                        {% for x in ""|ljust:order.guest_num %}
                             <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
                                title="{{ order.customer.name }}邀请的朋友">
                                 <img alt="{{ order.customer.name }}邀请的朋友" width="80" height="80"
@@ -129,7 +128,6 @@
                         {% endfor %}
                     {% endif %}
                 {% endfor %}
-
                 {% for empty_user in avaliable_seats %}
                     <div class="empty-user-wrapper">
                         <img class="seat-placeholder " width="80"
