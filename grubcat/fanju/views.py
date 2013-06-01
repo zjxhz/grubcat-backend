@@ -303,7 +303,7 @@ class UserListView(ListView):
             context['need_upload_avatar'] = user.is_default_avatar()
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 4:
+            elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 2:
                 context['need_edit_tags_again'] = True
             if self.request.GET.get('tags') and not self.request.user.tags.filter(name=self.request.GET.get('tags')).exists():
                 context['show_add_tag'] = True
