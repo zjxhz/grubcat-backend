@@ -325,9 +325,10 @@ jQuery(function($){
                 beforeSubmit: function () {
                     $(".avatar .loading").show();
                 }, // pre-submit callback
-                success: function () {
+                success: function (data) {
                     $(".avatar .loading").hide();
-
+                     $("#avatar-wrapper").find("img").attr('src', $.parseJSON(data).big_avatar_url);
+                    setChatAvatar($.parseJSON(data).small_avatar_url)
                     $('#crop-avatar-link').show().click();
                     return false;
                 }  // post-submit callback
