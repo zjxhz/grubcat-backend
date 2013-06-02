@@ -584,6 +584,7 @@ var chatApp = {
     }),
     hasAvatar: function(){
         return this.myProfile.get("avatarUrl") != $chatData.data("defaultAvatar")
+//        return this.myProfile.get("avatarUrl").indexOf('/default/male.png') < 0 &&
     },
 
     isWindowFocused: false,
