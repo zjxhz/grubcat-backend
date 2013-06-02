@@ -17,11 +17,11 @@
         <div id="meal-list" class="span9">
             {% for meal in meal_list %}
                 <div class="meal-cell">
-                    <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}">{{ meal.topic }}</a></h2>
+                    <h2 class="meal-topic"><a href="{{ meal.get_absolute_url }}" target="_blank">{{ meal.topic }}</a></h2>
 
                     <div class="row">
                         <div class="meal-img-wrapper span5">
-                            <a href="{{ meal.get_absolute_url }}">
+                            <a href="{{ meal.get_absolute_url }}" target="_blank">
                                 {% if forloop.counter0 < 1 %}
                                     <img width="360" height="240" class="img-polaroid"
                                          src="{{ meal.normal_cover_url }}">
@@ -45,7 +45,7 @@
                             <p class="introduction">
                                 {{ meal.introduction|truncatechars:"100" }}
                             </p>
-                            <a class="btn btn-primary  btn-book " href="{{ meal.get_absolute_url }}">查看饭局</a>
+                            <a class="btn btn-primary  btn-book " href="{{ meal.get_absolute_url }}" target="_blank">查看饭局</a>
                         </div>
                     </div>
                 </div>
