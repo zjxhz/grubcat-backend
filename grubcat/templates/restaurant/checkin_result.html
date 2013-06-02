@@ -1,4 +1,4 @@
-{% if order and user.resaurant == order.meal.restaurant %}
+{% if order and user.restaurant == order.meal.restaurant %}
     {% if order.is_used %}
         <div class="span10">
             <h3 class="alert alert-waringing">
