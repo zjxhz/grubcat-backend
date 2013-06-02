@@ -1,0 +1,505 @@
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
+//phone and pad
+@media (max-width: 979px) {
+
+  #main-container{
+    padding-top: 0;
+  }
+
+  .navbar-fixed-top .navbar-inner,
+  .navbar-fixed-bottom .navbar-inner {
+    padding: 0px 10px;
+  }
+
+  #profile_basic_info_page {
+    .span9 {
+      width: 100%;
+    }
+
+  }
+
+  #user-container {
+    .box {
+      .user-img {
+        img {
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+  }
+
+    #photo-list-page {
+    .thumbnails {
+        img {
+          width: auto;
+          height: auto;
+        }
+    }
+  }
+
+}
+
+//pad
+@media (min-width: 768px) and (max-width: 979px) {
+
+  .navbar .container, {
+    width: 710px;
+  }
+
+  .container, {
+    width: 700px;
+  }
+
+  #meal-list {
+    width: auto;
+
+    .meal-img-wrapper {
+      width: 380px;
+    }
+    .meal-info {
+      width: 300px;
+    }
+  }
+
+  #meal-detail {
+    width: auto;
+  }
+
+  #user-container {
+    .box {
+      width: 22%;
+    }
+  }
+
+  #order-detail-page {
+    .order-info {
+      width: 266px;
+    }
+    .meal-simple-info {
+      width: 700px;
+    }
+    #code {
+      display: block;
+    }
+    #map {
+      width: 395px;
+    }
+    .auth-code, .reminder, .hotline {
+      line-height: 21px;
+      margin-bottom: 11px;
+      padding-bottom: 0
+    }
+  }
+
+  #photo-list-page {
+    img.photo {
+      .square(156px)
+    }
+  }
+
+  #follow-list-page {
+    .row {
+      margin-left: -17px;
+    }
+    .following-cell, .follower-cell {
+      width: 13%;
+      margin-left: 17px;
+    }
+  }
+
+    #profile-meal-page {
+    .meal-cell {
+      width: 30%;
+      float: left;
+      .meal-img-wrapper img{
+        width:96%;
+        height: auto;
+        min-width: 210px;
+        min-height: 140px;
+      }
+    }
+  }
+
+  #edit-profile-page {
+    #avatar-wrapper {
+      img {
+        .square(160px)
+      }
+    }
+    #basic-profile-form {
+      width: 514px;
+    }
+     .control-group.error .help-block {
+            float: left;
+          }
+      #interst-tags-wrapper {
+        .hot-tags {
+          float: left;
+          width: 274px;
+          position: static;
+          margin-left: 100px;
+        }
+      }
+      .avatar #crop-avatar-link {
+        margin-left: 11px;
+        padding: 4px 5px;
+      }
+  }
+
+  #upload_avatar_form {
+    #id_avatar_for_upload {
+      right: 80px;
+    }
+  }
+
+  .avatar .loading {
+    margin: 5px 80px 0 7px;
+  }
+
+}
+
+//all phones
+@media (max-width: 767px) {
+  .navbar .nav.main{
+    margin-left: 0px;
+  }
+
+  .container, {
+    margin: 0 auto;
+  }
+
+  .profile-page {
+    #profile-nav {
+      margin-left: 0px;
+      .btn-follow, .btn-unfollow {
+        .border-radius(4px)
+      }
+      .btn-chat {
+        display: none;
+      }
+    }
+    .photo-actions {
+      .upload-photo-link {
+        display: none;
+      }
+      //      display: none;
+    }
+  }
+
+  #edit-profile-page {
+    .control-group {
+
+      .control-label {
+        padding-top: 5px;
+        width: 54px;
+        float: left;
+      }
+      .controls {
+        margin-left: 54px;
+      }
+      &.error .help-block {
+        float: left;
+      }
+      &.birthday select {
+        width: 70px;
+      }
+    }
+    #id_name, #id_college, #id_industry, #id_work_for, #id_occupation {
+      width: 200px;
+    }
+
+    #id_motto{
+      width:220px;
+    }
+
+    #id_industry {
+      width: 213px;
+    }
+
+    #interst-tags-wrapper {
+
+      .controls {
+        width: 286px;
+        float: left;
+        margin-left: 54px;
+        margin-top: -20px;
+        .as-selections {
+          width: 210px;
+        }
+      }
+
+      .hot-tags {
+        float: left;
+        width: 210px;
+        position: static;
+        margin-left: 54px;
+
+      }
+    }
+    .avatar #crop-avatar-link {
+      margin-left: 11px;
+      padding: 4px 5px;
+    }
+  }
+
+
+  #meal-list {
+    .btn-book {
+      display: none;
+    }
+    .meal-info {
+      float: left;
+      margin-top: 10px;
+      .introduction {
+        min-height: 10px;
+      }
+    }
+  }
+
+  #notification-wrapper {
+    left: initial;
+    right: 0px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+  #meal-detail {
+    .control-label {
+      float: left;
+      padding-top: 5px;
+    }
+    #desc {
+      margin-left: 0;
+    }
+    #meal-container {
+      text-align: center;
+    }
+    #meal-grub {
+      margin: 20px auto 10px auto;
+      float: none;
+      .btn-book {
+        float: none;
+      }
+    }
+    #order_info_form {
+      margin: 20px auto;
+    }
+    .user-wrapper {
+      float: left;
+    }
+    .meal-img-wrapper {
+      float: none;
+      img {
+        width: auto;
+        height: auto;
+      }
+    }
+  }
+
+  #user-container {
+    .box {
+      max-width: 176px;
+      .user-img {
+        img {
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+  }
+}
+
+//phones rotate
+@media (min-width: 480px) and (max-width: 767px) {
+  .container, {
+    max-width: 500px;
+  }
+  @footerHeight: 60px;
+  #main-container {
+    padding-bottom: @footerHeight + 20;
+  }
+
+
+  #footer {
+    position: relative;
+    margin-top: -@footerHeight; /* negative value of footer height */
+    height: @footerHeight;
+    clear: both;
+    color: #777;
+    text-align: center;
+    .container{
+      padding-top: 50px;
+    }
+  }
+  #user-container {
+    .box {
+      width: 30%;
+    }
+  }
+ #photo-list-page {
+    .thumbnails {
+      margin-left: -11px;
+      li {
+        float: left;
+        width: 30%;
+        margin-left: 11px;
+      }
+    }
+  }
+
+  #profile-meal-page {
+    .meal-cell {
+      width: 45%;
+      float: left;
+      margin-right: 20px;
+      .meal-topic{
+        width: 100%;
+      }
+      .meal-img-wrapper img{
+        width:100%;
+        height: auto;
+        min-width: 180px;
+        min-height: 120px;
+      }
+    }
+  }
+
+  #follow-list-page {
+    .following-cell, .follower-cell {
+      width: 23%;
+      margin-left: 10px;
+    }
+  }
+
+  #edit-profile-page #interst-tags-wrapper {
+
+    .controls {
+      float: left;
+      margin-left: 5px;
+      margin-top: 0px;
+    }
+  }
+}
+
+//phones
+@media (max-width: 479px) {
+
+  html{
+    min-width: 300px;
+  }
+  #user-container {
+    .box {
+      width: 44%;
+    }
+  }
+
+  .container {
+    max-width: 375px;
+  }
+
+  .navbar .nav > li > a {
+    padding: 15px 10px 15px;
+  }
+
+  .profile-nav {
+    li {
+      float: left;
+    }
+  }
+
+  #meal-list {
+    .introduction {
+      min-height: 30px;
+      margin-top: 10px;
+    }
+    .meal-img-wrapper {
+      img {
+        width: auto;
+        height: auto;
+        width: 96%;
+        min-height: 160px;
+        min-width: 240px;
+      }
+    }
+  }
+
+  #meal-detail-page {
+
+    .meal-img-wrapper {
+      img {
+        max-width: 96%;
+      }
+    }
+  }
+
+  .profile-page {
+    #profile-nav {
+      li a {
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+    }
+    #profile_basic_info_page {
+      .profile-actions {
+        display: none;
+      }
+    }
+  }
+
+  #photo-list-page {
+    .thumbnails {
+      margin-left: -6px;
+      li {
+        float: left;
+        width: 47%;
+        margin-left: 6px;
+      }
+    }
+  }
+
+  #profile-meal-page {
+    .meal-cell {
+      .meal-topic {
+        width: 100%;
+      }
+      float: left;
+      .meal-img-wrapper img {
+        width: 80%;
+        height: auto;
+      }
+    }
+  }
+
+  #follow-list-page{
+    .row{
+      margin-left: 0;
+    }
+    .following-cell, .follower-cell{
+      width:45%;
+      margin-left: 0;
+      margin-right: 13px;
+    }
+  }
+
+  #edit-profile-page {
+    #id_birthday_year, #id_birthday_month, #id_birthday_day {
+      margin-right: 0;
+    }
+  }
+
+  #order-detail-page {
+    #code {
+      display: block;
+    }
+    text-align: left;
+    .meal-simple-info {
+      border-bottom: 1px solid #AAAAAA;
+    }
+
+  }
+
+}
