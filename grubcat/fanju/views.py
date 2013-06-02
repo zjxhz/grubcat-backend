@@ -216,11 +216,8 @@ class UploadAvatarView(UpdateView):
 
     def form_valid(self, form):
         super(UploadAvatarView, self).form_valid(form)
-        if self.request.GET.get('action') == 'upload':
-            return HttpResponse() #return text/html type, not json, hack for IE ajax upload file
-        else:
-            data = {'big_avatar_url': self.object.big_avatar, 'small_avatar_url': self.object.small_avatar}
-            return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
+        data = {'big_avatar_url': self.object.big_avatar, 'small_avatar_url': self.object.small_avatar}
+        return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
 
 class ProfileUpdateView(UpdateView):
