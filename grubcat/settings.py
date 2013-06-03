@@ -156,7 +156,7 @@ DEFAULT_FEMALE_AVATAR = 'default/female.png'
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
 PAY_DEBUG = False
-ORDER_PREFIX = 'po2'
+ORDER_PREFIX = 'po3'
 ALIPAY_BACK_DOMAIN = 'http://fanjoin.com/'
 
 ###################### email ######################
