@@ -369,7 +369,8 @@ class User(AbstractUser):
     tags = TaggableManager(through=TaggedUser, blank=True)
     apns_token = models.CharField(max_length=255, blank=True, null=True)
     background_image = models.ImageField(u'背景图片', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True)
-
+    mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
+    
     @models.permalink
     def get_absolute_url(self):
         return 'user_detail', [str(self.id)]
