@@ -137,7 +137,7 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
-THUMBNAIL_QUALITY = 100
+THUMBNAIL_QUALITY = 90
 BIG_AVATAR_SIZE = (180, 180)
 MEDIUM_AVATAR_SIZE = (150, 150)
 NORMAL_AVATAR_SIZE = (80, 80)
