@@ -1,0 +1,723 @@
+// Core variables and mixins
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
+#meal-list-page {
+  #faq-what-is-fanju, #faq-what-is-fanju + p {
+    display: block;
+  }
+  .meal-cell{
+    .row{
+      position: relative;
+      zoom: 1;
+    }
+  }
+  .meal-img-wrapper {
+    img {
+      width: 360px;
+      height: 240px;
+    }
+  }
+}
+
+#meal-detail-page {
+  #faq-how-to-book-meal, #faq-how-to-book-meal +p, #faq-how-to-cancel-meal {
+    display: block;
+  }
+
+  .unit{
+    display: none;
+  }
+
+}
+
+h3 {
+  color: #444;
+}
+
+.meal-cell {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+}
+
+.meal-topic {
+  overflow: hidden;
+  padding-left: 15px;
+  background-image: url(../img/logo.png);
+  background-repeat: repeat-y;
+  background-position: -10px 0px;
+  font-size: 22px;
+  text-align: left;
+  line-height: 30px;
+  a {
+    color: #555;
+  }
+}
+
+.meal-img-wrapper {
+  position: relative;
+  float: left;
+}
+
+.meal-info {
+  .introduction {
+    line-height: 30px;
+    font-size: 16px;
+    color: #444;
+    min-height: 183px;
+  }
+}
+
+.btn-book, .btn-create-meal {
+  font-size: 30px;
+  line-height: 45px;
+  width: 80%;
+  margin: 0 auto;
+  .border-radius(0);
+}
+
+.btn-create-meal {
+  line-height: 50px;
+}
+
+#meal-detail-page {
+  .btn-book {
+    line-height: 50px;
+  }
+  .btn-sold-out, .btn-passed {
+    .buttonBackground(#FF4545, #FF4545);
+  }
+  .btn-booked {
+    width: 82%;
+    width: 85%\9;
+  }
+  #id_num_persons {
+    width: 73px;
+  }
+  .dk_toggle {
+    padding: 7px 45px 7px 10px;
+  }
+
+  #order_info_form {
+    margin: 85px 0 0 53px;
+    width: 217px;
+
+    .control-group {
+      margin-bottom: 10px;
+
+      .control-label {
+        text-align: left;
+        width: 100px;
+      }
+      .controls {
+        margin-left: 100px;
+      }
+    }
+  }
+  .meal-img-wrapper {
+    img {
+      width: 420px;
+      height: 280px;
+      max-width: none\9;
+    }
+  }
+  #create_meal_alert {
+    margin-top: 10px;
+  }
+
+  #pay_result_dialog {
+    width: 400px;
+    margin-left: -200px;
+  }
+  .menu-name {
+    color: #555;
+    font-size: 14px;
+  }
+  .dish-info {
+    display: block;
+    max-width: 100px;
+    text-align: right;
+  }
+}
+
+/*meal list page*/
+#meal-container {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+#meal-grub {
+  float: left;
+  width: 270px;
+}
+
+.sidebar {
+  margin-left: 20px;
+  margin-top: 10px;
+
+  .sidebar-box {
+    border: 1px solid #ccc;
+
+    margin-bottom: 20px;
+
+    .sidebar-box-title {
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+      padding: 6px 10px 6px 14px;
+      background: none repeat scroll 0 0 #eee;
+      color: #444;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+    .sidebar-box-content {
+      padding: 0 14px;
+      color: #666;
+    }
+  }
+
+  .faq a {
+    display: none;
+    margin-bottom: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .faq p {
+    display: none;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    color: #666;
+    line-height: 25px;
+    font-size: 13px;
+  }
+}
+
+.meal-simple-info {
+  position: relative;
+  margin-bottom: 0px;
+  padding-bottom: 15px;
+  zoom: 1;
+  span {
+    margin-top: 5px;
+  }
+  #restaurant-location {
+    color: #777777;
+    display: block;
+    float: left;
+    background-image: url('../img/meal_location.png');
+    background-repeat: no-repeat;
+    background-position: 0 1px;
+    padding-left: 15px;
+  }
+}
+
+#desc {
+  line-height: 30px;
+  font-size: 16px;
+}
+
+a.user-img-wrapper, div.empty-user-wrapper {
+  margin: 0 7px 7px 0;
+  display: block;
+  float: left;
+  .square(80px);
+  img {
+    .square(80px);
+  }
+}
+
+.what-is-fanju {
+  display: block;
+  float: left;
+  text-align: left;
+  padding: 11px;
+  background: #F7FF69;
+  margin-bottom: 12px;
+  font-size: 120%;
+  line-height: 140%;
+}
+
+.date {
+  font-weight: bold;
+}
+
+.show-menu {
+  font-size: 146%;
+  font-weight: bold;
+  color: #20538C;
+}
+
+#users {
+  h3 {
+    margin-bottom: 8px;
+    font-size: 1.4em;
+    color: #444;
+  }
+}
+
+.dish-pic {
+  float: left;
+  clear: left;
+  width: 55px;
+}
+
+.dish-content {
+  width: 400px;
+  float: left;
+}
+
+/*order details page*/
+#order-detail-page {
+  text-align: center;
+
+  .meal-simple-info {
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 1.8em;
+    margin-bottom: 5px;
+  }
+
+  #code {
+    font-size: 1.9em;
+    color: @green;
+  }
+
+  .auth-code, .reminder, .hotline {
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+  }
+
+  .meal-title {
+    margin-bottom: 40px;
+    h2 a {
+      color: #000000;
+    }
+  }
+
+  #map {
+    width: 540px;
+    height: 384px;
+    border: 1px solid #333;
+  }
+
+  .rest-name {
+    display: block;
+    margin-bottom: 5px;
+
+  }
+
+}
+
+#map {
+  width: 540px;
+  height: 384px;
+  border: 1px solid #333;
+  img {
+    max-width: none;
+  }
+}
+
+/*create meal page*/
+#create-meal-page {
+  .min_persons .errorlist, .region .errorlist, .list-price .errorlist {
+    float: left;
+  }
+
+  #show_map_modal.modal {
+    width: 80%;
+    min-height: 400px;
+    height: 80%;
+    margin-left: -40%;
+    .modal-body {
+      max-height: 100%;
+    }
+  }
+
+  #map {
+    height: 100%;
+    width: 100%;
+  }
+  #restaurant-list {
+    position: relative;
+    height: 377px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #F7F7F7;
+    margin-bottom: 15px;
+    border: 1px solid #DDD;
+    border-left: none;
+    padding-right: 1px;
+    width: 329px;
+
+    ul {
+      margin: 0;
+    }
+  }
+
+  .form-wrapper {
+    width: 685px;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+
+  }
+
+  #faq {
+    float: right;
+    width: 250px;
+    margin: 0 0 10px 0;
+  }
+
+  #create_meal_form {
+    fieldset {
+      background: white;
+      border-bottom: 1px solid #CCC;
+      width: 100%;
+      position: relative;
+      font-size: 16px;
+      padding: 0 0px 5px 1px;
+      margin-bottom: 30px;
+    }
+    legend {
+      padding: 12px;
+      font-size: 140%;
+      font-weight: bold;
+      color: #222;
+      border: none;
+      margin-bottom: 0px;
+    }
+  }
+
+  .control-group label {
+    font-size: 16px;
+  }
+
+  .controls input, .controls textarea {
+    width: 360px;
+    height: 25px;
+    padding: 5px;
+    font-size: 18px;
+  }
+
+  .controls textarea {
+    height: auto;
+    resize: none;
+  }
+
+  .dk_label {
+    color: #666;
+    font-size: 16px;
+  }
+
+  .dk_toggle {
+    padding: 10px 44px 10px 13px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff5f5f5', GradientType=0);
+
+  }
+
+  #dk_container_id_start_time {
+    .dk_toggle {
+      background-image: url(../img/clock.png);
+      background-position: 12px center;
+      padding: 12px 10px 9px 45px;
+    }
+  }
+
+  #div_start_date{
+    .clearfix();
+    display: block;
+    float: left;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    .border-radius(5px);
+    #gradient > .vertical(#fff,#f5f5f5);
+
+  }
+
+  #id_start_date {
+    width: 140px;
+    line-height: 36px;
+    height: 36px;
+    float: left;
+    padding: 0 0 0 45px;
+    background: url(../img/calendar.png) no-repeat 12px center;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+  }
+
+  #choose-menu {
+
+    margin-left: 0;
+    padding-top: 15px;
+  }
+
+  #choose-restaurant {
+    width: 330px;
+    margin-left: 0px;
+    position: relative;
+  }
+
+  .restaurant-item {
+    width: 315px;
+    height: 55px;
+    display: table;
+    border-bottom: 1px solid #DDD;
+    padding: 0 5px 0 10px;
+    cursor: pointer;
+    position:relative;
+    .helper{
+      *position: relative;
+      *top: -50%
+
+    }
+    .menu-cover, .rest-price, .rest-address {
+      display: table-cell;
+      vertical-align: middle;
+      *position: absolute;
+      *top: 50%;
+
+    }
+    .menu-cover {
+      width: 60px;
+      height: 40px;
+      img {
+        opacity: 0.6;
+      }
+    }
+    .rest-address {
+      width: 154px;
+      font-size: 88%;
+      color: black;
+      padding: 0 10px;
+      *left: 70px;
+    }
+    .rest-price {
+      *right: 10px;
+    }
+    &.selected {
+      background-color: white;
+      img {
+        opacity: 1.0
+      }
+    }
+  }
+
+
+  #choose-restaurant-info {
+    line-height: 30px;
+    text-align: left;
+    padding-top: 30px;
+    text-shadow: 0 1px 2px #DDD;
+    padding-left: 30px;
+  }
+
+  #create_meal_form .form-actions {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 0;
+    border: none;
+  }
+
+  .btn-create-meal {
+    width: 150px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .form-horizontal .control-group {
+    margin-bottom: 18px;
+    margin-left: 13px;
+  }
+
+  .form-horizontal .control-group label {
+    width: 100px;
+    text-align: left;
+  }
+
+  .form-horizontal .controls {
+    margin-left: 140px;
+    *margin-left: 0px;
+  }
+
+  .menu-info {
+    margin-left: 10px;
+
+    .title {
+      font-size: 16px;
+      color: #000;
+    }
+
+    .rest-address {
+      font-size: 14px;
+      font-weight: normal;
+      margin-top: 10px;
+      a {
+        font-weight: normal;
+      }
+    }
+
+    .menu-name {
+      margin: 15px 0;
+    }
+  }
+
+  .dish-info {
+    float: right;
+  }
+
+  dt {
+    width: 290px;
+    padding: 10px 0px;
+    font-size: 15px;
+  }
+
+  dd {
+    width: 250px;
+    padding: 0px 0px 5px 15px;
+    font-size: 14px;
+  }
+
+  .no-menu-info {
+    padding: 30px 15px;
+  }
+
+  #menu-info-wrapper {
+    width: 340px;
+    margin-left: 15px;
+  }
+
+  a.map-link {
+    text-decoration: none;
+    .border-radius(3px);
+    color: #333;
+    background: #ddd;
+    padding: 3px 7px;
+    margin-left: 5px;
+  }
+
+  #choose-menu-container {
+    border-top: 1px solid #DDD;
+    min-height: 400px;
+  }
+
+  #loading-menus {
+    width: 100px;
+    margin: 40px 300px;
+    z-index: 2;
+    position: absolute;
+  }
+
+  #dk_container_id_start_time a {
+    background-position: 89% center;
+  }
+
+  .privacy, .start_time, .min_persons {
+    height: 54px;
+  }
+
+  .privacy select, .start_time select, .min_persons select {
+    visibility: hidden;
+  }
+
+  #choose-restaurant-msg ul li {
+    margin-bottom: 6px;
+  }
+
+  #privacy-text {
+    line-height: 30px;
+    font-weight: bold;
+    color: #666;
+  }
+}
+
+
+//maybe also for register page
+#login-page {
+  .content {
+    width: 63%;
+  }
+
+  .form-errors {
+    width: 350px;
+    margin-left: 177px;
+    margin-bottom: 30px;
+  }
+  .errorlist {
+    margin-top: 0;
+
+  }
+
+.form-actions{
+  border-top: none;
+  padding-top: 0;
+}
+  input {
+    margin-bottom: 15px;
+    width:190px;
+  }
+
+
+  .social-login ul {
+    margin-top: 10px;
+    margin-left: -7px;
+  }
+
+  .social-login li {
+    float: left;
+    margin-left: 5px;
+  }
+
+  .remember-wrapper {
+    margin-top: 10px;
+  }
+
+  #login_form .btn.btn-signup {
+    display: block;
+    margin: 10px 10px 4px 0;
+    font-size: 120%;
+    padding: 10px 15px;
+    width: 205px;
+    zoom: 1;
+  }
+
+  &.register-wrapper, &.login-wrapper {
+    margin-top: 30px;
+  }
+
+  .login-panel, .register-panel {
+//    width: 190px;
+    padding-right: 36px;
+  }
+
+  .login-form input {
+    vertical-align: -2px;
+  }
+
+  .content {
+    width: 77%;
+    margin: 0 auto;
+  }
+
+  .hover-link {
+    color: #20538C;
+    cursor: pointer;
+  }
+
+  .hover-link:hover {
+    text-decoration: underline;
+  }
+
+  .forget-password, {
+    float: left
+  }
+}
