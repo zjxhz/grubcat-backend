@@ -86,7 +86,7 @@ class PubSub(object):
         if not client:
             client = xmpp.Client(jid.getDomain(), debug=settings.XMPP_DEBUG)
             client.connect(secure=0)
-            client.auth(str(jid), pw)
+            client.auth(jid.getNode(), pw)
         logger.debug('jid:%s' % str(jid))
         return client, jid
 
