@@ -909,8 +909,9 @@ def _pubsub_user_created(instance):
 @receiver(post_save, sender=User, dispatch_uid="pubsub_user_created")
 def pubsub_user_created(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_pubsub_user_created, args=(instance,))
-        t.start()
+        _pubsub_user_created(instance)
+        # t = threading.Thread(target=_pubsub_user_created, args=(instance,))
+        # t.start()
 
 @receiver(post_save, sender=Relationship, dispatch_uid="user_followed")
 def user_followed(sender, instance, created, **kwargs):
