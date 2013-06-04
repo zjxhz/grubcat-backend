@@ -1,4 +1,5 @@
 #coding=utf-8
+from django.db import transaction
 from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta
 from django.conf.urls.defaults import url
@@ -728,7 +729,8 @@ def checkemail(request):
             return SuccessResponse()
     else:
         raise
-    
+
+@transaction.autocommit
 def weibo_user_login(request):
     if request.method == 'POST':        
         # logs the user in as he has been authenticated by weibo at the mobile client side already. 
