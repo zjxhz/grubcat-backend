@@ -82,12 +82,12 @@ class PubSub(object):
 
     def create_client(self, subscriber, client=None):
         username, pw = get_xmpp_username_and_password(subscriber)
-        logger.debug('username:%s' % username)
         jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
         if not client:
             client = xmpp.Client(settings.XMPP_SERVER, debug=settings.XMPP_DEBUG)
             client.connect()
             client.auth(str(jid), pw)
+        logger.debug('jid:%s' % str(jid))
         return client, jid
 
     def createNode(self, user, node_name, client=None):
