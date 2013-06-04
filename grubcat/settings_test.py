@@ -12,7 +12,6 @@ CHATSERVER = "http://ifunjoin.com/http-bind/"
 CHATDOMAIN = "ifunjoin.com"
 XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
 XMPP_DEBUG = ['always']
-XMPP_SERVER = 'ifunjoin.com'
 ALIPAY_BACK_DOMAIN = 'http://ifunjoin.com/'
 ORDER_PREFIX = 'det1'
 PAY_DEBUG = False
