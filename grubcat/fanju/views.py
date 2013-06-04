@@ -4,6 +4,7 @@ import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.utils.encoding import smart_str
@@ -426,7 +427,7 @@ class UserMealListView(TemplateView):
         context['passed_orders'] = user.get_passed_orders()
         return context
 
-
+@transaction.autocommit
 def weibo_login(request):
     weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
                                    redirect_uri=settings.WEIBO_REDIRECT_URL)

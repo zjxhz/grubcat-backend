@@ -87,7 +87,6 @@ class PubSub(object):
             client = xmpp.Client(jid.getDomain(), debug=settings.XMPP_DEBUG)
             client.connect(secure=0)
             client.auth(jid.getNode(), pw)
-        logger.debug('jid:%s' % str(jid))
         return client, jid
 
     def createNode(self, user, node_name, client=None):
