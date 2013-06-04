@@ -257,7 +257,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['default', 'sentry'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'django': {
@@ -265,12 +265,12 @@ LOGGING = {
             'propagate': True
         },
         'fanju': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True
         },
         'fanju.apis': {
             'handlers': ['api'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True
         },
         'fanju.pay': {
