@@ -890,17 +890,17 @@ def set_default_avatar(sender, instance, created, **kwargs):
 
 def _pubsub_user_created(instance):
     user = instance
-    cl, jid = pubsub.create_client(user)
+    cl, _ = pubsub.create_client()
     node_name = "/user/%d/followers" % user.id
-    pubsub.create_node(user, node_name, client=cl)
-    pubsub.subscribe(user, node_name, client=cl)
+    pubsub.create_node(node_name, client=cl)
+    pubsub.subscribe(user, node_name)
     node_name = "/user/%d/meals" % user.id
-    pubsub.create_node(user, node_name, client=cl)
+    pubsub.create_node(node_name, client=cl)
     node_name = "/user/%d/visitors" % user.id
-    pubsub.create_node(user, node_name, client=cl)
-    pubsub.subscribe(user, node_name, client=cl)
+    pubsub.create_node(node_name, client=cl)
+    pubsub.subscribe(user, node_name)
     node_name = "/user/%d/photos" % user.id
-    pubsub.create_node(user, node_name, client=cl)
+    pubsub.create_node(node_name, client=cl)
     cl.disconnect()
 
 
@@ -918,7 +918,7 @@ def user_followed(sender, instance, created, **kwargs):
         follower = instance.from_person
         event = u'关注了你'
 
-        pubsub.publish(followee, "/user/%d/followers" % followee.id, json.dumps({"user": follower.id,
+        pubsub.publish( "/user/%d/followers" % followee.id, json.dumps({"user": follower.id,
                                                                                  "message": u"%s%s" % (
                                                                                  follower.name, event),
                                                                                  "event": event,
@@ -927,7 +927,7 @@ def user_followed(sender, instance, created, **kwargs):
                                                                                  "name": follower.name,
         }))
 
-        cl, jid = pubsub.create_client(follower)
+        cl, _ = pubsub.create_client(follower)
         pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
         pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
         cl.disconnect()
@@ -937,7 +937,7 @@ def user_followed(sender, instance, created, **kwargs):
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
-    cl, jid = pubsub.create_client(follower)
+    cl, _ = pubsub.create_client()
     pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id, client=cl)
     pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
     cl.disconnect()
@@ -949,10 +949,8 @@ def meal_created(sender, instance, created, **kwargs):
         meal = instance
         host = meal.host
         node_name = "/meal/%d/participants" % meal.id
-        cl, _ = pubsub.create_client(host)
-        pubsub.create_node(host, node_name, client=cl)
-        pubsub.subscribe(host, node_name, client=cl)
-        cl.disconnect()
+        pubsub.create_node(node_name)
+        pubsub.subscribe(host, node_name)
 
 
 def _meal_joined(meal_participant):
@@ -975,7 +973,7 @@ def _meal_joined(meal_participant):
         # host does not publish meal events to participants
         # and he has subscribed the events already when he created the meal
         meal_participant_node = "/meal/%d/participants" % meal.id
-        pubsub.publish(meal.host, meal_participant_node, payload)
+        pubsub.publish(meal_participant_node, payload)
         pubsub.subscribe(joiner, meal_participant_node)
         #TODO how about quit the meal
     #remove the subscription for of the user who is the joiner of the meal
@@ -985,7 +983,7 @@ def _meal_joined(meal_participant):
     for user in users_to_unsubscribe:
         pubsub.unsubscribe(user, followee_join_meal_node)
     time.sleep(1)
-    pubsub.publish(joiner, followee_join_meal_node, payload)
+    pubsub.publish(followee_join_meal_node, payload)
     for user in users_to_unsubscribe:
         pubsub.subscribe(user, followee_join_meal_node)
 
@@ -1003,14 +1001,14 @@ def user_visited(sender, instance, created, **kwargs):
         if visitor.id != instance.to_person.id:
             node_name = "/user/%d/visitors" % instance.to_person.id
             event = u"查看了你的个人资料"
-            payload = json.dumps({"user":visitor.id, 
-                                  "message":u"%s%s" % (visitor.name, event),
+            payload = json.dumps({"user": visitor.id,
+                                  "message": u"%s%s" % (visitor.name, event),
                                   "event": event,
-                                  "avatar":visitor.normal_avatar,
-                                  "s_avatar":visitor.small_avatar,
+                                  "avatar": visitor.normal_avatar,
+                                  "s_avatar": visitor.small_avatar,
                                   "name": visitor.name,
-                                  })
-            pubsub.publish(instance.to_person, node_name, payload)
+            })
+            pubsub.publish(node_name, payload)
 
 @receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
 def photo_uploaded(sender, instance, created, **kwargs):
@@ -1026,4 +1024,4 @@ def photo_uploaded(sender, instance, created, **kwargs):
                               "s_avatar":instance.user.small_avatar,
                               "name": instance.user.name,
                               "photo":instance.photo_thumbnail})
-        pubsub.publish(instance.user, node_name, payload)
+        pubsub.publish(node_name, payload)

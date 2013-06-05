@@ -37,12 +37,17 @@ def escape_xmpp_username(username):
     return username    
 
     
-def get_xmpp_username_and_password(user):
+def get_xmpp_username_and_password(user=None):
+
+    if not user:
+        return 'pubsub', 'pubX3ae4+-'
+
     if user.weibo_access_token:
         password = user.weibo_access_token
     else:
         password = user.password
     return escape_xmpp_node(user.username), password
+
 
 class PyapnsWrapper(object):
  
@@ -80,20 +85,20 @@ class PyapnsWrapper(object):
 
 class PubSub(object):
 
-    def create_client(self, subscriber, client=None):
-        username, pw = get_xmpp_username_and_password(subscriber)
+    def create_client(self, user=None, client=None):
+        username, pw = get_xmpp_username_and_password(user)
         jid = xmpp.protocol.JID("%s@%s" % (username, settings.CHATDOMAIN))
         if not client:
-            client = xmpp.Client(jid.getDomain(), debug=settings.XMPP_DEBUG)
+            client = xmpp.Client(settings.XMPP_SERVER, debug=settings.XMPP_DEBUG)
             client.connect(secure=0)
             client.auth(jid.getNode(), pw)
         return client, jid
 
-    def create_node(self, user, node_name, client=None):
+    def create_node(self, node_name, client=None):
         try:
 
-            cl, jid = self.create_client(user, client)
-            logger.debug("%s is creating node: %s" % (str(jid), node_name))
+            cl, _ = self.create_client(client)
+            logger.debug("creating node: %s" % node_name)
 
             iq = self.buildIq()
             iq.T.pubsub.NT.create['node']=node_name
@@ -114,14 +119,14 @@ class PubSub(object):
     def subscribe(self, subscriber, node_name, subscribing=True, client=None):
         try:
             cl, jid = self.create_client(subscriber, client)
-            logger.debug("%s is subscribing(%s) node: %s" % (str(jid), subscribing, node_name))
+            logger.debug("%s is subscribing(%s) node: %s" % (jid, subscribing, node_name))
             iq = self.buildIq()
             if subscribing:
                 subscribe_node = iq.T.pubsub.NT.subscribe
             else:
                 subscribe_node = iq.T.pubsub.NT.unsubscribe
-            subscribe_node['node']= node_name
-            subscribe_node['jid']=str(jid)
+            subscribe_node['node'] = node_name
+            subscribe_node['jid'] = jid.getStripped()
             cl.send(iq)
             cl.Process(1)
             if not client:
@@ -132,11 +137,11 @@ class PubSub(object):
     def unsubscribe(self, subscriber, node_name, client=None):
         self.subscribe(subscriber, node_name, False, client=client)
 
-    def publish(self, publisher, node_name, payload, client=None):
+    def publish(self, node_name, payload, client=None):
         try:
 
-            cl, jid = self.create_client(publisher, client)
-            logger.debug("%s is publishing node: %s with payload: %s" % (str(jid), node_name, payload))
+            cl, _ = self.create_client(client)
+            logger.debug("publishing node: %s with payload: %s" % (node_name, payload))
             iq = self.buildIq()
             iq.T.pubsub.NT.publish['node'] = node_name
             iq.T.pubsub.T.publish.T.item = ""
