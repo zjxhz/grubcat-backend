@@ -14,6 +14,7 @@ XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
 ALIPAY_BACK_DOMAIN = 'http://ifunjoin.com/'
 ORDER_PREFIX = 'det1'
 PAY_DEBUG = False
+XMPP_DEBUG = ['socket']
 
 #WEIBO_APP_KEY = "4071331500"
 #WEIBO_APP_SECERT = "5cf4910b217617cee72b2889a8e394eb"
