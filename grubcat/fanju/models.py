@@ -892,17 +892,15 @@ def _pubsub_user_created(instance):
     user = instance
     cl, jid = pubsub.create_client(user)
     node_name = "/user/%d/followers" % user.id
-    pubsub.createNode(user, node_name, client=cl)
+    pubsub.create_node(user, node_name, client=cl)
+    pubsub.subscribe(user, node_name, client=cl)
     node_name = "/user/%d/meals" % user.id
-    pubsub.createNode(user, node_name, client=cl)
-    pubsub.unsubscribe(user, node_name,
-                       client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+    pubsub.create_node(user, node_name, client=cl)
     node_name = "/user/%d/visitors" % user.id
-    pubsub.createNode(user, node_name, client=cl)
+    pubsub.create_node(user, node_name, client=cl)
+    pubsub.subscribe(user, node_name, client=cl)
     node_name = "/user/%d/photos" % user.id
-    pubsub.createNode(user, node_name, client=cl)
-    pubsub.unsubscribe(user, node_name,
-                       client=cl) # the user himself doesn't want to be bothered if he uploaded a photo
+    pubsub.create_node(user, node_name, client=cl)
     cl.disconnect()
 
 
@@ -951,7 +949,10 @@ def meal_created(sender, instance, created, **kwargs):
         meal = instance
         host = meal.host
         node_name = "/meal/%d/participants" % meal.id
-        pubsub.createNode(host, node_name)
+        cl, _ = pubsub.create_client(host)
+        pubsub.create_node(host, node_name, client=cl)
+        pubsub.subscribe(host, node_name, client=cl)
+        cl.disconnect()
 
 
 def _meal_joined(meal_participant):
