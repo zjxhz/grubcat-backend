@@ -97,7 +97,7 @@ class PubSub(object):
     def create_node(self, node_name, client=None):
         try:
 
-            cl, _ = self.create_client(client)
+            cl, _ = self.create_client(client=client)
             logger.debug("creating node: %s" % node_name)
 
             iq = self.buildIq()
@@ -140,7 +140,7 @@ class PubSub(object):
     def publish(self, node_name, payload, client=None):
         try:
 
-            cl, _ = self.create_client(client)
+            cl, _ = self.create_client(client=client)
             logger.debug("publishing node: %s with payload: %s" % (node_name, payload))
             iq = self.buildIq()
             iq.T.pubsub.NT.publish['node'] = node_name
