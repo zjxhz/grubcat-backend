@@ -11,7 +11,6 @@ ASSETS_AUTO_BUILD = False
 CHATSERVER = "http://ifunjoin.com/http-bind/"
 CHATDOMAIN = "ifunjoin.com"
 XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
-XMPP_DEBUG = ['always']
 ALIPAY_BACK_DOMAIN = 'http://ifunjoin.com/'
 ORDER_PREFIX = 'det1'
 PAY_DEBUG = False
