@@ -937,7 +937,7 @@ def user_followed(sender, instance, created, **kwargs):
 def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
-    cl, _ = pubsub.create_client()
+    cl, _ = pubsub.create_client(follower)
     pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id, client=cl)
     pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
     cl.disconnect()
