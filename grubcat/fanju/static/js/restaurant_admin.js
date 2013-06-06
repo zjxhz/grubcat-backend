@@ -58,7 +58,7 @@ jQuery(function ($) {
                 if ($addOrEditDishModal.data('dish-action') == 'add') {
                     $("#id_categories").val($addOrEditDishModal.data('last-dish-categories')).find("option:selected").prependTo($("#id_categories"))
                 }
-                $addOrEditDishModal.modal({show:true,backdrop:'static'})
+                $addOrEditDishModal.modal({show:true,backdrop:'static',keyboard:false})
             })
             return false
         })
@@ -519,7 +519,11 @@ jQuery(function ($) {
         $(".menu-detail-link").click(function () {
 
             $("#menu-detail-modal-wrapper").load($(this).attr("href"), function (html) {
+
+                $("#menu-detail-modal").find(".modal-body").css('max-height', $(window).height() - 120)
                 $("#menu-detail-modal").modal()
+
+
             });
             return false;
         })

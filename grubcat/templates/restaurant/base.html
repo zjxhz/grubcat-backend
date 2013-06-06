@@ -38,7 +38,7 @@
             <li id="nav-menu"><a href="{% url 'restaurant_menu_list' %}"><i class="icon-th"></i> 套餐管理</a></li>
             {% comment %}<li id="nav-order-history"><a href="{% url 'restaurant_order' %}"> <i class="icon-list"></i>
                 订单历史</a></li>{% endcomment %}
-            <li id="nav-logout"><a href="{% url 'logout' %}"><i class="icon-off"></i> 系统退出</a></li>
+            <li id="nav-logout"><a href="{% url 'logout' %}"><i class="icon-off"></i> <span class="hidden-phone">系统</span>退出</a></li>
         </ul>
         {% block content %} {% endblock %}
     </div>

@@ -357,7 +357,7 @@ class MealDetailView(OrderCreateView):
             raise Http404(u'对不起，该饭局不存在！')
         context['avaliable_seats'] = range(meal.left_persons)
 
-        payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+        payed_orders = meal.paid_orders()
         context['payed_orders'] = payed_orders
 
         if self.request.user.is_authenticated():

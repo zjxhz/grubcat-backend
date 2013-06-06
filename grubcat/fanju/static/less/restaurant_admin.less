@@ -3,38 +3,6 @@
 @import "bootstrap/mixins.less";
 
 
-/*style for pad*/
-@media (min-width: 768px) and (max-width: 979px) {
-  #restaurant-container {
-    #restaurant-nav {
-      margin-top: 10px;
-      li {
-        float: left;
-      }
-    }
-
-    #restaurant-nav, .content, #check-in-title {
-      width: 700px;
-    }
-
-    #save-menu-form, #menu-items {
-      width: 328px;
-    }
-
-    .order-status {
-      width: 223px;
-    }
-
-    .btn-use {
-      margin-right: 231px;
-    }
-    .menu-container {
-      width: 340px;
-    }
-
-  }
-}
-
 /**common for restaurant pages**/
 #restaurant-nav{
   margin-left: 20px;
@@ -578,4 +546,154 @@ body{
 }
 
 
+//responsive for phones and pads
+@media (max-width: 979px) {
+  #restaurant-nav {
+    margin-top: 10px;
+    li {
+      float: left;
+    }
+  }
+}
 
+/*style for pad*/
+@media (min-width: 768px) and (max-width: 979px) {
+  #restaurant-container {
+
+    #restaurant-nav, .content, #check-in-title {
+      width: 700px;
+    }
+
+    #save-menu-form, #menu-items {
+      width: 328px;
+    }
+
+    .order-status {
+      width: 223px;
+    }
+
+    .btn-use {
+      margin-right: 231px;
+    }
+    .menu-container {
+      width: 340px;
+    }
+    #menu-list-page{
+      width:720px;
+    }
+
+  }
+}
+
+@media (max-width: 767px) {
+  #restaurant-nav{
+    margin-left: 0;
+    margin-top: 15px;
+  }
+  #nav-dish, #nav-menu{
+    display: none;
+  }
+  li#nav-logout{
+    float: right;
+  }
+
+  #header{
+    display: none;
+  }
+
+  #today-meal-list-page{
+    td.meal-img{
+      display: none;
+    }
+
+    .modal {
+      margin-left: -50%;
+      left: 50%;
+      top: 10%;
+    }
+    .modal-footer {
+      display: none;
+    }
+
+  }
+
+  #check-in-page {
+
+    #id_code{
+      width: 50%;
+    }
+
+    #use-order-form{
+      float: right;
+    }
+    form{
+      button, button.btn-use{
+        float: right;
+        margin-left: 0;
+      }
+      .btn-use{
+        margin: 3px 0 0 0;
+      }
+    }
+
+    #order-status{
+      padding: 5px;
+    }
+
+    .btn-large {
+      padding: 5px 13px;
+      font-size: 16px;
+    }
+
+    .alert,h3 {
+      font-size: 16px;
+      line-height: 20px;
+      padding-right: 18px;
+    }
+    .meal-img{
+      display: none;
+    }
+  }
+
+}
+
+//phones rotate
+@media (min-width: 480px) and (max-width: 767px) {
+  #today-meal-list-page{
+    #menu-detail-modal{
+      top: 5%;
+    }
+
+  }
+}
+
+//phones
+@media (max-width: 479px) {
+
+  #today-meal-list-page{
+    td.meal-img{
+      display: none;
+    }
+    #menu-detail-modal{
+      width: 320px;
+       top: 5%;
+      margin-left: -160px;
+      .modal-header{
+        padding: 0px 10px;
+        h4{
+          font-size: 16px;
+        }
+      }
+      .modal-body{
+        padding: 0;
+      }
+
+      .dish{
+        width:auto;
+        padding-right: 10px;
+      }
+    }
+  }
+
+
+}

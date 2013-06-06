@@ -117,8 +117,8 @@ class TransFlowAdmin(admin.ModelAdmin):
 
 
 class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
-    list_display = ('id', 'topic', 'menu', 'host', 'list_price', 'actual_persons')
-    list_filter = ('start_date',)
+    list_display = ('id', 'topic', 'restaurant', 'menu', 'host', 'list_price', 'actual_persons')
+    list_filter = ('start_date','restaurant')
     ordering = ('menu', )
     actions = ['postpone_meal']
 

@@ -61,6 +61,7 @@ def use_order(request):
         order.save()
         data = get_meal_info(order.meal)
         data['order'] = order
+        data['user'] = request.user
         return render_to_response("restaurant/checkin_result.html", data)
 
 
