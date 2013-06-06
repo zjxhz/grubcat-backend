@@ -1,14 +1,15 @@
 #coding=utf-8
-from django.db import transaction
 from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta
-from django.conf.urls.defaults import url
 from django.conf import settings
+from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
+from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
 from exceptions import NoAvailableSeatsError
+from fanju.exceptions import AlreadyJoinedError
 from models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
     Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
     DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
@@ -116,7 +117,15 @@ class SuccessResponse(HttpResponse):
             content.update(extra_dict)
         content = json.dumps(content)
         super(SuccessResponse, self).__init__(content = content, content_type="application/json")
-    
+
+class FailureResponse(HttpResponse):
+    def __init__(self, extra_dict=None):
+        content = {"status": "NOK"}
+        if extra_dict:
+            content.update(extra_dict)
+        content = json.dumps(content)
+        super(FailureResponse, self).__init__(content = content, content_type="application/json")
+            
 #class DjangoUserResource(EOResource):
 #    class Meta:
 #        queryset = User.objects.all()
@@ -327,7 +336,10 @@ class UserResource(EOResource):
                 return SuccessResponse(dic)
             except NoAvailableSeatsError, e:
                 logger.warn("no available seat when joining %s", e)
-                return http.HttpApplicationError()
+                return FailureResponse({"info": e.message})
+            except AlreadyJoinedError, e:
+                logger.warn("already joined in")
+                return FailureResponse({"info": e.message}) 
             except Exception, e:
                 logger.error("failed to create an order: ", e)
                 return http.HttpApplicationError(e.message)
@@ -613,6 +625,14 @@ class MenuResource(EOResource):
 
 class SimpleOrderResource(EOResource):        
     customer = fields.ToOneField(SimpleUserResource, 'customer', full=True)
+    
+    def dehydrate(self, bundle):
+        request = bundle.request
+        order = bundle.obj
+        if order.customer != request.user and bundle.data.get("code"):
+            del(bundle.data["code"])
+        return bundle
+    
     class Meta:
         queryset = Order.objects.all()
         ordering = ['created_time','meal']
