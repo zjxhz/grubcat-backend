@@ -7,13 +7,15 @@ jQuery(function($){
             $.get("/chat/", function(data){
                 $("body").append($(data));
                 $("#chat-dialog").modal({
-                    show: false
+                    show: false,
+                    keyboard: false
                 })
             }, "html")
 
         } else {
             $("#chat-dialog").modal({
-                show: true
+                show: true,
+                keyboard:false
             })
         }
         return false;
