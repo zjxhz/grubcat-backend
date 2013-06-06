@@ -116,11 +116,12 @@ class TransFlowAdmin(admin.ModelAdmin):
     list_display = ('order','alipay_trade_no')
 
 
-class MealAdmin(admin.ModelAdmin):
-    list_display = ('id', 'topic', 'menu', 'host', 'list_price','actual_persons')
+class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
+    list_display = ('id', 'topic', 'menu', 'host', 'list_price', 'actual_persons')
     list_filter = ('start_date',)
     ordering = ('menu', )
     actions = ['postpone_meal']
+
     def postpone_meal(self, request, queryset):
         for meal in queryset:
             meal.start_date += datetime.timedelta(days=31)
@@ -201,8 +202,8 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(TransFlow, TransFlowAdmin)
 admin.site.register(Dish, DishAdmin)
 admin.site.register(DishCategory, DishCategoryAdmin)
-admin.site.register(Menu,MenuAdmin)
-admin.site.register(Restaurant,RestaurantAdmin)
+admin.site.register(Menu, MenuAdmin)
+admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(UserTag)
 admin.site.register(User, UserAdmin)
 # admin.site.register(GroupCategory)

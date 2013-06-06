@@ -702,8 +702,8 @@ class Meal(models.Model):
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
-    photo = models.FileField(u'图片', null=True, blank=True,
-                             upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
+    photo = models.ImageField(u'饭局封面', null=True, blank=True, upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
+    cropping = ImageRatioField('photo', '420x280')
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
     host = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
@@ -778,7 +778,8 @@ class Meal(models.Model):
     def get_cover_thumbnail(self, size):
         return get_thumbnailer(self.photo).get_thumbnail({
             'size': size,
-            'crop': True
+            'crop': True,
+            'box': self.cropping
         }).url
 
     @property
