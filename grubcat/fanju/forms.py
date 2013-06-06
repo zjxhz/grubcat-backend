@@ -149,5 +149,5 @@ class PhotoForm(ModelForm):
 
 #restaurant admin related
 class OrderCheckInForm(forms.Form):
-    code = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入用户就餐验证码"})))
+    code = forms.CharField(max_length=20, widget=(TextInput(attrs={'placeholder': "请输入就餐验证码"})))
 
