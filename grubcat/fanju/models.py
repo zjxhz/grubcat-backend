@@ -716,10 +716,9 @@ class Meal(models.Model):
 
     @classmethod
     def get_default_upcomming_meals(cls):
-        return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).filter(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(),
-                start_time__gt=datetime.now().time())).order_by("start_date",
+        return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date",
             "start_time").select_related("menu")
+    # .filter(Q(start_date__gt=date.today()) | Q(start_date=date.today(),  start_time__gt=datetime.now().time()))
 
     def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
