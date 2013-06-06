@@ -1,2 +1,3 @@
 User-agent: *
 Disallow:/user/p/2/
+Disallow:/restaurant/
