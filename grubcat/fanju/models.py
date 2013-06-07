@@ -954,9 +954,7 @@ def meal_created(sender, instance, created, **kwargs):
         pubsub.subscribe(host, node_name)
 
 
-def _meal_joined(meal_participant):
-    meal = meal_participant.meal
-    joiner = meal_participant.user
+def _meal_joined(meal, joiner):
     if meal.host and meal.host.id == joiner.id:
         event = u"发起了饭局"
     else:
@@ -992,7 +990,7 @@ def _meal_joined(meal_participant):
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_meal_joined, args=(instance,))
+        t = threading.Thread(target=_meal_joined, args=(instance.meal, instance.user))
         t.start()
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")

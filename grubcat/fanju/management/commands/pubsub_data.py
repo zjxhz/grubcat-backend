@@ -6,7 +6,7 @@ Created on Mar 9, 2013
 from django.core.management.base import BaseCommand
 import time
 from fanju.models import User, Relationship, pubsub_user_created, user_followed, \
-    Meal, meal_created, MealParticipants, meal_joined
+    Meal, meal_created, MealParticipants, meal_joined, OrderStatus, Order, _meal_joined
 from fanju.util import pubsub
 from optparse import make_option
 import logging
@@ -54,12 +54,13 @@ class Command(BaseCommand):
                 meal_created(self, meal, True)
                 
     def signal_meal_joined(self):
-        for meal_participant in MealParticipants.objects.all():
+        for order in Order.objects.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)):
             if self.dry_run:
                 print u"participant %s is subscribing meal %s" % (
-                    meal_participant.user.id, meal_participant.meal.id)
+                    order.customer.id, order.meal.id)
             else:
-                meal_joined(self, meal_participant, True)
+                _meal_joined(order.meal, order.customer)
+
 
     def unsubscribe_owner_meal(self):
         for profile in User.objects.all():
