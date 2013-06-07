@@ -17,6 +17,11 @@ class Command(BaseCommand):
         logger.debug("check data")
         user_list = [uid[0] for uid in User.objects.all().values_list('id')]
         meal_list = [mid[0] for mid in Meal.objects.all().values_list('id')]
+
+        for meal in Meal.objects.all():
+            if meal.host_id not in user_list:
+                logger.error("host %s not exist, meal_id=%s" % (meal.host_id, meal.id))
+
         for relation in Relationship.objects.all():
             if relation.from_person_id not in user_list:
                 logger.error("follower %s not exist, relation_id=%s" % (relation.from_person_id, relation.id))
