@@ -721,6 +721,7 @@ class Meal(models.Model):
                 start_time__gt=datetime.now().time())).order_by("start_date",
             "start_time").select_related("menu")
 
+
     def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
             customer__in=self.participants.all()).filter(status=OrderStatus.CREATED,
