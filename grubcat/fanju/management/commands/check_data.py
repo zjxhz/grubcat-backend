@@ -6,11 +6,10 @@ Created on Mar 9, 2013
 from django.core.management.base import BaseCommand
 import time
 from fanju.models import User, Relationship, pubsub_user_created, user_followed, \
-    Meal, meal_created, MealParticipants, meal_joined, OrderStatus, Order, _meal_joined
-from fanju.util import pubsub
-from optparse import make_option
+    Meal, MealParticipants, meal_joined, OrderStatus, Order, _meal_joined
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):    
 
