@@ -20,18 +20,18 @@ class Command(BaseCommand):
 
         for meal in Meal.objects.all():
             if meal.host_id not in user_list:
-                logger.error("host %s not exist, meal_id=%s" % (meal.host_id, meal.id))
+                print ("host %s not exist, meal_id=%s" % (meal.host_id, meal.id))
 
         for relation in Relationship.objects.all():
             if relation.from_person_id not in user_list:
-                logger.error("follower %s not exist, relation_id=%s" % (relation.from_person_id, relation.id))
+                print ("follower %s not exist, relation_id=%s" % (relation.from_person_id, relation.id))
             if relation.to_person_id not in user_list:
-                logger.error("followee %s not exist, relation_id=%s" % (relation.to_person_id, relation.id))
+                print ("followee %s not exist, relation_id=%s" % (relation.to_person_id, relation.id))
 
         for participant in MealParticipants.objects.all():
             if participant.user_id not in user_list:
-                logger.error('user %s not exist, participant_id=%s' % (participant.user_id, participant.id))
+                print ('user %s not exist, participant_id=%s' % (participant.user_id, participant.id))
 
             if participant.meal_id not in meal_list:
-                logger.error('meal %s not exist, participant_id=%s' % ( participant.meal_id, participant.id))
+                print ('meal %s not exist, participant_id=%s' % ( participant.meal_id, participant.id))
 
