@@ -24,7 +24,7 @@
 		var defaults = {
 			asHtmlID: false,
 			startText: "Enter Name Here",
-			emptyText: "按空格键添加",
+			emptyText: "按TAB键添加",
 			preFill: {},
 			limitText: "No More Selections Are Allowed",
 			selectedItemProp: "value", //name of object property
