@@ -35,7 +35,8 @@
 //  font-size: 14px;
   .box-shadow(none);
   li {
-    white-space: nowrap;
+    max-width: 90%\9;
+    white-space: nowrap\9;
     list-style: none;
     cursor: pointer;
     border: 1px solid #DDDDDD;
@@ -43,7 +44,7 @@
     color: #555;
     float: left;
     margin: 0 6px 6px 0;
-    padding: 2px 9px;
+    padding: 2px 7px;
 //    padding-bottom: 0\9;
 //    padding-top: 0\9;
 //    line-height: 20px\9;
@@ -377,12 +378,14 @@
     }
     ul.as-selections {
       width: 274px;
+      overflow-x:hidden\9;
       border: 1px solid @inputBorder;
       margin-bottom: @baseLineHeight / 2;
       vertical-align: middle;
     }
 
     ul.hot-tags {
+      overflow-x:hidden\9;
       box-shadow: none;
       float: right;
       width: 270px;
