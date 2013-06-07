@@ -1,0 +1,49 @@
+<div class="control-group nickname">
+
+    <label class="control-label" for="id_name">* 姓名：</label>
+
+    <div class="controls">
+        <input type="text" name="name" id="id_name"
+               value="{{ form.name.value|default_if_none:'' }}"
+               required data-validation-required-message="请输入姓名"
+                >
+        {{ form.name.errors }}
+    </div>
+</div>
+
+<div class="control-group gender">
+
+    <label class="control-label"> * 性别：</label>
+
+    <div class="controls">
+        <label class="radio inline" for="id_gender_1"><input
+                {% if form.gender.value == '0' or  form.gender.value == 0 %}checked="checked"{% endif %}
+                type="radio"
+                id="id_gender_1"
+                value="0" name="gender" data-validation-minchecked-minchecked="1"
+                data-validation-minchecked-message="这是个很严肃的问题！请选择！"> 男</label>
+        <label class="radio inline" for="id_gender_2"><input
+                {% if form.gender.value == '1' or form.gender.value == 1 %}checked="checked"{% endif %}
+                type="radio"
+                id="id_gender_2"
+                value="1" name="gender"> 女</label>
+        {{ form.gender.errors }}
+    </div>
+</div>
+
+
+<div class="control-group interest-tags" id="interst-tags-wrapper">
+
+    <label class="control-label" for="as-values-tags"> * 兴趣：</label>
+
+    <div class="controls">
+        {{ form.tags }}{{ form.tags.errors }}
+    </div>
+    <ul class="hot-tags  as-selections" id="hot-tags">
+        <div class="tags-head clearfix">
+            <span class="fl">你可能喜欢：</span>
+            <a id="change_hot_tags" href="{% url 'tag_list' %}" page="1" class="fr">换一换</a>
+        </div>
+    </ul>
+
+</div>

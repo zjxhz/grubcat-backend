@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+{% block title %}订单详情{% endblock %}
+{% block page_js %}
+
+    <script type="text/javascript" src="http://maps.google.com.hk/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="{% static_asset 'js/gmap3.v5.0b.min.js' %}"></script>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            {% if order.meal %}
+                $('#map').gmap3({
+                    marker: {
+                        latLng: [{{ order.meal.restaurant.latitude }}, {{ order.meal.restaurant.longitude }}]
+                    },
+                    map: {
+                        options: {
+                            zoom: 15
+                        }
+                    }
+                });
+            {% endif %}
+        })
+    </script>
+     {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div id="order-detail-page" class="row">
+
+        {% if avatar_tip %}
+            <div class="alert span12">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                上传真实的头像，会让大家更好地了解你，这样大家更容易和你成为朋友哦！现在就去<a href="{% url 'edit_basic_profile' %}"> 上传头像 </a>吧！</div>
+        {% endif %}
+        <div class="meal-simple-info clearfix span12">
+
+            <h1 class="meal-topic"><a href="{% url 'meal_detail' order.meal.id %}">{{ order.meal.topic }}</a></h1>
+                <span id="restaurant-location"><a
+                        href="http://ditu.google.cn?q={{order.meal.restaurant.latitude }},{{ order.meal.restaurant.longitude }}({{ order.meal.restaurant.name  }})"
+                        target="_blank"
+                        class="restaurant-name">{{ order.meal.menu.restaurant.name }}</a> {{ order.meal.menu.restaurant.address }}</span>
+           <span class="date fr">{{ order.meal.start_date|date:"n" }}月{{ order.meal.start_date|date:"j" }}日 {{ order.meal.start_date|date:"D" }}
+               {{ order.meal.start_time|date:"G:i " }}</span>
+        </div>
+        {% if order.meal.menu %}
+            <div class="span7 hidden-phone">
+                <div id="map"></div>
+            </div>
+        {% endif %}
+        <div class="span5 order-info">
+
+            <div class="auth-code"><h2>验证码：<span id="code">{{ order.code }}</span></h2>
+
+                <p>供 {{ order.num_persons }} 人使用，请妥善保管！当您进入餐厅的时候，请向餐厅工作人员提供该验证码！</p></div>
+            <div class="reminder"><h2>友情提醒：</h2>
+
+                <p>如果您在就餐时需要其他的菜或者饮品，您可以额外购买！</p></div>
+            <div class="hotline"><h2>饭聚网热线：<br>0571-82811182</h2>
+
+                <p>如果您有任何问题，可以拨打我们的热线</p></div>
+        </div>
+
+    </div>
+{% endblock %}
