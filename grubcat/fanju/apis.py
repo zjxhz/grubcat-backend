@@ -277,7 +277,7 @@ class UserResource(EOResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/comments%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_received_comments'), name="api_get_received_comments"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/meal%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_meal'), name="api_get_meal"),
+                self.wrap_view('next_meal'), name="api_next_meal"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/feeds%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('get_feeds'), name="api_get_feeds"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/tags%s$" % (self._meta.resource_name, trailing_slash()),
@@ -295,7 +295,7 @@ class UserResource(EOResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/background%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('background'), name="api_background"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('visit'), name="api_visit"),            
+                self.wrap_view('visit'), name="api_visit"),              
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -348,6 +348,17 @@ class UserResource(EOResource):
             all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passed_orders()
             return self.get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
+    def next_meal(self, request, **kwargs):
+        if request.method == 'GET':
+            obj = self.obj(request, **kwargs)
+            upcoming = obj.get_upcomming_orders()
+            next_meal = []
+            if upcoming:
+                next_meal = [upcoming[0].meal]
+            return self.get_my_list(MealResource(), next_meal, request)
+        else:
+            return http.HttpBadRequest("Only GET request is allowed")
+        
     @writeMineOnly
     def view_following(self, request, **kwargs):        
         me = self.obj(request, **kwargs)        
@@ -387,14 +398,6 @@ class UserResource(EOResource):
             return self.get_my_list(UserMessageResource(), user_to_query.received_comments, request)
         else:
             raise  http.HttpBadRequest() 
-    
-    @writeMineOnly
-    def get_meal(self, request, **kwargs):
-        if request.method == "GET":
-            obj = self.obj(request, **kwargs)
-            return self.get_my_list(MealResource(), obj.upcoming_meals, request)
-        else:
-            return http.HttpBadRequest()
 
     @writeMineOnly
     def view_tags(self, request, **kwargs):
@@ -705,7 +708,7 @@ class MealCommentResource(EOResource):
 class OrderResource(EOResource):        
     meal = fields.ForeignKey(MealResource,'meal', full=True)
     customer = fields.ToOneField(UserResource, 'customer', full=True)
-        
+    
     class Meta:
         queryset = Order.objects.all() # .exclude(status=4)
         filtering = {'customer':ALL_WITH_RELATIONS, 'meal':ALL_WITH_RELATIONS, "status":ALL}
