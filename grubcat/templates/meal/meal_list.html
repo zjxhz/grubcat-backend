@@ -13,7 +13,14 @@
 
 {% block content %}
 {#    {% cache 900 meal_list_frag %}#}
+    
+
+
     <div class="row" id="meal-list-page">
+        <div id="app" class="span12">
+            <img src="{% static 'img/app.png' %}" alt=""/>
+        </div>
+
         <div id="meal-list" class="span9">
             {% for meal in meal_list %}
                 <div class="meal-cell">
