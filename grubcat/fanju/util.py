@@ -138,6 +138,8 @@ class PubSub(object):
         self.subscribe(subscriber, node_name, False, client=client)
 
     def publish(self, node_name, payload, client=None):
+        if True:
+            return
         try:
 
             cl, _ = self.create_client(client=client)
