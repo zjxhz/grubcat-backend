@@ -668,7 +668,7 @@ class MealResource(EOResource):
     
     def get_upcoming(self, request, **kwargs):
         if request.method == "GET":
-            return self.get_my_list(self, Meal.get_default_upcomming_meals(), request)
+            return self.get_my_list(self, Meal.get_upcomming_meals(), request)
         else:
             return http.HttpBadRequest()
         

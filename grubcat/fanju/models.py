@@ -714,11 +714,22 @@ class Meal(models.Model):
     type = models.IntegerField(default=0) # THEMES, DATES
 
     @classmethod
-    def get_default_upcomming_meals(cls):
-        return cls.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by("start_date",
-            "start_time").select_related("menu")
-    # .filter(Q(start_date__gt=date.today()) | Q(start_date=date.today(),  start_time__gt=datetime.now().time()))
+    def get_all_meals(cls):
+        return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).select_related("menu")
 
+
+    @classmethod
+    def get_upcomming_meals(cls):
+        return cls.get_all_meals().filter(
+            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
+            "start_date",
+            "start_time")
+
+    @classmethod
+    def get_passed_meals(cls):
+        return cls.get_all_meals().exclude(
+            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
+            "-start_date", "-start_time")
 
     def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
