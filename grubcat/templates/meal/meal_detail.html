@@ -17,7 +17,7 @@
                 <h1 class="meal-topic"><a href="#">{{ meal.topic }}</a></h1>
                 <span id="restaurant-location"><a href="http://ditu.google.cn?q={{meal.restaurant.latitude }},{{ meal.restaurant.longitude }}({{ meal.restaurant.name  }})"
                                                   target="_blank"
-                                                  class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}</span>
+                                                  class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}&nbsp;&nbsp;{{ meal.menu.restaurant.tel }} </span>
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
                {{ meal.start_time|date:"G:i " }}</span>
             </div>

@@ -40,7 +40,7 @@
                 <span id="restaurant-location"><a
                         href="http://ditu.google.cn?q={{order.meal.restaurant.latitude }},{{ order.meal.restaurant.longitude }}({{ order.meal.restaurant.name  }})"
                         target="_blank"
-                        class="restaurant-name">{{ order.meal.menu.restaurant.name }}</a> {{ order.meal.menu.restaurant.address }}</span>
+                        class="restaurant-name">{{ order.meal.menu.restaurant.name }}</a> {{ order.meal.menu.restaurant.address }}&nbsp;&nbsp;{{ order.meal.menu.restaurant.tel }} </span>
            <span class="date fr">{{ order.meal.start_date|date:"n" }}月{{ order.meal.start_date|date:"j" }}日 {{ order.meal.start_date|date:"D" }}
                {{ order.meal.start_time|date:"G:i " }}</span>
         </div>
