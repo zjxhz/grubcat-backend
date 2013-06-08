@@ -50,7 +50,7 @@ class Restaurant(models.Model):
     regions = models.ManyToManyField(Region, verbose_name=u'区域', null=True, blank=True)
 
     def __unicode__(self):
-        return u'%s %s' % (self.name, self.address)
+        return u'%s' % (self.name,)
 
     # def get_recommended_dishes(self, max_number=10):
     #     return BestRatingDish.objects.filter(restaurant__id=self.id).order_by('-times')[:max_number]
@@ -153,7 +153,7 @@ class Menu(models.Model):
         return self.get_cover_thumbnail(settings.MINI_MENU_COVER_SIZE)
 
     def __unicode__(self):
-        return u'套餐%s' % self.name
+        return u'%s %s' % (self.restaurant.name, self.name, )
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
