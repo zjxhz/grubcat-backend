@@ -153,7 +153,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 
 class MenuAdmin(ImageCroppingMixin, admin.ModelAdmin):
-    list_display = ('id', 'restaurant', 'status', 'num_persons', 'average_price',)
+    list_display = ('id', 'name' 'restaurant', 'status', 'num_persons', 'average_price',)
     list_filter = ('restaurant', 'status')
     inlines = [DishItemInline, DishCategoryItemInline]
     ordering = ('status',)
