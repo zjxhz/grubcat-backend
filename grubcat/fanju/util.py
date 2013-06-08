@@ -162,7 +162,7 @@ class PubSub(object):
 pubsub = PubSub()
 
 
-def chat_context_processor(request):
+def common_context_processor(request):
     return {"CHATSERVER": settings.CHATSERVER, "CHATDOMAIN": settings.CHATDOMAIN}
 
 # list of mobile User Agents

@@ -73,7 +73,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "fanju.util.chat_context_processor"
+    "fanju.util.common_context_processor"
 )
 
 MANAGERS = ADMINS
