@@ -18,6 +18,7 @@ import datetime
 class UserCreationForm(auth_forms.UserCreationForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
+
     def clean_username(self):
         # Since User.username is unique, this check is redundant,
         # but it sets a nicer error message than the ORM. See #13147.
@@ -32,7 +33,8 @@ class UserCreationForm(auth_forms.UserCreationForm):
         model = User
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
-            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token','is_staff','is_superuser',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token', 'is_staff',
+            'is_superuser',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -43,11 +45,13 @@ class UserCreationForm(auth_forms.UserCreationForm):
 class UserChangeForm(auth_forms.UserChangeForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
+
     class Meta:
         model = User
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
-            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token','is_staff','is_superuser',
+            'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token', 'is_staff',
+            'is_superuser',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -69,7 +73,8 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     )
     add_fieldsets = (
         (None, {
-        'fields': ('username', 'password1', 'password2', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
+            'fields': (
+                'username', 'password1', 'password2', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
         ('Others', {'fields': (
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
             'apns_token', 'is_staff', 'is_superuser',)})
@@ -97,28 +102,32 @@ class DishAdmin(AjaxSelectAdmin):
 
 
 class DishCategoryAdmin(admin.ModelAdmin):
-    list_display =('id', 'name', 'restaurant')
+    list_display = ('id', 'name', 'restaurant')
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','meal', 'customer', 'created_time','payed_time','completed_time','status', 'num_persons', 'code','total_price','flow')
+    list_display = (
+        'id', 'meal', 'customer', 'created_time', 'payed_time', 'completed_time', 'status', 'num_persons', 'code',
+        'total_price', 'flow')
     list_filter = ('meal', 'status')
-    ordering = ('-id','meal', 'status',)
+    ordering = ('-id', 'meal', 'status',)
     actions = ['cancel_order']
+
     def cancel_order(self, request, queryset):
         for order in queryset:
             order.cancel()
         self.message_user(request, "订单取消成功!")
+
     cancel_order.short_description = u"取消订单"
 
 
 class TransFlowAdmin(admin.ModelAdmin):
-    list_display = ('order','alipay_trade_no')
+    list_display = ('order', 'alipay_trade_no')
 
 
 class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id', 'topic', 'restaurant', 'menu', 'host', 'list_price', 'actual_persons')
-    list_filter = ('start_date','restaurant')
+    list_filter = ('start_date', 'restaurant')
     ordering = ('menu', )
     actions = ['postpone_meal']
 
@@ -127,6 +136,7 @@ class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
             meal.start_date += datetime.timedelta(days=31)
             meal.save()
         self.message_user(request, "延期成功!")
+
     postpone_meal.short_description = u"延期1个月"
 
 
@@ -139,20 +149,20 @@ class DishCategoryItemInline(admin.StackedInline):
 
 
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name','latitude','longitude','address')
+    list_display = ('id', 'name', 'latitude', 'longitude', 'address')
 
 
 class MenuAdmin(ImageCroppingMixin, admin.ModelAdmin):
-    list_display = ('id','restaurant','status','num_persons','average_price',)
-    list_filter = ('restaurant','status')
-    inlines = [DishItemInline,DishCategoryItemInline]
+    list_display = ('id', 'restaurant', 'status', 'num_persons', 'average_price',)
+    list_filter = ('restaurant', 'status')
+    inlines = [DishItemInline, DishCategoryItemInline]
     ordering = ('status',)
 
 
 class MealParticipantsAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'meal')
     actions = ['resend_message']
-    
+
     def resend_message(self, request, queryset):
         for participant in queryset:
             meal_joined(MealParticipants, participant, True)
@@ -164,7 +174,7 @@ class MealParticipantsAdmin(admin.ModelAdmin):
 class RelationshipAdmin(admin.ModelAdmin):
     list_display = ('id', 'from_person', 'to_person')
     actions = ['resend_message']
-    
+
     def resend_message(self, request, queryset):
         for relationship in queryset:
             user_followed(Relationship, relationship, True)
@@ -176,7 +186,7 @@ class RelationshipAdmin(admin.ModelAdmin):
 class VisitorAdmin(admin.ModelAdmin):
     list_display = ('id', 'from_person', 'to_person')
     actions = ['resend_message']
-    
+
     def resend_message(self, request, queryset):
         for visitor in queryset:
             user_visited(Visitor, visitor, True)
@@ -188,7 +198,7 @@ class VisitorAdmin(admin.ModelAdmin):
 class UserPhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'photo')
     actions = ['resend_message']
-    
+
     def resend_message(self, request, queryset):
         for up in queryset:
             photo_uploaded(UserPhoto, up, True)

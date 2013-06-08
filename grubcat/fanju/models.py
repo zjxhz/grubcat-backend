@@ -152,9 +152,8 @@ class Menu(models.Model):
     def mini_cover_url(self):
         return self.get_cover_thumbnail(settings.MINI_MENU_COVER_SIZE)
 
-
     def __unicode__(self):
-        return u'套餐%s' % self.id
+        return u'套餐%s' % self.name
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
