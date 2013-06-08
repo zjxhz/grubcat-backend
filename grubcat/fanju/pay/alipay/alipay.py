@@ -32,7 +32,7 @@ def create_wap_pay(order, subject, price, quantity):
     #req data
     req_data = {'subject': subject,
                 'out_trade_no': order_prefix + str(order),
-                'total_fee': str(0.01 * quantity),
+                'total_fee': str(price * quantity),
                 'seller_account_name': settings.ALIPAY_SELLER_EMAIL,
                 'call_back_url': settings.ALIPAY_WAP_SYNC_BACK_URL,
                 'notify_url': settings.ALIPAY_WAP_AYSNC_BACK_URL,
@@ -100,7 +100,7 @@ def create_direct_pay(order, subject, price, quantity=""):
               'out_trade_no': order_prefix + str(order),
               'subject': (u'饭局： %s' % subject),
               'body': subject,
-              'price': 0.01,
+              'price': price,
               'quantity': quantity,
               'it_b_pay': str(django_settings.PAY_OVERTIME_FOR_PAY_OR_USER) + 'm'}
 
@@ -120,7 +120,7 @@ def create_app_pay(order, subject, total_fee):
               'out_trade_no': order_prefix + str(order),
               'subject': u'饭局：%s' % subject,
               'body': subject,
-              'total_fee': 0.01}
+              'total_fee': total_fee}
 
     params, req_str = params_filter(params, template='%s="%s"&')
     sign = build_mysign(req_str)
