@@ -177,7 +177,12 @@ class MealListView(ListView):
     context_object_name = "meal_list"
     #TODO add filter to queyset
     def get_queryset(self):
-        return Meal.get_default_upcomming_meals()
+        return Meal.get_upcomming_meals()
+
+    def get_context_data(self, **kwargs):
+        context = super(MealListView, self).get_context_data(**kwargs)
+        context['passed_meal_list'] = Meal.get_passed_meals()
+        return context
 
 
 ### User related views ###
