@@ -342,10 +342,11 @@ class OrderCreateView(CreateView):
         order = meal.join(customer, num_persons)
         #        TODO some checks
         if not settings.PAY_DEBUG:
+            price = meal.list_price
             if isMobileRequest(self.request):
-                url = create_wap_pay(order.id, order.meal.topic, meal.list_price, num_persons)
+                url = create_wap_pay(order.id, meal.topic, price, num_persons)
             else:
-                url = create_direct_pay(order.id, order.meal.topic, meal.list_price, num_persons)
+                url = create_direct_pay(order.id, meal.topic, price, num_persons)
             pay_logger.info("支付订单：%s" % url)
         else:
             handle_alipay_back(order.id)
@@ -463,7 +464,8 @@ def weibo_login(request):
         try:
             data = weibo_client.request_access_token(code)
             logger.debug(data)
-        except:
+        except Exception as e:
+            logger.exception(e)
             raise Exception(u'对不起，微博登录出现异常！')
             #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
