@@ -3,6 +3,8 @@ from django.core.urlresolvers import reverse_lazy
 
 #for product server
 
+###
+FREE_PAY_USER_ID = ('1652340607', '', '')
 
 ###################### app ######################
 DEBUG = False

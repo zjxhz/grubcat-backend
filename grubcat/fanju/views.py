@@ -342,11 +342,11 @@ class OrderCreateView(CreateView):
         order = meal.join(customer, num_persons)
         #        TODO some checks
         if not settings.PAY_DEBUG:
-            price = meal.list_price
+            price = order.total_price
             if isMobileRequest(self.request):
-                url = create_wap_pay(order.id, meal.topic, price, num_persons)
+                url = create_wap_pay(order.id, meal.topic, price, 1)
             else:
-                url = create_direct_pay(order.id, meal.topic, price, num_persons)
+                url = create_direct_pay(order.id, meal.topic, price, 1)
             pay_logger.info("支付订单：%s" % url)
         else:
             handle_alipay_back(order.id)
