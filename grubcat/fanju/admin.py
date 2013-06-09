@@ -108,7 +108,7 @@ class DishCategoryAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'meal', 'customer', 'created_time', 'payed_time', 'completed_time', 'status', 'num_persons', 'code',
-        'total_price', 'flow')
+        'total_price', 'orginal_total_price', 'flow')
     list_filter = ('meal', 'status')
     ordering = ('-id', 'meal', 'status',)
     actions = ['cancel_order']

@@ -194,7 +194,8 @@ class Order(models.Model):
     meal = models.ForeignKey('Meal', related_name='orders', verbose_name='饭局')
     num_persons = models.IntegerField(u"人数")
     status = models.IntegerField(u'订单状态', choices=ORDER_STATUS, default=1)
-    total_price = models.DecimalField(u'总价钱', max_digits=6, decimal_places=1)
+    orginal_total_price = models.DecimalField(u'优惠前总价钱', max_digits=6, decimal_places=1)
+    total_price = models.DecimalField(u'优惠后总价钱', max_digits=6, decimal_places=1)
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
@@ -760,7 +761,11 @@ class Meal(models.Model):
         order.meal = self
         order.customer = customer
         order.num_persons = requesting_persons
-        order.total_price = self.list_price * requesting_persons
+        order.orginal_total_price = self.list_price * requesting_persons
+        if customer.is_staff:
+            order.total_price = 0.1 * requesting_persons
+        else:
+            order.total_price = order.orginal_total_price
         order.status = OrderStatus.CREATED
         order.save()
         return order

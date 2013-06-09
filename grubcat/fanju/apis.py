@@ -331,7 +331,7 @@ class UserResource(EOResource):
                 order_bundle = order_resource.build_bundle(obj=order)
                 serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
                 dic = json.loads(serialized)
-                app_req_str = create_app_pay(order.id, order.meal.topic, meal.list_price * num_persons)
+                app_req_str = create_app_pay(order.id, order.meal.topic, order.total_price)
                 dic['app_req_str'] = app_req_str
                 return SuccessResponse(dic)
             except NoAvailableSeatsError, e:
