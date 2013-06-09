@@ -190,6 +190,11 @@ def dehydrate_basic_userinfo(resource, bundle):
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
+#    if hasattr(bundle.request, "user"):
+#        request_user = bundle.request.user
+#        if hasattr(request_user, "location") and request_user.location and bundle.obj.location:
+#            bundle.data['distance'] = request_user.getDistance(bundle.obj.location.lng, bundle.obj.location.lat, request_user.location.lng, request_user.location.lat)
+    
     
 #    request_user = bundle.request.user
 #    if request_user and request_user.is_authenticated() and request_user.is_following(bundle.obj):
@@ -329,6 +334,7 @@ class UserResource(EOResource):
                 order = meal.join(user_profile, num_persons)
                 order_resource = OrderResource()
                 order_bundle = order_resource.build_bundle(obj=order)
+                order_bundle.request = request
                 serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
                 dic = json.loads(serialized)
                 app_req_str = create_app_pay(order.id, order.meal.topic, order.total_price)
