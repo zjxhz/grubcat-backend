@@ -4,7 +4,7 @@
 
     <form id="upload_avatar_form" action="{% url 'upload_avatar' %}?action=upload" enctype="multipart/form-data"
           method="post">
-        <input type="file" id="id_avatar_for_upload" name="avatar">
+        <input type="file" id="id_avatar_for_upload" name="avatar" accept="image/*">
         <a id="upload-avatar-link" class="btn btn-primary fl " href="{% url 'upload_avatar' %}?action=upload">上传头像</a>
         <a id="crop-avatar-link" class="btn fl {% if user.is_default_avatar %}hide{% endif %} "
            href="{% url 'upload_avatar' %}">裁剪头像</a>
@@ -13,6 +13,7 @@
     {% if user.is_default_avatar %}
         <div class="alert" id="avatar_alert">你还没有上传头像，其他朋友无法寻找到你哦！</div>
     {% endif %}
+    <div id='alert-avatar-upload'></div>
 
 
 </div>
