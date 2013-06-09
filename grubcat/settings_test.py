@@ -9,7 +9,7 @@ ASSETS_DEBUG = False
 ASSETS_AUTO_BUILD = False
 
 CHATSERVER = "http://t.ifunjoin.com/http-bind/"
-CHATDOMAIN = "t.ifunjoin.com"
+CHATDOMAIN = "ifunjoin.com"
 XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
 ALIPAY_BACK_DOMAIN = 'http://t.ifunjoin.com/'
 ORDER_PREFIX = 'det1'
