@@ -77,7 +77,8 @@ def set_profile_common_attrs(context, request):
     used in all profile pages:basic_profile, photo_list, photo_detail, upload_photo, user_meals, follower/followees
     '''
     context['is_mine'] = context['profile'] == request.user
-    context['orders_count'] = context['profile'].orders.filter(status__in=(OrderStatus.PAYIED,OrderStatus.USED )).count()
+    context['orders_count'] = context['profile'].orders.filter(
+        status__in=(OrderStatus.PAYIED, OrderStatus.USED )).count()
     if context['is_mine']:
         context['orders_count'] += context['profile'].get_paying_orders_count()
 
@@ -103,7 +104,8 @@ def del_photo(request, pk):
         if photo.user == request.user:
             photo.delete()
             return create_sucess_json_response(u'成功删除照片！',
-                {'redirect_url': reverse('photo_list', kwargs={'user_id': request.user.id})})
+                                               {'redirect_url': reverse('photo_list',
+                                                                        kwargs={'user_id': request.user.id})})
         else:
             return create_no_right_response(u'对不起，只有照片的所有者才能删除该照片')
     elif request.method == 'GET':
@@ -118,7 +120,8 @@ class MenuListView(ListView):
     def get_queryset(self):
         #TODO filter by  date and time
         num_persons = self.request.GET.get("num_persons", 8)
-        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons,).exclude(photo='').select_related('restaurant', )
+        qs = Menu.objects.filter(status=MenuStatus.PUBLISHED, num_persons=num_persons, ).exclude(
+            photo='').select_related('restaurant', )
         if hasattr(self.request.user, 'restaurant'):
             #餐厅用户只显示本餐厅的菜单
             qs = qs.filter(restaurant=self.request.user.restaurant)
@@ -162,7 +165,7 @@ class MealCreateView(CreateView):
             #TODO to remove
             meal.restaurant = meal.menu.restaurant
 
-        if hasattr(self.request.user, 'restaurant'):
+        if self.request.user.is_superuser or hasattr(self.request.user, 'restaurant'):
             meal.status = MealStatus.PUBLISHED
         elif menu_id:
             meal.status = MealStatus.CREATED_WITH_MENU
@@ -235,7 +238,6 @@ class ProfileUpdateView(UpdateView):
     template_name = 'profile/edit_profile.html'
 
     def get_object(self, queryset=None):
-
         return self.request.user
 
     def get_context_data(self, **kwargs):
@@ -297,7 +299,7 @@ class UserListView(ListView):
         user = self.request.user
 
         if context['page_obj'].has_next():
-            next_page_url = reverse_lazy('more_user',kwargs={'page': context['page_obj'].next_page_number()})+"?"
+            next_page_url = reverse_lazy('more_user', kwargs={'page': context['page_obj'].next_page_number()}) + "?"
             for arg in ('show', 'tags'):
                 if self.request.GET.get(arg):
                     next_page_url += ("%s=%s&" % (arg, self.request.GET.get(arg)))
@@ -311,7 +313,8 @@ class UserListView(ListView):
                 context['show_common_tags_link'] = True
             elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 2:
                 context['need_edit_tags_again'] = True
-            if self.request.GET.get('tags') and not self.request.user.tags.filter(name=self.request.GET.get('tags')).exists():
+            if self.request.GET.get('tags') and not self.request.user.tags.filter(
+                    name=self.request.GET.get('tags')).exists():
                 context['show_add_tag'] = True
         return context
 
@@ -370,7 +373,7 @@ class MealDetailView(OrderCreateView):
 
         if self.request.user.is_authenticated():
             my_orders = payed_orders.filter(customer=self.request.user)
-            if len(my_orders) == 1 :
+            if len(my_orders) == 1:
                 context['order'] = my_orders[0]
             elif len(my_orders) > 1:
                 logger.error('user %s has %s orders for meal %s' % (self.request.user.id, len(my_orders), meal.id ))
@@ -434,6 +437,7 @@ class UserMealListView(TemplateView):
         context['upcomming_orders'] = user.get_upcomming_orders()
         context['passed_orders'] = user.get_passed_orders()
         return context
+
 
 @transaction.autocommit
 def weibo_login(request):
@@ -564,7 +568,7 @@ def handle_alipay_wap_async_back(request):
     pay_logger.info(data)
     try:
         #支付宝wap异步返回验签的参数顺序为如下固定顺序
-        notify_data = decrypt( smart_str(data.get('notify_data')))
+        notify_data = decrypt(smart_str(data.get('notify_data')))
         sort = ('service', 'v', 'sec_id', 'notify_data')
         result_param = {
             'service': data.get('service'),
@@ -588,7 +592,7 @@ def handle_alipay_wap_async_back(request):
     except AlreadyJoinedError:
         pass
     except Exception, e:
-        pay_logger.error(u"alipay_wap异步通知--结束--失败 "+ unicode(e))
+        pay_logger.error(u"alipay_wap异步通知--结束--失败 " + unicode(e))
         return HttpResponse("fail")
     pay_logger.info(u"alipay_wap异步通知--结束--成功")
     return HttpResponse("success")
@@ -615,7 +619,7 @@ def handle_alipay_direct_sync_back(request):
     pay_logger.info(u'alipay_web同步通知开始....' + trade_status)
     pay_logger.info(data)
     order_id = data.get('out_trade_no').replace(order_prefix, '')
-    if trade_status in ('WAIT_SELLER_SEND_GOODS',   "TRADE_SUCCESS", 'success'):
+    if trade_status in ('WAIT_SELLER_SEND_GOODS', "TRADE_SUCCESS", 'success'):
         verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE)
         handle_alipay_back(order_id, data.get('trade_no'), data.get('gmt_payment'))
         order = Order.objects.get(pk=order_id)
@@ -632,7 +636,7 @@ def handle_alipay_direct_aysnc_back(request):
     if trade_status in ('WAIT_SELLER_SEND_GOODS', "TRADE_SUCCESS"):
         #WAIT_SELLER_SEND_GOODS 是担保支付返回的成功状态，TRADE_SUCCESS是及时支付返回的成功状态
         try:
-            verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE )
+            verify_sign(data, signType=alipay_settings.ALIPAY_DIRECT_SIGN_TYPE)
             handle_alipay_back(data.get('out_trade_no').replace(order_prefix, ''), data.get('trade_no'),
                                data.get('gmt_payment'))
         except AlreadyJoinedError:
@@ -642,6 +646,7 @@ def handle_alipay_direct_aysnc_back(request):
             return HttpResponse("fail")
     pay_logger.info(u"alipay_web异步通知--结束--成功")
     return HttpResponse("success")
+
 
 @csrf_exempt
 def handle_alipay_app_async_back(request):
@@ -656,15 +661,15 @@ def handle_alipay_app_async_back(request):
         doc = xml.dom.minidom.parseString(notify_data)
         trade_status = getTextByTagName(doc, 'trade_status')
         pay_logger.debug(trade_status)
-        if trade_status in('TRADE_FINISHED', 'TRADE_SUCCESS'):
+        if trade_status in ('TRADE_FINISHED', 'TRADE_SUCCESS'):
             alipay_trade_no = getTextByTagName(doc, 'trade_no')
-            order_id = getTextByTagName(doc, 'out_trade_no').replace(order_prefix,'')
+            order_id = getTextByTagName(doc, 'out_trade_no').replace(order_prefix, '')
             gmt_payment = getTextByTagName(doc, 'gmt_payment')
             handle_alipay_back(order_id, alipay_trade_no, gmt_payment, check_overtime=True)
     except (AlreadyJoinedError, PayOverTimeError):
         pass
     except Exception, e:
-        pay_logger.exception(u"alipay_app异步通知--结束--失败 " )
+        pay_logger.exception(u"alipay_app异步通知--结束--失败 ")
         return HttpResponse("fail")
     pay_logger.info(u"alipay_app异步通知--结束--成功")
     return HttpResponse("success")
