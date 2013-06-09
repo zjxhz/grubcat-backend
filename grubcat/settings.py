@@ -137,6 +137,15 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',)
+VALID_IMAGE_FORMATS = ('image/png', 'image/jpg', 'image/jpeg', 'image/pjpeg')
+AVATAR_MIN_WIDTH = 180
+AVATAR_MIN_HEIGHT = 180
+AVATAR_MAX_SIZE = 4 #MB
+PHOTO_MIN_WIDTH = 180
+PHOTO_MIN_HEIGHT = 180
+PHOTO_MAX_SIZE = 4048
+
+
 THUMBNAIL_QUALITY = 90
 BIG_AVATAR_SIZE = (180, 180)
 MEDIUM_AVATAR_SIZE = (150, 150)

@@ -1,5 +1,7 @@
 #coding=utf-8
 from django import forms
+from django.core.files.images import get_image_dimensions
+from django.db.models.fields.files import ImageFieldFile
 from django.forms import ModelForm, Form
 from django.forms.extras import SelectDateWidget
 from django.forms.widgets import *
@@ -100,6 +102,20 @@ class UploadFileForm(forms.Form):
 
 #User related
 class UploadAvatarForm(ModelForm):
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+        if avatar and not isinstance(avatar, ImageFieldFile):
+            w, h = get_image_dimensions(avatar)
+            print avatar.content_type
+            if hasattr(avatar, 'content_type') and not avatar.content_type.startswith('image/'): #in settings.VALID_IMAGE_FORMATS:
+                raise forms.ValidationError('对不起，请您上传png/jpg/jpeg/bmp格式的头像')
+            if w < settings.AVATAR_MIN_WIDTH or h < settings.AVATAR_MIN_HEIGHT:
+                raise forms.ValidationError(u'您上传的头像尺寸太小，请上传尺寸大于%sx%s的头像' % (settings.AVATAR_MIN_WIDTH, settings.AVATAR_MIN_HEIGHT))
+            if avatar and avatar._size > settings.AVATAR_MAX_SIZE * 1024 * 1024:
+                raise forms.ValidationError("请您上传不超过%sMB的头像" % settings.AVATAR_MAX_SIZE)
+            return avatar
+
     class Meta:
         model = User
         fields = ('avatar', 'cropping')

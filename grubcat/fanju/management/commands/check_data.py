@@ -19,7 +19,7 @@ class Command(BaseCommand):
         meal_list = [mid[0] for mid in Meal.objects.all().values_list('id')]
 
         for meal in Meal.objects.all():
-            if meal.host_id not in user_list:
+            if meal.host_id and meal.host_id not in user_list:
                 print ("host %s not exist, meal_id=%s" % (meal.host_id, meal.id))
 
         for relation in Relationship.objects.all():

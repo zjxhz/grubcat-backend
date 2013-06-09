@@ -325,15 +325,35 @@ jQuery(function($){
             var options = {
 //                target: '#crop_avatar_wrapper', // target element(s) to be updated with server response
                 beforeSubmit: function () {
+                    $("#alert-avatar-upload").html("")
                     $(".avatar .loading").show();
                 }, // pre-submit callback
                 success: function (data) {
-                    $(".avatar .loading").hide();
-                     $("#avatar-wrapper").find("img").attr('src', $.parseJSON(data).big_avatar_url);
-                    setChatAvatar($.parseJSON(data).small_avatar_url)
+                    var data, big_avatar_url, small_avatar_url, avatar_error
+                    try{
+                        data = $.parseJSON(data)
+                        big_avatar_url = data.big_avatar_url
+                        small_avatar_url = data.small_avatar_url
+                        avatar_error = data.avatar
+                        if (avatar_error) {
+                            $("#alert-avatar-upload").html(avatar_error[0])
+                            return false;
+                        }
+                    } catch(e){
+                         $("#alert-avatar-upload").html("请您上传不超4MB的头像")
+                        return false;
+                    } finally{
+                        $(".avatar .loading").hide();
+                    }
+                     $("#avatar-wrapper").find("img").attr('src', big_avatar_url)
+                    setChatAvatar(small_avatar_url)
                     $('#crop-avatar-link').show().click();
                     return false;
-                }  // post-submit callback
+                },  // post-submit callback
+                error: function(){
+                    $(".avatar .loading").hide();
+                      $("#alert-avatar-upload").html("请您上传不超4MB的头像")
+                }
             };
             $("#upload_avatar_form").ajaxSubmit(options);
 
