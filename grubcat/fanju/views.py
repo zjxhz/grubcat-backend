@@ -466,7 +466,7 @@ def weibo_login(request):
             logger.debug(data)
         except Exception as e:
             logger.exception(e)
-            raise Exception(u'对不起，微博登录出现异常！')
+            raise Exception(u'对不起，微博登录接口出现异常！请您尝试再次登录，如果仍有问题，请联系我们的工作人员。')
             #        data = {'access_token':'2.00xQDpnBG_tW8E7a7387b8510f3_eq'} #for local debug
         user_to_authenticate = auth.authenticate(**data)
         if user_to_authenticate:
@@ -476,8 +476,7 @@ def weibo_login(request):
             #            else:
             return HttpResponseRedirect(next_url)
         else:
-            # raise Exception(u'微博接口异常')
-            raise Exception(u'对不起，微博登录出现异常！')
+            raise Exception(u'对不起，微博登录接口出现异常！请您尝试再次登录，如果仍有问题，请联系我们的工作人员。')
 
 
 #class BindProfileView(UpdateView):
