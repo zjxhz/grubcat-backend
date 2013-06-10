@@ -341,13 +341,13 @@ class UserResource(EOResource):
                 dic['app_req_str'] = app_req_str
                 return SuccessResponse(dic)
             except NoAvailableSeatsError, e:
-                logger.warn("no available seat when joining %s", e)
+                logger.warn(u"no available seat when joining %s", e)
                 return FailureResponse({"info": e.message})
             except AlreadyJoinedError, e:
-                logger.warn("already joined in")
+                logger.warn(u"already joined in")
                 return FailureResponse({"info": e.message}) 
             except Exception, e:
-                logger.error("failed to create an order: ", e)
+                logger.error(u"failed to create an order: ", e)
                 return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
