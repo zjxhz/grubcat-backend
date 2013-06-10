@@ -695,7 +695,7 @@ class MealResource(EOResource):
             return http.HttpBadRequest()
     
     class Meta:
-        queryset = Meal.objects.all()
+        queryset = Meal.get_all_meals()
         filtering = {'type': ALL,'start_date':ALL, "id":ALL}
         allowed_methods = ['get','post']
         authorization = ReadOnlyAuthorization()
