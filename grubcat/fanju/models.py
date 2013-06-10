@@ -996,7 +996,7 @@ def _meal_joined(meal, joiner):
     followee_join_meal_node = "/user/%d/meals" % joiner.id
     for user in users_to_unsubscribe:
         pubsub.unsubscribe(user, followee_join_meal_node)
-    time.sleep(1)
+#    time.sleep(1)
     pubsub.publish(followee_join_meal_node, payload)
     for user in users_to_unsubscribe:
         pubsub.subscribe(user, followee_join_meal_node)
