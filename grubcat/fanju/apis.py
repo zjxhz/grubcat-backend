@@ -1,5 +1,4 @@
 #coding=utf-8
-from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.conf.urls.defaults import url
@@ -8,12 +7,13 @@ from django.contrib.auth import logout
 from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
-from exceptions import NoAvailableSeatsError
+from fanju.api_auth import UserObjectsOnlyAuthorization
+from fanju.exceptions import NoAvailableSeatsError
 from fanju.exceptions import AlreadyJoinedError
-from models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
+from fanju.models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
     Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
     DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
-from pay.alipay.alipay import create_app_pay
+from fanju.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields, http
 from tastypie.api import Api
