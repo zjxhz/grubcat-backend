@@ -70,7 +70,7 @@ class TodayMealListView(ListView):
     context_object_name = 'meal_list'
 
     def get_queryset(self):
-        return Meal.objects.filter(restaurant=self.request.user.restaurant, start_date=date.today()).order_by(
+        return Meal.objects.filter(status=MealStatus.PUBLISHED, restaurant=self.request.user.restaurant, start_date=date.today()).order_by(
             'start_time').select_related("menu")
 
     def get_context_data(self, **kwargs):
