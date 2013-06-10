@@ -1,5 +1,4 @@
 #coding=utf-8
-from api_auth import UserObjectsOnlyAuthorization
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.conf.urls.defaults import url
@@ -8,12 +7,13 @@ from django.contrib.auth import logout
 from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
-from exceptions import NoAvailableSeatsError
+from fanju.api_auth import UserObjectsOnlyAuthorization
+from fanju.exceptions import NoAvailableSeatsError
 from fanju.exceptions import AlreadyJoinedError
-from models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
+from fanju.models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
     Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
     DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
-from pay.alipay.alipay import create_app_pay
+from fanju.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields, http
 from tastypie.api import Api
@@ -190,6 +190,11 @@ def dehydrate_basic_userinfo(resource, bundle):
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
+#    if hasattr(bundle.request, "user"):
+#        request_user = bundle.request.user
+#        if hasattr(request_user, "location") and request_user.location and bundle.obj.location:
+#            bundle.data['distance'] = request_user.getDistance(bundle.obj.location.lng, bundle.obj.location.lat, request_user.location.lng, request_user.location.lat)
+    
     
 #    request_user = bundle.request.user
 #    if request_user and request_user.is_authenticated() and request_user.is_following(bundle.obj):
@@ -329,19 +334,20 @@ class UserResource(EOResource):
                 order = meal.join(user_profile, num_persons)
                 order_resource = OrderResource()
                 order_bundle = order_resource.build_bundle(obj=order)
+                order_bundle.request = request
                 serialized = order_resource.serialize(None, order_resource.full_dehydrate(order_bundle),  'application/json')
                 dic = json.loads(serialized)
                 app_req_str = create_app_pay(order.id, order.meal.topic, order.total_price)
                 dic['app_req_str'] = app_req_str
                 return SuccessResponse(dic)
             except NoAvailableSeatsError, e:
-                logger.warn("no available seat when joining %s", e)
+                logger.warn(u"no available seat when joining %s", e)
                 return FailureResponse({"info": e.message})
             except AlreadyJoinedError, e:
-                logger.warn("already joined in")
+                logger.warn(u"already joined in")
                 return FailureResponse({"info": e.message}) 
             except Exception, e:
-                logger.error("failed to create an order: ", e)
+                logger.error(u"failed to create an order: ", e)
                 return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
@@ -689,7 +695,7 @@ class MealResource(EOResource):
             return http.HttpBadRequest()
     
     class Meta:
-        queryset = Meal.objects.all()
+        queryset = Meal.get_all_meals()
         filtering = {'type': ALL,'start_date':ALL, "id":ALL}
         allowed_methods = ['get','post']
         authorization = ReadOnlyAuthorization()
