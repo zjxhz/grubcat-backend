@@ -102,7 +102,7 @@
                 </div>
 
             </div>
-            <div id="users" class="">
+            <div id="users" class="clearfix">
                 {% if meal.actual_persons %}
                     {% if meal.left_persons <= 0 %}
                         <h3 id="left_persons_tip" data-left-persons="0">没有空位了！</h3>
@@ -137,6 +137,9 @@
                 {% endfor %}
 
             </div>
+
+            {% include 'comments/comment_frag.html' with target=meal %}
+
         </div>
         <div class="sidebar span3  visible-desktop">
 

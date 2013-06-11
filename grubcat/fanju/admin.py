@@ -7,7 +7,7 @@ from django.contrib.auth import forms as auth_forms
 from django.forms.extras import SelectDateWidget
 from fanju.forms import BasicProfileForm
 from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
-    DishItem, DishCategoryItem, TransFlow
+    DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, UserComment
 from fanju.models import meal_joined, MealParticipants, user_followed, \
     Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, pubsub_user_created
 from image_cropping.admin import ImageCroppingMixin
@@ -216,6 +216,9 @@ admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu, MenuAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(UserTag)
+admin.site.register(MealComment)
+admin.site.register(PhotoComment)
+admin.site.register(UserComment)
 admin.site.register(User, UserAdmin)
 # admin.site.register(GroupCategory)
 # admin.site.register(Group, GroupAdmin)

@@ -847,9 +847,10 @@ class MealParticipants(models.Model):
 
 
 class Comment(models.Model):
-    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者', blank=True)
-    comment = models.CharField(u'评论', max_length=300)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者', blank=True)
+    comment = models.CharField(u'评论', max_length=600)
     timestamp = models.DateTimeField(blank=True, auto_now_add=True)
+    parent = models.ForeignKey('self', blank=True, null=True )
 
     @property
     def time_gap(self):
@@ -868,13 +869,24 @@ class Comment(models.Model):
             result = u"1分钟内"
         return result
 
+    def __unicode__(self):
+        return '[%s] %s' % (self.id, self.comment[:20])
+
+
     class Meta:
         abstract = True
 
 
 class MealComment(Comment):
-    meal = models.ForeignKey(Meal, related_name="comments")
+    target = models.ForeignKey(Meal, related_name="comments")
 
+
+class PhotoComment(Comment):
+    target = models.ForeignKey(UserPhoto, related_name='comments')
+
+
+class UserComment(Comment):
+    target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments')
 
 
 # class ImageTest(models.Model):
