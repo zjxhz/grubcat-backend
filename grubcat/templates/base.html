@@ -49,7 +49,7 @@
                         </div>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="hidden-phone">{{  user.name|default:'用户' }}</span>
+                                <span class="hidden-phone" id='nav-username'>{{  user.name|default:'用户' }}</span>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{% url 'user_detail' user.id %}">我的主页</a></li>
