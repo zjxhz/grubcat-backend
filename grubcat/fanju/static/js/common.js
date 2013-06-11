@@ -10,4 +10,16 @@ $(document).ready(function ($) {
         $(this).removeClass("active");
         $active.addClass("active");
     });
+
+    var $commentContainer = $("#comment-container")
+    if ($commentContainer[0]){
+
+        $commentContainer.find(".comment").hover(function(){
+            $(this).find(".comment-time, .comment-footer").css('visibility', 'visible')
+        }, function(){
+            $(this).find(".comment-footer").css('visibility', 'hidden')
+        })
+
+    }
+
 })
