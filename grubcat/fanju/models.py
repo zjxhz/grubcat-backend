@@ -609,6 +609,8 @@ class User(AbstractUser):
 class UserPhoto(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
+    timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
+
 
     def __unicode__(self):
         return str(self.id)
