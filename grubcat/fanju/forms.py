@@ -101,7 +101,7 @@ class UploadFileForm(forms.Form):
 
 
 class CommentForm(forms.Form):
-    comment = forms.CharField(max_length=40, widget=Textarea(attrs={'rows': 3, 'placeholder':u'说点什么吧！'}))
+    comment = forms.CharField(max_length=200, widget=Textarea(attrs={'rows': 3, 'placeholder': u'说点什么吧！'}))
     parent = forms.CharField(widget=HiddenInput, required=False)
 
 

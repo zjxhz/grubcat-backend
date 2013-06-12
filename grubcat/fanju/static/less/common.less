@@ -668,14 +668,13 @@ dl.menu-items {
   }
 }
 
+
 //#comment related
 #comment-container {
-  padding: 10px 0;
-  .loading {
+ .loading {
     margin-top: 10px;
     text-align: center;
   }
-
 //  used in single comment and comment box
   .comment-avatar {
     padding-top: 2px;
@@ -692,6 +691,7 @@ dl.menu-items {
     .clearfix;
     padding: 10px 0;
     border-bottom: 1px solid #eee;
+
 
     .comment-body {
 
@@ -727,18 +727,29 @@ dl.menu-items {
         .comment-actions {
           display: none;
           float: left;
-          font-size: 15px;
+          font-size: 14px;
           a {
             color: #666;
           }
+          .del-comment-link{
+//            font-size: 13px;
+          }
 
+        }
+      }
+    }
+
+    &.viewee {
+      .comment-header {
+        a {
+          color: #D32;
         }
       }
     }
   }
 
   .comment-box {
-    padding: 25px 0 5px 0;
+    padding: 20px 0 5px 0;
 
     .comment-form {
       position: relative;
@@ -752,6 +763,7 @@ dl.menu-items {
         position: absolute;
         right: 0;
         bottom: 0;
+        .border-radius(0);
       }
     }
 

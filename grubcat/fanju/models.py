@@ -853,11 +853,27 @@ class CommentType:
     GROUP = 'group'
 
 
+class CommentStatus:
+    UNFLAGGED = 0
+    APPROVED = 1
+    UNAPPROVED_BY_MACHINE = 2
+    UNAPPROVED_BY_ADMIN = 3
+    DELETED = 4
+
+COMMENT_STATUS_CHOICE = (
+    (CommentStatus.UNFLAGGED, u'未审核'),
+    (CommentStatus.APPROVED, u'人工审核通过'),
+    (CommentStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
+    (CommentStatus.UNAPPROVED_BY_ADMIN, u'人工审核不通过'),
+    (CommentStatus.DELETED, u'已删除'),
+)
+
 class Comment(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者', blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'作者', blank=True)
     comment = models.CharField(u'评论', max_length=200)
-    timestamp = models.DateTimeField(blank=True, auto_now_add=True)
-    parent = models.ForeignKey('self', blank=True, null=True )
+    timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
+    status = models.SmallIntegerField(u'状态', default=CommentStatus.UNFLAGGED, choices=COMMENT_STATUS_CHOICE)
+    parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True )
 
 
     @classmethod
@@ -871,7 +887,8 @@ class Comment(models.Model):
 
     @classmethod
     def get_comments(cls, comment_type, target_id):
-        return cls.get_comment_class(comment_type).objects.filter(target_id=target_id).select_related('parent__user', 'user')
+        return cls.get_comment_class(comment_type).objects.filter(target_id=target_id, status__in=(
+            CommentStatus.UNFLAGGED, CommentStatus.APPROVED)).select_related('parent__user', 'user')
 
     @property
     def time_gap(self):
@@ -899,16 +916,25 @@ class Comment(models.Model):
 
 
 class MealComment(Comment):
-    target = models.ForeignKey(Meal, related_name="comments")
+    target = models.ForeignKey(Meal, verbose_name=u'被评论的饭局', related_name='comments')
 
+    class Meta:
+        verbose_name = u'饭局评论'
+        verbose_name_plural = verbose_name
 
 class PhotoComment(Comment):
-    target = models.ForeignKey(UserPhoto, related_name='comments')
+    target = models.ForeignKey(UserPhoto, verbose_name=u'被评论的照片', related_name='comments')
 
+    class Meta:
+        verbose_name = u'照片评论'
+        verbose_name_plural = verbose_name
 
 class UserComment(Comment):
-    target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments')
+    target = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'被评论的用户', related_name='comments')
 
+    class Meta:
+        verbose_name = u'用户留言'
+        verbose_name_plural = verbose_name
 
 # class ImageTest(models.Model):
 #     image = ImageField(blank=True, null=True, upload_to='apps')

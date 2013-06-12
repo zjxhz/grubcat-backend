@@ -320,24 +320,23 @@ class UserListView(ListView):
         return context
 
 
-
-
-
 #comment related
 class CommentListView(ListView):
-    template_name = "comments/comment_frag.html"
+    template_name = "comments/comment_inner_frag.html"
     context_object_name = 'comment_list'
 
     def get_queryset(self):
         comment_type = self.kwargs['comment_type']
         target_id = self.kwargs['target_id']
         # TODO check login if not meal list
-
+        if comment_type != CommentType.MEAL and not self.request.user.is_authenticated():
+            raise NoRightException
         return Comment.get_comments(comment_type, target_id)
 
     def get_context_data(self, **kwargs):
+
         context = super(CommentListView, self).get_context_data(**kwargs)
-        context['post_comment_url'] = reverse_lazy('add_comment', kwargs={'comment_type': 'meal',
+        context['post_comment_url'] = reverse_lazy('add_comment', kwargs={'comment_type': self.kwargs['comment_type'],
                                                                           'target_id': self.kwargs['target_id']})
         context['form'] = CommentForm()
         return context
@@ -349,8 +348,8 @@ def add_comment(request, comment_type, target_id):
         if form.is_valid():
             parent = form.cleaned_data['parent']
             comment = Comment.get_comment_class(comment_type).objects.create(user=request.user, parent_id=parent,
-                                                                            comment=form.cleaned_data['comment'],
-                                                                            target_id=target_id)
+                                                                             comment=form.cleaned_data['comment'],
+                                                                             target_id=target_id)
 
             result = render_to_string('comments/single_comment_frag.html', {'comment': comment})
 
@@ -358,6 +357,14 @@ def add_comment(request, comment_type, target_id):
         else:
             return create_failure_json_response(extra_dict=form.errors)
 
+
+def del_comment(request, comment_type, comment_id):
+    if request.method == 'POST':
+        comment = Comment.get_comment_class(comment_type).objects.get(pk=comment_id)
+        if request.user.id == comment.user_id:
+            comment.status = CommentStatus.DELETED
+            comment.save(update_fields=('status', ))
+        return create_sucess_json_response(u'已经成功删除评论！')
 
 ### Order related views ###
 class OrderCreateView(CreateView):

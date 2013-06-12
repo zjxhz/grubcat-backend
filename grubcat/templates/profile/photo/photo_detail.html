@@ -21,7 +21,9 @@
             <span class="photo-direction photo-prev " url='{% url 'photo_detail' pre_photo.id %}' title="上一张"></span>
             <span class="photo-direction photo-next " url='{% url 'photo_detail' next_photo.id %}' title="下一张"></span>
         </div>
+
+    {% include 'comments/comment_outer_frag.html' with target=photo comment_type='photo' %}
     </div>
 
-    <div id="data" class='hide' data-active-nav-id="profile_photo"></div>
+    <div id="data" class='hide' data-owner-id='{{ profile.id }}' data-active-nav-id="profile_photo"></div>
 {% endblock %}

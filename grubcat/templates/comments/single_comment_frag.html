@@ -1,4 +1,4 @@
-<div id="comment-{{ comment.id }}" class='comment'>
+<div id="comment-{{ comment.id }}" class='comment' data-uid='{{ comment.user.id }}'>
     <div class="comment-avatar">
         <a target="_blank" href="{{ comment.user.get_absolute_url }}">
             <img src="{{ comment.user.small_avatar }}" alt="{{ comment.user.name }}"/>

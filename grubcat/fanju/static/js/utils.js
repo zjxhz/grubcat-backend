@@ -78,3 +78,21 @@ if (!String.prototype.trim) {
    //code for trim
     String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
 }
+
+function formatDate(date, today) {
+    var today = today || new Date()
+    var d1, d2, dayGap, resultDate;
+    d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    dayGap = Math.abs(d1 - d2) / 1000 / 60 / 60 / 24
+    if (dayGap == 0) {
+        resultDate = ""
+    } else if (dayGap == 1) {
+        resultDate = "昨天"
+    } else if (dayGap == 2) {
+        resultDate = "前天"
+    } else {
+        resultDate = date.getTwoDigitMonth() + "-" + date.getTwoDigitDate()
+    }
+    return resultDate
+}
