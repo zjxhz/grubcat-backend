@@ -99,6 +99,9 @@ $(document).ready(function ($) {
                 var $commentToDel =  $(this).parents(".comment")
                 var commentId = $commentToDel.attr('id').replace("comment-",'')
                 var delCommentUrl = $commentContainer.data('delCommentUrl').replace('1',commentId )
+
+                $commentToDel.find("#reply_box").hide().insertBefore("#comment_box")
+
                 $.post(delCommentUrl, function(){
                     $commentToDel.slideUp(function(){
                         $commentToDel.remove()
