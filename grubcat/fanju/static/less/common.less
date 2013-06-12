@@ -3,20 +3,19 @@
 
 @footerHeight: 100px;
 
-html,body{
+html, body {
   height: 100%;
 }
 
-#main-wrap{
+#main-wrap {
   min-height: 100%;
   width: 100%;
 }
 
 #main-container {
-  padding-top: @navbarHeight+20 ;
+  padding-top: @navbarHeight+20;
   padding-bottom: @footerHeight + 20;
 }
-
 
 #footer {
   position: relative;
@@ -25,7 +24,7 @@ html,body{
   clear: both;
   color: #777;
   text-align: center;
-  .container{
+  .container {
     padding-top: 50px;
   }
 }
@@ -42,13 +41,13 @@ html,body{
   font-size: 16px;
 
   ul.nav > li > a {
-//    font-size: 18px;
+    //    font-size: 18px;
   }
-  .logo{
+  .logo {
     font-size: 24px;
     padding: 4px 20px;
-    img{
-      width:52px;
+    img {
+      width: 52px;
       height: 40px;
       max-width: none;
     }
@@ -57,7 +56,7 @@ html,body{
     padding-left: 5px;
     font-size: 18px;
   }
-  .nav.main{
+  .nav.main {
     margin-left: 30px;
   }
 }
@@ -68,7 +67,6 @@ html,body{
   margin: 15px 0 0 0;
   list-style: none;
 }
-
 
 ul.dropdown-menu {
   min-width: 120px;
@@ -81,7 +79,7 @@ ul.dropdown-menu {
   }
 }
 
-.nav .dropdown-menu{
+.nav .dropdown-menu {
   *width: 100px;
 }
 
@@ -93,7 +91,6 @@ option {
   text-align: left;
   padding-left: 10px;
 }
-
 
 #login_link {
   padding-left: 40px;
@@ -162,12 +159,12 @@ option {
       border-bottom: 1px solid #dedede;
       cursor: pointer;
 
-      &.photo{
+      &.photo {
         height: 85px;
-        .extra_info{
+        .extra_info {
           height: 65px;
-          img{
-//            .rotate(15deg)
+          img {
+            //            .rotate(15deg)
           }
         }
       }
@@ -208,7 +205,7 @@ option {
       .extra_info {
         float: right;
         width: 60px;
-//        height: 65px;
+        //        height: 65px;
         overflow: hidden;
         position: absolute;
         right: 8px;
@@ -235,7 +232,7 @@ option {
           padding: 3px;
           position: absolute;
           top: -7px;
-          *top:-13px;
+          *top: -13px;
           font-size: 25px;
           right: 0px;
           *right: 2px;
@@ -578,9 +575,8 @@ option {
 }
 
 #ie6-warning {
-//  padding: 8px 0;
+  //  padding: 8px 0;
 }
-
 
 .date-time-wrapper {
   position: absolute;
@@ -636,7 +632,7 @@ dl.menu-items {
     .clearfix();
     font-size: 14px;
     padding: 0 0 5px 7px;
-    .dish-name{
+    .dish-name {
       max-width: 125px;
       display: block;
       float: left;
@@ -652,11 +648,11 @@ dl.menu-items {
   }
 }
 
-#not-found-page{
+#not-found-page {
   text-align: center;
   margin: 40px;
   font-size: 20px;
-  p{
+  p {
     line-height: 30px;
   }
 }
@@ -671,22 +667,32 @@ dl.menu-items {
     font-size: 16px;
   }
 }
+
 //#comment related
 #comment-container {
   padding: 10px 0;
+  .loading {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+//  used in single comment and comment box
+  .comment-avatar {
+    padding-top: 2px;
+    float: left;
+    .square(60px);
+    img {
+      .border-radius(3px);
+      .box-shadow(0 1px 3px rgba(0, 0, 0, 0.22))
+    }
+  }
+
+  //single comment
   .comment {
     .clearfix;
     padding: 10px 0;
     border-bottom: 1px solid #eee;
-    .comment-avatar {
-      padding-top: 2px;
-      float: left;
-      .square(60px);
-      img {
-        .border-radius(3px);
-        .box-shadow(0 1px 3px rgba(0, 0, 0, 0.22))
-      }
-    }
+
     .comment-body {
 
       padding-left: 60px;
@@ -695,27 +701,66 @@ dl.menu-items {
 
         a {
           font-size: 13px;
-          color: #B63D24;
+          color: green;
+          //          color: #B63D24;
         }
       }
       .comment-content {
         margin: 8px 0;
         word-wrap: break-word;
+        .name {
+          font-size: 13px;
+          color: #666;
+        }
       }
       .comment-footer {
-        visibility: hidden;
         .clearfix;
+        margin-top: 5px;
         font-size: 13px;
         color: #999;
         .comment-time {
+          float: left;
           color: #999;
           font-size: 12px;
           margin-right: 15px;
         }
-        a {
-          color: #666;
+        .comment-actions {
+          display: none;
+          float: left;
+          font-size: 15px;
+          a {
+            color: #666;
+          }
+
         }
       }
     }
   }
+
+  .comment-box {
+    padding: 25px 0 5px 0;
+
+    .comment-form {
+      position: relative;
+      textarea {
+        width: 70%;
+        margin-bottom: 0;
+      }
+      .btn-submit-comment {
+        float: right;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+  }
+
+  #reply_box{
+    .comment-avatar{
+      margin-right: 10px;
+      .square(40px);
+    }
+  }
+
 }

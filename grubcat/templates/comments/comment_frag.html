@@ -1,28 +1,33 @@
-<div id="comment-container">
+{% for comment in comment_list %}
+    {% include 'comments/single_comment_frag.html' with comment=comment%}
+{% endfor %}
 
-{#    <form id="comment-form" action="{% url  %}"></form>#}
-
-    {% for comment in target.comments.all %}
-        <div id="comment-{{ comment.id }}" class='comment'>
-            <div class="comment-avatar">
-                <a target="_blank" href="{{ comment.user.get_absolute_url }}">
-                    <img src="{{ comment.user.small_avatar }}" alt="{{ comment.user.name }}"/>
-                </a>
-
-            </div>
-            <div class="comment-body">
-                <div class="comment-header">
-                    <a class="author" target="_blank"
-                       href="{{ comment.user.get_absolute_url }}">{{ comment.user.name }}</a>
-
-                </div>
-                <p class="comment-content">{{ comment.comment }}</p>
-
-                <div class="comment-footer">
-                    <span class="comment-time">{{ comment.time_gap }}</span>
-                    <a href="#" class="reply-link"></i>回复</a>
-                </div>
-            </div>
+{% if user.is_authenticated %}
+    <div class="comment-box" id="comment_box">
+        <div class="comment-avatar">
+            <a target="_blank" href="{{ user.get_absolute_url }}">
+                <img src="{{ user.small_avatar }}" alt="{{ user.name }}"/>
+            </a>
         </div>
-    {% endfor %}
-</div>
+
+        <form class="comment-form" action="{{ post_comment_url }}" method="post">
+            <textarea name="comment" placeholder="说点什么吧！" rows="3" cols="40"></textarea>
+            <input name="parent" type="hidden">
+            <button type="submit" class="btn btn-primary btn-large btn-submit-comment">发表</button>
+        </form>
+    </div>
+
+    <div class="comment-box hide" id="reply_box">
+        <div class="comment-avatar">
+            <a target="_blank" href="{{ user.get_absolute_url }}">
+                <img src="{{ user.small_avatar }}" alt="{{ user.name }}"/>
+            </a>
+        </div>
+
+        <form class="comment-form" action="{{ post_comment_url }}" method="post">
+            <textarea name="comment" placeholder="说点什么吧！" rows="3" cols="40"></textarea>
+            <input name="parent" type="hidden">
+            <button type="submit" class="btn btn-primary btn-large btn-submit-comment">回复</button>
+        </form>
+    </div>
+{% endif %}

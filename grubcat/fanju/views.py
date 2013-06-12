@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
@@ -317,6 +318,50 @@ class UserListView(ListView):
                     name=self.request.GET.get('tags')).exists():
                 context['show_add_tag'] = True
         return context
+
+
+def get_comment_target_class(comment_type):
+    if comment_type == CommentType.MEAL:
+        return MealComment
+    elif comment_type == CommentType.PHOTO:
+        return PhotoComment
+    elif comment_type == CommentType.USER:
+        return UserComment
+
+
+#comment related
+class CommentListView(ListView):
+    template_name = "comments/comment_frag.html"
+    context_object_name = 'comment_list'
+
+    def get_queryset(self):
+        comment_type = self.kwargs['comment_type']
+        target_id = self.kwargs['target_id']
+        return get_comment_target_class(comment_type).objects.filter(target_id=target_id)
+        # TODO check login
+
+    def get_context_data(self, **kwargs):
+        context = super(CommentListView, self).get_context_data(**kwargs)
+        context['post_comment_url'] = reverse_lazy('add_comment', kwargs={'comment_type': 'meal',
+                                                                          'target_id': self.kwargs['target_id']})
+        context['form'] = CommentForm()
+        return context
+
+
+def add_comment(request, comment_type, target_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            parent = form.cleaned_data['parent']
+            comment = get_comment_target_class(comment_type).objects.create(user=request.user, parent_id=parent,
+                                                                            comment=form.cleaned_data['comment'],
+                                                                            target_id=target_id)
+
+            result = render_to_string('comments/single_comment_frag.html', {'comment': comment})
+
+            return create_sucess_json_response(extra_dict={'html': result})
+        else:
+            return create_failure_json_response(extra_dict=form.errors)
 
 
 ### Order related views ###
