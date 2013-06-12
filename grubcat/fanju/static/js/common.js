@@ -1,6 +1,4 @@
 function scrollToElement($element, speed, offset) {
-    speed=speed||1000
-    offset=offset||40
     if ($element.length)
         $("html,body").animate({scrollTop: $element.offset().top - (offset || 0) }, speed || 1000);
 }
@@ -20,7 +18,22 @@ $(document).ready(function ($) {
 
     var $commentContainer = $("#comment-container")
     if ($commentContainer[0]) {
-        $commentContainer.load($commentContainer.data("comment-list-url"))
+        $.get($commentContainer.data("comment-list-url"), function(data){
+            var $comments = $(data)
+            var viewerId = $comments.find("#comment_box").data('uid'),
+                vieweeId = $("#data").data('ownerId'), commentOwnerId
+
+            $comments.find(".comment").each(function () {
+                commentOwnerId = $(this).data('uid')
+                if (viewerId == commentOwnerId) {
+                    $(this).find(".comment-actions").append('<a href="#" class="del-comment-link"></i>删除</a>')
+                }
+                if (vieweeId == commentOwnerId) {
+                    $(this).addClass('viewee')
+                }
+            })
+            $commentContainer.html($comments)
+        })
         $commentContainer.on('mouseenter', ".comment",function () {
 
             $(this).find(".comment-actions").show()
@@ -32,8 +45,13 @@ $(document).ready(function ($) {
             }).on('click', ".btn-submit-comment",function () {
 
                 var $commentForm = $(this).parents("form"), $parent = $commentForm.find('[name=parent]'),
-                    $comment = $commentForm.find('[name=comment]')
-                if(!$comment.val() || !$comment.val().trim() ){
+                    $comment = $commentForm.find('[name=comment]'), comment = $comment.val()
+                if(!comment|| !comment.trim() ){
+                    $comment.focus()
+                    return false
+                }
+                if(comment.length > 200){
+                    alert('最多只能输入200字，已经超出' + (comment.length-200) + '字')
                     $comment.focus()
                     return false
                 }
@@ -43,7 +61,14 @@ $(document).ready(function ($) {
                     'comment': $comment.val()
                 }, function (data) {
                     if (data.status == 'OK') {
-                        var $newComment = $(data.html)
+                        var $newComment = $(data.html), viewerId = $("#comment_box").data('uid'), vieweeId = $("#data").data('ownerId')
+                        if (viewerId && $newComment.data('uid') == viewerId) {
+                            $newComment.find(".comment-actions").append('<a href="#" class="del-comment-link"></i>删除</a>')
+                        }
+                        if (vieweeId == $newComment.data('uid')) {
+                            $newComment.addClass('viewee')
+                        }
+
                         $newComment.hide().insertBefore($("#comment_box")).slideDown()
                         scrollToElement($newComment,500)
                         $("#reply_box").hide()
@@ -68,6 +93,18 @@ $(document).ready(function ($) {
 //                scrollToElement($("#comment_form"))
 //                $("#id_comment").focus()
                 return false;
+
+            }).on('click', '.del-comment-link', function(){
+
+                var $commentToDel =  $(this).parents(".comment")
+                var commentId = $commentToDel.attr('id').replace("comment-",'')
+                var delCommentUrl = $commentContainer.data('delCommentUrl').replace('1',commentId )
+                $.post(delCommentUrl, function(){
+                    $commentToDel.slideUp(function(){
+                        $commentToDel.remove()
+                    })
+                })
+                return false
 
             }).on('keydown', '[name=comment]', function(e){
 

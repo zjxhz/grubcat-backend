@@ -123,6 +123,7 @@ urlpatterns = patterns('',
 
     url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/$', CommentListView.as_view(), name='comment_list'),
     url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/add/$', login_required(add_comment), name='add_comment'),
+    url(r'^comment/(?P<comment_type>\w+)/(?P<comment_id>\d+)/del/$', login_required(del_comment), name='del_comment'),
 
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),

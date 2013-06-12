@@ -137,10 +137,7 @@
                 {% endfor %}
 
             </div>
-                <div id="comment-container" data-comment-list-url='{% url 'comment_list' comment_type='meal' target_id=meal.id %}' >
-                    <div class="loading">评论加载中&nbsp;&nbsp;<img src="{% static 'img/loader.gif' %}" alt=""/> </div>
-                </div>
-{#            {% include 'comments/comment_frag.html' with target=meal %}#}
+            {% include 'comments/comment_outer_frag.html' with target=meal comment_type='meal' %}
 
         </div>
         <div class="sidebar span3  visible-desktop">
