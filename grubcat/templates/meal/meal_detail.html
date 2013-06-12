@@ -21,7 +21,7 @@
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
                {{ meal.start_time|date:"G:i " }}</span>
             </div>
-            <p id="desc">{{ meal.introduction }}</p>
+            <p id="desc">{{ meal.introduction|linebreaksbr }}</p>
 
             <div id="meal-container" class="clearfix box-seperator">
                 <div class="meal-img-wrapper">
@@ -137,8 +137,10 @@
                 {% endfor %}
 
             </div>
-
-            {% include 'comments/comment_frag.html' with target=meal %}
+                <div id="comment-container" data-comment-list-url='{% url 'comment_list' comment_type='meal' target_id=meal.id %}' >
+                    <div class="loading">评论加载中&nbsp;&nbsp;<img src="{% static 'img/loader.gif' %}" alt=""/> </div>
+                </div>
+{#            {% include 'comments/comment_frag.html' with target=meal %}#}
 
         </div>
         <div class="sidebar span3  visible-desktop">

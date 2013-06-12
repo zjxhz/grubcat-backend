@@ -120,6 +120,10 @@ urlpatterns = patterns('',
     url(r'^tag/$', login_required(list_tags), name='tag_list'),
     url(r'^tag/add/$', login_required(add_tag), name='add_tag'),
 
+
+    url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/$', CommentListView.as_view(), name='comment_list'),
+    url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/add/$', login_required(add_comment), name='add_comment'),
+
     #restaurant admin
     url(r'^restaurant/$', restaurant_login_required(rest.OrderCheckInView.as_view()), name="restaurant_admin"),
 

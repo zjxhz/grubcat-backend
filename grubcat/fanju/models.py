@@ -846,9 +846,16 @@ class MealParticipants(models.Model):
         verbose_name_plural = verbose_name
 
 
+class CommentType:
+    MEAL = 'meal'
+    USER = 'user'
+    PHOTO = 'photo'
+    GROUP = 'group'
+
+
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者', blank=True)
-    comment = models.CharField(u'评论', max_length=600)
+    comment = models.CharField(u'评论', max_length=200)
     timestamp = models.DateTimeField(blank=True, auto_now_add=True)
     parent = models.ForeignKey('self', blank=True, null=True )
 
