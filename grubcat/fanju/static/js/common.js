@@ -63,7 +63,7 @@ $(document).ready(function ($) {
 
                 var parentId = $(this).parents(".comment").attr("id").replace('comment-','')
                 $replyBox.find('[name=parent]').val(parentId)
-                $replyBox.find("[name=comment]").focus()
+                $replyBox.find("[name=comment]").val('').focus()
 
 //                scrollToElement($("#comment_form"))
 //                $("#id_comment").focus()

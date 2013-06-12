@@ -859,6 +859,20 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(blank=True, auto_now_add=True)
     parent = models.ForeignKey('self', blank=True, null=True )
 
+
+    @classmethod
+    def get_comment_class(cls, comment_type):
+        if comment_type == CommentType.MEAL:
+            return MealComment
+        elif comment_type == CommentType.PHOTO:
+            return PhotoComment
+        elif comment_type == CommentType.USER:
+            return UserComment
+
+    @classmethod
+    def get_comments(cls, comment_type, target_id):
+        return cls.get_comment_class(comment_type).objects.filter(target_id=target_id).select_related('parent__user', 'user')
+
     @property
     def time_gap(self):
         gap = datetime.now() - self.timestamp
@@ -873,7 +887,7 @@ class Comment(models.Model):
         elif gap.seconds >= 60:
             result = u"%d分钟前" % (gap.seconds / 60)
         else:
-            result = u"1分钟内"
+            result = u'刚刚'
         return result
 
     def __unicode__(self):

@@ -320,13 +320,7 @@ class UserListView(ListView):
         return context
 
 
-def get_comment_target_class(comment_type):
-    if comment_type == CommentType.MEAL:
-        return MealComment
-    elif comment_type == CommentType.PHOTO:
-        return PhotoComment
-    elif comment_type == CommentType.USER:
-        return UserComment
+
 
 
 #comment related
@@ -337,8 +331,9 @@ class CommentListView(ListView):
     def get_queryset(self):
         comment_type = self.kwargs['comment_type']
         target_id = self.kwargs['target_id']
-        return get_comment_target_class(comment_type).objects.filter(target_id=target_id)
-        # TODO check login
+        # TODO check login if not meal list
+
+        return Comment.get_comments(comment_type, target_id)
 
     def get_context_data(self, **kwargs):
         context = super(CommentListView, self).get_context_data(**kwargs)
@@ -353,7 +348,7 @@ def add_comment(request, comment_type, target_id):
         form = CommentForm(request.POST)
         if form.is_valid():
             parent = form.cleaned_data['parent']
-            comment = get_comment_target_class(comment_type).objects.create(user=request.user, parent_id=parent,
+            comment = Comment.get_comment_class(comment_type).objects.create(user=request.user, parent_id=parent,
                                                                             comment=form.cleaned_data['comment'],
                                                                             target_id=target_id)
 
