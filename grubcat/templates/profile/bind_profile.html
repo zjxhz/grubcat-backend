@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+
+{% block title %}完善个人信息{% endblock %}
+
+{% block page_js %}
+    {% assets "edit_or_bind_profile_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <div id="bind-profile-page" class="row">
+
+    <div class="welcom-info span12">
+        <h1>第一次来到饭聚网，完善资料，让更多的人了解你吧！</h1>
+        <hr/>
+    </div>
+        {% include 'profile/avatar_frag.html' %}
+        <form id="basic-profile-form" action="" method="post" class="form-horizontal span9 ">
+            <fieldset>
+                {% include "profile/mandatory_profile_elements.html" with form=form %}
+
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-large btn-primary">保存</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="data" class='hide' list-tags-url='{% url 'tag_list' %}'></div>
+
+{% endblock %}
