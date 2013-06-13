@@ -568,7 +568,7 @@ class UserResource(EOResource):
         authorization = Authorization()
         queryset = User.objects.all()
         resource_name = 'user'
-        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL, "username":ALL}
+        filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL, "username":ALL, "name": ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
         excludes=['password','weibo_access_token']
         authorization = UserObjectsOnlyAuthorization(True)
@@ -577,7 +577,6 @@ class UserResource(EOResource):
 class RelationshipResource(EOResource):
     from_person = fields.ForeignKey(SimpleUserResource, 'from_person', full=True) #TODO maybe we don't need "full" for from_person
     to_person = fields.ForeignKey(SimpleUserResource, 'to_person', full=True )
-    
 
     def post_list(self, request, **kwargs):
         if not request.user.is_authenticated():
