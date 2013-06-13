@@ -1,0 +1,20 @@
+# use glob syntax.
+syntax: glob
+build/*
+*.pyc
+.idea/*
+grubcat/settings_dev.py
+grubcat/eo/static/gen/*
+grubcat/eo/static/.webassets*
+*.orig
+grubcat/\.settings
+grubcat/os
+grubcat/eo/static/less/responsive.css
+grubcat/eo/static/less/profile.css
+grubcat/eo/static/less/common.css
+requirements.txt~
+grubcat/fanju/static/gen/*
+grubcat/fanju/static/.webassets*
+.DS_Store
+grubcat/fanju/static/img/default/male.png*
+grubcat/fanju/static/img/default/female.png*

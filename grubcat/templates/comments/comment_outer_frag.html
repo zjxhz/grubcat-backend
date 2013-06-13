@@ -1,0 +1,5 @@
+{% load static from staticfiles %}
+<div id="comment-container" data-comment-list-url='{% url 'comment_list' comment_type=comment_type target_id=target.id %}'
+     data-del-comment-url='{% url "del_comment" comment_type=comment_type comment_id=1 %}'>
+    <div class="loading"><img src="{% static 'img/loader.gif' %}" alt=""/></div>
+</div>
