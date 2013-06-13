@@ -1,0 +1,12 @@
+<div class="modal fade" id="menu-detail-modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4>菜单：{{ menu.name }} ({{ menu.num_persons }}人)</h4>
+    </div>
+    <div class="modal-body">
+        {% include 'meal/menu_frag.html'%}
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn btn-primary" data-dismiss="modal">关闭</a>
+    </div>
+</div>
