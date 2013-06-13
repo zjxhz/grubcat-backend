@@ -296,7 +296,18 @@ class Visitor(models.Model):
         verbose_name = u'用户访问'
         verbose_name_plural = u'用户访问'
 
+class PhotoRequest(models.Model):
+    from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photo_requesting")
+    to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photo_requesters")
 
+    def __unicode__(self):
+        return u'%s -> %s' % (self.from_person, self.to_person)
+
+    class Meta:
+        unique_together = ('from_person', 'to_person')
+        verbose_name = u'求照片'
+        verbose_name_plural = u'求照片'
+    
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
@@ -978,6 +989,9 @@ def _pubsub_user_created(instance):
     pubsub.subscribe(user, node_name)
     node_name = "/user/%d/photos" % user.id
     pubsub.create_node(node_name, client=cl)
+    node_name = "/user/%d/photo_requests" % user.id
+    pubsub.create_node(node_name, client=cl)
+    pubsub.subscribe(user, node_name)
     cl.disconnect()
 
 
@@ -1084,6 +1098,23 @@ def user_visited(sender, instance, created, **kwargs):
                                   "name": visitor.name,
             })
             pubsub.publish(node_name, payload)
+
+@receiver(post_save, sender=PhotoRequest, dispatch_uid="photo_request")
+def photo_requested(sender, instance, created, **kwargs):
+    if created:
+        requestor = instance.from_person
+        if requestor.id != instance.to_person.id:
+            node_name = "/user/%d/photo_requests" % instance.to_person.id
+            event = u"邀请你上传照片"
+            payload = json.dumps({"user": requestor.id,
+                                  "message": u"%s%s" % (requestor.name, event),
+                                  "event": event,
+                                  "avatar": requestor.normal_avatar,
+                                  "s_avatar": requestor.small_avatar,
+                                  "name": requestor.name,
+            })
+            pubsub.publish(node_name, payload)
+
 
 @receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
 def photo_uploaded(sender, instance, created, **kwargs):
