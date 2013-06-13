@@ -1,17 +1,17 @@
 #coding=utf-8
 from ajax_select.admin import AjaxSelectAdmin
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from django import forms
+from django.contrib import admin
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth.admin import UserAdmin
 from django.forms.extras import SelectDateWidget
 from fanju.forms import BasicProfileForm
-from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, UserTag, \
-    DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, UserComment
-from fanju.models import meal_joined, MealParticipants, user_followed, \
-    Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, pubsub_user_created
+from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
+    UserTag, DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, \
+    UserComment, photo_requested, User, meal_joined, MealParticipants, user_followed, \
+    Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, \
+    pubsub_user_created, PhotoRequest
 from image_cropping.admin import ImageCroppingMixin
-from fanju.models import User
 import datetime
 
 
@@ -195,7 +195,17 @@ class VisitorAdmin(admin.ModelAdmin):
 
     resend_message.short_description = u"重新发送用户访问消息"
 
+class PhotoRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'from_person', 'to_person')
+    actions = ['resend_message']
 
+    def resend_message(self, request, queryset):
+        for photo_request in queryset:
+            photo_requested(PhotoRequest, photo_request, True)
+        self.message_user(request, "成功发送求照片消息!")
+
+    resend_message.short_description = u"重新发送求照片消息"
+    
 class UserPhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'photo')
     actions = ['resend_message']
@@ -226,5 +236,6 @@ admin.site.register(User, UserAdmin)
 admin.site.register(MealParticipants, MealParticipantsAdmin)
 admin.site.register(Relationship, RelationshipAdmin)
 admin.site.register(Visitor, VisitorAdmin)
+admin.site.register(PhotoRequest, PhotoRequestAdmin)
 admin.site.register(UserPhoto, UserPhotoAdmin)
 

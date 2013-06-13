@@ -8,11 +8,11 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
 from fanju.api_auth import UserObjectsOnlyAuthorization
-from fanju.exceptions import NoAvailableSeatsError
-from fanju.exceptions import AlreadyJoinedError
-from fanju.models import UserLocation, UserTag, UserPhoto, User, MealParticipants, \
-    Meal, Relationship, UserMessage, Visitor, Restaurant, DishCategory, \
-    DishCategoryItem, MealComment, Order, Menu, Dish, DishItem
+from fanju.exceptions import AlreadyJoinedError, NoAvailableSeatsError
+from fanju.models import UserLocation, UserTag, UserPhoto, User, \
+    MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
+    DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem, \
+    PhotoRequest
 from fanju.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields, http
@@ -300,7 +300,9 @@ class UserResource(EOResource):
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/background%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('background'), name="api_background"),
             url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/visitors%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('visit'), name="api_visit"),              
+                self.wrap_view('visit'), name="api_visit"),   
+            url(r"^(?P<resource_name>%s)/(?P<pk>\d+)/photo_request%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('photo_request'), name="api_photo_request"),             
         ]
     
     def obj_update(self, bundle, request=None, **kwargs):
@@ -503,6 +505,15 @@ class UserResource(EOResource):
         if request.method == "POST":
             visitor = User.objects.get(id=request.POST.get('visitor_id'))
             Visitor.objects.get_or_create(from_person=visitor, to_person=host)
+            return SuccessResponse()
+        else:
+            raise http.HttpBadRequest() 
+    
+    def photo_request(self, request, **kwargs):
+        host = self.obj(request, **kwargs)   
+        if request.method == "POST":
+            photo_requester = User.objects.get(id=request.POST.get('photo_requester_id'))
+            PhotoRequest.objects.get_or_create(from_person=photo_requester, to_person=host)
             return SuccessResponse()
         else:
             raise http.HttpBadRequest() 
