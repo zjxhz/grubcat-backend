@@ -762,13 +762,26 @@ var notyApp = {
                 var formattedDate = chatApp.formatDate(time)
                 attrs.date = formattedDate ? formattedDate : time.getHourMinute()
 
-                if (node.indexOf('meal') > 0) {
+                 if (node.indexOf('comments') > 0) {
+                    // view my profile
+                    if (attrs.photo_id) {
+                        attrs.url = '/photo/' + attrs.photo_id + '/#comment-' + attrs.comment_id
+                    } else if (attrs.meal_id) {
+                        attrs.url = '/meal/' + attrs.meal_id + '/#comment-' + attrs.comment_id
+                    }
+                    attrs.type = 'comment'
+                    attrs.target_text = attrs.comment
+                } else if (node.indexOf('meal') > 0) {
                     // create or paticipate a meal
                     attrs.url = '/meal/' + attrs.meal + '/'
                     attrs.type = 'meal'
                     attrs.target_text = attrs.topic
                     attrs.target_pic = attrs.meal_photo
-                } else if (node.indexOf('/photos') > 0) {
+                }else if (node.indexOf('/photo_requests') > 0) {
+                    //upload photo
+                    attrs.url = '/user/' + attrs.user + '/'
+                    attrs.type = 'photo-request'
+                }else if (node.indexOf('/photos') > 0) {
                     //upload photo
                     attrs.url = '/photo/' + attrs.photo_id + '/'
                     attrs.type = 'photo'

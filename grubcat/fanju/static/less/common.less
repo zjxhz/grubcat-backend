@@ -168,6 +168,11 @@ option {
           }
         }
       }
+      &.photo, &.meal{
+        .action{
+          width: 160px;
+        }
+      }
       a {
         display: block;
         position: relative;
@@ -185,7 +190,7 @@ option {
       .action {
         float: left;
         margin-left: 10px;
-        width: 160px;
+        width: 220px;
         .name, .target-text {
           overflow: hidden;
           height: 20px;
@@ -759,6 +764,7 @@ dl.menu-items {
         resize: vertical;
       }
       .btn-submit-comment {
+        display: none;
         float: right;
         position: absolute;
         right: 0;
