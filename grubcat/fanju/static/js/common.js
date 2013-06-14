@@ -115,6 +115,8 @@ $(document).ready(function ($) {
                    $(this).siblings(".btn-submit-comment").click()
                 }
 
+            }).on('focus', '[name=comment]', function(){
+                $(this).siblings('.btn-submit-comment').show()
             })
     }
 
