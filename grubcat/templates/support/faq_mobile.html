@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}常见问题{% endblock %}
 {% block nav %}{% endblock %}
+{% block module_css %}
+    <style type="text/css">
+        #main-container{
+            padding-bottom: 0;
+        }
+    </style>
+{% endblock %}
 {% block extra_js %}{% endblock %}
 {% block content %}
     <div class="" id="faq-mobile-page">
         {% include 'support/faq_sidebar.html' %}
     </div>
-
 {% endblock %}
+{% block footer %}{% endblock %}
