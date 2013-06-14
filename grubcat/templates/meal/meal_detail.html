@@ -3,6 +3,13 @@
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ meal.topic }}{% endblock %}
 
+{% block page_js %}
+    {% assets "jquery_color_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
+
 {% block content %}
     <div class="row" id="meal-detail-page">
         <div id="meal-detail" class="span9">

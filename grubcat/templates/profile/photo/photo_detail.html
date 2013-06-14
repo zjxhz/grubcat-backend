@@ -2,7 +2,12 @@
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
-
+{% block page_js %}
+    {% assets "jquery_color_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
 
 {% block profile-main %}
     <div id="photo-detail-page" class="span12">

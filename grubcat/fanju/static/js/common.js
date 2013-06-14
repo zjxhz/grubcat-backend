@@ -33,6 +33,16 @@ $(document).ready(function ($) {
                 }
             })
             $commentContainer.html($comments)
+            if (location.hash.indexOf('#comment-') > -1) {
+                var $commentToGo = $(location.hash)
+                if ($commentToGo[0]) {
+
+                    scrollToElement($commentToGo)
+                    $commentToGo.css('background-color', '#ffc40d').animate({"background-color": "#FFF"}, 3000)
+                } else {
+                    noty({text: "评论已经被删除", timeout: 2000, type:'warning'});
+                }
+            }
         })
         $commentContainer.on('mouseenter', ".comment",function () {
 
