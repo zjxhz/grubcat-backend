@@ -1168,14 +1168,18 @@ def photo_uploaded(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=PhotoComment, dispatch_uid="photo_comment")
 def photo_commented(sender, instance, created, **kwargs):
+
     comment = instance
-    if created and comment.user != comment.target.user:
-        if comment.parent_id:
+
+    if created:
+        photo_owner = comment.target.user
+        comment_author = comment.user
+        reply_to = comment.parent.user if comment.parent_id else None
+        print "%s %s %s" %( photo_owner, comment_author, reply_to)
+        if reply_to and comment_author != reply_to:
             event = u'回复了你'
-        else:
-            event = u"评论了你的照片"
-        comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
-        payload = json.dumps({"user": comment.user.id,
+            comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
+            payload = json.dumps({"user": comment.user.id,
                               "avatar": comment.user.normal_avatar,
                               "s_avatar": comment.user.small_avatar,
                               "name": comment.user.name,
@@ -1184,11 +1188,21 @@ def photo_commented(sender, instance, created, **kwargs):
                               "photo_id": comment.target.id,
                               "comment_id": comment.id,
                               "comment": u'“%s”' % comment_content})
-        if comment.parent_id:
-            pubsub.publish(node_comment_reply % comment.parent.user.id, payload)
-        else:
-            pubsub.publish(node_photo_comment % comment.target.user.id, payload)
+            pubsub.publish(node_comment_reply % reply_to.id, payload)
 
+        if comment_author != photo_owner and (reply_to is None or reply_to != photo_owner):
+            event = u'评论了你的照片'
+            comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
+            payload = json.dumps({"user": comment.user.id,
+                              "avatar": comment.user.normal_avatar,
+                              "s_avatar": comment.user.small_avatar,
+                              "name": comment.user.name,
+                              "message": u"%s%s" % (comment.user.name, event),
+                              "event": event,
+                              "photo_id": comment.target.id,
+                              "comment_id": comment.id,
+                              "comment": u'“%s”' % comment_content})
+            pubsub.publish(node_photo_comment % photo_owner.id, payload)
 
 
 @receiver(post_save, sender=MealComment, dispatch_uid="meal_comment")
