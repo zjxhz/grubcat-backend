@@ -10,7 +10,7 @@ from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     UserTag, DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, \
     UserComment, photo_requested, User, meal_joined, MealParticipants, user_followed, \
     Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, \
-    pubsub_user_created, PhotoRequest
+    pubsub_user_created, PhotoRequest, meal_created
 from image_cropping.admin import ImageCroppingMixin
 import datetime
 
@@ -129,7 +129,14 @@ class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id', 'topic', 'restaurant', 'menu', 'host', 'list_price', 'actual_persons')
     list_filter = ('start_date', 'restaurant')
     ordering = ('menu', )
-    actions = ['postpone_meal']
+    actions = ['resend_message', 'postpone_meal']
+
+    def resend_message(self, request, queryset):
+        for meal in queryset:
+            meal_created(MealAdmin, meal, True)
+        self.message_user(request, "成功发饭局创建消息!")
+
+    resend_message.short_description = u"重新发送饭局创建消息"
 
     def postpone_meal(self, request, queryset):
         for meal in queryset:
@@ -138,6 +145,7 @@ class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
         self.message_user(request, "延期成功!")
 
     postpone_meal.short_description = u"延期1个月"
+
 
 
 class DishItemInline(admin.StackedInline):

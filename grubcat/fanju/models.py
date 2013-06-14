@@ -7,6 +7,7 @@ import threading
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.urlresolvers import reverse_lazy
 from django.db import models, IntegrityError
 from django.db.models import Max
 from django.db.models.fields.files import ImageField
@@ -931,12 +932,18 @@ class Comment(models.Model):
 class MealComment(Comment):
     target = models.ForeignKey(Meal, verbose_name=u'被评论的饭局', related_name='comments')
 
+    def get_absolute_url(self):
+        return '%s#comment-%d' % (reverse_lazy('meal_detail', kwargs={'meal_id': self.target_id}), self.id)
+
     class Meta:
         verbose_name = u'饭局评论'
         verbose_name_plural = verbose_name
 
 class PhotoComment(Comment):
     target = models.ForeignKey(UserPhoto, verbose_name=u'被评论的照片', related_name='comments')
+
+    def get_absolute_url(self):
+        return '%s#comment-%d' % (reverse_lazy('photo_detail', kwargs={'pk': self.target_id}), self.id)
 
     class Meta:
         verbose_name = u'照片评论'
@@ -976,23 +983,42 @@ def set_default_avatar(sender, instance, created, **kwargs):
         user.save(update_fields=('avatar', 'cropping'))
 
 
-def _pubsub_user_created(instance):
-    user = instance
-    cl, _ = pubsub.create_client()
-    node_name = "/user/%d/followers" % user.id
-    pubsub.create_node(node_name, client=cl)
-    pubsub.subscribe(user, node_name)
-    node_name = "/user/%d/meals" % user.id
-    pubsub.create_node(node_name, client=cl)
-    node_name = "/user/%d/visitors" % user.id
-    pubsub.create_node(node_name, client=cl)
-    pubsub.subscribe(user, node_name)
-    node_name = "/user/%d/photos" % user.id
-    pubsub.create_node(node_name, client=cl)
-    node_name = "/user/%d/photo_requests" % user.id
-    pubsub.create_node(node_name, client=cl)
-    pubsub.subscribe(user, node_name)
-    cl.disconnect()
+#my followee do sth
+node_followee_join_meal      = "/user/%d/meals"
+node_followee_upload_photo   = "/user/%d/photos"
+
+#sb do sth to me or my staff
+node_photo_comment           = "/user/%d/photos/comments"
+node_comment_reply           = "/user/%d/comments/reply"
+node_visitor                 = "/user/%d/visitors"
+node_follower                = "/user/%d/followers"
+node_photo_request           = "/user/%d/photo_requests"
+
+#sb do sth to meal which I joined
+node_meal_comment            = "/meal/%d/comments"
+node_meal_participant        = "/meal/%d/participants"
+
+
+def _pubsub_user_created(user):
+
+    cl_create_node, _ = pubsub.create_client()
+    pubsub.create_node(node_followee_join_meal % user.id, client=cl_create_node)
+    pubsub.create_node(node_followee_upload_photo % user.id, client=cl_create_node)
+    pubsub.create_node(node_photo_comment % user.id, client=cl_create_node)
+    pubsub.create_node(node_comment_reply % user.id, client=cl_create_node)
+    pubsub.create_node(node_visitor % user.id, client=cl_create_node)
+    pubsub.create_node(node_follower % user.id, client=cl_create_node)
+    pubsub.create_node(node_photo_request % user.id, client=cl_create_node)
+    cl_create_node.disconnect()
+
+
+    cl_user, _ = pubsub.create_client(user=user)
+    pubsub.subscribe(user, node_photo_comment % user.id, client=cl_user)
+    pubsub.subscribe(user, node_comment_reply % user.id, client=cl_user)
+    pubsub.subscribe(user, node_visitor % user.id, client=cl_user)
+    pubsub.subscribe(user, node_follower % user.id, client=cl_user)
+    pubsub.subscribe(user, node_photo_request % user.id, client=cl_user)
+    cl_user.disconnect()
 
 
 @receiver(post_save, sender=User, dispatch_uid="pubsub_user_created")
@@ -1009,18 +1035,18 @@ def user_followed(sender, instance, created, **kwargs):
         follower = instance.from_person
         event = u'关注了你'
 
-        pubsub.publish( "/user/%d/followers" % followee.id, json.dumps({"user": follower.id,
-                                                                                 "message": u"%s%s" % (
-                                                                                 follower.name, event),
-                                                                                 "event": event,
-                                                                                 "avatar": follower.normal_avatar,
-                                                                                 "s_avatar": follower.small_avatar,
-                                                                                 "name": follower.name,
-        }))
+        payload = json.dumps({"user": follower.id,
+                              "avatar": follower.normal_avatar,
+                              "s_avatar": follower.small_avatar,
+                              "name": follower.name,
+                              "message": u"%s%s" % (follower.name, event),
+                              "event": event})
+
+        pubsub.publish(node_follower % followee.id, payload)
 
         cl, _ = pubsub.create_client(follower)
-        pubsub.subscribe(follower, "/user/%d/meals" % followee.id, client=cl)
-        pubsub.subscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+        pubsub.subscribe(follower, node_followee_join_meal % followee.id, client=cl)
+        pubsub.subscribe(follower, node_followee_upload_photo % followee.id, client=cl)
         cl.disconnect()
 
 
@@ -1029,8 +1055,8 @@ def user_unfollowed(sender, instance, **kwargs):
     followee = instance.to_person
     follower = instance.from_person
     cl, _ = pubsub.create_client(follower)
-    pubsub.unsubscribe(follower, "/user/%d/meals" % followee.id, client=cl)
-    pubsub.unsubscribe(follower, "/user/%d/photos" % followee.id, client=cl)
+    pubsub.unsubscribe(follower, node_followee_join_meal % followee.id, client=cl)
+    pubsub.unsubscribe(follower, node_followee_upload_photo % followee.id, client=cl)
     cl.disconnect()
     
 
@@ -1039,7 +1065,11 @@ def meal_created(sender, instance, created, **kwargs):
     if created:
         meal = instance
         host = meal.host
-        node_name = "/meal/%d/participants" % meal.id
+        node_name = node_meal_participant % meal.id
+        pubsub.create_node(node_name)
+        pubsub.subscribe(host, node_name)
+
+        node_name = node_meal_comment % meal.id
         pubsub.create_node(node_name)
         pubsub.subscribe(host, node_name)
 
@@ -1049,26 +1079,30 @@ def _meal_joined(meal, joiner):
         event = u"发起了饭局"
     else:
         event = u"参加了饭局"
-    payload = json.dumps({"meal": meal.id,
+    payload = json.dumps({
                           "user": joiner.id,
-                          "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
-                          "event": event,
                           "avatar": joiner.normal_avatar,
                           "s_avatar": joiner.small_avatar,
                           "name": joiner.name,
+                          "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
+                          "event": event,
+                          "meal": meal.id,
                           "topic": meal.topic,
                           "meal_photo": meal.small_cover_url})
     if not meal.host or meal.host.id != joiner.id:
         # host does not publish meal events to participants
         # and he has subscribed the events already when he created the meal
-        meal_participant_node = "/meal/%d/participants" % meal.id
-        pubsub.publish(meal_participant_node, payload)
-        pubsub.subscribe(joiner, meal_participant_node)
+        pubsub.publish(node_meal_participant % meal.id, payload)
+        pubsub.subscribe(joiner, node_meal_participant % meal.id)
+
+        pubsub.publish(node_meal_comment % meal.id, payload)
+        pubsub.subscribe(joiner, node_meal_comment % meal.id)
+
         #TODO how about quit the meal
     #remove the subscription for of the user who is the joiner of the meal
     # and is also the  follower of the joiner, to prevent duplicate notification'
     users_to_unsubscribe = meal.participants.filter(id__in=joiner.followers.all())
-    followee_join_meal_node = "/user/%d/meals" % joiner.id
+    followee_join_meal_node = node_followee_join_meal % joiner.id
     for user in users_to_unsubscribe:
         pubsub.unsubscribe(user, followee_join_meal_node)
 #    time.sleep(1)
@@ -1088,14 +1122,14 @@ def user_visited(sender, instance, created, **kwargs):
     if created:
         visitor = instance.from_person
         if visitor.id != instance.to_person.id:
-            node_name = "/user/%d/visitors" % instance.to_person.id
+            node_name = node_visitor % instance.to_person.id
             event = u"查看了你的个人资料"
             payload = json.dumps({"user": visitor.id,
-                                  "message": u"%s%s" % (visitor.name, event),
-                                  "event": event,
                                   "avatar": visitor.normal_avatar,
                                   "s_avatar": visitor.small_avatar,
                                   "name": visitor.name,
+                                  "message": u"%s%s" % (visitor.name, event),
+                                  "event": event,
             })
             pubsub.publish(node_name, payload)
 
@@ -1104,14 +1138,14 @@ def photo_requested(sender, instance, created, **kwargs):
     if created:
         requestor = instance.from_person
         if requestor.id != instance.to_person.id:
-            node_name = "/user/%d/photo_requests" % instance.to_person.id
+            node_name = node_photo_request % instance.to_person.id
             event = u"邀请你上传照片"
             payload = json.dumps({"user": requestor.id,
-                                  "message": u"%s%s" % (requestor.name, event),
-                                  "event": event,
                                   "avatar": requestor.normal_avatar,
                                   "s_avatar": requestor.small_avatar,
                                   "name": requestor.name,
+                                  "message": u"%s%s" % (requestor.name, event),
+                                  "event": event,
             })
             pubsub.publish(node_name, payload)
 
@@ -1119,15 +1153,84 @@ def photo_requested(sender, instance, created, **kwargs):
 @receiver(post_save, sender=UserPhoto, dispatch_uid="photo_uploaded")
 def photo_uploaded(sender, instance, created, **kwargs):
     if created:
-        node_name = "/user/%d/photos" % instance.user.id
+        node_name = node_followee_upload_photo % instance.user.id
         event = u"上传了一张照片"
         payload = json.dumps({"user":instance.user.id, 
-                              "photo_id":instance.id, 
-                              "photo_url":instance.photo.url,
-                              "message":u"%s%s" % (instance.user.name, event),
-                              "event": event,
                               "avatar":instance.user.normal_avatar,
                               "s_avatar":instance.user.small_avatar,
                               "name": instance.user.name,
+                              "message":u"%s%s" % (instance.user.name, event),
+                              "event": event,
+                              "photo_id":instance.id,
+                              "photo_url":instance.photo.url,
                               "photo":instance.photo_thumbnail})
         pubsub.publish(node_name, payload)
+
+@receiver(post_save, sender=PhotoComment, dispatch_uid="photo_comment")
+def photo_commented(sender, instance, created, **kwargs):
+    comment = instance
+    if created and comment.user != comment.target.user:
+        if comment.parent_id:
+            event = u'回复了你'
+        else:
+            event = u"评论了你的照片"
+        comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
+        payload = json.dumps({"user": comment.user.id,
+                              "avatar": comment.user.normal_avatar,
+                              "s_avatar": comment.user.small_avatar,
+                              "name": comment.user.name,
+                              "message": u"%s%s" % (comment.user.name, event),
+                              "event": event,
+                              "photo_id": comment.target.id,
+                              "comment_id": comment.id,
+                              "comment": u'“%s”' % comment_content})
+        if comment.parent_id:
+            pubsub.publish(node_comment_reply % comment.parent.user.id, payload)
+        else:
+            pubsub.publish(node_photo_comment % comment.target.user.id, payload)
+
+
+
+@receiver(post_save, sender=MealComment, dispatch_uid="meal_comment")
+def meal_commented(sender, instance, created, **kwargs):
+ # 被回复的人和我自己先 unsubscribe meal comment
+ # 通知饭局参加者
+ # 再通知被回复的人
+ # 被回复的人和我自己再subscribe meal comment
+    comment = instance
+    if created:
+        comment_author = comment.user
+        reply_to = comment.parent.user if comment.parent_id else None
+        meal = comment.target
+        meal_participants = meal.participants.all()
+        user_to_unsubscribe_meal_comment = [user for user in (comment_author, reply_to) if
+                                            user and user in meal_participants]
+        for user in user_to_unsubscribe_meal_comment:
+            pubsub.unsubscribe(user, node_meal_comment % meal.id, )
+
+        comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
+        playlaod_json = {"user": comment.user.id,
+                              "avatar": comment.user.normal_avatar,
+                              "s_avatar": comment.user.small_avatar,
+                              "name": comment.user.name,
+                              "meal_id": comment.target.id,
+                              "comment_id": comment.id,
+                              "comment": u'“%s”' % comment_content}
+
+
+        if len(meal_participants):
+            event = u"评论了饭局 “%s”" % meal.topic[:9]
+            playlaod_json['event'] = event
+            playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
+            pubsub.publish(node_meal_comment % meal.id, json.dumps(playlaod_json))
+
+        for user in user_to_unsubscribe_meal_comment:
+            pubsub.subscribe(user, node_meal_comment % meal.id, )
+
+        if reply_to:
+            event = u'回复了你'
+            playlaod_json['event'] = event
+            playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
+            pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
+            pubsub.publish(node_comment_reply % reply_to.id )
+
