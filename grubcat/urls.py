@@ -160,6 +160,8 @@ urlpatterns = patterns('',
 
     #support
     url(r'^support/$', TemplateView.as_view(template_name="support/support.html"), name="support"),
+    url(r'^faq/$', TemplateView.as_view(template_name="support/faq.html"), name="faq"),
+    url(r'^faq/mobile/$', TemplateView.as_view(template_name="support/faq_mobile.html"), name="faq"),
     (r'^test/$', TemplateView.as_view(template_name="test.html")),
 
     # developer interfaces...

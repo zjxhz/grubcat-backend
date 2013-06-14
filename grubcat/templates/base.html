@@ -129,11 +129,12 @@
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
 {% endblock %}
-{% if user.is_authenticated %}
-    {% assets "chat_js" %}
-        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
-    {% endassets %}
-{% endif %}
-
+{% block extra_js %}
+    {% if user.is_authenticated %}
+        {% assets "chat_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
+    {% endif %}
+{% endblock %}
 </body>
 </html>
