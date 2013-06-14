@@ -46,6 +46,8 @@ jquery_js = Bundle('js/jquery_1.7.2.js', output='gen/jquery-1.7.2.%(version)s.js
 
 jquery_dropkick_js = Bundle('js/jquery.dropkick_1.0.0.js', output='gen/jquery-dropkick.%(version)s.js', filters='yui_js')
 
+jquery_color_js = Bundle('js/jquery.animate-colors-min.js', output='gen/jquery-color.%(version)s.js', filters='yui_js')
+
 noty_js = Bundle('js/noty/jquery.noty.js', 'js/noty/layouts/top.js', 'js/noty/layouts/topCenter.js',
                  'js/noty/layouts/center.js', 'js/noty/themes/default.js',
                  output='gen/jquery-noty.%(version)s.js', filters='yui_js')
@@ -110,6 +112,7 @@ register('bootstrap_js', bootstrap_js)
 register('bootstrap_box_js', bootstrap_box_js)
 register('jquery_js', jquery_js)
 register('jquery_dropkick_js', jquery_dropkick_js)
+register('jquery_color_js', jquery_color_js)
 register('noty_js', noty_js)
 register('base_js', base_js)
 register('base_main_js', base_main_js)
