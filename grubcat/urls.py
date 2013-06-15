@@ -116,6 +116,7 @@ urlpatterns = patterns('',
     url(r'^photo/upload/$', login_required(PhotoCreateView.as_view()), name='upload_photo'),
     url(r'^photo/(?P<pk>\d+)/$', login_required(PhotoDetailView.as_view()), name='photo_detail'),
     url(r'^photo/del/(?P<pk>\d+)/$', login_required(del_photo), name='del_photo'),
+    url(r'^photo/request/(?P<host_id>\d+)/$', login_required(photo_request), name='photo_request'),
 
     url(r'^tag/$', login_required(list_tags), name='tag_list'),
     url(r'^tag/add/$', login_required(add_tag), name='add_tag'),

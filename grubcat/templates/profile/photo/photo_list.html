@@ -21,13 +21,26 @@
                     </li>
 
                 {% endfor %}
+                <li class="span3 photo-request">
+                    <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
+                            src="{% static 'img/photo_request.png' %}"
+                            class="photo"
+                            alt="photo"></a>
+                </li>
             </ul>
         {% else %}
             <div class="no-results">
                 {% if is_mine %}
                     还没有任何照片，现在就上传吧！
                 {% else %}
-                    TA还没上传照片，邀请TA上传吧！
+                    <ul class="thumbnails">
+                            <li class="span3 photo-request">
+                                <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
+                                        src="{% static 'img/photo_request.png' %}"
+                                        class="photo"
+                                        alt="photo"></a>
+                            </li>
+                    </ul>
                 {% endif %}
             </div>
         {% endif %}
