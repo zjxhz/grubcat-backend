@@ -32,6 +32,12 @@ pay_logger = logging.getLogger("fanju.pay")
 ###Photo related views ###
 
 
+def photo_request(request, host_id):
+    if request.method == "POST":
+        PhotoRequest.objects.get_or_create(from_person=request.user, to_person_id=host_id)
+        return create_sucess_json_response()
+
+
 class PhotoCreateView(CreateView):
     form_class = PhotoForm
     template_name = 'profile/photo/upload_photo.html'

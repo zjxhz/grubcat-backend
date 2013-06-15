@@ -74,25 +74,22 @@ jQuery(function($){
         return false;
     });
 
-    var $photo = $("#photo-wrapper");
-    var $nextPhoto = $(".photo-next");
-    var $prevPhoto = $(".photo-prev");
+    if($("#photo-list-page")[0]){
+        $(".photo-request a").click(function(){
+            $.post($(this).attr('href'), function(){
+                noty({text:'成功发送求照片请求！', timeout:1000})
+            })
+            return false;
+        })
+    }
+
+    if ($("#photo-detail-page")[0]) {
+
+        var $photo = $("#photo-wrapper");
+        var $nextPhoto = $(".photo-next");
+        var $prevPhoto = $(".photo-prev");
 //    if($photo.find('a').attr('href') != $nextPhoto.attr('url')){
-    $photo.click(function (e) {
-        if (e.clientX - $(this).offset().left < $(this).width() / 2) {
-            $prevPhoto.addClass('highlight');
-            $nextPhoto.removeClass('highlight');
-        } else if (e.clientX - $(this).offset().left <= $(this).width()) {
-            $nextPhoto.addClass('highlight');
-            $prevPhoto.removeClass('highlight');
-        }
-        window.location = $(".highlight").attr('url');
-        return false;
-    }).hover(function () {
-            $photo.addClass('photo-direction-active')
-        },function () {
-            $photo.removeClass('photo-direction-active')
-        }).mousemove(function (e) {
+        $photo.click(function (e) {
             if (e.clientX - $(this).offset().left < $(this).width() / 2) {
                 $prevPhoto.addClass('highlight');
                 $nextPhoto.removeClass('highlight');
@@ -100,11 +97,25 @@ jQuery(function($){
                 $nextPhoto.addClass('highlight');
                 $prevPhoto.removeClass('highlight');
             }
-        });
+            window.location = $(".highlight").attr('url');
+            return false;
+        }).hover(function () {
+                $photo.addClass('photo-direction-active')
+            },function () {
+                $photo.removeClass('photo-direction-active')
+            }).mousemove(function (e) {
+                if (e.clientX - $(this).offset().left < $(this).width() / 2) {
+                    $prevPhoto.addClass('highlight');
+                    $nextPhoto.removeClass('highlight');
+                } else if (e.clientX - $(this).offset().left <= $(this).width()) {
+                    $nextPhoto.addClass('highlight');
+                    $prevPhoto.removeClass('highlight');
+                }
+            });
 //    } else{
 //        $photo.click(function (e) {return false;}).style.cursor  ='none'
 //    }
-
+    }
     var $faq = $("#faq");
     if ($faq[0]) {
         $faq.find(".sidebar-box-content a").click(function () {
