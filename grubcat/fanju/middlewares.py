@@ -19,6 +19,10 @@ class WeiboAuthenticationBackend(object):
             expires_in = str(3600*24*14)
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(access_token, expires_in)
+        try:
+            weibo_client.friendships.create.post(uid=settings.WEIBO_OFFICIAL)
+        except Exception:
+            logger.exception("can't follow fanjoin weibo")
         if User.objects.filter(weibo_access_token=access_token).count():
             user_to_authenticate = User.objects.get(weibo_access_token=access_token)
             logger.debug("auth for %s OK" % user_to_authenticate)
