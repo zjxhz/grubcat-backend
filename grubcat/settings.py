@@ -183,6 +183,7 @@ LOGIN_URL = reverse_lazy('weibo_login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 RESTAURANT_LOGIN_URL = reverse_lazy('login')
 
+WEIBO_OFFICIAL = '3193907700'
 WEIBO_APP_KEY = "2295468526"
 WEIBO_APP_SECERT = "5991184a22eaff8d2b1149bcf1b1ff91"
 WEIBO_REDIRECT_URL = "http://fanjoin.com/login/weibo/"
