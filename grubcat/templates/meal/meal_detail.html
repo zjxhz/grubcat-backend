@@ -2,12 +2,19 @@
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
 {% block title %}{{ meal.topic }}{% endblock %}
-
+{#{% block ns %}xmlns:wb="http://open.weibo.com/wb"{% endblock %}#}
 {% block page_js %}
     {% assets "jquery_color_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
     {% endassets %}
     {{ block.super }}
+{#    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=" type="text/javascript" charset="utf-8"></script>#}
+    <script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=0"></script>
+    <script type="text/javascript" id="bdshell_js"></script>
+    <script type="text/javascript">
+        var bds_config = {'bdPic': (location.origin +'{{ meal.big_cover_url }}'), 'bdText': '我刚发现一个有趣的饭局 “{{ meal.topic }}”，大家快来看看吧！','snsKey':{'tsina':'2295468526'} };
+        document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date() / 3600000)
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -22,7 +29,7 @@
             <div class="meal-simple-info box-seperator clearfix">
 
                 <h1 class="meal-topic"><a href="#">{{ meal.topic }}</a></h1>
-                <span id="restaurant-location"><a href="http://ditu.google.cn?q={{meal.restaurant.latitude }},{{ meal.restaurant.longitude }}({{ meal.restaurant.name  }})"
+                <span id="restaurant-location"><a href="http://ditu.google.cn?q={{meal.restaurant.latitude }}, {{ meal.restaurant.longitude }}({{ meal.restaurant.name  }})"
                                                   target="_blank"
                                                   class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}&nbsp;&nbsp;{{ meal.menu.restaurant.tel }} </span>
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
@@ -104,9 +111,16 @@
                             {#                        <span class="mt5">{{ meal.list_price }}RMB/人</span>#}
                         </a>
                     {% endif %}
-
-
                 </div>
+                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
+                    <span class="fl">分享到：</span>
+                    <a class="bds_tsina"></a>
+                    <a class="bds_qzone"></a>
+                    <a class="bds_tqq"></a>
+                    <a class="bds_renren"></a>
+                    <a class="shareCount"></a>
+                </div>
+
 
             </div>
             <div id="users" class="clearfix">
