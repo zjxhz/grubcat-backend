@@ -1,0 +1,49 @@
+{% extends "profile/base.html" %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}{% if is_mine %}我{% else %}TA{% endif %}的照片{% endblock %}
+
+{% block profile-main %}
+    <div id="photo-list-page" class="span12">
+        {% if is_mine %}
+            <div class="photo-actions ">
+                <a class="upload-photo-link fr" href="{% url 'upload_photo' %}">上传照片</a>
+            </div>
+        {% endif %}
+        {% if photo_list %}
+            <ul class="thumbnails">
+                {% for photo in photo_list %}
+                    <li class="span3">
+                        <a href="{% url 'photo_detail' photo.id %}" class="thumbnail"> <img
+                                src="{{ photo.photo_thumbnail }}"
+                                class="photo"
+                                alt="photo"></a>
+                    </li>
+
+                {% endfor %}
+                <li class="span3 photo-request">
+                    <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
+                            src="{% static 'img/photo_request.png' %}"
+                            class="photo"
+                            alt="photo"></a>
+                </li>
+            </ul>
+        {% else %}
+            <div class="no-results">
+                {% if is_mine %}
+                    还没有任何照片，现在就上传吧！
+                {% else %}
+                    <ul class="thumbnails">
+                            <li class="span3 photo-request">
+                                <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
+                                        src="{% static 'img/photo_request.png' %}"
+                                        class="photo"
+                                        alt="photo"></a>
+                            </li>
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div id="data" class='hide' data-active-nav-id="profile_photo"></div>
+{% endblock %}

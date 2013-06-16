@@ -1,0 +1,106 @@
+{% load thumbnail %} 
+{% block head %}
+    {% block title %}Image Test{% endblock %}
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
+		<script src="/static/js/jquery.min.js" type="text/javascript"></script>
+		<script src="/static/js/jquery.Jcrop.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="/static/css/jquery.Jcrop.css" type="text/css" />
+		<!--<link rel="stylesheet" href="demo_files/demos.css" type="text/css" />-->
+		<script type="text/javascript">
+
+    jQuery(function($){
+      // Create variables (in this scope) to hold the API and image size
+      var jcrop_api, boundx, boundy;
+      
+      $('#target').Jcrop({
+        onChange: selectionChanged, 
+        onSelect: selectionChanged,
+        aspectRatio: 1.25
+      },function(){
+        // Use the API to get the real image size
+        var bounds = this.getBounds();
+        boundx = bounds[0];
+        boundy = bounds[1];
+        // Store the API in the jcrop_api variable
+        jcrop_api = this;
+    });
+
+    function selectionChanged(c)
+    {
+        showCoords(c);
+        updatePreview(c);
+    };
+
+    function updatePreview(c)
+    {
+        if (parseInt(c.w) > 0)
+        {
+          var rx = 320 / c.w;
+          var ry = 256 / c.h;
+
+          $('#preview').css({
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+            marginTop: '-' + Math.round(ry * c.y) + 'px'
+          });
+        }
+    };
+
+    function showCoords(c)
+    {
+      $('#x1').val(c.x);
+      $('#y1').val(c.y);
+      $('#x2').val(c.x2);
+      $('#y2').val(c.y2);
+      $('#w').val(c.w);
+      $('#h').val(c.h);
+    };
+
+    });
+
+  </script>
+{% endblock %}
+
+
+{% block content %}
+  <h1>Test preview and upload images</h1>
+
+  <form action="" method="post" enctype="multipart/form-data">
+    <label for="image">Image ID: {{ img_test.id }}</label>
+    <br/>
+    <div id="outer">
+	    <div class="jcExample">
+	    <div class="article">
+		    <table>
+			    <tr>
+				    <td>
+					    <img src="{{ img_test.image.url }}" id="target" alt="Flowers" />
+				    </td>
+				    <td>
+					    <div style="width:320px;height:256px;overflow:hidden;">
+						    <img src="{{ img_test.image.url }}" id="preview" alt="Preview" />
+					    </div>
+				    </td>
+			    </tr>
+		    </table>
+	    </div>
+	    </div>
+    </div>
+    <div>
+        <label>X1 <input type="text" size="4" id="x1" name="x1" /></label>
+        <label>Y1 <input type="text" size="4" id="y1" name="y1" /></label>
+        <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
+        <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
+        <label>W <input type="text" size="4" id="w" name="w" /></label>
+        <label>H <input type="text" size="4" id="h" name="h" /></label>
+     </div>
+    <input type="submit" value="OK">
+  </form>
+
+
+  <!--{% thumbnail img_test.image 430x360 box=img_test.cropping crop detail %}
+  {% thumbnail img_test.image 100x0 %}
+  <img src={% thumbnail img_test.image 100x0 %} />-->
+
+{% endblock %}
