@@ -1009,7 +1009,6 @@ def set_default_avatar(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User, dispatch_uid='set_default_audit')
 def set_default_audit(sender, instance, created, **kwargs):
-    print "@@@@@@@@@@@@@@@@@@###############________________+++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
     if not user.avatar or user.is_default_avatar() or user.tags.count() < 3:
         if user.status in (AuditStatus.UNFLAGGED, AuditStatus.APPROVED):
