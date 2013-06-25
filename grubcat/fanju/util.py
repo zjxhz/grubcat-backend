@@ -1,4 +1,5 @@
 from django.conf import settings
+from settings import APNS_ENVIRONMENT
 from xmpp.protocol import NS_DATA
 import json
 import logging
@@ -51,7 +52,7 @@ def get_xmpp_username_and_password(user=None):
 
 class PyapnsWrapper(object):
  
-    def __init__(self, host, app_id, apns_certificate_file, mode='sandbox'):
+    def __init__(self, host, app_id, apns_certificate_file, mode=APNS_ENVIRONMENT):
         self.app_id = app_id
         pyapns.configure({'HOST': host})
         pyapns.provision(app_id,
