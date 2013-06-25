@@ -291,8 +291,8 @@ class UserListView(ListView):
 
     def get_queryset(self):
         tags = self.request.GET.get('tags')
-        users = User.objects.exclude(
-            avatar__in=('', settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)).exclude(
+        users = User.objects.filter(
+            status=AuditStatus.APPROVED).exclude(
             restaurant__isnull=False).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             return self.request.user.tags.similar_objects()
