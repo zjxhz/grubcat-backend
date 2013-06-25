@@ -28,9 +28,36 @@ import random
 # Create your models here.
 logger = logging.getLogger(__name__)
 
+
 class Privacy:
     PUBLIC = 0
     PRIVATE = 1
+
+
+class AuditStatus:
+    UNFLAGGED = 0
+    APPROVED = 1
+    UNAPPROVED_BY_MACHINE = 2
+    UNAPPROVED_BY_ADMIN = 3
+    DELETED = 4
+
+
+AUDIT_STATUS_CHOICE = (
+    (AuditStatus.UNFLAGGED, u'待审核'),
+    (AuditStatus.APPROVED, u'人工审核通过'),
+    (AuditStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
+    (AuditStatus.UNAPPROVED_BY_ADMIN, u'人工审核不通过'),
+    (AuditStatus.DELETED, u'已删除'),
+)
+
+
+class UserStatus(AuditStatus):
+    BLACKLIST = 5
+
+
+USER_STATUS_CHOICE = AUDIT_STATUS_CHOICE + ( (UserStatus.BLACKLIST, u'黒名单'),)
+
+
 
 
 class Region(models.Model):
@@ -102,10 +129,11 @@ class MenuStatus:
     PUBLISHED = 0
     DELETED = 1
 
+
 MENU_STATUS = (
     (MenuStatus.PUBLISHED, '已发布'),
     (MenuStatus.DELETED, '已删除')
-    )
+)
 
 LIST_PRICE_CHOICE = [(x, "%s元/人" % int(x)) for x in (25.0, 30.0, 35.0, 40.0, 45.0)]
 
@@ -187,7 +215,7 @@ ORDER_STATUS = (
     (OrderStatus.PAYIED, '已支付'),
     (OrderStatus.USED, '已使用'),
     (OrderStatus.CANCELED, '已取消')
-    )
+)
 
 
 class Order(models.Model):
@@ -200,7 +228,7 @@ class Order(models.Model):
     created_time = models.DateTimeField(u'创建时间', auto_now_add=True)
     payed_time = models.DateTimeField(u'支付时间', blank=True, null=True)
     completed_time = models.DateTimeField(u'就餐时间', blank=True, null=True)
-    code = models.CharField(u'订单验证码',blank=True, max_length=12, null=True, unique=True)
+    code = models.CharField(u'订单验证码', blank=True, max_length=12, null=True, unique=True)
 
     @models.permalink
     def get_absolute_url(self):
@@ -219,7 +247,8 @@ class Order(models.Model):
             order.gen_code()
         order.save()
         #set all other unpaid order as "canceld" status
-        Order.objects.filter(meal=order.meal,customer=order.customer, status=OrderStatus.CREATED).update(status=OrderStatus.CANCELED)
+        Order.objects.filter(meal=order.meal, customer=order.customer, status=OrderStatus.CREATED).update(
+            status=OrderStatus.CANCELED)
         meal = order.meal
         MealParticipants.objects.create(meal=meal, user=order.customer)
         meal.actual_persons += order.num_persons
@@ -297,6 +326,7 @@ class Visitor(models.Model):
         verbose_name = u'用户访问'
         verbose_name_plural = u'用户访问'
 
+
 class PhotoRequest(models.Model):
     from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photo_requesting")
     to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photo_requesters")
@@ -308,7 +338,8 @@ class PhotoRequest(models.Model):
         unique_together = ('from_person', 'to_person')
         verbose_name = u'求照片'
         verbose_name_plural = u'求照片'
-    
+
+
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
@@ -319,11 +350,12 @@ class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
 
     def tagged_users(self):
-        return [tagged_user.content_object for tagged_user in self.items.all()[:50] ]
+        return [tagged_user.content_object for tagged_user in self.items.all()[:50]]
 
     class Meta:
         verbose_name = u'兴趣标签'
         verbose_name_plural = u'兴趣标签'
+
 
 class TaggedUser(GenericTaggedItemBase):
     tag = models.ForeignKey(UserTag, related_name='items')
@@ -334,10 +366,11 @@ class Gender:
     MALE = 0
     FEMALE = 1
 
+
 GENDER_CHOICE = (
     (Gender.MALE, u'男'),
     (Gender.FEMALE, u'女'),
-    )
+)
 INDUSTRY_CHOICE = (
     (0, u'计算机/互联网/通信'),
     (1, u'商业/服务业/个体经营'),
@@ -358,7 +391,7 @@ INDUSTRY_CHOICE = (
     (16, u'酒店旅游'),
     (17, u'现代农业'),
     (18, u'在校学生'),
-    )
+)
 
 
 class User(AbstractUser):
@@ -366,7 +399,8 @@ class User(AbstractUser):
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
     visitoring = models.ManyToManyField('self', related_name="visitors", symmetrical=False, through="Visitor")
     gender = models.IntegerField(u'性别', null=True, choices=GENDER_CHOICE)
-    avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True) # photo
+    avatar = models.ImageField(u'头像', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True,
+                               null=True) # photo
     cropping = ImageRatioField('avatar', '180x180', adapt_rotation=True)
     location = models.ForeignKey(UserLocation, unique=True, null=True, blank=True)
     constellation = models.IntegerField(u'星座', blank=True, null=True, default=-1)
@@ -380,13 +414,15 @@ class User(AbstractUser):
     weibo_access_token = models.CharField(max_length=128, null=True, blank=True)
     tags = TaggableManager(through=TaggedUser, blank=True)
     apns_token = models.CharField(max_length=255, blank=True, null=True)
-    background_image = models.ImageField(u'背景图片', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True, null=True)
+    background_image = models.ImageField(u'背景图片', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True,
+                                         null=True)
     mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
-    
+    status = models.SmallIntegerField(u'状态', default=UserStatus.UNFLAGGED, choices=USER_STATUS_CHOICE)
+
     @models.permalink
     def get_absolute_url(self):
         return 'user_detail', [str(self.id)]
-    
+
     def follow(self, followee):
         if self == followee:
             raise BusinessException(u'你不可以自己关注自己！')
@@ -404,7 +440,7 @@ class User(AbstractUser):
             return True
         else:
             return False
-        
+
     def get_passed_orders(self):
         return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
             Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
@@ -441,7 +477,7 @@ class User(AbstractUser):
             return date.today().year - self.birthday.year
         else:
             return None
-    
+
     def avatar_thumbnail_for_size(self, avatar_size):
         return get_thumbnailer(self.avatar).get_thumbnail({
             'size': avatar_size,
@@ -463,7 +499,7 @@ class User(AbstractUser):
     @property
     def small_avatar(self):
         return self.avatar_thumbnail_for_size(settings.SMALL_AVATAR_SIZE)
-    
+
     @property
     def followers(self):
         return self.followers.all()
@@ -471,7 +507,7 @@ class User(AbstractUser):
     @property
     def upcoming_meals(self):
         return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
-            Q(start_date__gt=date.today()) | 
+            Q(start_date__gt=date.today()) |
             Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
             "start_date", "start_time")
 
@@ -576,9 +612,10 @@ class User(AbstractUser):
         return dic.values()
 
     def chat_history_with_user(self, other_user, limit=20):
-        return\
-        self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user)).order_by('timestamp')[
-        :limit]
+        return \
+            self.messages.filter(type=0).filter(Q(from_person=other_user) | Q(to_person=other_user)).order_by(
+                'timestamp')[
+            :limit]
 
     def new_messages(self, last_message_id):
         last_message = UserMessage.objects.get(pk=last_message_id)
@@ -641,10 +678,10 @@ class UserPhoto(models.Model):
         try:
             return get_thumbnailer(self.photo).get_thumbnail({'size': (710, 1400 ),
                                                               'crop': False,
-                                                              }).url
+            }).url
         except Exception:
             return None
-        
+
     @models.permalink
     def get_absolute_url(self):
         return 'photo_detail', [str(self.id)]
@@ -672,9 +709,9 @@ class MealPrivacy(Privacy):
 MEAL_PRIVACY_CHOICE = (
     (MealPrivacy.PUBLIC, u"公开：所有人都可以参加"),
     (MealPrivacy.PRIVATE, u"私密：仅被邀请的人可以参加")
-    )
+)
 
-MEAL_PERSON_CHOICE = [(2*x, "%s 人" % (2*x)) for x in range(1, 5)]
+MEAL_PERSON_CHOICE = [(2 * x, "%s 人" % (2 * x)) for x in range(1, 5)]
 START_TIME_CHOICE = (
     (dtime(9, 00), "9:00"), (dtime(9, 30), "9:30"), (dtime(10, 00), "10:00"), (dtime(10, 30), "10:30"),
     (dtime(11, 00), "11:00"), (dtime(11, 30), "11:30"), (dtime(12, 00), "12:00"), (dtime(12, 30), "12:30"),
@@ -682,7 +719,7 @@ START_TIME_CHOICE = (
     (dtime(15, 00), "15:00"), (dtime(15, 30), "15:30"), (dtime(16, 00), "16:00"), (dtime(16, 30), "16:30"),
     (dtime(17, 00), "17:00"), (dtime(17, 30), "17:30"), (dtime(18, 00), "18:00"), (dtime(18, 30), "18:30"),
     (dtime(19, 00), "19:00"), (dtime(19, 30), "19:30"), (dtime(20, 00), "20:00"), (dtime(20, 30), "20:30"),
-    )
+)
 
 
 class MealStatus:
@@ -711,17 +748,20 @@ class Meal(models.Model):
                                   choices=MEAL_PRIVACY_CHOICE) # PUBLIC, PRIVATE, VISIBLE_TO_FOLLOWERS?
     min_persons = models.IntegerField(u'参加人数', choices=MEAL_PERSON_CHOICE, default=8)
     region = models.ForeignKey(Region, verbose_name=u'区域', blank=True, null=True)
-    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1,  default=30.0,
+    list_price = models.DecimalField(u'均价', max_digits=6, decimal_places=1, default=30.0,
                                      blank=True, null=True)
     extra_requests = models.CharField(u'其它要求', max_length=128, null=True, blank=True)
     status = models.SmallIntegerField(u'饭局状态', choices=MEAL_STATUS_CHOICE, default=MealStatus.CREATED_NO_MENU)
     max_persons = models.IntegerField(u'最多参加人数', default=0, blank=True, null=True) # not used for now,
-    photo = models.ImageField(u'饭局封面', null=True, blank=True, upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
+    photo = models.ImageField(u'饭局封面', null=True, blank=True,
+                              upload_to='uploaded_images/%Y/%m/%d') #if none use menu's cover
     cropping = ImageRatioField('photo', '420x280')
     restaurant = models.ForeignKey(Restaurant, verbose_name=u'餐厅', blank=True, null=True) #TODO retrieve from menu
     menu = models.ForeignKey(Menu, verbose_name=u'菜单', null=True, blank=True)
-    host = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="host_user", verbose_name=u'发起者', )
-    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals", verbose_name=u'参加者', blank=True, null=True,
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="host_user",
+                             verbose_name=u'发起者', )
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals", verbose_name=u'参加者',
+                                          blank=True, null=True,
                                           through="MealParticipants")
     # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
     #                                null=True)
@@ -760,7 +800,8 @@ class Meal(models.Model):
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
                 message = u'现在有%s位用户正在支付，最多只可以预定%s个座位，你可以%s分钟后再尝试预定！' % (
-                    paying_persons, self.max_persons - self.actual_persons - paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
+                    paying_persons, self.max_persons - self.actual_persons - paying_persons,
+                    settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             else:
                 message = u'现在有%s位用户正在支付，你可以%s分钟后再尝试预定！' % (paying_persons, settings.PAY_OVERTIME_FOR_PAY_OR_USER)
             raise NoAvailableSeatsError(message)
@@ -788,11 +829,11 @@ class Meal(models.Model):
     def is_passed(self):
         return self.start_date < date.today() or (
             self.start_date == date.today() and self.start_time < datetime.now().time())
-    
+
     @property
     def paid_orders(self):
         return Order.objects.filter(meal=self).filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED))
-    
+
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
 
@@ -850,14 +891,15 @@ class Meal(models.Model):
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    
+
     def __unicode__(self):
-        return u"%s参加了饭局%s" %(self.user, self.meal)
-        
+        return u"%s参加了饭局%s" % (self.user, self.meal)
+
     class Meta:
-        ordering = ['id',]
+        ordering = ['id', ]
         verbose_name = u'饭局参加者'
         verbose_name_plural = verbose_name
+
 
 
 class CommentType:
@@ -867,27 +909,16 @@ class CommentType:
     GROUP = 'group'
 
 
-class CommentStatus:
-    UNFLAGGED = 0
-    APPROVED = 1
-    UNAPPROVED_BY_MACHINE = 2
-    UNAPPROVED_BY_ADMIN = 3
-    DELETED = 4
+class CommentStatus(AuditStatus):
+    pass
 
-COMMENT_STATUS_CHOICE = (
-    (CommentStatus.UNFLAGGED, u'未审核'),
-    (CommentStatus.APPROVED, u'人工审核通过'),
-    (CommentStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
-    (CommentStatus.UNAPPROVED_BY_ADMIN, u'人工审核不通过'),
-    (CommentStatus.DELETED, u'已删除'),
-)
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'作者', blank=True)
     comment = models.CharField(u'评论', max_length=200)
     timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
-    status = models.SmallIntegerField(u'状态', default=CommentStatus.UNFLAGGED, choices=COMMENT_STATUS_CHOICE)
-    parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True )
+    status = models.SmallIntegerField(u'状态', default=CommentStatus.UNFLAGGED, choices=AUDIT_STATUS_CHOICE)
+    parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True)
 
 
     @classmethod
@@ -939,6 +970,7 @@ class MealComment(Comment):
         verbose_name = u'饭局评论'
         verbose_name_plural = verbose_name
 
+
 class PhotoComment(Comment):
     target = models.ForeignKey(UserPhoto, verbose_name=u'被评论的照片', related_name='comments')
 
@@ -948,6 +980,7 @@ class PhotoComment(Comment):
     class Meta:
         verbose_name = u'照片评论'
         verbose_name_plural = verbose_name
+
 
 class UserComment(Comment):
     target = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'被评论的用户', related_name='comments')
@@ -974,33 +1007,37 @@ def set_default_avatar(sender, instance, created, **kwargs):
     elif user.gender != Gender.FEMALE and user.avatar == settings.DEFAULT_FEMALE_AVATAR:
         need_set_default_avatar = True
 
-    if need_set_default_avatar:
-        if user.gender == Gender.FEMALE:
-            user.avatar = settings.DEFAULT_FEMALE_AVATAR
-        else:
-            user.avatar = settings.DEFAULT_MALE_AVATAR
-        user.cropping = ''
-        user.save(update_fields=('avatar', 'cropping'))
+@receiver(post_save, sender=User, dispatch_uid='set_default_audit')
+def set_default_audit(sender, instance, created, **kwargs):
+    print "@@@@@@@@@@@@@@@@@@###############________________+++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    if not user.avatar or user.is_default_avatar() or user.tags.count() < 3:
+        if user.status in (AuditStatus.UNFLAGGED, AuditStatus.APPROVED):
+            user.status = AuditStatus.UNAPPROVED_BY_MACHINE
+            user.save(update_fields=('status', ))
+
+    elif user.status not in (AuditStatus.UNFLAGGED,):
+        user.status = AuditStatus.UNFLAGGED
+        user.save(update_fields=('status', ))
 
 
 #my followee do sth
-node_followee_join_meal      = "/user/%d/meals"
-node_followee_upload_photo   = "/user/%d/photos"
+node_followee_join_meal = "/user/%d/meals"
+node_followee_upload_photo = "/user/%d/photos"
 
 #sb do sth to me or my staff
-node_photo_comment           = "/user/%d/photos/comments"
-node_comment_reply           = "/user/%d/comments/reply"
-node_visitor                 = "/user/%d/visitors"
-node_follower                = "/user/%d/followers"
-node_photo_request           = "/user/%d/photo_requests"
+node_photo_comment = "/user/%d/photos/comments"
+node_comment_reply = "/user/%d/comments/reply"
+node_visitor = "/user/%d/visitors"
+node_follower = "/user/%d/followers"
+node_photo_request = "/user/%d/photo_requests"
 
 #sb do sth to meal which I joined
-node_meal_comment            = "/meal/%d/comments"
-node_meal_participant        = "/meal/%d/participants"
+node_meal_comment = "/meal/%d/comments"
+node_meal_participant = "/meal/%d/participants"
 
 
 def _pubsub_user_created(user):
-
     cl_create_node, _ = pubsub.create_client()
     pubsub.create_node(node_followee_join_meal % user.id, client=cl_create_node)
     pubsub.create_node(node_followee_upload_photo % user.id, client=cl_create_node)
@@ -1010,7 +1047,6 @@ def _pubsub_user_created(user):
     pubsub.create_node(node_follower % user.id, client=cl_create_node)
     pubsub.create_node(node_photo_request % user.id, client=cl_create_node)
     cl_create_node.disconnect()
-
 
     cl_user, _ = pubsub.create_client(user=user)
     pubsub.subscribe(user, node_photo_comment % user.id, client=cl_user)
@@ -1027,6 +1063,7 @@ def pubsub_user_created(sender, instance, created, **kwargs):
         # _pubsub_user_created(instance)
         t = threading.Thread(target=_pubsub_user_created, args=(instance,))
         t.start()
+
 
 @receiver(post_save, sender=Relationship, dispatch_uid="user_followed")
 def user_followed(sender, instance, created, **kwargs):
@@ -1058,7 +1095,7 @@ def user_unfollowed(sender, instance, **kwargs):
     pubsub.unsubscribe(follower, node_followee_join_meal % followee.id, client=cl)
     pubsub.unsubscribe(follower, node_followee_upload_photo % followee.id, client=cl)
     cl.disconnect()
-    
+
 
 @receiver(post_save, sender=Meal, dispatch_uid="meal_created")
 def meal_created(sender, instance, created, **kwargs):
@@ -1080,15 +1117,15 @@ def _meal_joined(meal, joiner):
     else:
         event = u"参加了饭局"
     payload = json.dumps({
-                          "user": joiner.id,
-                          "avatar": joiner.normal_avatar,
-                          "s_avatar": joiner.small_avatar,
-                          "name": joiner.name,
-                          "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
-                          "event": event,
-                          "meal": meal.id,
-                          "topic": meal.topic,
-                          "meal_photo": meal.small_cover_url})
+        "user": joiner.id,
+        "avatar": joiner.normal_avatar,
+        "s_avatar": joiner.small_avatar,
+        "name": joiner.name,
+        "message": u"%s%s：%s" % (joiner.name, event, meal.topic),
+        "event": event,
+        "meal": meal.id,
+        "topic": meal.topic,
+        "meal_photo": meal.small_cover_url})
     if not meal.host or meal.host.id != joiner.id:
         # host does not publish meal events to participants
         # and he has subscribed the events already when he created the meal
@@ -1105,7 +1142,7 @@ def _meal_joined(meal, joiner):
     followee_join_meal_node = node_followee_join_meal % joiner.id
     for user in users_to_unsubscribe:
         pubsub.unsubscribe(user, followee_join_meal_node)
-#    time.sleep(1)
+    #    time.sleep(1)
     pubsub.publish(followee_join_meal_node, payload)
     for user in users_to_unsubscribe:
         pubsub.subscribe(user, followee_join_meal_node)
@@ -1116,6 +1153,7 @@ def meal_joined(sender, instance, created, **kwargs):
     if created:
         t = threading.Thread(target=_meal_joined, args=(instance.meal, instance.user))
         t.start()
+
 
 @receiver(post_save, sender=Visitor, dispatch_uid="user_visited")
 def user_visited(sender, instance, created, **kwargs):
@@ -1132,6 +1170,7 @@ def user_visited(sender, instance, created, **kwargs):
                                   "event": event,
             })
             pubsub.publish(node_name, payload)
+
 
 @receiver(post_save, sender=PhotoRequest, dispatch_uid="photo_request")
 def photo_requested(sender, instance, created, **kwargs):
@@ -1155,62 +1194,62 @@ def photo_uploaded(sender, instance, created, **kwargs):
     if created:
         node_name = node_followee_upload_photo % instance.user.id
         event = u"上传了一张照片"
-        payload = json.dumps({"user":instance.user.id, 
-                              "avatar":instance.user.normal_avatar,
-                              "s_avatar":instance.user.small_avatar,
+        payload = json.dumps({"user": instance.user.id,
+                              "avatar": instance.user.normal_avatar,
+                              "s_avatar": instance.user.small_avatar,
                               "name": instance.user.name,
-                              "message":u"%s%s" % (instance.user.name, event),
+                              "message": u"%s%s" % (instance.user.name, event),
                               "event": event,
-                              "photo_id":instance.id,
-                              "photo_url":instance.photo.url,
-                              "photo":instance.photo_thumbnail})
+                              "photo_id": instance.id,
+                              "photo_url": instance.photo.url,
+                              "photo": instance.photo_thumbnail})
         pubsub.publish(node_name, payload)
+
 
 @receiver(post_save, sender=PhotoComment, dispatch_uid="photo_comment")
 def photo_commented(sender, instance, created, **kwargs):
-
     comment = instance
 
     if created:
         photo_owner = comment.target.user
         comment_author = comment.user
         reply_to = comment.parent.user if comment.parent_id else None
-        print "%s %s %s" %( photo_owner, comment_author, reply_to)
+        print "%s %s %s" % ( photo_owner, comment_author, reply_to)
         if reply_to and comment_author != reply_to:
             event = u'回复了你'
             comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
             payload = json.dumps({"user": comment.user.id,
-                              "avatar": comment.user.normal_avatar,
-                              "s_avatar": comment.user.small_avatar,
-                              "name": comment.user.name,
-                              "message": u"%s%s" % (comment.user.name, event),
-                              "event": event,
-                              "photo_id": comment.target.id,
-                              "comment_id": comment.id,
-                              "comment": u'“%s”' % comment_content})
+                                  "avatar": comment.user.normal_avatar,
+                                  "s_avatar": comment.user.small_avatar,
+                                  "name": comment.user.name,
+                                  "message": u"%s%s" % (comment.user.name, event),
+                                  "event": event,
+                                  "photo_id": comment.target.id,
+                                  "comment_id": comment.id,
+                                  "comment": u'“%s”' % comment_content})
             pubsub.publish(node_comment_reply % reply_to.id, payload)
 
         if comment_author != photo_owner and (reply_to is None or reply_to != photo_owner):
             event = u'评论了你的照片'
             comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
             payload = json.dumps({"user": comment.user.id,
-                              "avatar": comment.user.normal_avatar,
-                              "s_avatar": comment.user.small_avatar,
-                              "name": comment.user.name,
-                              "message": u"%s%s" % (comment.user.name, event),
-                              "event": event,
-                              "photo_id": comment.target.id,
-                              "comment_id": comment.id,
-                              "comment": u'“%s”' % comment_content})
+                                  "avatar": comment.user.normal_avatar,
+                                  "s_avatar": comment.user.small_avatar,
+                                  "name": comment.user.name,
+                                  "message": u"%s%s" % (comment.user.name, event),
+                                  "event": event,
+                                  "photo_id": comment.target.id,
+                                  "comment_id": comment.id,
+                                  "comment": u'“%s”' % comment_content})
             pubsub.publish(node_photo_comment % photo_owner.id, payload)
 
 
 @receiver(post_save, sender=MealComment, dispatch_uid="meal_comment")
 def meal_commented(sender, instance, created, **kwargs):
- # 被回复的人和我自己先 unsubscribe meal comment
- # 通知饭局参加者
- # 再通知被回复的人
- # 被回复的人和我自己再subscribe meal comment
+# 被回复的人和我自己先 unsubscribe meal comment
+# 通知饭局参加者
+# 再通知被回复的人
+# 被回复的人和我自己再subscribe meal comment
     comment = instance
     if created:
         comment_author = comment.user
@@ -1224,13 +1263,12 @@ def meal_commented(sender, instance, created, **kwargs):
 
         comment_content = comment.comment[:12] + ("..." if len(comment.comment) > 12 else  "")
         playlaod_json = {"user": comment.user.id,
-                              "avatar": comment.user.normal_avatar,
-                              "s_avatar": comment.user.small_avatar,
-                              "name": comment.user.name,
-                              "meal_id": comment.target.id,
-                              "comment_id": comment.id,
-                              "comment": u'“%s”' % comment_content}
-
+                         "avatar": comment.user.normal_avatar,
+                         "s_avatar": comment.user.small_avatar,
+                         "name": comment.user.name,
+                         "meal_id": comment.target.id,
+                         "comment_id": comment.id,
+                         "comment": u'“%s”' % comment_content}
 
         if len(meal_participants):
             event = u"评论了饭局 “%s”" % meal.topic[:9]

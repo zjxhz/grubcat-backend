@@ -10,9 +10,35 @@ from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     UserTag, DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, \
     UserComment, photo_requested, User, meal_joined, MealParticipants, user_followed, \
     Relationship, user_visited, Visitor, photo_uploaded, UserPhoto, \
-    pubsub_user_created, PhotoRequest, meal_created
+    pubsub_user_created, PhotoRequest, meal_created, AuditStatus
 from image_cropping.admin import ImageCroppingMixin
 import datetime
+
+
+def approve(self, request, queryset):
+    queryset.update(status=AuditStatus.APPROVED)
+    self.message_user(request, "审核通过!")
+
+
+approve.short_description = u"审核通过"
+
+
+def un_approve(self, request, queryset):
+    queryset.update(status=AuditStatus.UNAPPROVED_BY_ADMIN)
+    self.message_user(request, "审核不通过!")
+
+
+un_approve.short_description = u"审核不通过"
+
+
+def make_delete(self, request, queryset):
+    queryset.update(status=AuditStatus.DELETED)
+    self.message_user(request, "成功标记为删除状态!")
+
+
+make_delete.short_description = u"标记为删除状态"
+
+audit_actions = [approve, un_approve, make_delete]
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
@@ -51,7 +77,7 @@ class UserChangeForm(auth_forms.UserChangeForm):
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
             'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token', 'is_staff',
-            'is_superuser',
+            'is_superuser', 'status',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -64,9 +90,10 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('id', 'username', 'name', 'weibo_id', )
+    list_display = ('id', 'username', 'name', 'weibo_id', 'status', 'avatar', 'cropping')
+    list_filter = ('status', 'is_staff', 'is_superuser', 'is_active', 'groups')
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags')}),
+        (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
         ('Others', {'fields': (
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
             'apns_token', 'is_staff', 'is_superuser',)}),
@@ -80,9 +107,9 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
             'apns_token', 'is_staff', 'is_superuser',)})
     )
     search_fields = ('username',)
-    ordering = ('username',)
+    ordering = ('-id',)
 
-    actions = ['resend_message']
+    actions = ['resend_message'] + audit_actions
 
     def resend_message(self, request, queryset):
         for user in queryset:
