@@ -33,6 +33,8 @@ import re
 
 logger = logging.getLogger(__name__)
 
+user_exclude_fields = ['password', 'weibo_access_token', 'status']
+
 # page starts from 1
 class PageNumberPaginator(Paginator):
     def page(self):
@@ -211,7 +213,7 @@ class SimpleUserResource(EOResource):
     class Meta:
         queryset = User.objects.all()
         authorization = UserObjectsOnlyAuthorization(True)
-        excludes=['password','weibo_access_token']
+        excludes= user_exclude_fields
         resource_name = 'simple_user'
         filtering = {'id':ALL, 'username':ALL, 'name':ALL}
 
@@ -570,7 +572,7 @@ class UserResource(EOResource):
         resource_name = 'user'
         filtering = {'from_user':ALL,'gender': ALL, 'user': ALL_WITH_RELATIONS, "id":ALL, "username":ALL, "name": ALL}
         allowed_methods = ['get', 'post', 'put', 'patch']
-        excludes=['password','weibo_access_token']
+        excludes= user_exclude_fields
         authorization = UserObjectsOnlyAuthorization(True)
 
 
