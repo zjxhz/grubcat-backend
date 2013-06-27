@@ -435,6 +435,11 @@ class User(AbstractUser):
     def is_default_avatar(self):
         return self.avatar in (settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)
 
+    def avatar_thumb(self):
+        return '<img src="%s"/>' % (self.small_avatar)
+    avatar_thumb.allow_tags = True
+
+
     def is_following(self, another):
         if another.followers.filter(pk=self.pk):
             return True
@@ -1007,17 +1012,17 @@ def set_default_avatar(sender, instance, created, **kwargs):
     elif user.gender != Gender.FEMALE and user.avatar == settings.DEFAULT_FEMALE_AVATAR:
         need_set_default_avatar = True
 
-@receiver(post_save, sender=User, dispatch_uid='set_default_audit')
-def set_default_audit(sender, instance, created, **kwargs):
-
-    if not user.avatar or user.is_default_avatar() or user.tags.count() < 3:
-        if user.status in (AuditStatus.UNFLAGGED, AuditStatus.APPROVED):
-            user.status = AuditStatus.UNAPPROVED_BY_MACHINE
-            user.save(update_fields=('status', ))
-
-    elif user.status not in (AuditStatus.UNFLAGGED,):
-        user.status = AuditStatus.UNFLAGGED
-        user.save(update_fields=('status', ))
+# @receiver(post_save, sender=User, dispatch_uid='set_default_audit')
+# def set_default_audit(sender, instance, created, **kwargs):
+#     user = instance
+#     if not user.avatar or user.is_default_avatar() or user.tags.count() < 3:
+#         if user.status in (AuditStatus.UNFLAGGED, AuditStatus.APPROVED):
+#             user.status = AuditStatus.UNAPPROVED_BY_MACHINE
+#             user.save(update_fields=('status', ))
+#
+#     elif user.status not in (AuditStatus.UNFLAGGED,):
+#         user.status = AuditStatus.UNFLAGGED
+#         user.save(update_fields=('status', ))
 
 
 #my followee do sth
