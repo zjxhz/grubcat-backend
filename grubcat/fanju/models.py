@@ -45,8 +45,8 @@ class AuditStatus:
 AUDIT_STATUS_CHOICE = (
     (AuditStatus.UNFLAGGED, u'待审核'),
     (AuditStatus.APPROVED, u'人工审核通过'),
-    (AuditStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
     (AuditStatus.UNAPPROVED_BY_ADMIN, u'人工审核不通过'),
+    (AuditStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
     (AuditStatus.DELETED, u'已删除'),
 )
 
