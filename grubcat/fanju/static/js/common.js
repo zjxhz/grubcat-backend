@@ -40,7 +40,7 @@ $(document).ready(function ($) {
                     scrollToElement($commentToGo)
                     $commentToGo.css('background-color', '#ffc40d').animate({"background-color": "#FFF"}, 3000)
                 } else {
-                    noty({text: "评论已经被删除", timeout: 2000, type:'warning'});
+                    noty({text: "评论已经被用户删除", timeout: 2000, type:'warning'});
                 }
             }
         })

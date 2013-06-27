@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.admin import UserAdmin
 from django.forms.extras import SelectDateWidget
+from taggit.utils import edit_string_for_tags
 from fanju.forms import BasicProfileForm
 from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     UserTag, DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, \
@@ -90,8 +91,21 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('id', 'username', 'name', 'weibo_id', 'status', 'avatar', 'cropping')
+    def avatar_thumb(self, instance):
+        # if instance.is_default_avatar():
+        #     return '无头像'
+        # else:
+        return '<img src="%s"/>' % (instance.small_avatar)
+    avatar_thumb.allow_tags = True
+    avatar_thumb.short_description = u'头像'
+
+    def tags_plain(self, instance):
+        return edit_string_for_tags(instance.tags.all())
+    tags_plain.short_description = u'兴趣'
+
+    list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )
     list_filter = ('status', 'is_staff', 'is_superuser', 'is_active', 'groups')
+    list_editable = ('status', )
     fieldsets = (
         (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
         ('Others', {'fields': (
@@ -174,7 +188,6 @@ class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
     postpone_meal.short_description = u"延期1个月"
 
 
-
 class DishItemInline(admin.StackedInline):
     model = DishItem
 
@@ -189,7 +202,6 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 class MenuAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'restaurant', 'status', 'num_persons', 'average_price',)
-    list_editable = ('name', )
     list_filter = ('restaurant', 'status')
     inlines = [DishItemInline, DishCategoryItemInline]
     ordering = ('status',)
@@ -230,6 +242,7 @@ class VisitorAdmin(admin.ModelAdmin):
 
     resend_message.short_description = u"重新发送用户访问消息"
 
+
 class PhotoRequestAdmin(admin.ModelAdmin):
     list_display = ('id', 'from_person', 'to_person')
     actions = ['resend_message']
@@ -240,9 +253,16 @@ class PhotoRequestAdmin(admin.ModelAdmin):
         self.message_user(request, "成功发送求照片消息!")
 
     resend_message.short_description = u"重新发送求照片消息"
-    
+
+
 class UserPhotoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'photo')
+
+    def photo_thumb(self, instance):
+        return '<img src="%s"/>' % (instance.photo_thumbnail)
+    photo_thumb.allow_tags = True
+    photo_thumb.short_description = u'照片'
+
+    list_display = ('id', 'user', 'photo_thumb')
     actions = ['resend_message']
 
     def resend_message(self, request, queryset):
@@ -253,6 +273,14 @@ class UserPhotoAdmin(admin.ModelAdmin):
     resend_message.short_description = u"重新发送用户上传照片消息"
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'target', 'user', 'comment', 'status',)
+    list_filter = ('status', 'target',)
+    list_editable = ('status',)
+    ordering = ('-target', '-id')
+    actions = audit_actions
+
+
 admin.site.register(Meal, MealAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(TransFlow, TransFlowAdmin)
@@ -261,9 +289,9 @@ admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu, MenuAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(UserTag)
-admin.site.register(MealComment)
-admin.site.register(PhotoComment)
-admin.site.register(UserComment)
+admin.site.register(MealComment, CommentAdmin)
+admin.site.register(PhotoComment, CommentAdmin)
+admin.site.register(UserComment, CommentAdmin)
 admin.site.register(User, UserAdmin)
 # admin.site.register(GroupCategory)
 # admin.site.register(Group, GroupAdmin)
