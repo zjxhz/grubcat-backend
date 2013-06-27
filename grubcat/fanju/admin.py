@@ -104,7 +104,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     tags_plain.short_description = u'兴趣'
 
     list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )
-    list_filter = ('status', 'is_staff', 'is_superuser', 'is_active', 'groups')
+    list_filter = ('status', 'is_staff', 'is_superuser',)
     list_editable = ('status', )
     fieldsets = (
         (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
