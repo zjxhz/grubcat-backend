@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="login-wrapper" id='login-page'>
+        <div class="login-panel span8 offset2">
+            <form id="login_form" class="form form-horizontal login-form" action="{% url 'login' %}" method="post">{% csrf_token %}
+                <fieldset>
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                    <div class="control-group">
+
+                        <label class="control-label" for="id_username">{{ form.username.label_tag }}</label>
+
+                        <div class="controls">
+                             {{ form.username }}
+                            {{ form.username.errors }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+
+                        <label class="control-label" for="id_password">{{ form.password.label_tag }}</label>
+
+                        <div class="controls">
+                            {{ form.password }}
+                            {{ form.password.errors }}
+                        </div>
+                    </div>
+
+{#                    {% for field in form %}#}
+{#                        <p class="fieldWrapper">#}
+{##}
+{#                             {{ field }}  {{ field.errors }}#}
+{#                        </p>#}
+{#                    {% endfor %}#}
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                </fieldset>
+
+{#                <p class="remember-wrapper">#}
+{#                    <input name="user[remember_me]" type="hidden" value="0">#}
+{#                    <input checked="checked" checked_value="1"#}
+{#                           id="user_remember_me"#}
+{#                           name="user[remember_me]" type="checkbox"#}
+{#                           unchecked_value="0" value="1">#}
+{#                    <span>下次自动登录</span>#}
+{#                    <a href="/user/password/forget" class="hover-link forget-password fr">忘记密码</a>#}
+{#                </p>#}
+                <div class="form-actions">
+                    <input class="btn btn-primary btn-signup" name="commit" type="submit" value="登录">
+                </div>
+            </form>
+        </div>
+
+{#        {% include "registration/social_login.html" %}#}
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
