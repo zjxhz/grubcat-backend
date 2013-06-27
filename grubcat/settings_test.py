@@ -28,5 +28,5 @@ RAVEN_CONFIG = {
     'dsn': 'http://66a385f77d6a4fa3ab75db245d66695a:0d7f487d06a74dbaa634d894f77703d6@ifunjoin.com:9000/2',
     }
 
-APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev.pem" 
+APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns-dev_combine.pem" 
 APNS_ENVIRONMENT='sandbox'
