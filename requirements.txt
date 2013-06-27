@@ -7,7 +7,7 @@ cssmin==0.1.4
 django-ajax-selects==1.2.5
 django-assets==0.8
 django-debug-toolbar==0.9.4
-django-devserver==0.4.0
+django-devserver==0.6.2
 django-forms-bootstrap==2.0.3.post1
 django-image-cropping==0.6.4
 django-taggit==0.9.3
