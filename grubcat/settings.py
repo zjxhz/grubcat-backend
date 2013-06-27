@@ -191,7 +191,7 @@ WEIBO_REDIRECT_URL = "http://fanjoin.com/login/weibo/"
 ###################### apple push ######################
 APP_ID = 'grubcat' # MAKE SURE THIS DOESN'T CONTAIN ANY PERIODS!
 APNS_HOST = 'http://localhost:7077/'
-APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/APNS.pem" # Created in step 2
+APNS_CERTIFICATE_LOCATION = "/home/fanju/src/grubcat-backend/apns_combine.pem" # Created in step 2
 APNS_ENVIRONMENT='production'
 
 
