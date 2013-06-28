@@ -32,3 +32,4 @@ yuicompressor==2.4.7
 MySQL-python==1.2.4
 django-qsstats-magic>=0.6.1
 django-chart-tools>=0.2.1
+django-admin-user-stats==0.2
