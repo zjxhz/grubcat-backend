@@ -16,6 +16,8 @@ import fanju.views_restaurant as rest
 admin.autodiscover()
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
+    url(r'^admin_tool/', include('admin_tools.urls')),
+    #  (r'^grappelli/', include('grappelli.urls')),
     #    ('^get_restaurant_list_by_geo/$', get_restaurant_list_by_geo),
     #    ('^restaurant/(\d+)/$', get_restaurant),
     #    ('^restaurant/(\d+)/dish/recommendation/$', get_recommended_dishes),
