@@ -1012,6 +1012,14 @@ def set_default_avatar(sender, instance, created, **kwargs):
     elif user.gender != Gender.FEMALE and user.avatar == settings.DEFAULT_FEMALE_AVATAR:
         need_set_default_avatar = True
 
+    if need_set_default_avatar:
+        if user.gender == Gender.FEMALE:
+            user.avatar = settings.DEFAULT_FEMALE_AVATAR
+        else:
+            user.avatar = settings.DEFAULT_MALE_AVATAR
+        user.cropping = ''
+        user.save(update_fields=('avatar', 'cropping'))
+
 # @receiver(post_save, sender=User, dispatch_uid='set_default_audit')
 # def set_default_audit(sender, instance, created, **kwargs):
 #     user = instance
