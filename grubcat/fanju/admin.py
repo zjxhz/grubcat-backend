@@ -95,7 +95,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
         #     return '无头像'
         # else:
         try:
-            return '<img src="%s"/>' % (instance.small_avatar)
+            return '<img src="%s"/>' % (instance.normal_avatar)
         except Exception:
             return u'头像 出错'
     avatar_thumb.allow_tags = True
