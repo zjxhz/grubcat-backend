@@ -113,6 +113,7 @@ class CustomAppIndexDashboard(AppIndexDashboard):
         """
         return super(CustomAppIndexDashboard, self).init_with_context(context)
 
+
 class RegistrationChart(BaseChart):
     """
     Dashboard module with user registration charts.
@@ -121,6 +122,7 @@ class RegistrationChart(BaseChart):
     """
     queryset = get_user_model().objects.all()
     date_field = 'date_joined'
+
 
 class RegistrationCharts(BaseCharts):
     """ Group module with 3 default registration charts """
@@ -132,23 +134,28 @@ class UploadPhotoChart(BaseChart):
     queryset = UserPhoto.objects.all()
     date_field = 'timestamp'
 
+
 class UploadPhotoCharts(BaseCharts):
     """ Group module with 3 default registration charts """
     title = u'上传照片'
     chart_model = UploadPhotoChart
 
+
 class MealCommentChart(BaseChart):
     queryset = MealComment.objects.all()
     date_field = 'timestamp'
+
 
 class MealCommentCharts(BaseCharts):
     """ Group module with 3 default registration charts """
     title = u'饭局评论'
     chart_model = MealCommentChart
 
+
 class PhotoCommentChart(BaseChart):
     queryset = PhotoComment.objects.all()
     date_field = 'timestamp'
+
 
 class PhotoCommentCharts(BaseCharts):
     """ Group module with 3 default registration charts """
