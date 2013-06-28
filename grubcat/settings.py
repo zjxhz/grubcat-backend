@@ -44,11 +44,9 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'grubcat.urls'
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
+
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'fanju',
     'django.contrib.staticfiles',
@@ -60,6 +58,15 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'taggit',
     'raven.contrib.django.raven_compat',
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
+    #  'grappelli.dashboard',
+    # 'grappelli',
+    'django.contrib.auth',
+    'django.contrib.sites',
+    'django.contrib.admin',
 )
 
 SERIALIZATION_MODULES = {
@@ -112,8 +119,8 @@ ASSETS_AUTO_BUILD = False
 ASSETS_ROOT = SITE_ROOT + 'src/grubcat-backend/grubcat/fanju/static'
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.CachedStaticFilesStorage"
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django_assets.finders.AssetsFinder'
 )
 

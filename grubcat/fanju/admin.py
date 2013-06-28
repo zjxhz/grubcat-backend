@@ -6,7 +6,6 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.admin import UserAdmin
 from django.forms.extras import SelectDateWidget
 from taggit.utils import edit_string_for_tags
-from fanju.forms import BasicProfileForm
 from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     UserTag, DishItem, DishCategoryItem, TransFlow, MealComment, PhotoComment, \
     UserComment, photo_requested, User, meal_joined, MealParticipants, user_followed, \
@@ -95,7 +94,10 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
         # if instance.is_default_avatar():
         #     return '无头像'
         # else:
-        return '<img src="%s"/>' % (instance.small_avatar)
+        try:
+            return '<img src="%s"/>' % (instance.small_avatar)
+        except Exception:
+            return u'头像 出错'
     avatar_thumb.allow_tags = True
     avatar_thumb.short_description = u'头像'
 
@@ -104,7 +106,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     tags_plain.short_description = u'兴趣'
 
     list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )
-    list_filter = ('status', 'is_staff', 'is_superuser',)
+    list_filter = ('status', 'date_joined', 'is_staff', 'is_superuser',)
     list_editable = ('status', )
     fieldsets = (
         (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
