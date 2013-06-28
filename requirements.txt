@@ -4,6 +4,7 @@ Pillow==2.0.0
 South==0.7.6
 argparse==1.2.1
 cssmin==0.1.4
+django-admin-tools==0.5.1
 django-ajax-selects==1.2.5
 django-assets==0.8
 django-debug-toolbar==0.9.4
@@ -29,3 +30,5 @@ webassets==0.8
 xmpppy==0.5.0rc1
 yuicompressor==2.4.7
 MySQL-python==1.2.4
+django-qsstats-magic>=0.6.1
+django-chart-tools>=0.2.1

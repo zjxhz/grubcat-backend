@@ -58,6 +58,8 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'taggit',
     'raven.contrib.django.raven_compat',
+    'admin_user_stats',
+    'chart_tools',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',
@@ -210,6 +212,9 @@ CHATSERVER = "http://fanjoin.com/http-bind/"
 CHATDOMAIN = "fanjoin.com"
 
 
+###################  admin #######################
+ADMIN_TOOLS_INDEX_DASHBOARD = 'grubcat.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'grubcat.dashboard.CustomAppIndexDashboard'
 
 ###################### msic ######################
 SHOW_EXCEPTION_DETAIL = False
