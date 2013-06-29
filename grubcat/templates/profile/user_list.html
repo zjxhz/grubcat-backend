@@ -26,10 +26,10 @@
                 请完善你的兴趣爱好，这样便可以找到那些和你有着共同喜好的朋友了！赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>吧！
             </div>
         {% endif %}
-        {% if need_upload_avatar %}
+        {% if not is_approved_user %}
             <div class="alert">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                你还没有上传头像，其他朋友无法在这里看到你哦！赶快去 <a href="{% url 'edit_basic_profile' %}">上传头像</a> 吧！
+                想成为推荐用户吗？只要上传清晰的个人头像，完善兴趣标签等其它信息，就有机会成为推荐用户哦！赶快去 <a href="{% url 'edit_basic_profile' %}">完善资料</a> 吧！
             </div>
         {% endif %}
 

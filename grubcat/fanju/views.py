@@ -315,7 +315,7 @@ class UserListView(ListView):
         if user.is_authenticated():
             if not user.tags.all():
                 context['need_edit_tags'] = True
-            context['need_upload_avatar'] = user.is_default_avatar()
+            context['is_approved_user'] = user.status == UserStatus.APPROVED
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
             elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 2:
