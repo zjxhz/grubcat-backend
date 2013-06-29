@@ -4,6 +4,8 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.admin import UserAdmin
+from django.forms import Textarea
+from django.db import models
 from django.forms.extras import SelectDateWidget
 from taggit.utils import edit_string_for_tags
 from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
@@ -168,11 +170,19 @@ class TransFlowAdmin(admin.ModelAdmin):
     list_display = ('order', 'alipay_trade_no')
 
 
+class MealAdminForm(forms.ModelForm):
+    introduction = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = Meal
+
+
 class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id', 'topic', 'restaurant', 'menu', 'host', 'list_price', 'actual_persons')
     list_filter = ('start_date', 'restaurant')
     ordering = ('menu', )
     actions = ['resend_message', 'postpone_meal']
+    form = MealAdminForm
 
     def resend_message(self, request, queryset):
         for meal in queryset:
