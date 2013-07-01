@@ -529,9 +529,7 @@ def weibo_login(request):
             #            else:
             if not user_to_authenticate.location:
                 ip = get_client_ip(request)
-                logger.debug("login:%s" % ip)
                 location = get_location_by_ip(ip)
-                logger.debug("login:%s" % location)
                 if location:
                     lat, lng = location
                     user_to_authenticate.update_location(lat, lng)
