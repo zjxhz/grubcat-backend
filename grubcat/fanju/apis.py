@@ -487,17 +487,9 @@ class UserResource(EOResource):
     def update_location(self, request, **kwargs):
         user_to_query = self.obj(request, **kwargs)   
         if request.method == "POST":
-            location = None
-            if user_to_query.location:
-                location = user_to_query.location
-            else:
-                location = UserLocation()
-            location.lat = request.POST.get("lat")
-            location.lng = request.POST.get("lng")
-            location.updated_at = datetime.now()
-            location.save()
-            user_to_query.location = location
-            user_to_query.save()
+            lat = request.POST.get("lat")
+            lng = request.POST.get("lng")
+            user_to_query.update_location(lat, lng)
             return SuccessResponse()
         else:
             raise http.HttpBadRequest()

@@ -343,8 +343,10 @@ class PhotoRequest(models.Model):
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
-    updated_at = models.DateTimeField()
+    updated_at = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return u'%s, %s' % (self.lat, self.lng)
 
 class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
@@ -435,10 +437,16 @@ class User(AbstractUser):
     def is_default_avatar(self):
         return self.avatar in (settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)
 
-    def avatar_thumb(self):
-        return '<img src="%s"/>' % (self.small_avatar)
-    avatar_thumb.allow_tags = True
-
+    def update_location(self, lat, lng):
+        if self.location:
+            user_location = self.location
+        else:
+            user_location = UserLocation()
+        user_location.lat = lat
+        user_location.lng = lng
+        user_location.save()
+        self.location = user_location()
+        self.save()
 
     def is_following(self, another):
         if another.followers.filter(pk=self.pk):
@@ -559,7 +567,8 @@ class User(AbstractUser):
             lng = self.location.lng
         if not lat or not lng:
             return []
-        for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
+        # for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
+        for user in User.objects.filter(status=UserStatus.APPROVED).exclude(pk=self.id):
             if user.location:
                 distance = self.getDistance(lng, lat, user.location.lng, user.location.lat)
                 distance_user_dict[user] = distance
@@ -1296,4 +1305,3 @@ def meal_commented(sender, instance, created, **kwargs):
             playlaod_json['event'] = event
             playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
             pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
-

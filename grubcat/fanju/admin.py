@@ -79,7 +79,7 @@ class UserChangeForm(auth_forms.UserChangeForm):
         fields = (
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
             'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token', 'is_staff',
-            'is_superuser', 'status',
+            'is_superuser', 'status', 'location',
             'apns_token')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
@@ -113,7 +113,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
         ('Others', {'fields': (
-            'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
+            'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'location', 'weibo_access_token',
             'apns_token', 'is_staff', 'is_superuser',)}),
     )
     add_fieldsets = (
@@ -124,7 +124,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token',
             'apns_token', 'is_staff', 'is_superuser',)})
     )
-    search_fields = ('username',)
+    search_fields = ('username', 'name')
     ordering = ('-id',)
 
     actions = ['resend_message'] + audit_actions

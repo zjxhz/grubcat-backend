@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.geoip import GeoIP
 from settings import APNS_ENVIRONMENT
 from xmpp.protocol import NS_DATA
 import json
@@ -199,3 +200,21 @@ def isMobileRequest(request):
         pass
 
     return mobile_browser
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def get_location_by_ip(ip):
+    try:
+        geo_ip = GeoIP(cache=GeoIP.GEOIP_MEMORY_CACHE)
+        return geo_ip.lat_lon(ip)
+    except Exception:
+        return None
+

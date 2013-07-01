@@ -19,7 +19,7 @@ from fanju.exceptions import *
 from fanju.models import Order, Relationship, Meal
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
-from fanju.util import isMobileRequest
+from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip
 from fanju.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from fanju.forms import *
 from django.conf import settings
@@ -527,6 +527,14 @@ def weibo_login(request):
             #            if not request.user.is_active:
             #                return HttpResponseRedirect(reverse_lazy('bind') + '?next=' + next)
             #            else:
+            if not user_to_authenticate.location:
+                ip = get_client_ip(request)
+                location = get_location_by_ip(ip)
+                if location:
+                    lat, lng = location
+                    user_to_authenticate.update_location(lat, lng)
+
+
             return HttpResponseRedirect(next_url)
         else:
             raise Exception(u'对不起，微博登录接口出现异常！请您尝试再次登录，如果仍有问题，请联系我们的工作人员。')
