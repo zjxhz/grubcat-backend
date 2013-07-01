@@ -445,8 +445,9 @@ class User(AbstractUser):
         user_location.lat = lat
         user_location.lng = lng
         user_location.save()
-        self.location = user_location
-        self.save()
+        if not self.location:
+            self.location = user_location
+            self.save()
 
     def is_following(self, another):
         if another.followers.filter(pk=self.pk):
