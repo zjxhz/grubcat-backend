@@ -55,7 +55,7 @@ class CustomIndexDashboard(Dashboard):
         ))
 
 
-        need_audit_user_count = User.objects.filter(status=AuditStatus.UNFLAGGED).count()
+        need_audit_user_count = User.objects.filter(status=AuditStatus.WAIT_TO_AUDIT).count()
         if need_audit_user_count:
             need_audit_user_title = u'待审核用户（<span style="color:red">%s</span>）' % need_audit_user_count
         else:
@@ -66,7 +66,7 @@ class CustomIndexDashboard(Dashboard):
             children=[
                 {
                     'title': need_audit_user_title,
-                    'url': "%s?status__exact=%s" % (reverse("admin:fanju_user_changelist"), AuditStatus.UNFLAGGED) ,
+                    'url': "%s?status__exact=%s" % (reverse("admin:fanju_user_changelist"), AuditStatus.WAIT_TO_AUDIT) ,
                     'external': False,
                 },
             ]

@@ -56,6 +56,7 @@ class WeiboAuthenticationBackend(object):
                         #don't save default empty avatar
                         user_to_authenticate.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_to_authenticate.save()
+                    user_to_authenticate.audit_by_machine()
                     return user_to_authenticate
             except Exception:
                 if user_to_authenticate:

@@ -233,6 +233,7 @@ class UploadAvatarView(UpdateView):
     def form_valid(self, form):
         super(UploadAvatarView, self).form_valid(form)
         data = {'big_avatar_url': self.object.big_avatar, 'small_avatar_url': self.object.small_avatar}
+        self.object.audit_by_machine()
         return HttpResponse(json.dumps(data)) #return text/html type, not json, hack for IE ajax upload file
 
     def form_invalid(self, form):
