@@ -35,7 +35,7 @@ class Privacy:
 
 
 class AuditStatus:
-    UNFLAGGED = 0
+    WAIT_TO_AUDIT = 0
     APPROVED = 1
     UNAPPROVED_BY_MACHINE = 2
     UNAPPROVED_BY_ADMIN = 3
@@ -43,7 +43,7 @@ class AuditStatus:
 
 
 AUDIT_STATUS_CHOICE = (
-    (AuditStatus.UNFLAGGED, u'待审核'),
+    (AuditStatus.WAIT_TO_AUDIT, u'待审核'),
     (AuditStatus.APPROVED, u'人工审核通过'),
     (AuditStatus.UNAPPROVED_BY_ADMIN, u'人工审核不通过'),
     (AuditStatus.UNAPPROVED_BY_MACHINE, u'机器审核不通过'),
@@ -419,7 +419,7 @@ class User(AbstractUser):
     background_image = models.ImageField(u'背景图片', upload_to='uploaded_images/%Y/%m/%d', max_length=256, blank=True,
                                          null=True)
     mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
-    status = models.SmallIntegerField(u'状态', default=UserStatus.UNFLAGGED, choices=USER_STATUS_CHOICE)
+    status = models.SmallIntegerField(u'状态', default=UserStatus.WAIT_TO_AUDIT, choices=USER_STATUS_CHOICE)
 
     @models.permalink
     def get_absolute_url(self):
@@ -448,6 +448,15 @@ class User(AbstractUser):
         user_location.save()
         if not self.location:
             self.location = user_location
+            self.save()
+
+    def audit_by_machine(self):
+        if not self.avatar or self.is_default_avatar():
+            if self.status not in (UserStatus.UNAPPROVED_BY_MACHINE, UserStatus.BLACKLIST, UserStatus.DELETED):
+                self.status = UserStatus.UNAPPROVED_BY_MACHINE
+                self.save()
+        elif self.status not in (UserStatus.WAIT_TO_AUDIT, UserStatus.BLACKLIST, UserStatus.DELETED):
+            self.status = UserStatus.WAIT_TO_AUDIT
             self.save()
 
     def is_following(self, another):
@@ -933,7 +942,7 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'作者', blank=True)
     comment = models.CharField(u'评论', max_length=200)
     timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
-    status = models.SmallIntegerField(u'状态', default=CommentStatus.UNFLAGGED, choices=AUDIT_STATUS_CHOICE)
+    status = models.SmallIntegerField(u'状态', default=CommentStatus.WAIT_TO_AUDIT, choices=AUDIT_STATUS_CHOICE)
     parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True)
 
 
@@ -949,7 +958,7 @@ class Comment(models.Model):
     @classmethod
     def get_comments(cls, comment_type, target_id):
         return cls.get_comment_class(comment_type).objects.filter(target_id=target_id, status__in=(
-            CommentStatus.UNFLAGGED, CommentStatus.APPROVED)).select_related('parent__user', 'user')
+            CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)).select_related('parent__user', 'user')
 
     @property
     def time_gap(self):

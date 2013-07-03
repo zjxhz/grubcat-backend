@@ -534,6 +534,7 @@ class UserResource(EOResource):
             if os.path.exists(
                     old_avatar_path) and user_to_query.avatar.path != old_avatar_path and settings.DEFAULT_FEMALE_AVATAR not in old_avatar_path and settings.DEFAULT_MALE_AVATAR not in old_avatar_path:
                 os.remove(old_avatar_path)
+            user_to_query.audit_by_machine()
             # xmpp_client.syncProfile(user_to_query)
             user_resource = UserResource()
             ur_bundle = user_resource.build_bundle(obj=user_to_query)
