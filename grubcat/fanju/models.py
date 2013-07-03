@@ -343,7 +343,7 @@ class PhotoRequest(models.Model):
 class UserLocation(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField()
 
     def __unicode__(self):
         return u'%s, %s' % (self.lat, self.lng)
@@ -444,6 +444,7 @@ class User(AbstractUser):
             user_location = UserLocation()
         user_location.lat = lat
         user_location.lng = lng
+        user_location.updated_at = datetime.now()
         user_location.save()
         if not self.location:
             self.location = user_location

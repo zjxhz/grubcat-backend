@@ -180,7 +180,6 @@ class MealAdminForm(forms.ModelForm):
 class MealAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ('id', 'topic', 'restaurant', 'menu', 'host', 'list_price', 'actual_persons')
     list_filter = ('start_date', 'restaurant')
-    ordering = ('menu', )
     actions = ['resend_message', 'postpone_meal']
     form = MealAdminForm
 
