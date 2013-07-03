@@ -555,7 +555,7 @@ class User(AbstractUser):
         who don't have same interests will be listed as well, users that this user has been already following will
         be excluded
         """
-        return self.tags.similar_objects()
+        return [user for user in self.tags.similar_objects() if user.status == UserStatus.APPROVED]
 
     # return a list of values with the order how keys are sorted for a given dict
     def sortedDictValues(self, some_dict):

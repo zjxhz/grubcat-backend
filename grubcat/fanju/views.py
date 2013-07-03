@@ -296,7 +296,8 @@ class UserListView(ListView):
             status=AuditStatus.APPROVED).exclude(
             restaurant__isnull=False).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
-            return self.request.user.tags.similar_objects()
+            # return users.filter(id__in=[user.id for user in self.request.user.tags.similar_objects()])
+            return self.request.user.recommendations
         elif tags:
             return users.filter(tags__name__in=(tags, )).distinct()
         else:
