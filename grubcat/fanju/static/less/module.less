@@ -2,17 +2,19 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
+.faq{
+  .faq-q{
+
+  }
+  a{
+//    color:#555;
+  }
+}
+
 #meal-list-page {
 
   #app{
     margin-bottom: 20px;
-//    position: relative;
-//
-//    .ios-download{
-//      position: absolute;
-//      top: 50px;
-//
-//    }
   }
   #faq-what-is-fanju, #faq-what-is-fanju + p {
     display: block;
@@ -32,9 +34,17 @@
 }
 
 #meal-detail-page {
-  #faq-how-to-book-meal, #faq-how-to-cancel-meal,#faq-can-change-meal, #faq-ask, #faq-ask  +p {
+  #what-is-fanju.faq-q {
+    display: none;
+  }
+  .faq-q, #faq-why-pay +p{
     display: block;
   }
+
+  #faq-why-pay{
+//    color: @green;
+  }
+
   .jtico_jiathis {
     display: none !important;
   }
