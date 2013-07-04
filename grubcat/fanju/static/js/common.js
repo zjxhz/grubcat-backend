@@ -126,7 +126,7 @@ $(document).ready(function ($) {
                 }
 
             }).on('focus', '[name=comment]', function(){
-                $(this).siblings('.btn-submit-comment').show()
+                $(this).siblings('.btn-submit-comment').css('display','block')
             })
     }
 
