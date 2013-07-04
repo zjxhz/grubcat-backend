@@ -188,7 +188,7 @@ def dehydrate_basic_userinfo(resource, bundle):
         # simulate a location. TODO remove these lines in production
         bundle.data['lat'] = 30.275
         bundle.data['lng'] = 120.148
-        bundle.data['updated_at'] = "2013-07-16"
+        bundle.data['updated_at'] = "2012-10-16"
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
