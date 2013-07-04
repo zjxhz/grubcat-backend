@@ -186,8 +186,8 @@ class UserPhotoResource(EOResource):
 def dehydrate_basic_userinfo(resource, bundle):
     if not bundle.data['location']:
         # simulate a location. TODO remove these lines in production
-        bundle.data['lat'] = 30.275
-        bundle.data['lng'] = 120.148
+        bundle.data['lat'] = settings.FAKED_LAT
+        bundle.data['lng'] = settings.FAKED_LNG
         bundle.data['updated_at'] = "2013-06-16"
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar
