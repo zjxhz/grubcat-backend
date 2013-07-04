@@ -188,7 +188,7 @@ def dehydrate_basic_userinfo(resource, bundle):
         # simulate a location. TODO remove these lines in production
         bundle.data['lat'] = 30.275
         bundle.data['lng'] = 120.148
-        bundle.data['updated_at'] = "2012-10-16"
+        bundle.data['updated_at'] = "2013-06-16"
     bundle.data['small_avatar'] = bundle.obj.normal_avatar #small is too small for iPhone
     bundle.data['big_avatar'] = bundle.obj.big_avatar
     resource.mergeOneToOneField(bundle, 'location', ['id', ])
@@ -265,7 +265,7 @@ class UserResource(EOResource):
     photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
 
     def hydrate(self, bundle):
-        bundle.data['avatar'] = str(bundle.obj.avatar) # never change avatar in a patch request, or it always add /media/
+        bundle.data['avatar'] = str(bundle.obj.normal_avatar) # never change avatar in a patch request, or it always add /media/
         return bundle
         
     def dehydrate(self, bundle):
