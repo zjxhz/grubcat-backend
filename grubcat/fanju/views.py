@@ -534,7 +534,11 @@ def weibo_login(request):
                 location = get_location_by_ip(ip)
                 if location:
                     lat, lng = location
-                    user_to_authenticate.update_location(lat, lng)
+                else:
+                    lat = settings.FAKED_LAT
+                    lng = settings.FAKED_LNG
+                    logger.error('can not calculate location by ip: %s of user %d' % (ip, user_to_authenticate.id))
+                user_to_authenticate.update_location(lat, lng)
 
 
             return HttpResponseRedirect(next_url)

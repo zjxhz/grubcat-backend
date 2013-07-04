@@ -219,6 +219,8 @@ ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'grubcat.dashboard.CustomAppIndexDashboard'
 ###################### msic ######################
 SHOW_EXCEPTION_DETAIL = False
 GEOIP_PATH = SITE_ROOT + 'soft/'
+FAKED_LAT = 30.275
+FAKED_LNG = 120.148
 ###################### log ######################
 RAVEN_CONFIG = {
     'dsn': 'http://0110aabffb89455db2b86848b0694351:c2cd2b4d540e47baa418ebe1d4249fad@fanjoin.com:9000/2',

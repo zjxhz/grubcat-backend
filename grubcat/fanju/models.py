@@ -437,7 +437,13 @@ class User(AbstractUser):
     def is_default_avatar(self):
         return self.avatar in (settings.DEFAULT_MALE_AVATAR, settings.DEFAULT_FEMALE_AVATAR)
 
-    def update_location(self, lat, lng):
+    def is_fake_user(self):
+        return self.username.endswith('@1.com')
+
+    def update_location(self, lat, lng, update_fake_user=False):
+        if not update_fake_user and self.is_fake_user():
+            return
+
         if self.location:
             user_location = self.location
         else:
@@ -607,8 +613,8 @@ class User(AbstractUser):
             return self.location
         else:
             location = UserLocation()
-            location.lat = 30.275
-            location.lng = 120.148
+            location.lat = settings.FAKED_LAT
+            location.lng = settings.FAKED_LNG
             location.updated_at = datetime.now() - timedelta(minutes=random.randint(0, 60 * 24 * 30))
             self.location = location
 
