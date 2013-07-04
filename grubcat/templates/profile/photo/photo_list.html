@@ -21,12 +21,14 @@
                     </li>
 
                 {% endfor %}
-                <li class="span3 photo-request">
-                    <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
-                            src="{% static 'img/photo_request.png' %}"
-                            class="photo"
-                            alt="photo"></a>
-                </li>
+                {% if not is_mine %}
+                    <li class="span3 photo-request">
+                        <a href="{% url 'photo_request' profile.id %}" class="thumbnail"> <img
+                                src="{% static 'img/photo_request.png' %}"
+                                class="photo"
+                                alt="photo"></a>
+                    </li>
+                {% endif %}
             </ul>
         {% else %}
             <div class="no-results">
