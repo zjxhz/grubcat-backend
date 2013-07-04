@@ -265,7 +265,7 @@ class UserResource(EOResource):
     photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
 
     def hydrate(self, bundle):
-        bundle.data['avatar'] = str(bundle.obj.normal_avatar) # never change avatar in a patch request, or it always add /media/
+        bundle.data['avatar'] = str(bundle.obj.avatar) # never change avatar in a patch request, or it always add /media/
         return bundle
         
     def dehydrate(self, bundle):
