@@ -5,6 +5,9 @@ from django.db.models.fields.files import ImageFieldFile
 from django.forms import ModelForm, Form
 from django.forms.extras import SelectDateWidget
 from django.forms.widgets import *
+from django.core.files import File
+from PIL import Image
+import tempfile
 from fanju.models import *
 from fanju import widgets
 
@@ -163,6 +166,31 @@ class BindProfileForm(ModelForm):
 
 
 class PhotoForm(ModelForm):
+    x1 = forms.IntegerField(required=False)
+    x2 = forms.IntegerField(required=False)
+    y1 = forms.IntegerField(required=False)
+    y2 = forms.IntegerField(required=False)
+
+    def save(self, commit=True):
+
+        photo = super(PhotoForm, self).save(commit=False)
+
+        if commit:
+            photo_image = self.cleaned_data['photo']
+            x1 = self.cleaned_data['x1']
+            y1 = self.cleaned_data['y1']
+            x2 = self.cleaned_data['x2']
+            y2 = self.cleaned_data['y2']
+            if x1 and x2 and y1 and y2:
+                box = (x1, y1, x2, y2)
+                image = Image.open(photo.photo)
+                image = image.crop(box)
+                temp_file = tempfile.NamedTemporaryFile(delete=True)
+                image.save(temp_file, format="JPEG")
+                photo.photo.save(photo_image.name, File(temp_file))
+            photo = super(PhotoForm, self).save(commit=True)
+        return photo
+
     class Meta:
         model = UserPhoto
         fields = ('photo',)
