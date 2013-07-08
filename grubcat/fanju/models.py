@@ -6,6 +6,8 @@ import time
 import threading
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse_lazy
 from django.db import models, IntegrityError
@@ -23,7 +25,9 @@ from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
 import json
 import os
+import weibo
 import random
+
 #import redis
 # Create your models here.
 logger = logging.getLogger(__name__)
@@ -58,6 +62,40 @@ class UserStatus(AuditStatus):
 USER_STATUS_CHOICE = AUDIT_STATUS_CHOICE + ( (UserStatus.BLACKLIST, u'黒名单'),)
 
 
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'Owner', related_name='likes')
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    target = generic.GenericForeignKey('content_type', 'object_id')
+
+    @classmethod
+    def add_like(self, content_type, object_id, user):
+        like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=object_id)
+        return created
+
+    @classmethod
+    def enable_like(self, cls):
+
+        def likes(self):
+            content_type = ContentType.objects.get_for_model(self)
+            return Like.objects.filter(content_type=content_type, object_id=self.id).select_related("user")
+
+        def likes_count(self):
+            content_type = ContentType.objects.get_for_model(self)
+            return Like.objects.filter(content_type=content_type, object_id=self.id).count()
+
+        def add_like(self, user):
+            content_type = ContentType.objects.get_for_model(self)
+            like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=self.id)
+            return created
+
+        cls.add_to_class("likes_count", property(likes_count))
+        cls.add_to_class("likes", property(likes))
+        cls.add_to_class("add_like", add_like)
+
+    class Meta:
+        unique_together = (('user', 'content_type', 'object_id'),)
 
 
 class Region(models.Model):
@@ -678,6 +716,17 @@ class User(AbstractUser):
     #            response.append(message)
     #        print response
 
+    def get_webio_client(self):
+        weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
+        weibo_client.set_access_token(self.weibo_access_token, str(3600*24*14))
+        return weibo_client
+
+    def share_meal(self, meal):
+        weibo_client = self.get_webio_client()
+        share_text = u"我刚发现一个有趣的饭局“%s”，大家快来看看吧！" % meal.topic
+        share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
+        weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url)
+
     def __unicode__(self):
         return self.name if self.name is not None else self.username
 
@@ -918,6 +967,7 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
+Like.enable_like(Meal)
 
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
@@ -933,7 +983,7 @@ class MealParticipants(models.Model):
 
 
 
-class CommentType:
+class ObjectType:
     MEAL = 'meal'
     USER = 'user'
     PHOTO = 'photo'
@@ -954,11 +1004,11 @@ class Comment(models.Model):
 
     @classmethod
     def get_comment_class(cls, comment_type):
-        if comment_type == CommentType.MEAL:
+        if comment_type == ObjectType.MEAL:
             return MealComment
-        elif comment_type == CommentType.PHOTO:
+        elif comment_type == ObjectType.PHOTO:
             return PhotoComment
-        elif comment_type == CommentType.USER:
+        elif comment_type == ObjectType.USER:
             return UserComment
 
     @classmethod
@@ -1019,6 +1069,9 @@ class UserComment(Comment):
     class Meta:
         verbose_name = u'用户留言'
         verbose_name_plural = verbose_name
+
+
+
 
 # class ImageTest(models.Model):
 #     image = ImageField(blank=True, null=True, upload_to='apps')

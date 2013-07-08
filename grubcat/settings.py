@@ -101,6 +101,7 @@ TIME_ZONE = 'Asia/Shanghai'
 LANGUAGE_CODE = 'zh-cn'
 DATE_FORMAT = 'Y n j'
 SITE_ID = 1
+SITE_DOMAIN = "http://fanjoin.com"
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.

@@ -5,6 +5,9 @@ function scrollToElement($element, speed, offset) {
 
 $(document).ready(function ($) {
 
+    var $commonData = $("#common-data")
+    var isLogined = $commonData.data("uid") != ""
+
     $("#main-nav ul.nav li").removeClass("active");
     var $active = $("#" + $("#data").data('navActiveId'))
     $active.addClass("active");
@@ -129,5 +132,31 @@ $(document).ready(function ($) {
                 $(this).siblings('.btn-submit-comment').css('display','block')
             })
     }
+
+    var $likeLink = $("#like-link")
+    if($likeLink[0]){
+        $likeLink.click(function(){
+            $.post($likeLink.attr("href"), function(data){
+                var alreadyLiked = data.already_liked
+                if(alreadyLiked){
+                     noty({text:'你对我们这个饭局很感兴趣啊，</br>不妨来参加下，大家一起交个朋友！', timeout:5000})
+                } else{
+                    var $likeNum = $("#like-wrapper .like-num")
+                    $likeNum.text(parseInt($likeNum.text())  + 1)
+//                    noty({text:'还有!', timeout:1000})
+                }
+            })
+
+            return false
+        })
+    }
+
+    $(".need-login").click(function(){
+
+        if(!isLogined){
+            var loginBackUrl = $(this).data("login-back-url") || $(this).attr("href")
+            window.location = "/login/weibo/?next=" + loginBackUrl
+        }
+    })
 
 })
