@@ -28,10 +28,7 @@ def add_like(request, target_type, target_id):
     if model_cls in (Meal, UserPhoto, User):
         already_liked = not Like.add_like(content_type, target_id, request.user)
         if not already_liked and model_cls is Meal: #TODO check created
-            try:
-                request.user.share_meal(Meal.objects.get(pk=target_id))
-            except:
-                logger.exception('share meal error')
+            request.user.share_meal(Meal.objects.get(pk=target_id))
         return create_sucess_json_response(extra_dict={'already_liked': already_liked})
 
 

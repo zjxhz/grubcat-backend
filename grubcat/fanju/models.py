@@ -297,6 +297,7 @@ class Order(models.Model):
             elif meal.status is MealStatus.CREATED_WITH_MENU:
                 meal.status = MealStatus.PUBLISHED
         meal.save()
+        order.customer.share_meal(order.meal)
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
@@ -722,15 +723,18 @@ class User(AbstractUser):
         return weibo_client
 
     def share_meal(self, meal):
-        weibo_client = self.get_webio_client()
-        r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
-        meal_url = r.urls[0].url_short
-        share_text = u"我刚发现一个有趣的饭局“%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
-        # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
-        # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
+        try:
+            weibo_client = self.get_webio_client()
+            r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
+            meal_url = r.urls[0].url_short
+            share_text = u"我刚发现一个有趣的饭局“%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+            # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
+            # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
 
-        # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-        weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
+            # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
+            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
+        except:
+            logger.exception("error when share meal")
 
     def __unicode__(self):
         return self.name if self.name is not None else self.username
