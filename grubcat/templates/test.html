@@ -15,5 +15,7 @@
 {% assets "jquery_ui_js" %}
     <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
 {% endassets %}
+
+{% render_comment_form for [object] %}
 </body>
 </html>

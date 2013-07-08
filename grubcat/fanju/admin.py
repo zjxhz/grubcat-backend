@@ -273,7 +273,7 @@ class UserPhotoAdmin(admin.ModelAdmin):
     photo_thumb.allow_tags = True
     photo_thumb.short_description = u'照片'
 
-    list_display = ('id', 'user', 'photo_thumb')
+    list_display = ('id', 'user', 'photo_thumb', 'timestamp')
     actions = ['resend_message']
 
     def resend_message(self, request, queryset):

@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -337,7 +338,7 @@ class CommentListView(ListView):
         comment_type = self.kwargs['comment_type']
         target_id = self.kwargs['target_id']
         # TODO check login if not meal list
-        if comment_type != CommentType.MEAL and not self.request.user.is_authenticated():
+        if comment_type != ObjectType.MEAL and not self.request.user.is_authenticated():
             raise NoRightException
         return Comment.get_comments(comment_type, target_id)
 
@@ -350,29 +351,27 @@ class CommentListView(ListView):
         return context
 
 
+@require_POST
 def add_comment(request, comment_type, target_id):
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            parent = form.cleaned_data['parent']
-            comment = Comment.get_comment_class(comment_type).objects.create(user=request.user, parent_id=parent,
-                                                                             comment=form.cleaned_data['comment'],
-                                                                             target_id=target_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        parent = form.cleaned_data['parent']
+        comment = Comment.get_comment_class(comment_type).objects.create(user=request.user, parent_id=parent,
+                                                                         comment=form.cleaned_data['comment'],
+                                                                         target_id=target_id)
 
-            result = render_to_string('comments/single_comment_frag.html', {'comment': comment})
+        result = render_to_string('comments/single_comment_frag.html', {'comment': comment})
 
-            return create_sucess_json_response(extra_dict={'html': result})
-        else:
-            return create_failure_json_response(extra_dict=form.errors)
+        return create_sucess_json_response(extra_dict={'html': result})
 
 
+@require_POST
 def del_comment(request, comment_type, comment_id):
-    if request.method == 'POST':
-        comment = Comment.get_comment_class(comment_type).objects.get(pk=comment_id)
-        if request.user.id == comment.user_id:
-            comment.status = CommentStatus.DELETED
-            comment.save(update_fields=('status', ))
-        return create_sucess_json_response(u'已经成功删除评论！')
+    comment = Comment.get_comment_class(comment_type).objects.get(pk=comment_id)
+    if request.user.id == comment.user_id:
+        comment.status = CommentStatus.DELETED
+        comment.save(update_fields=('status', ))
+    return create_sucess_json_response(u'已经成功删除评论！')
 
 ### Order related views ###
 class OrderCreateView(CreateView):

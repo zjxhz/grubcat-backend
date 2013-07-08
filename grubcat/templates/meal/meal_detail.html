@@ -9,12 +9,12 @@
     {% endassets %}
     {{ block.super }}
 {#    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=" type="text/javascript" charset="utf-8"></script>#}
-    <script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=0"></script>
-    <script type="text/javascript" id="bdshell_js"></script>
-    <script type="text/javascript">
-        var bds_config = {'bdPic': (location.origin +'{{ meal.normal_cover_url }}'), 'bdText': '我刚发现一个有趣的饭局 “{{ meal.topic }}”，大家快来看看吧！','snsKey':{'tsina':'2295468526'},'searchPic':'1' };
-        document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date() / 3600000)
-    </script>
+{#    <script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=0"></script>#}
+{#    <script type="text/javascript" id="bdshell_js"></script>#}
+{#    <script type="text/javascript">#}
+{#        var bds_config = {'bdPic': (location.origin +'{{ meal.normal_cover_url }}'), 'bdText': '我刚发现一个有趣的饭局 “{{ meal.topic }}”，大家快来看看吧！','snsKey':{'tsina':'2295468526'},'searchPic':'1' };#}
+{#        document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date() / 3600000)#}
+{#    </script>#}
 {% endblock %}
 
 {% block content %}
@@ -112,14 +112,19 @@
                         </a>
                     {% endif %}
                 </div>
-                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-                    <span class="fl">分享到：</span>
-                    <a class="bds_tsina"></a>
-                    <a class="bds_qzone"></a>
-                    <a class="bds_tqq"></a>
-                    <a class="bds_renren"></a>
-                    <a class="shareCount"></a>
+
+                <div id="like-wrapper">
+                   <span class="like-num">{{ meal.likes_count }}</span> 人 <a id="like-link" class="need-login btn btn-link" href="{% url "add_like" 'meal' meal.id %}" data-login-back-url="{% url 'meal_detail' meal.id %}" >我感兴趣</a>
                 </div>
+
+{#                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">#}
+{#                    <span class="fl">分享到：</span>#}
+{#                    <a class="bds_tsina"></a>#}
+{#                    <a class="bds_qzone"></a>#}
+{#                    <a class="bds_tqq"></a>#}
+{#                    <a class="bds_renren"></a>#}
+{#                    <a class="shareCount"></a>#}
+{#                </div>#}
 
 
             </div>

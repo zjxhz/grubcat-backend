@@ -8,10 +8,12 @@ STATIC_URL = '/static/'
 ASSETS_DEBUG = False
 ASSETS_AUTO_BUILD = False
 
-CHATSERVER = "http://t.ifunjoin.com/http-bind/"
+SITE_DOMAIN = "http://t.ifunjoin.com"
+CHATSERVER = SITE_DOMAIN + "/http-bind/"
 CHATDOMAIN = "ifunjoin.com"
 XMPP_PUBSUB_SERVICE = 'pubsub.ifunjoin.com'
-ALIPAY_BACK_DOMAIN = 'http://t.ifunjoin.com/'
+ALIPAY_BACK_DOMAIN = SITE_DOMAIN + "/"
+
 ORDER_PREFIX = 'det1'
 PAY_DEBUG = False
 XMPP_DEBUG = ['socket']
@@ -21,7 +23,7 @@ XMPP_DEBUG = ['socket']
 
 WEIBO_APP_KEY = "1086545555"
 WEIBO_APP_SECERT = "edc858db52e5c2bc803010a81b183c5d"
-WEIBO_REDIRECT_URL = "http://t.ifunjoin.com/login/weibo/"
+WEIBO_REDIRECT_URL = SITE_DOMAIN + "login/weibo/"
 
 RAVEN_CONFIG = {
     'register_signals': True,
