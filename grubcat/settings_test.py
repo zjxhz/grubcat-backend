@@ -23,7 +23,7 @@ XMPP_DEBUG = ['socket']
 
 WEIBO_APP_KEY = "1086545555"
 WEIBO_APP_SECERT = "edc858db52e5c2bc803010a81b183c5d"
-WEIBO_REDIRECT_URL = SITE_DOMAIN + "login/weibo/"
+WEIBO_REDIRECT_URL = SITE_DOMAIN + "/login/weibo/"
 
 RAVEN_CONFIG = {
     'register_signals': True,
