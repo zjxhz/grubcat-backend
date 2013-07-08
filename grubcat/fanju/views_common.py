@@ -15,6 +15,7 @@ import json
 
 SUCESS = "OK"
 ERROR = 'NOK'
+logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
 order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
@@ -30,7 +31,7 @@ def add_like(request, target_type, target_id):
             try:
                 request.user.share_meal(Meal.objects.get(pk=target_id))
             except:
-                pass
+                logger.exception('share meal error')
         return create_sucess_json_response(extra_dict={'already_liked': already_liked})
 
 
