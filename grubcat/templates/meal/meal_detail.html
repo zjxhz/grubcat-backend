@@ -113,10 +113,11 @@
                     {% endif %}
                 </div>
 
+            {% if user.is_staff %}
                 <div id="like-wrapper">
                    <span class="like-num">{{ meal.likes_count }}</span> 人 <a id="like-link" class="need-login btn btn-link" href="{% url "add_like" 'meal' meal.id %}" data-login-back-url="{% url 'meal_detail' meal.id %}" >我感兴趣</a>
                 </div>
-
+             {% endif %}
 {#                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">#}
 {#                    <span class="fl">分享到：</span>#}
 {#                    <a class="bds_tsina"></a>#}
