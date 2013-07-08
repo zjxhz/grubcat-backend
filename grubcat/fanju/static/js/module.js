@@ -166,7 +166,7 @@ jQuery(function($){
             return false;
         });
 
-        $(".user-img-wrapper").tooltip({'placement': 'bottom'});
+        $(".user-img-wrapper, #like-link, .like-num").tooltip({'placement': 'bottom'});
 
     }
 
