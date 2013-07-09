@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from taggit.models import Tag
 import time
 from fanju.exceptions import *
-from fanju.models import User, Order, OrderStatus, TransFlow, Meal, UserPhoto, Like
+from fanju.models import User, Order, OrderStatus, TransFlow, Meal, UserPhoto
 import json
 
 SUCESS = "OK"
@@ -25,11 +25,13 @@ def add_like(request, target_type, target_id):
 #     target_type = meal/userphoto/user
     content_type = ContentType.objects.get(app_label="fanju", model=target_type)
     model_cls = content_type.model_class()
-    if model_cls in (Meal, UserPhoto, User):
-        already_liked = not Like.add_like(content_type, target_id, request.user)
-        if not already_liked and model_cls is Meal: #TODO check created
-            request.user.share_meal(Meal.objects.get(pk=target_id))
-        return create_sucess_json_response(extra_dict={'already_liked': already_liked})
+    target = model_cls.objects.get(pk=target_id)
+    already_liked = target.likes.filter(id=request.user.id).exists()
+    if not already_liked:
+        target.likes.add(request.user)
+        if model_cls is Meal:
+            request.user.share_meal(target)
+    return create_sucess_json_response(extra_dict={'already_liked': already_liked})
 
 
 def handle_alipay_back(order_id, alipay_trade_no='', payed_time_str='', check_overtime=False):

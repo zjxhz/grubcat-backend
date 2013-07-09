@@ -293,14 +293,18 @@ class UserListView(ListView):
 
     def get_queryset(self):
         tags = self.request.GET.get('tags')
+        like_target_type = self.request.GET.get('target_type')
+        like_target_id = self.request.GET.get('target_id')
         users = User.objects.filter(
-            status=AuditStatus.APPROVED).exclude(
-            restaurant__isnull=False).select_related('tags').order_by('-id')
+            status=AuditStatus.APPROVED).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             # return users.filter(id__in=[user.id for user in self.request.user.tags.similar_objects()])
             return self.request.user.recommendations
         elif tags:
             return users.filter(tags__name__in=(tags, )).distinct()
+        elif like_target_type:
+            target_model_cls = ContentType.objects.get(app_label='fanju', model=like_target_type).model_class()
+            return target_model_cls.objects.get(pk=like_target_id).likes.select_related('tags').order_by('-avatar')
         else:
             return users
 
@@ -310,12 +314,18 @@ class UserListView(ListView):
 
         if context['page_obj'].has_next():
             next_page_url = reverse_lazy('more_user', kwargs={'page': context['page_obj'].next_page_number()}) + "?"
-            for arg in ('show', 'tags'):
+            for arg in ('show', 'tags', 'target_type', 'target_id'):
                 if self.request.GET.get(arg):
                     next_page_url += ("%s=%s&" % (arg, self.request.GET.get(arg)))
             context['next_page_url'] = next_page_url
 
-        if user.is_authenticated():
+        if self.request.GET.get('target_type'):
+            context['is_like_users'] = True
+        else:
+            context['is_like_users'] = False
+
+
+        if user.is_authenticated() and not context['is_like_users']:
             if not user.tags.all():
                 context['need_edit_tags'] = True
             context['is_approved_user'] = user.status == UserStatus.APPROVED
@@ -337,7 +347,6 @@ class CommentListView(ListView):
     def get_queryset(self):
         comment_type = self.kwargs['comment_type']
         target_id = self.kwargs['target_id']
-        # TODO check login if not meal list
         if comment_type != ObjectType.MEAL and not self.request.user.is_authenticated():
             raise NoRightException
         return Comment.get_comments(comment_type, target_id)

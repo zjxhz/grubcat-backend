@@ -62,42 +62,6 @@ class UserStatus(AuditStatus):
 USER_STATUS_CHOICE = AUDIT_STATUS_CHOICE + ( (UserStatus.BLACKLIST, u'黒名单'),)
 
 
-class Like(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'Owner', related_name='likes')
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    target = generic.GenericForeignKey('content_type', 'object_id')
-
-    @classmethod
-    def add_like(self, content_type, object_id, user):
-        like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=object_id)
-        return created
-
-    @classmethod
-    def enable_like(self, cls):
-
-        def likes(self):
-            content_type = ContentType.objects.get_for_model(self)
-            return Like.objects.filter(content_type=content_type, object_id=self.id).select_related("user")
-
-        def likes_count(self):
-            content_type = ContentType.objects.get_for_model(self)
-            return Like.objects.filter(content_type=content_type, object_id=self.id).count()
-
-        def add_like(self, user):
-            content_type = ContentType.objects.get_for_model(self)
-            like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=self.id)
-            return created
-
-        cls.add_to_class("likes_count", property(likes_count))
-        cls.add_to_class("likes", property(likes))
-        cls.add_to_class("add_like", add_like)
-
-    class Meta:
-        unique_together = (('user', 'content_type', 'object_id'),)
-
-
 class Region(models.Model):
     name = models.CharField(max_length=64)
 
@@ -297,7 +261,7 @@ class Order(models.Model):
             elif meal.status is MealStatus.CREATED_WITH_MENU:
                 meal.status = MealStatus.PUBLISHED
         meal.save()
-        order.customer.share_meal(order.meal)
+        order.customer.share_meal(order.meal, is_join=True)
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
@@ -722,17 +686,21 @@ class User(AbstractUser):
         weibo_client.set_access_token(self.weibo_access_token, str(3600*24*14))
         return weibo_client
 
-    def share_meal(self, meal):
+    def share_meal(self, meal, is_join=False):
         try:
             weibo_client = self.get_webio_client()
             r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
             meal_url = r.urls[0].url_short
-            share_text = u"我刚发现一个有趣的饭局“%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+            if is_join:
+                share_text = u"我刚参加了一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+            else:
+                share_text = u"我刚发现一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+
             # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
             # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
 
             # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
+            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text, visible=2)
         except:
             logger.exception("error when share meal")
 
@@ -748,7 +716,8 @@ class UserPhoto(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
     timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
-
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_photos", verbose_name=u'喜欢该照片的人',
+                                   blank=True, null=True)
 
     def __unicode__(self):
         return str(self.id)
@@ -852,8 +821,8 @@ class Meal(models.Model):
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals", verbose_name=u'参加者',
                                           blank=True, null=True,
                                           through="MealParticipants")
-    # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_meals", verbose_name=u'喜欢该饭局的人', blank=True,
-    #                                null=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_meals", verbose_name=u'喜欢该饭局的人',
+                                   blank=True, null=True)
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
@@ -976,7 +945,8 @@ class Meal(models.Model):
         verbose_name = u'饭局'
         verbose_name_plural = u'饭局'
 
-Like.enable_like(Meal)
+# Like.enable_like(Meal)
+
 
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
@@ -1013,12 +983,10 @@ class Comment(models.Model):
 
     @classmethod
     def get_comment_class(cls, comment_type):
-        if comment_type == ObjectType.MEAL:
-            return MealComment
-        elif comment_type == ObjectType.PHOTO:
-            return PhotoComment
-        elif comment_type == ObjectType.USER:
-            return UserComment
+        comment_content_type = u"%scomment" % comment_type
+        content_type = ContentType.objects.get(app_label="fanju", model=comment_content_type)
+        model_cls = content_type.model_class()
+        return model_cls
 
     @classmethod
     def get_comments(cls, comment_type, target_id):
