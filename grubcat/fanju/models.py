@@ -700,7 +700,7 @@ class User(AbstractUser):
             # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
 
             # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text, visible=2)
+            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
         except:
             logger.exception("error when share meal")
 
