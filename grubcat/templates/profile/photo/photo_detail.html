@@ -29,7 +29,7 @@
         <div id="like-wrapper" class="">
             <a id="like-link" class="btn btn" href="{% url "add_like" 'userphoto' photo.id %}"
                {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
-               <i class="icon-thumbs-up"></i> 赞</a>
+               <i class="icon-thumbs-up"></i>&nbsp;赞</a>
             <a id="like-num" href="{% url 'user_list' %}?target_type=userphoto&target_id={{ photo.id }}"
                target="_blank" class="like-num btn btn-link" title="查看赞的用户">{{ photo.likes.count }}</a>
         </div>
