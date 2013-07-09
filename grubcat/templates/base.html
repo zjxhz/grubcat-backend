@@ -93,7 +93,7 @@
             <div class="container">{% if not user.is_authenticated%}   <span id="restaurant-login-link"><a href="{% url 'restaurant_admin' %}">餐厅登录</a> |</span>  {% endif %}  ©2013 饭聚 浙ICP备13002509号</div>
         </div>
     {% endblock %}
-    <div id="common-data" class="hide" data-uid="{{ user.username.lower }}" data-pwd="{{ user.weibo_access_token }}"
+    <div id="common-data" class="hide" data-uid="{{ user.username.lower|escape_xml }}" data-pwd="{{ user.weibo_access_token }}"
             data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
     {% if user.is_authenticated %}
     <div id="chat-dialog" class="modal fade hide">

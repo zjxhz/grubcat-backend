@@ -23,7 +23,8 @@ def escape_xmpp_node(node):
         node = node.replace('>',  "\\3e")
         node = node.replace('@',  "\\40")
         return node
-    
+
+
 def escape_xmpp_username(username):
     username = username.strip()
     username = username.replace("\\20", " ")
