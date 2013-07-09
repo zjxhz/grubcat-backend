@@ -20,7 +20,7 @@ from fanju.exceptions import *
 from fanju.models import Order, Relationship, Meal
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
-from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip
+from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
 from fanju.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from fanju.forms import *
 from django.conf import settings
@@ -204,18 +204,18 @@ def get_user_info(request):
     result = {}
     if request.method == 'POST':
         if request.POST.get("ids"):
-            usernames = request.POST.get("ids").split(",")
+            usernames = escape_xmpp_username(request.POST.get("ids")).split(",")
             users = User.objects.filter(username__in=usernames)
             result = []
             for user in users:
-                result.append({"id": user.username.lower(), "name": user.name, "avatarUrl": user.small_avatar,
+                result.append({"id": escape_xmpp_node(user.username.lower()), "name": user.name, "avatarUrl": user.small_avatar,
                                'profileUrl': user.get_absolute_url()})
         elif request.POST.get("id"):
-            username = request.POST.get("id")
+            username = escape_xmpp_username(request.POST.get("id"))
             user = User.objects.filter(username=username)
             if len(user):
                 user = user[0]
-                result = {"id": user.username.lower(), "name": user.name, "avatarUrl": user.small_avatar,
+                result = {"id": escape_xmpp_node(user.username.lower()), "name": user.name, "avatarUrl": user.small_avatar,
                           'profileUrl': user.get_absolute_url()}
             else:
                 result = {}

@@ -1,6 +1,8 @@
 from django import template
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.template.defaultfilters import stringfilter
+from fanju.util import *
 
 register = template.Library()
 
@@ -22,3 +24,13 @@ def static_asset(path):
     if path.startswith(static_url):
         path = path.replace(static_url, "", len(static_url))
     return static(path)
+
+
+
+@register.filter("escape_xml", is_safe=True)
+@stringfilter
+def escape_filter(value):
+    """
+    Marks the value as a string that should not be auto-escaped.
+    """
+    return escape_xmpp_node(value)

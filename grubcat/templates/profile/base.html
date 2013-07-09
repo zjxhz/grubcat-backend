@@ -16,11 +16,11 @@
                 <div class="btn-group">
                     {% if not is_mine %}
                         {% if profile not in user.following.all %}
-                            <a href="{% url 'follow' profile.id %}" class="btn btn-follow" data-uid="{{ profile.username }}"><i class="icon-star"></i> 关注</a>
+                            <a href="{% url 'follow' profile.id %}" class="btn btn-follow" data-uid="{{ profile.username.lower|escape_xml }}"><i class="icon-star"></i> 关注</a>
                         {% else %}
                             <a href="{% url 'un_follow' profile.id %}" class="btn btn-unfollow">取消关注</a>
                         {% endif %}
-                        <a class="btn btn-chat" data-uid="{{ profile.username }}"><i class="icon-comment"></i> 聊天</a>
+                        <a class="btn btn-chat" data-uid="{{ profile.username|lower|escape_xml }}"><i class="icon-comment"></i> 聊天</a>
                     {% endif %}
                 </div>
             </li>
