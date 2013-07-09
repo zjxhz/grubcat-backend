@@ -75,6 +75,9 @@ class PhotoDetailView(DetailView):
             next_photo = UserPhoto.objects.filter(user=self.object.user).order_by('id')[0]
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
+
+        context['is_already_liked'] = self.request.user.is_authenticated() and self.object.likes.filter(
+            id=self.request.user.id).exists()
         context['profile'] = self.object.user
         set_profile_common_attrs(context, self.request)
         return context
@@ -319,11 +322,14 @@ class UserListView(ListView):
                     next_page_url += ("%s=%s&" % (arg, self.request.GET.get(arg)))
             context['next_page_url'] = next_page_url
 
-        if self.request.GET.get('target_type'):
+        like_target_type = self.request.GET.get('target_type')
+        if like_target_type:
             context['is_like_users'] = True
         else:
             context['is_like_users'] = False
 
+        if like_target_type == 'meal':
+            context['like_text'] = u'感兴趣'
 
         if user.is_authenticated() and not context['is_like_users']:
             if not user.tags.all():
@@ -446,6 +452,9 @@ class MealDetailView(OrderCreateView):
             context['just_created'] = True
         else:
             context['just_created'] = False
+
+        context['is_already_liked'] = self.request.user.is_authenticated() and meal.likes.filter(id=self.request.user.id).exists()
+
         return context
 
 

@@ -43,7 +43,7 @@
                 <a class="btn-link add-tag-link" href="#" data-tags='{{ request.GET.tags }}'>添加到我的兴趣</a>
             {% endif %}
             {% if is_like_users %}
-                  <h4 class="like-users-title">感兴趣的用户</h4>
+                  <h4 class="like-users-title">{{ like_text|default:'赞' }}的用户</h4>
             {% endif %}
             {% if show_common_tags_link %}
                 <a class='show-common-link' href="{% url 'user_list' %}?show=common" class="fr">志趣相投</a>

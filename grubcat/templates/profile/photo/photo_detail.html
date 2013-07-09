@@ -26,7 +26,13 @@
             <span class="photo-direction photo-prev " url='{% url 'photo_detail' pre_photo.id %}' title="上一张"></span>
             <span class="photo-direction photo-next " url='{% url 'photo_detail' next_photo.id %}' title="下一张"></span>
         </div>
-
+        <div id="like-wrapper" class="">
+            <a id="like-link" class="btn btn" href="{% url "add_like" 'userphoto' photo.id %}"
+               {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
+               <i class="icon-thumbs-up"></i> 赞</a>
+            <a id="like-num" href="{% url 'user_list' %}?target_type=userphoto&target_id={{ photo.id }}"
+               target="_blank" class="like-num btn btn-link" title="查看赞的用户">{{ photo.likes.count }}</a>
+        </div>
     {% include 'comments/comment_outer_frag.html' with target=photo comment_type='photo' %}
     </div>
 

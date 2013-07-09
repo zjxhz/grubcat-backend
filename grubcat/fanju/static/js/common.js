@@ -133,17 +133,43 @@ $(document).ready(function ($) {
             })
     }
 
-    var $likeLink = $("#like-link")
-    if($likeLink[0]){
+    var $likeLink = $("#like-link"), $mealDetailPage = $("#meal-detail-page")
+    if($likeLink[0] ){
+        var orginalLikeLink = $likeLink.html(), isAlreadyLiked = $likeLink.data("isAlreadyLiked"),
+            likeText = $likeLink.data("likeText") || "赞"
+
+
+        $likeLink.hover(function () {
+            if (isAlreadyLiked) {
+                $likeLink.html("&nbsp;已" + likeText)
+            }
+        }, function () {
+            $likeLink.html(orginalLikeLink)
+        })
+
+        $likeLink.click(function () {
+            if (isAlreadyLiked)
+                return false
+            $.post($likeLink.attr("href"), function (data) {
+                if (!data.already_liked) {
+                    var $likeNum = $("#like-wrapper .like-num")
+                    $likeNum.text(parseInt($likeNum.text()) + 1)
+                }
+                isAlreadyLiked = true
+            })
+
+            return false
+        })
+
+    } else if($likeLink[0]){
         $likeLink.click(function(){
             $.post($likeLink.attr("href"), function(data){
                 var alreadyLiked = data.already_liked
-                if(alreadyLiked){
-                     noty({text:'你对我们这个饭局很感兴趣啊，</br>不妨来参加下，大家一起交个朋友！', timeout:5000})
-                } else{
+                if (alreadyLiked) {
+                    noty({text: '你对我们这个饭局很感兴趣啊，</br>不妨来参加下，大家一起交个朋友！', timeout: 3000})
+                } else {
                     var $likeNum = $("#like-wrapper .like-num")
-                    $likeNum.text(parseInt($likeNum.text())  + 1)
-//                    noty({text:'还有!', timeout:1000})
+                    $likeNum.text(parseInt($likeNum.text()) + 1)
                 }
             })
 

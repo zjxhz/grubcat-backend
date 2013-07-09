@@ -115,7 +115,9 @@
 
                 <div id="like-wrapper">
                     <a id="like-link" class="btn btn  need-login" href="{% url "add_like" 'meal' meal.id %}"
-                       data-login-back-url="{% url 'meal_detail' meal.id %}"> <i class="icon-star"></i> 感兴趣</a>
+                       data-login-back-url="{% url 'meal_detail' meal.id %}" data-like-text="感兴趣"
+                            {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
+                        <i class="icon-star"></i> 感兴趣</a>
                     <a id="like-num" href="{% url 'user_list' %}?target_type=meal&target_id={{ meal.id }}"
                        target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes.count }}</a>
                 </div>
