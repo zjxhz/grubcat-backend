@@ -115,8 +115,9 @@
 
                 <div id="like-wrapper">
                     <a id="like-link" class="btn btn  need-login" href="{% url "add_like" 'meal' meal.id %}"
-                       data-login-back-url="{% url 'meal_detail' meal.id %}" >感兴趣</a>
-                    <span class="like-num">{{ meal.likes_count }}</span> 人 &nbsp;
+                       data-login-back-url="{% url 'meal_detail' meal.id %}"> <i class="icon-star"></i> 感兴趣</a>
+                    <a id="like-num" href="{% url 'user_list' %}?target_type=meal&target_id={{ meal.id }}"
+                       target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes.count }}</a>
                 </div>
 {#                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">#}
 {#                    <span class="fl">分享到：</span>#}
