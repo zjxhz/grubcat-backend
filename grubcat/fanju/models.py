@@ -1208,7 +1208,7 @@ def _meal_joined(meal, joiner):
         pubsub.publish(node_meal_participant % meal.id, payload)
         pubsub.subscribe(joiner, node_meal_participant % meal.id)
 
-        pubsub.publish(node_meal_comment % meal.id, payload)
+        pubsub.publish(node_meal_participant % meal.id, payload)
         pubsub.subscribe(joiner, node_meal_comment % meal.id)
 
         #TODO how about quit the meal
