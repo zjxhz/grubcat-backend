@@ -284,12 +284,43 @@ class UserPhotoAdmin(admin.ModelAdmin):
     resend_message.short_description = u"重新发送用户上传照片消息"
 
 
+class CommentAdminForm(forms.ModelForm):
+    comment = forms.CharField(widget=Textarea)
+
+
+class MealCommentAdminForm(CommentAdminForm):
+    class Meta:
+        model = MealComment
+
+
+class UserCommentAdminForm(CommentAdminForm):
+    class Meta:
+        model = UserComment
+
+
+class PhotoCommentAdminForm(CommentAdminForm):
+    class Meta:
+        model = PhotoComment
+
+
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'target', 'user', 'comment', 'status',)
     list_filter = ('status', 'target',)
     list_editable = ('status',)
-    ordering = ('-target', '-id')
+    ordering = ('-id', )
     actions = audit_actions
+
+
+class UserCommentAdmin(CommentAdmin):
+    form = UserCommentAdminForm
+
+
+class MealCommentAdmin(CommentAdmin):
+    form = MealCommentAdminForm
+
+
+class PhotoCommentAdmin(CommentAdmin):
+    form = PhotoCommentAdminForm
 
 
 admin.site.register(Meal, MealAdmin)
@@ -300,9 +331,9 @@ admin.site.register(DishCategory, DishCategoryAdmin)
 admin.site.register(Menu, MenuAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(UserTag)
-admin.site.register(MealComment, CommentAdmin)
-admin.site.register(PhotoComment, CommentAdmin)
-admin.site.register(UserComment, CommentAdmin)
+admin.site.register(MealComment, MealCommentAdmin)
+admin.site.register(PhotoComment, PhotoCommentAdmin)
+admin.site.register(UserComment, UserCommentAdmin)
 admin.site.register(User, UserAdmin)
 # admin.site.register(GroupCategory)
 # admin.site.register(Group, GroupAdmin)

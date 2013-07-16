@@ -349,7 +349,11 @@ class UserLocation(models.Model):
     updated_at = models.DateTimeField()
 
     def __unicode__(self):
-        return u'%s, %s' % (self.lat, self.lng)
+
+        if self.lat == settings.FAKED_LAT and self.lng == settings.FAKED_LNG:
+            return u'(%s) fake location'
+        else:
+            return u'%s, %s' % (self.lat, self.lng)
 
 class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
