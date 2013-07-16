@@ -184,7 +184,11 @@ class Menu(models.Model):
         return self.get_cover_thumbnail(settings.MINI_MENU_COVER_SIZE)
 
     def __unicode__(self):
-        return u'%s %s' % (self.restaurant.name, self.name, )
+        if self.status == MenuStatus.PUBLISHED:
+            status = u'已发布'
+        else:
+            status = u'已删除'
+        return u'(%s) %s %s (%s元)' % (status, self.restaurant.name, self.name, str(self.average_price))
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
