@@ -127,12 +127,17 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     search_fields = ('username', 'name')
     ordering = ('-id',)
 
-    actions = ['resend_message'] + audit_actions
+    actions = ['resend_message', 'share_fanju'] + audit_actions
 
     def resend_message(self, request, queryset):
         for user in queryset:
             pubsub_user_created(User, user, True)
         self.message_user(request, "成功发送用户创建消息!")
+
+    def share_fanju(self, request, queryset):
+        for user in queryset:
+            user.share_fanju()
+        self.message_user(request, "成功分享饭聚!")
 
     resend_message.short_description = u"重新发送用户创建消息"
 
