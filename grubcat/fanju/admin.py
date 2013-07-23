@@ -15,7 +15,7 @@ from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     pubsub_user_created, PhotoRequest, meal_created, AuditStatus
 from image_cropping.admin import ImageCroppingMixin
 import datetime
-
+from fanju import tasks
 
 def approve(self, request, queryset):
     queryset.update(status=AuditStatus.APPROVED)
@@ -136,7 +136,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
 
     def share_fanju(self, request, queryset):
         for user in queryset:
-            user.share_fanju()
+            tasks.share_fanju.delay(user.id)
         self.message_user(request, "成功分享饭聚!")
 
     resend_message.short_description = u"重新发送用户创建消息"

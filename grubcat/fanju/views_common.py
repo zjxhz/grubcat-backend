@@ -11,6 +11,7 @@ from taggit.models import Tag
 import time
 from fanju.exceptions import *
 from fanju.models import User, Order, OrderStatus, TransFlow, Meal, UserPhoto
+from fanju import tasks
 import json
 
 SUCESS = "OK"
@@ -30,7 +31,7 @@ def add_like(request, target_type, target_id):
     if not already_liked:
         target.likes.add(request.user)
         if model_cls is Meal:
-            request.user.share_meal(target)
+            tasks.share_meal.delay(request.user.id, target.id)
     return create_sucess_json_response(extra_dict={'already_liked': already_liked})
 
 

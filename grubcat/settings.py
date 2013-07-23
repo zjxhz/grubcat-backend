@@ -69,6 +69,8 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.sites',
     'django.contrib.admin',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 SERIALIZATION_MODULES = {
@@ -216,6 +218,13 @@ CHATDOMAIN = "fanjoin.com"
 ###################  admin #######################
 ADMIN_TOOLS_INDEX_DASHBOARD = 'grubcat.dashboard.CustomIndexDashboard'
 ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'grubcat.dashboard.CustomAppIndexDashboard'
+
+################### celery #######################
+import djcelery
+djcelery.setup_loader()
+
+BROKER_URL = 'redis://localhost:6379/0'
+# BROKER_URL = 'django://'
 
 ###################### msic ######################
 SHOW_EXCEPTION_DETAIL = False

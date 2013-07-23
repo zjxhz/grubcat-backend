@@ -265,7 +265,8 @@ class Order(models.Model):
             elif meal.status is MealStatus.CREATED_WITH_MENU:
                 meal.status = MealStatus.PUBLISHED
         meal.save()
-        order.customer.share_meal(order.meal, is_join=True)
+        from fanju import tasks
+        tasks.share_meal.delay(order.customer.id, order.meal.id, is_join=True)
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
@@ -693,38 +694,6 @@ class User(AbstractUser):
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(self.weibo_access_token, str(3600*24*14))
         return weibo_client
-
-    def share_fanju(self):
-        try:
-            weibo_client = self.get_webio_client()
-            r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN)
-            fanju_url = r.urls[0].url_short
-            share_texts = (u'你敢和志趣相投的陌生人一起吃饭，一起交流吗？反正我敢！我在＠饭聚 ',
-                           u'刚注册了饭聚网，一个严肃却又有趣的陌生人线下聚会平台, 不用再担心被放鸽子了！我在＠饭聚 ',
-                           u'一个靠谱的陌生人线下聚会平台，不用再担心被放鸽子了。赶快来看看吧，因为在这里你可以找到志同道合的朋友，找到心仪的TA ＠饭聚 ')
-
-            share_text = "%s%s" % (share_texts[2], fanju_url)
-            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
-        except:
-            logger.exception("error when share fanju")
-
-    def share_meal(self, meal, is_join=False):
-        try:
-            weibo_client = self.get_webio_client()
-            r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
-            meal_url = r.urls[0].url_short
-            if is_join:
-                share_text = u"我刚参加了一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
-            else:
-                share_text = u"我刚发现一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
-
-            # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
-            # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
-
-            # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
-        except:
-            logger.exception("error when share meal")
 
     def __unicode__(self):
         return self.name if self.name is not None else self.username
