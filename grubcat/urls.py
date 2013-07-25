@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import TemplateView
 from fanju.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
-from fanju.decorators import restaurant_login_required, cache_for_anonymous, cache_page_for_anonymous
+from fanju.decorators import restaurant_login_required, cache_page_for_anonymous
 from fanju.views import upload_app
 from fanju.views_common import list_tags, add_tag, add_like
 from fanju.views import *
