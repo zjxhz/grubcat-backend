@@ -66,7 +66,8 @@ def test_restaurant_user(user):
 
 class CacheMdidlewareForAnonymous(CacheMiddleware):
     def process_request(self, request):
-        if self.cache_anonymous_only and request.user.is_authenticated():
+        if request.user.is_authenticated():
+            request._cache_update_cache = False
             return None
         else:
             return super(CacheMdidlewareForAnonymous, self).process_request(request)

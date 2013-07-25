@@ -72,6 +72,9 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
     'clear_cache',
+    'cacheops',
+    'django_pickling'
+
 )
 
 SERIALIZATION_MODULES = {
@@ -135,14 +138,56 @@ CACHES = {
         'KEY_PREFIX': 'fj'
     },
 }
-
-# JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_fj'
 CACHE_MIDDLEWARE_SECONDS = 3600
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
-# CACHE_EMPTY_QUERYSETS = True
 
+CACHEOPS_REDIS = {
+    'host': 'localhost', # redis-server is on same machine
+    'port': 6379,        # default redis port
+    'db': 1,             # SELECT non-default redis database
+                         # using separate redis db or redis instance
+                         # is highly recommended
+    'socket_timeout': 3,
+}
+
+CACHEOPS = {
+    # Automatically cache any User.objects.get() calls for 15 minutes
+    # This includes request.user or post.author access,
+    # where Post.author is a foreign key to auth.User
+    'fanju.meal': ('all', 60 * 60 * 6),
+    'fanju.user': ('all', 60 * 60 * 6),
+    'fanju.restaurant': ('all', 60 * 60 * 12),
+    'fanju.userlocation': ('all', 60 * 60 * 12),
+    'fanju.menu': ('all', 60 * 60 * 12),
+    'fanju.dish': ('all', 60 * 60 * 12),
+    'fanju.dishcategory': ('all', 60 * 60 * 12),
+    'fanju.userphoto': ('all', 60 * 10),
+    'fanju.visitor': ('all', 60 * 10),
+    'fanju.relationship': ('all', 60 * 10),
+    'fanju.mealcomment': ('all', 60 * 60),
+    'fanju.usercomment': ('all', 60 * 60),
+    'fanju.photocomment': ('all', 60 * 60),
+    'fanju.order': ('get', 60 * 60),
+    # 'fanju.usertag': ('all', 60 * 60),
+    # 'fanju.taggeduser': ('all', 60 * 60),
+    # 'taggit_tag': ('all', 60 * 60),
+
+    # Automatically cache all gets, queryset fetches and counts
+    # to other django.contrib.auth models for an hour
+    # 'auth.*': ('all', 60*60),
+
+    # Enable manual caching on all news models with default timeout of an hour
+    # Use News.objects.cache().get(...)
+    #  or Tags.objects.filter(...).order_by(...).cache()
+    # to cache particular ORM request.
+    # Invalidation is still automatic
+    # 'news.*': ('just_enable', 60*60),
+
+    # Automatically cache count requests for all other models for 15 min
+    # '*.*': ('count', 60*15),
+}
+CACHEOPS_DEGRADE_ON_FAILURE=True
 ###################### static ######################
 STATIC_URL = '/static/'
 # STATIC_URL = 'http://fanju.dn.qbox.me/'

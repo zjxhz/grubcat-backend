@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 from taggit.models import Tag
 import time
@@ -96,7 +97,6 @@ def create_failure_json_response(message=u"操作失败", extra_dict=None):
 
 def create_no_right_response(message=u'对不起，您没有权限执行此操作'):
     return create_json_response(ERROR, message)
-
 
 def list_tags(request):
     query = request.GET.get('q', '')

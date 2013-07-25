@@ -14,8 +14,8 @@
                     <div class="user-info">
                         {% if user.motto %}<p> “ {{ user.motto }} ”</p>{% endif %}
                         <ul class="tags">
-                            {% for tag in tags %}
-                                <li>{{ tag.name }}</li>
+                            {% for tag_name in tags %}
+                                <li>{{ tag_name }}</li>
                             {% endfor %}
                         </ul>
                     </div>
