@@ -35,9 +35,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'fanju.exceptions.ProcessExceptionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
     'django.middleware.transaction.TransactionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     )
 
@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'djcelery',
     'kombu.transport.django',
+    'clear_cache',
 )
 
 SERIALIZATION_MODULES = {
@@ -114,6 +115,33 @@ USE_I18N = True
 USE_L10N = True
 
 AUTH_USER_MODEL = 'fanju.User'
+
+
+##################### chache ######################
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        # 'BACKEND': 'johnny.backends.redis.RedisCache',
+        'LOCATION': '127.0.0.1:6379',
+        'TIMEOUT': 3600,
+        # 'JOHNNY_CACHE' : True,
+        'OPTIONS': {
+            # 'DB': 1,
+            # 'PASSWORD': 'yadayada',
+            'MAX_ENTRIES': 50000,
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+        'KEY_PREFIX': 'fj'
+    },
+}
+
+# JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_fj'
+CACHE_MIDDLEWARE_SECONDS = 3600
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+# CACHE_EMPTY_QUERYSETS = True
 
 ###################### static ######################
 STATIC_URL = '/static/'
@@ -174,6 +202,7 @@ MINI_MENU_COVER_SIZE = (60, 40)
 #relative to media root
 DEFAULT_MALE_AVATAR = 'default/male.png'
 DEFAULT_FEMALE_AVATAR = 'default/female.png'
+
 
 ###################### pay ######################
 PAY_OVERTIME = 35
