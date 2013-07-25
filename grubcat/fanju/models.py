@@ -2,36 +2,58 @@
 from datetime import datetime, date, timedelta
 from datetime import time as dtime
 import logging
-import time
 import threading
+import json
+import random
+
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse_lazy
+from django.core.cache import cache
 from django.db import models, IntegrityError
 from django.db.models import Max
-from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 from easy_thumbnails.files import get_thumbnailer
-from fanju.exceptions import BusinessException, AlreadyJoinedError, \
-    NoAvailableSeatsError
-from fanju.util import pubsub
 from image_cropping.fields import ImageRatioField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
-import json
-import os
 import weibo
-import random
+
+from fanju.exceptions import BusinessException, AlreadyJoinedError, \
+    NoAvailableSeatsError
+from fanju.util import pubsub
+
 
 #import redis
 # Create your models here.
 logger = logging.getLogger(__name__)
 
+
+class CacheKey:
+    USER_TAG = "user_tags_%s"
+    MEAL_PAYED_ORDERS = "meal_payed_orders_%s"
+
+
+class CacheUtil:
+
+    @classmethod
+    def get_user_tags(cls, user):
+        user_tags = cache.get(CacheKey.USER_TAG % user.id)
+        if user_tags is None:
+            user_tags = user.tags.all()
+            cache.set(CacheKey.USER_TAG % user.id, user_tags)
+        return user_tags
+
+    @classmethod
+    def get_meal_payed_orders(cls, meal):
+        payed_orders = cache.get(CacheKey.MEAL_PAYED_ORDERS % meal.id)
+        if payed_orders is None:
+            payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED)).select_related('customer')
+            cache.set(CacheKey.MEAL_PAYED_ORDERS % meal.id, payed_orders)
+        return payed_orders
 
 class Privacy:
     PUBLIC = 0
@@ -322,7 +344,7 @@ class Relationship(models.Model):
         verbose_name_plural = u'用户关系'
 
 
-class Visitor(models.Model):
+class Visitor( models.Model):
     from_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="host")
     to_person = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="visitor")
 
@@ -408,6 +430,10 @@ INDUSTRY_CHOICE = (
 )
 
 
+# class MyUserManager(UserManager, CachingManager):
+#     pass
+
+
 class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
@@ -433,9 +459,14 @@ class User(AbstractUser):
     mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
     status = models.SmallIntegerField(u'状态', default=UserStatus.WAIT_TO_AUDIT, choices=USER_STATUS_CHOICE)
 
+    # objects = MyUserManager()
+
     @models.permalink
     def get_absolute_url(self):
         return 'user_detail', [str(self.id)]
+
+    def get_tags_from_cache(self):
+        return CacheUtil.get_user_tags(self)
 
     def follow(self, followee):
         if self == followee:
@@ -786,7 +817,7 @@ MEAL_STATUS_CHOICE = (
 )
 
 
-class Meal(models.Model):
+class Meal( models.Model):
     topic = models.CharField(u'主题', max_length=64)
     introduction = models.CharField(u'简介', max_length=1024)
     #    time = models.DateTimeField(u'开始时间', )
@@ -817,23 +848,30 @@ class Meal(models.Model):
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
+
     @classmethod
     def get_all_meals(cls):
-        return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).select_related("menu")
+        return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by('start_date','start_time')
 
 
     @classmethod
     def get_upcomming_meals(cls):
-        return cls.get_all_meals().filter(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "start_date",
-            "start_time")
+        upcomming_meals = []
+        for meal in cls.get_all_meals():
+            if meal.start_date > date.today() or (meal.start_date==date.today() and meal.start_time > datetime.now().time()):
+                upcomming_meals.append(meal)
+        return upcomming_meals
+
 
     @classmethod
     def get_passed_meals(cls):
-        return cls.get_all_meals().exclude(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "-start_date", "-start_time")
+        passed_meals = []
+        for meal in cls.get_all_meals():
+            if meal.start_date < date.today() or (meal.start_date == date.today() and meal.start_time < datetime.now().time()):
+                passed_meals.append(meal)
+        passed_meals.reverse()
+        return passed_meals
+
 
     def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
@@ -881,7 +919,7 @@ class Meal(models.Model):
 
     @property
     def paid_orders(self):
-        return Order.objects.filter(meal=self).filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+        return CacheUtil.get_meal_payed_orders(self)
 
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
@@ -971,18 +1009,17 @@ class Comment(models.Model):
     status = models.SmallIntegerField(u'状态', default=CommentStatus.WAIT_TO_AUDIT, choices=AUDIT_STATUS_CHOICE)
     parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True)
 
-
     @classmethod
     def get_comment_class(cls, comment_type):
         comment_content_type = u"%scomment" % comment_type
-        content_type = ContentType.objects.get(app_label="fanju", model=comment_content_type)
+        content_type = ContentType.objects.get_by_natural_key("fanju", comment_content_type)
         model_cls = content_type.model_class()
         return model_cls
 
     @classmethod
     def get_comments(cls, comment_type, target_id):
         return cls.get_comment_class(comment_type).objects.filter(target_id=target_id, status__in=(
-            CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)).select_related('parent__user', 'user')
+            CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)).select_related('parent__user', 'user').order_by('id')
 
     @property
     def time_gap(self):
@@ -1048,9 +1085,12 @@ class UserComment(Comment):
 
 ####################################################  POST SAVE   #######################################
 
-@receiver(post_save, sender=User, dispatch_uid='set_default_avatar')
-def set_default_avatar(sender, instance, created, **kwargs):
-    user = instance
+@receiver(post_save, sender=User, dispatch_uid='profile_changed')
+def profile_changed(sender, instance, created, **kwargs):
+    set_default_avatar(instance)
+    cache.delete(CacheKey.USER_TAG % instance.id)
+
+def set_default_avatar(user):
     need_set_default_avatar = False
     if not user.avatar:
         need_set_default_avatar = True
@@ -1342,3 +1382,11 @@ def meal_commented(sender, instance, created, **kwargs):
             playlaod_json['event'] = event
             playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
             pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
+
+
+@receiver(post_save, sender=Order, dispatch_uid="order_changed")
+def order_changed(sender, instance, created, **kwargs):
+    order = instance
+
+    if not order.status == OrderStatus.CREATED:
+        cache.delete(CacheKey.MEAL_PAYED_ORDERS % order.meal.id)

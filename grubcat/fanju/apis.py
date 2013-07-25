@@ -430,7 +430,7 @@ class UserResource(EOResource):
             else:
                 return http.HttpBadRequest()
         else:
-            return self.get_my_list(UserTagResource(), user.tags.all(), request) 
+            return self.get_my_list(UserTagResource(), user.get_tags_from_cache(), request)
 
     # we need to do the filtering of list by ourselves as tastypie filters only queryset
     def filter_list(self, request, users):

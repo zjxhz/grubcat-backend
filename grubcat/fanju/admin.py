@@ -104,7 +104,7 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     avatar_thumb.short_description = u'头像'
 
     def tags_plain(self, instance):
-        return edit_string_for_tags(instance.tags.all())
+        return edit_string_for_tags(instance.get_tags_from_cache())
     tags_plain.short_description = u'兴趣'
 
     list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )

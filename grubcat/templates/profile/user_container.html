@@ -1,23 +1,28 @@
+{% load cache %}
+
 <div id="user-container" class="infinite-scroll">
     {% for user in user_list %}
-        <div class="box ">
-            <div class="user-img">
-                <a href="{% url 'user_detail' user.id %}" title="{{ user.name|default:'' }}" target="_blank">
-                    <img src="{{ user.big_avatar }}" alt="{{ user.name|default:'' }}" width="175" height="175">
-                </a>
-            </div>
-
-            {% if user.motto or user.tags.all %}
-                <div class="user-info">
-                    {% if user.motto %}<p> “ {{ user.motto }} ”</p>{% endif %}
-                    <ul class="tags">
-                        {% for tag in user.tags.all %}
-                            <li>{{ tag.name }}</li>
-                        {% endfor %}
-                    </ul>
+{#        {% cache 600 user_box user.id %}#}
+            <div class="box ">
+                <div class="user-img">
+                    <a href="{% url 'user_detail' user.id %}" title="{{ user.name|default:'' }}" target="_blank">
+                        <img src="{{ user.big_avatar }}" alt="{{ user.name|default:'' }}" width="175" height="175">
+                    </a>
                 </div>
-            {% endif %}
-        </div>
+                {% with tags=user.get_tags_from_cache %}
+                {% if user.motto or tags %}
+                    <div class="user-info">
+                        {% if user.motto %}<p> “ {{ user.motto }} ”</p>{% endif %}
+                        <ul class="tags">
+                            {% for tag in tags %}
+                                <li>{{ tag.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            </div>
+{#        {% endcache %}#}
     {% endfor %}
 </div>
 {% if need_edit_tags_again %}

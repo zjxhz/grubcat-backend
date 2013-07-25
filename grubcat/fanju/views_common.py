@@ -24,7 +24,7 @@ order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 @require_POST
 def add_like(request, target_type, target_id):
 #     target_type = meal/userphoto/user
-    content_type = ContentType.objects.get(app_label="fanju", model=target_type)
+    content_type = ContentType.objects.get_by_natural_key("fanju", target_type)
     model_cls = content_type.model_class()
     target = model_cls.objects.get(pk=target_id)
     already_liked = target.likes.filter(id=request.user.id).exists()

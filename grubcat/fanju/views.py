@@ -4,6 +4,7 @@ import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
@@ -17,7 +18,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
 from fanju.exceptions import *
-from fanju.models import Order, Relationship, Meal
+from fanju.models import Order, Relationship, Meal,CacheKey
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
 from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
@@ -31,6 +32,7 @@ logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
 
 ###Photo related views ###
+
 
 
 def photo_request(request, host_id):
@@ -189,7 +191,7 @@ class MealCreateView(CreateView):
 class MealListView(ListView):
     template_name = "meal/meal_list.html"
     context_object_name = "meal_list"
-    #TODO add filter to queyset
+
     def get_queryset(self):
         return Meal.get_upcomming_meals()
 
@@ -299,14 +301,14 @@ class UserListView(ListView):
         like_target_type = self.request.GET.get('target_type')
         like_target_id = self.request.GET.get('target_id')
         users = User.objects.filter(
-            status=AuditStatus.APPROVED).select_related('tags').order_by('-id')
+            status=AuditStatus.APPROVED).order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             # return users.filter(id__in=[user.id for user in self.request.user.tags.similar_objects()])
             return self.request.user.recommendations
         elif tags:
             return users.filter(tags__name__in=(tags, )).distinct()
         elif like_target_type:
-            target_model_cls = ContentType.objects.get(app_label='fanju', model=like_target_type).model_class()
+            target_model_cls = ContentType.objects.get_by_natural_key('fanju', like_target_type).model_class()
             return target_model_cls.objects.get(pk=like_target_id).likes.select_related('tags').order_by('-avatar')
         else:
             return users
@@ -330,16 +332,19 @@ class UserListView(ListView):
 
         if like_target_type == 'meal':
             context['like_text'] = u'感兴趣'
+        if user.is_authenticated():
+            user_tags = user.get_tags_from_cache()
+            context['user_tags'] = user_tags
 
         if user.is_authenticated() and not context['is_like_users']:
-            if not user.tags.all():
+            if not user_tags:
                 context['need_edit_tags'] = True
             context['is_approved_user'] = user.status == UserStatus.APPROVED
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 2:
+            elif user_tags and not context['page_obj'].has_next() and context['page_obj'].number < 2:
                 context['need_edit_tags_again'] = True
-            if self.request.GET.get('tags') and not self.request.user.tags.filter(
+            if self.request.GET.get('tags') and not user_tags.filter(
                     name=self.request.GET.get('tags')).exists():
                 context['show_add_tag'] = True
         return context
@@ -431,8 +436,7 @@ class MealDetailView(OrderCreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
         try:
-            meal = Meal.objects.select_related('menu__restaurant', ).prefetch_related('participants').get(
-                pk=self.kwargs.get('meal_id'))
+            meal = Meal.objects.select_related('menu__restaurant', ).get(pk=self.kwargs.get('meal_id'))
             context['meal'] = meal
         except ObjectDoesNotExist:
             raise Http404(u'对不起，该饭局不存在！')
@@ -442,7 +446,7 @@ class MealDetailView(OrderCreateView):
         context['payed_orders'] = payed_orders
 
         if self.request.user.is_authenticated():
-            my_orders = payed_orders.filter(customer=self.request.user)
+            my_orders = [o for o in payed_orders if o.customer==self.request.user]
             if len(my_orders) == 1:
                 context['order'] = my_orders[0]
             elif len(my_orders) > 1:
