@@ -9,7 +9,7 @@ FREE_PAY_USER_ID = ('1652340607', '', '')
 ###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False
-ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com')
+ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com', '*.ifunjoin.com:8001')
 SITE_ROOT = '/home/fanju/'
 
 DATABASES = {
