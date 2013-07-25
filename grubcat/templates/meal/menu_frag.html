@@ -1,6 +1,6 @@
 {#used in meal detail page ,today meal list page, create a meal page, check in page#}
 {% load cache %}
-{% cache 3600 menu menu.id %}
+{% cache 36000 menu menu.id %}
 <dl class="menu-items">
     {% for item in menu.items %}
         {% if item.num %}

@@ -34,8 +34,6 @@ logger = logging.getLogger(__name__)
 
 class CacheKey:
     USER_TAG = "user_tags_%s"
-    MEAL_PAYED_ORDERS = "meal_payed_orders_%s"
-
 
 class CacheUtil:
 
@@ -43,17 +41,10 @@ class CacheUtil:
     def get_user_tags(cls, user):
         user_tags = cache.get(CacheKey.USER_TAG % user.id)
         if user_tags is None:
-            user_tags = user.tags.all()
+            user_tags = [tag.name for tag in user.tags.all()]
             cache.set(CacheKey.USER_TAG % user.id, user_tags)
         return user_tags
 
-    @classmethod
-    def get_meal_payed_orders(cls, meal):
-        payed_orders = cache.get(CacheKey.MEAL_PAYED_ORDERS % meal.id)
-        if payed_orders is None:
-            payed_orders = Order.objects.filter(meal=meal, status__in=(OrderStatus.PAYIED, OrderStatus.USED)).select_related('customer')
-            cache.set(CacheKey.MEAL_PAYED_ORDERS % meal.id, payed_orders)
-        return payed_orders
 
 class Privacy:
     PUBLIC = 0
@@ -210,7 +201,7 @@ class Menu(models.Model):
             status = u'已发布'
         else:
             status = u'已删除'
-        return u'(%s) %s %s (%s元)' % (status, self.restaurant.name, self.name, str(self.average_price))
+        return u'(%s) %s %s %s (%s元)' % (status, str(self.id), self.restaurant.name, self.name, str(self.average_price))
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
@@ -430,10 +421,6 @@ INDUSTRY_CHOICE = (
 )
 
 
-# class MyUserManager(UserManager, CachingManager):
-#     pass
-
-
 class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
@@ -514,17 +501,28 @@ class User(AbstractUser):
         else:
             return False
 
-    def get_passed_orders(self):
-        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
-            Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
-                                                     meal__start_time__lt=datetime.now().time())).order_by(
-            "meal__start_date", "meal__start_time").select_related('meal')
+    def get_payed_orders(self):
+        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).order_by(
+            "meal__start_date", "meal__start_time").cache()
 
-    def get_upcomming_orders(self):
-        return self.orders.filter(status=OrderStatus.PAYIED).filter(
-            Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
-                                                     meal__start_time__gt=datetime.now().time())).order_by(
-            "meal__start_date", "meal__start_time").select_related('meal')
+    def get_passed_orders(self, my_payed_orders=None):
+        if not my_payed_orders:
+            my_payed_orders = self.get_payed_orders()
+        my_passed_orders = []
+        for order in my_payed_orders:
+            if datetime.combine(order.meal.start_date, order.meal.start_time) <= datetime.now():
+                my_passed_orders.append(order)
+        # my_passed_orders.reverse()
+        return my_passed_orders
+
+    def get_upcomming_orders(self, my_payed_orders=None):
+        if not my_payed_orders:
+            my_payed_orders = self.get_payed_orders()
+        my_upcomming_orders = []
+        for order in my_payed_orders:
+            if datetime.combine(order.meal.start_date, order.meal.start_time) > datetime.now():
+                my_upcomming_orders.append(order)
+        return my_upcomming_orders
 
     #return 30分钟内未支付的饭局订单，如果一个饭局有多个未支付的订单，那么这个饭局只返回最新的一个订单
     def get_paying_orders(self):
@@ -577,12 +575,12 @@ class User(AbstractUser):
     def followers(self):
         return self.followers.all()
 
-    @property
-    def upcoming_meals(self):
-        return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
-            Q(start_date__gt=date.today()) |
-            Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "start_date", "start_time")
+    # @property
+    # def upcoming_meals(self):
+    #     return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
+    #         Q(start_date__gt=date.today()) |
+    #         Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
+    #         "start_date", "start_time")
 
     @property
     def feeds(self):
@@ -858,7 +856,7 @@ class Meal( models.Model):
     def get_upcomming_meals(cls):
         upcomming_meals = []
         for meal in cls.get_all_meals():
-            if meal.start_date > date.today() or (meal.start_date==date.today() and meal.start_time > datetime.now().time()):
+            if datetime.combine(meal.start_date, meal.start_time) >= datetime.now() - timedelta(hours=3):
                 upcomming_meals.append(meal)
         return upcomming_meals
 
@@ -867,7 +865,7 @@ class Meal( models.Model):
     def get_passed_meals(cls):
         passed_meals = []
         for meal in cls.get_all_meals():
-            if meal.start_date < date.today() or (meal.start_date == date.today() and meal.start_time < datetime.now().time()):
+            if datetime.combine(meal.start_date, meal.start_time) < datetime.now() - timedelta(hours=3):
                 passed_meals.append(meal)
         passed_meals.reverse()
         return passed_meals
@@ -919,7 +917,7 @@ class Meal( models.Model):
 
     @property
     def paid_orders(self):
-        return CacheUtil.get_meal_payed_orders(self)
+        return Order.objects.filter(meal=self, status__in=(OrderStatus.PAYIED, OrderStatus.USED)).select_related('customer').cache()
 
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
@@ -1019,7 +1017,7 @@ class Comment(models.Model):
     @classmethod
     def get_comments(cls, comment_type, target_id):
         return cls.get_comment_class(comment_type).objects.filter(target_id=target_id, status__in=(
-            CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)).select_related('parent__user', 'user').order_by('id')
+            CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)).select_related('parent__user', 'user')
 
     @property
     def time_gap(self):
@@ -1088,7 +1086,7 @@ class UserComment(Comment):
 @receiver(post_save, sender=User, dispatch_uid='profile_changed')
 def profile_changed(sender, instance, created, **kwargs):
     set_default_avatar(instance)
-    cache.delete(CacheKey.USER_TAG % instance.id)
+    cache.set(CacheKey.USER_TAG % instance.id, None)
 
 def set_default_avatar(user):
     need_set_default_avatar = False
@@ -1389,4 +1387,4 @@ def order_changed(sender, instance, created, **kwargs):
     order = instance
 
     if not order.status == OrderStatus.CREATED:
-        cache.delete(CacheKey.MEAL_PAYED_ORDERS % order.meal.id)
+        cache.set(CacheKey.MEAL_PAYED_ORDERS % order.meal.id, None)
