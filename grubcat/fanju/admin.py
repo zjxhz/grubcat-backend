@@ -18,7 +18,10 @@ import datetime
 from fanju import tasks
 
 def approve(self, request, queryset):
-    queryset.update(status=AuditStatus.APPROVED)
+    # queryset.update(status=AuditStatus.APPROVED)
+    for obj in queryset:
+        obj.status = AuditStatus.APPROVED
+        obj.save()
     self.message_user(request, "审核通过!")
 
 
@@ -26,7 +29,10 @@ approve.short_description = u"审核通过"
 
 
 def un_approve(self, request, queryset):
-    queryset.update(status=AuditStatus.UNAPPROVED_BY_ADMIN)
+    # queryset.update(status=AuditStatus.UNAPPROVED_BY_ADMIN)
+    for obj in queryset:
+        obj.status = AuditStatus.UNAPPROVED_BY_ADMIN
+        obj.save()
     self.message_user(request, "审核不通过!")
 
 
@@ -34,7 +40,10 @@ un_approve.short_description = u"审核不通过"
 
 
 def make_delete(self, request, queryset):
-    queryset.update(status=AuditStatus.DELETED)
+    # queryset.update(status=AuditStatus.DELETED)
+    for obj in queryset:
+        obj.status = AuditStatus.DELETED
+        obj.save()
     self.message_user(request, "成功标记为删除状态!")
 
 
