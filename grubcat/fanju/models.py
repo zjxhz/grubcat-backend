@@ -1381,10 +1381,10 @@ def meal_commented(sender, instance, created, **kwargs):
             playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
             pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
 
-
-@receiver(post_save, sender=Order, dispatch_uid="order_changed")
-def order_changed(sender, instance, created, **kwargs):
-    order = instance
-
-    if not order.status == OrderStatus.CREATED:
-        cache.set(CacheKey.MEAL_PAYED_ORDERS % order.meal.id, None)
+#
+# @receiver(post_save, sender=Order, dispatch_uid="order_changed")
+# def order_changed(sender, instance, created, **kwargs):
+#     order = instance
+#
+#     if not order.status == OrderStatus.CREATED:
+#         cache.set(CacheKey.MEAL_PAYED_ORDERS % order.meal.id, None)
