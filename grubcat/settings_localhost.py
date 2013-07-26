@@ -97,3 +97,5 @@ LOGGING = {
         },
     }
 }
+
+GEOIP_PATH = '/Users/wayne/workspace/fanju_resources/geo'
