@@ -119,7 +119,7 @@
                             {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
                         <i class="icon-star"></i>&nbsp;感兴趣</a>
                     <a id="like-num" href="{% url 'user_list' %}?target_type=meal&target_id={{ meal.id }}"
-                       target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes.cache.count }}</a>
+                       target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes_count }}</a>
                 </div>
 {#                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">#}
 {#                    <span class="fl">分享到：</span>#}

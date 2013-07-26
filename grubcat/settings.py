@@ -125,7 +125,7 @@ AUTH_USER_MODEL = 'fanju.User'
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        # 'BACKEND': 'johnny.backends.redis.RedisCache',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         'LOCATION': '127.0.0.1:6379',
         'TIMEOUT': 3600,
         # 'JOHNNY_CACHE' : True,
@@ -156,7 +156,7 @@ CACHEOPS = {
     # This includes request.user or post.author access,
     # where Post.author is a foreign key to auth.User
     'fanju.meal': ('all', 60 * 60 * 6),
-    'fanju.user': ('all', 60 * 60 * 6),
+    'fanju.user': ('get', 60 * 60 * 6),
     'fanju.restaurant': ('all', 60 * 60 * 12),
     'fanju.userlocation': ('all', 60 * 60 * 12),
     'fanju.menu': ('all', 60 * 60 * 12),
@@ -169,6 +169,8 @@ CACHEOPS = {
     'fanju.usercomment': ('all', 60 * 60),
     'fanju.photocomment': ('all', 60 * 60),
     'fanju.order': ('get', 60 * 60),
+    'fanju.meallike': ('all', 60 * 60),
+    'fanju.photolike': ('all', 60 * 60),
     # 'fanju.usertag': ('all', 60 * 60),
     # 'fanju.taggeduser': ('all', 60 * 60),
     # 'taggit_tag': ('all', 60 * 60),
