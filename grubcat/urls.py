@@ -3,9 +3,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.decorators.cache import cache_page
 from django.views.generic.base import TemplateView
 from fanju.apis import v1_api, mobile_user_login, mobile_user_logout, mobile_user_register, weibo_user_login, checkemail
-from fanju.decorators import restaurant_login_required
+from fanju.decorators import restaurant_login_required, cache_page_for_anonymous
 from fanju.views import upload_app
 from fanju.views_common import list_tags, add_tag, add_like
 from fanju.views import *
@@ -52,12 +53,12 @@ urlpatterns = patterns('',
 
     ######################below is used for website urls
     # meal
-    url(r'^$', MealListView.as_view(), name="index"),
-    url(r'^meal/$', MealListView.as_view(), name="meal_list"),
-    url(r'^meal/(?P<meal_id>\d+)/$', MealDetailView.as_view(), name='meal_detail'),
+    url(r'^$', cache_page_for_anonymous(MealListView.as_view()), name="index"),
+    url(r'^meal/$', cache_page_for_anonymous(MealListView.as_view()), name="meal_list"),
+    url(r'^meal/(?P<meal_id>\d+)/$', cache_page_for_anonymous()(MealDetailView.as_view()), name='meal_detail'),
     url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
 
-    url(r'^user/(?P<user_id>\d+)/meals/$', UserMealListView.as_view(), name="user_meal_list"),
+    url(r'^user/(?P<user_id>\d+)/meals/$', login_required(UserMealListView.as_view()), name="user_meal_list"),
 
 
     #menu
@@ -100,8 +101,8 @@ urlpatterns = patterns('',
 
     #account
     #    url(r'^user/register/$', RegisterView.as_view(), name='register'),
-    url(r'^user/$', UserListView.as_view(), name="user_list"),
-    url(r'^user/p/(?P<page>[0-9]+)/$', UserListView.as_view(template_name="profile/user_container.html"),
+    url(r'^user/$', cache_page_for_anonymous(UserListView.as_view()), name="user_list"),
+    url(r'^user/p/(?P<page>[0-9]+)/$', cache_page_for_anonymous(UserListView.as_view(template_name="profile/user_container.html")),
         name="more_user"),
     url(r'^profile/edit/$', login_required(ProfileUpdateView.as_view()), name='edit_basic_profile'),
     url(r'^user/(?P<pk>\d+)/$', login_required(ProfileDetailView.as_view()), name='user_detail'),
@@ -124,7 +125,7 @@ urlpatterns = patterns('',
     url(r'^tag/add/$', login_required(add_tag), name='add_tag'),
 
 
-    url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/$', CommentListView.as_view(), name='comment_list'),
+    url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/$', cache_page_for_anonymous()(CommentListView.as_view()), name='comment_list'),
     url(r'^comment/(?P<comment_type>\w+)/(?P<target_id>\d+)/add/$', login_required(add_comment), name='add_comment'),
     url(r'^comment/(?P<comment_type>\w+)/(?P<comment_id>\d+)/del/$', login_required(del_comment), name='del_comment'),
 

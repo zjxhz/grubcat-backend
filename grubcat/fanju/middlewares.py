@@ -5,6 +5,7 @@ import logging
 import urllib2
 import weibo
 from fanju.models import User, Gender
+from fanju import tasks
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +20,8 @@ class WeiboAuthenticationBackend(object):
             expires_in = str(3600*24*14)
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
         weibo_client.set_access_token(access_token, expires_in)
-        try:
-            weibo_client.friendships.create.post(uid=settings.WEIBO_OFFICIAL)
-        except Exception:
-            logger.exception("can't follow fanjoin weibo")
+
+        # check weibo id first
         if User.objects.filter(weibo_access_token=access_token).count():
             user_to_authenticate = User.objects.get(weibo_access_token=access_token)
             logger.debug("auth for %s OK" % user_to_authenticate)
@@ -56,7 +55,7 @@ class WeiboAuthenticationBackend(object):
                         #don't save default empty avatar
                         user_to_authenticate.avatar.save(username+".jpg", ContentFile(urllib2.urlopen(avatar_url).read()), save=False)
                     user_to_authenticate.save()
-                    user_to_authenticate.audit_by_machine()
+                    tasks.user_registered.delay(user_to_authenticate.id)
                     return user_to_authenticate
             except Exception:
                 if user_to_authenticate:

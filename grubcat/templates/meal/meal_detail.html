@@ -29,7 +29,7 @@
             <div class="meal-simple-info box-seperator clearfix">
 
                 <h1 class="meal-topic"><a href="#">{{ meal.topic }}</a></h1>
-                <span id="restaurant-location"><a href="http://ditu.google.cn?q={{meal.restaurant.latitude }}, {{ meal.restaurant.longitude }}({{ meal.restaurant.name  }})"
+                <span id="restaurant-location"><a href="http://ditu.google.cn?q={{meal.menu.restaurant.latitude }}, {{ meal.menu.restaurant.longitude }}({{ meal.menu.restaurant.name  }})"
                                                   target="_blank"
                                                   class="restaurant-name">{{ meal.menu.restaurant.name }}</a> {{ meal.menu.restaurant.address }}&nbsp;&nbsp;{{ meal.menu.restaurant.tel }} </span>
            <span class="date fr">{{ meal.start_date|date:"n" }}月{{ meal.start_date|date:"j" }}日 {{ meal.start_date|date:"D" }}
@@ -119,7 +119,7 @@
                             {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
                         <i class="icon-star"></i>&nbsp;感兴趣</a>
                     <a id="like-num" href="{% url 'user_list' %}?target_type=meal&target_id={{ meal.id }}"
-                       target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes.count }}</a>
+                       target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes_count }}</a>
                 </div>
 {#                <div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">#}
 {#                    <span class="fl">分享到：</span>#}

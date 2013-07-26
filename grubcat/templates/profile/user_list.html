@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% load static from staticfiles %}{% load assets %}{% load static_asset %}
 
 {% block page_js %}
     <script type="text/javascript">
-        var myTags = [{% for tag in request.user.tags.all %}{% if forloop.last %}'{{ tag.name }}'{% else %}'{{ tag.name }}', {% endif %}   {% endfor %}];
+        var myTags = [{{ user_tags|safe }}];
     </script>
     {% assets "water_fall_js" %}
         <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>

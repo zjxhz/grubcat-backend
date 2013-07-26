@@ -21,15 +21,15 @@
                 </div>
             {% endif %}
 
-            {% with tags=profile.tags.all %}
+            {% with tags=profile.get_tags_from_cache %}
                 {% if tags %}
                     <div class="info-item info-tags">
                         <div class="info-label">兴趣：</div>
                         <div class="info-value">
                             <ul class="tags">
-                                {% with my_tags=user.tags.all %}
+                                {% with my_tags=user.get_tags_from_cache %}
                                     {% for tag in tags %}
-                                        <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag.name }}</li>
+                                        <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag }}</li>
                                     {% endfor %}
                                 {% endwith %}
                             </ul>

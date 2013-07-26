@@ -2,35 +2,48 @@
 from datetime import datetime, date, timedelta
 from datetime import time as dtime
 import logging
-import time
 import threading
+import json
+import random
+
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse_lazy
+from django.core.cache import cache
 from django.db import models, IntegrityError
 from django.db.models import Max
-from django.db.models.fields.files import ImageField
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 from easy_thumbnails.files import get_thumbnailer
-from fanju.exceptions import BusinessException, AlreadyJoinedError, \
-    NoAvailableSeatsError
-from fanju.util import pubsub
 from image_cropping.fields import ImageRatioField
 from taggit.managers import TaggableManager
 from taggit.models import GenericTaggedItemBase, Tag
-import json
-import os
 import weibo
-import random
+
+from fanju.exceptions import BusinessException, AlreadyJoinedError, \
+    NoAvailableSeatsError
+from fanju.util import pubsub
+
 
 #import redis
 # Create your models here.
 logger = logging.getLogger(__name__)
+
+
+class CacheKey:
+    USER_TAG = "user_tags_%s"
+
+
+class CacheUtil:
+    @classmethod
+    def get_user_tags(cls, user):
+        user_tags = cache.get(CacheKey.USER_TAG % user.id)
+        if user_tags is None:
+            user_tags = [tag.name for tag in user.tags.all()]
+            cache.set(CacheKey.USER_TAG % user.id, user_tags)
+        return user_tags
 
 
 class Privacy:
@@ -188,7 +201,7 @@ class Menu(models.Model):
             status = u'已发布'
         else:
             status = u'已删除'
-        return u'(%s) %s %s (%s元)' % (status, self.restaurant.name, self.name, str(self.average_price))
+        return u'(%s) %s %s %s (%s元)' % (status, str(self.id), self.restaurant.name, self.name, str(self.average_price))
 
     class Meta:
         unique_together = (('restaurant', 'status', 'name'),)
@@ -265,7 +278,9 @@ class Order(models.Model):
             elif meal.status is MealStatus.CREATED_WITH_MENU:
                 meal.status = MealStatus.PUBLISHED
         meal.save()
-        order.customer.share_meal(order.meal, is_join=True)
+        from fanju import tasks
+
+        tasks.share_meal.delay(order.customer.id, order.meal.id, is_join=True)
 
     def cancel(self):
         if self.status != OrderStatus.CANCELED:
@@ -359,6 +374,7 @@ class UserLocation(models.Model):
         else:
             return u'%s, %s' % (self.lat, self.lng)
 
+
 class UserTag(Tag):
     image_url = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256) # background image
 
@@ -432,9 +448,16 @@ class User(AbstractUser):
     mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
     status = models.SmallIntegerField(u'状态', default=UserStatus.WAIT_TO_AUDIT, choices=USER_STATUS_CHOICE)
 
+    # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="users_i_like", verbose_name=u'赞',
+    #                                blank=True, null=True, through="UserLike")
+
+
     @models.permalink
     def get_absolute_url(self):
         return 'user_detail', [str(self.id)]
+
+    def get_tags_from_cache(self):
+        return CacheUtil.get_user_tags(self)
 
     def follow(self, followee):
         if self == followee:
@@ -482,17 +505,28 @@ class User(AbstractUser):
         else:
             return False
 
-    def get_passed_orders(self):
-        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).filter(
-            Q(meal__start_date__lt=date.today()) | Q(meal__start_date=date.today(),
-                                                     meal__start_time__lt=datetime.now().time())).order_by(
-            "meal__start_date", "meal__start_time").select_related('meal')
+    def get_payed_orders(self):
+        return self.orders.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)).order_by(
+            "meal__start_date", "meal__start_time").cache()
 
-    def get_upcomming_orders(self):
-        return self.orders.filter(status=OrderStatus.PAYIED).filter(
-            Q(meal__start_date__gt=date.today()) | Q(meal__start_date=date.today(),
-                                                     meal__start_time__gt=datetime.now().time())).order_by(
-            "meal__start_date", "meal__start_time").select_related('meal')
+    def get_passed_orders(self, my_payed_orders=None):
+        if not my_payed_orders:
+            my_payed_orders = self.get_payed_orders()
+        my_passed_orders = []
+        for order in my_payed_orders:
+            if datetime.combine(order.meal.start_date, order.meal.start_time) <= datetime.now():
+                my_passed_orders.append(order)
+            # my_passed_orders.reverse()
+        return my_passed_orders
+
+    def get_upcomming_orders(self, my_payed_orders=None):
+        if not my_payed_orders:
+            my_payed_orders = self.get_payed_orders()
+        my_upcomming_orders = []
+        for order in my_payed_orders:
+            if datetime.combine(order.meal.start_date, order.meal.start_time) > datetime.now():
+                my_upcomming_orders.append(order)
+        return my_upcomming_orders
 
     #return 30分钟内未支付的饭局订单，如果一个饭局有多个未支付的订单，那么这个饭局只返回最新的一个订单
     def get_paying_orders(self):
@@ -545,12 +579,12 @@ class User(AbstractUser):
     def followers(self):
         return self.followers.all()
 
-    @property
-    def upcoming_meals(self):
-        return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
-            Q(start_date__gt=date.today()) |
-            Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "start_date", "start_time")
+    # @property
+    # def upcoming_meals(self):
+    #     return Meal.objects.filter(Q(host=self) | Q(participants=self)).filter(
+    #         Q(start_date__gt=date.today()) |
+    #         Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
+    #         "start_date", "start_time")
 
     @property
     def feeds(self):
@@ -595,7 +629,7 @@ class User(AbstractUser):
             lng = self.location.lng
         if not lat or not lng:
             return []
-        # for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
+            # for user in self.non_restaurant_usres.exclude(pk=self.id): #.exclude(pk__in=self.following.values('id')):
         for user in User.objects.filter(status=UserStatus.APPROVED).exclude(pk=self.id):
             if user.location:
                 distance = self.getDistance(lng, lat, user.location.lng, user.location.lat)
@@ -690,27 +724,10 @@ class User(AbstractUser):
     #        print response
 
     def get_webio_client(self):
-        weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,redirect_uri=settings.WEIBO_REDIRECT_URL)
-        weibo_client.set_access_token(self.weibo_access_token, str(3600*24*14))
+        weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,
+                                       redirect_uri=settings.WEIBO_REDIRECT_URL)
+        weibo_client.set_access_token(self.weibo_access_token, str(3600 * 24 * 14))
         return weibo_client
-
-    def share_meal(self, meal, is_join=False):
-        try:
-            weibo_client = self.get_webio_client()
-            r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
-            meal_url = r.urls[0].url_short
-            if is_join:
-                share_text = u"我刚参加了一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
-            else:
-                share_text = u"我刚发现一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
-
-            # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
-            # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
-
-            # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-            weibo_client.statuses.update.post(uid=self.weibo_id, status=share_text)
-        except:
-            logger.exception("error when share meal")
 
     def __unicode__(self):
         return self.name if self.name is not None else self.username
@@ -724,8 +741,8 @@ class UserPhoto(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photos")
     photo = models.ImageField(upload_to='uploaded_images/%Y/%m/%d', max_length=256)
     timestamp = models.DateTimeField(u'时间', blank=True, auto_now_add=True)
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_photos", verbose_name=u'喜欢该照片的人',
-                                   blank=True, null=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="photos_i_like", verbose_name=u'赞',
+                                   blank=True, null=True, through="PhotoLike")
 
     def __unicode__(self):
         return str(self.id)
@@ -747,6 +764,10 @@ class UserPhoto(models.Model):
             }).url
         except Exception:
             return None
+
+    @property
+    def likes_count(self):
+        return PhotoLike.objects.filter(target=self).count()
 
     @models.permalink
     def get_absolute_url(self):
@@ -829,28 +850,43 @@ class Meal(models.Model):
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals", verbose_name=u'参加者',
                                           blank=True, null=True,
                                           through="MealParticipants")
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_meals", verbose_name=u'喜欢该饭局的人',
-                                   blank=True, null=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="meals_i_like", verbose_name=u'喜欢该饭局的人',
+                                   blank=True, null=True, through="MealLike")
     actual_persons = models.IntegerField(u'实际参加人数', default=0)
     type = models.IntegerField(default=0) # THEMES, DATES
 
+
     @classmethod
     def get_all_meals(cls):
-        return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).select_related("menu")
+        return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by('start_date',
+                                                                                                     'start_time').cache()
 
 
     @classmethod
-    def get_upcomming_meals(cls):
-        return cls.get_all_meals().filter(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "start_date",
-            "start_time")
+    def get_upcomming_meals(cls, all_meals=None):
+        if not all_meals:
+            all_meals = cls.get_all_meals()
+        upcomming_meals = []
+        for meal in all_meals:
+            if datetime.combine(meal.start_date, meal.start_time) >= datetime.now() - timedelta(hours=3):
+                upcomming_meals.append(meal)
+        return upcomming_meals
+
 
     @classmethod
-    def get_passed_meals(cls):
-        return cls.get_all_meals().exclude(
-            Q(start_date__gt=date.today()) | Q(start_date=date.today(), start_time__gt=datetime.now().time())).order_by(
-            "-start_date", "-start_time")
+    def get_passed_meals(cls, all_meals=None):
+        if not all_meals:
+            all_meals = cls.get_all_meals()
+        passed_meals = []
+        for meal in all_meals:
+            if datetime.combine(meal.start_date, meal.start_time) < datetime.now() - timedelta(hours=3):
+                passed_meals.append(meal)
+        passed_meals.reverse()
+        return passed_meals
+
+    @property
+    def likes_count(self):
+        return MealLike.objects.filter(target=self).count()
 
     def checkAvaliableSeats(self, customer, requesting_persons):
         other_paying_orders = self.orders.exclude(customer=customer).exclude(
@@ -898,7 +934,8 @@ class Meal(models.Model):
 
     @property
     def paid_orders(self):
-        return Order.objects.filter(meal=self).filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED))
+        return Order.objects.filter(meal=self, status__in=(OrderStatus.PAYIED, OrderStatus.USED)).select_related(
+            'customer').cache()
 
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
@@ -955,6 +992,107 @@ class Meal(models.Model):
 
 # Like.enable_like(Meal)
 
+# class MealLike(models.Model):
+#     meal = models.ForeignKey(Meal)
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL)
+#
+#     def __unicode__(self):
+#         return u"%s参加了饭局%s" % (self.user, self.meal)
+#
+#     class Meta:
+#         ordering = ['id', ]
+#         verbose_name = u'饭局参加者'
+#         verbose_name_plural = verbose_name
+
+# class Like(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'Owner', related_name='likes')
+#
+#     content_type = models.ForeignKey(ContentType)
+#     object_id = models.PositiveIntegerField()
+#     target = generic.GenericForeignKey('content_type', 'object_id')
+#
+#     @classmethod
+#     def add_like(self, content_type, object_id, user):
+#         like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=object_id)
+#         return created
+#
+#     @classmethod
+#     def enable_like(self, cls):
+#
+#         def likes(self):
+#             content_type = ContentType.objects.get_for_model(self)
+#             return Like.objects.filter(content_type=content_type, object_id=self.id).select_related("user")
+#
+#         def likes_count(self):
+#             content_type = ContentType.objects.get_for_model(self)
+#             return Like.objects.filter(content_type=content_type, object_id=self.id).count()
+#
+#         def add_like(self, user):
+#             content_type = ContentType.objects.get_for_model(self)
+#             like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=self.id)
+#             return created
+#
+#         cls.add_to_class("likes_count", property(likes_count))
+#         cls.add_to_class("likes", property(likes))
+#         cls.add_to_class("add_like", add_like)
+#
+#     class Meta:
+#         unique_together = (('user', 'content_type', 'object_id'),)
+
+
+
+# class Like(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'用户', blank=True)
+#
+#     @classmethod
+#     def get_like_class(cls, like_type):
+#         like_content_type = u"%slike" % comment_type
+#         content_type = ContentType.objects.get_by_natural_key("fanju", like_content_type)
+#         model_cls = content_type.model_class()
+#         return model_cls
+#
+#     @classmethod
+#     def get_likes(cls, like_type, target_id):
+#         return cls.get_like_class(like_type).objects.filter(target_id=target_id).select_related('user')
+#
+#     @classmethod
+#     def get_likes_count(cls, like_type, target_id):
+#         return cls.get_like_class(like_type).objects.filter(target_id=target_id).count()
+#
+#     @classmethod
+#     def add_like(self, user):
+#             content_type = ContentType.objects.get_for_model(self)
+#             like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=self.id)
+#             return created
+#
+#     @classmethod
+#     def enable_like(self, cls):
+#
+#         # def likes(self):
+#         #     content_type = ContentType.objects.get_for_model(self)
+#         #     return Like.objects.filter(content_type=content_type, object_id=self.id).select_related("user")
+#
+#         def likes_count(self):
+#             like_type = 'meal' #TODO
+#             content_type = ContentType.objects.get_for_model(self)
+#             return Like.get_likes_count(like_type, self.id)
+#
+#         def add_like(self, user):
+#             content_type = ContentType.objects.get_for_model(self)
+#             like, created = Like.objects.get_or_create(user=user, content_type=content_type, object_id=self.id)
+#             return created
+#
+#         cls.add_to_class("likes_count", property(likes_count))
+#         cls.add_to_class("likes", property(likes))
+#         cls.add_to_class("add_like", add_like)
+#
+#     def __unicode__(self):
+#         return '[%s] %s' % (self.id, self.comment[:20])
+#
+#
+#     class Meta:
+#         abstract = True
+
 
 class MealParticipants(models.Model):
     meal = models.ForeignKey(Meal)
@@ -967,7 +1105,6 @@ class MealParticipants(models.Model):
         ordering = ['id', ]
         verbose_name = u'饭局参加者'
         verbose_name_plural = verbose_name
-
 
 
 class ObjectType:
@@ -988,11 +1125,10 @@ class Comment(models.Model):
     status = models.SmallIntegerField(u'状态', default=CommentStatus.WAIT_TO_AUDIT, choices=AUDIT_STATUS_CHOICE)
     parent = models.ForeignKey('self', verbose_name=u'父评论', blank=True, null=True)
 
-
     @classmethod
     def get_comment_class(cls, comment_type):
         comment_content_type = u"%scomment" % comment_type
-        content_type = ContentType.objects.get(app_label="fanju", model=comment_content_type)
+        content_type = ContentType.objects.get_by_natural_key("fanju", comment_content_type)
         model_cls = content_type.model_class()
         return model_cls
 
@@ -1033,7 +1169,7 @@ class MealComment(Comment):
         return '%s#comment-%d' % (reverse_lazy('meal_detail', kwargs={'meal_id': self.target_id}), self.id)
 
     class Meta:
-        verbose_name = u'饭局评论'
+        verbose_name = u'评论饭局'
         verbose_name_plural = verbose_name
 
 
@@ -1044,7 +1180,7 @@ class PhotoComment(Comment):
         return '%s#comment-%d' % (reverse_lazy('photo_detail', kwargs={'pk': self.target_id}), self.id)
 
     class Meta:
-        verbose_name = u'照片评论'
+        verbose_name = u'评论照片'
         verbose_name_plural = verbose_name
 
 
@@ -1052,11 +1188,39 @@ class UserComment(Comment):
     target = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'被评论的用户', related_name='comments')
 
     class Meta:
-        verbose_name = u'用户留言'
+        verbose_name = u'评论用户'
         verbose_name_plural = verbose_name
 
 
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
+    class Meta:
+        abstract = True
+
+
+class MealLike(Like):
+    target = models.ForeignKey(Meal, verbose_name=u'饭局')
+
+    class Meta:
+        verbose_name = u'赞饭局'
+        verbose_name_plural = verbose_name
+
+
+class PhotoLike(Like):
+    target = models.ForeignKey(UserPhoto, verbose_name=u'照片')
+
+    class Meta:
+        verbose_name = u'赞照片'
+        verbose_name_plural = verbose_name
+#
+#
+# class UserLike(Like):
+#     target = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=u'用户')
+#
+#     class Meta:
+#         verbose_name = u'赞用户'
+#         verbose_name_plural = verbose_name
 
 # class ImageTest(models.Model):
 #     image = ImageField(blank=True, null=True, upload_to='apps')
@@ -1065,9 +1229,13 @@ class UserComment(Comment):
 
 ####################################################  POST SAVE   #######################################
 
-@receiver(post_save, sender=User, dispatch_uid='set_default_avatar')
-def set_default_avatar(sender, instance, created, **kwargs):
-    user = instance
+@receiver(post_save, sender=User, dispatch_uid='profile_changed')
+def profile_changed(sender, instance, created, **kwargs):
+    set_default_avatar(instance)
+    cache.set(CacheKey.USER_TAG % instance.id, None)
+
+
+def set_default_avatar(user):
     need_set_default_avatar = False
     if not user.avatar:
         need_set_default_avatar = True
@@ -1217,7 +1385,7 @@ def _meal_joined(meal, joiner):
     followee_join_meal_node = node_followee_join_meal % joiner.id
     for user in users_to_unsubscribe:
         pubsub.unsubscribe(user, followee_join_meal_node)
-    #    time.sleep(1)
+        #    time.sleep(1)
     pubsub.publish(followee_join_meal_node, payload)
     for user in users_to_unsubscribe:
         pubsub.subscribe(user, followee_join_meal_node)
@@ -1359,3 +1527,11 @@ def meal_commented(sender, instance, created, **kwargs):
             playlaod_json['event'] = event
             playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
             pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
+
+#
+# @receiver(post_save, sender=Order, dispatch_uid="order_changed")
+# def order_changed(sender, instance, created, **kwargs):
+#     order = instance
+#
+#     if not order.status == OrderStatus.CREATED:
+#         cache.set(CacheKey.MEAL_PAYED_ORDERS % order.meal.id, None)
