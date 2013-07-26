@@ -355,8 +355,7 @@ class UserListView(ListView):
                 context['show_common_tags_link'] = True
             elif user_tags and not context['page_obj'].has_next() and context['page_obj'].number < 2:
                 context['need_edit_tags_again'] = True
-            if self.request.GET.get('tags') and not user_tags.filter(
-                    name=self.request.GET.get('tags')).exists():
+            if self.request.GET.get('tags') and not self.request.GET.get('tags') in user_tags:
                 context['show_add_tag'] = True
         return context
 
