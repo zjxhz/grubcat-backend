@@ -15,10 +15,13 @@ from fanju.models import Restaurant, Dish, DishCategory, Order, Meal, Menu, \
     pubsub_user_created, PhotoRequest, meal_created, AuditStatus
 from image_cropping.admin import ImageCroppingMixin
 import datetime
-
+from fanju import tasks
 
 def approve(self, request, queryset):
-    queryset.update(status=AuditStatus.APPROVED)
+    # queryset.update(status=AuditStatus.APPROVED)
+    for obj in queryset:
+        obj.status = AuditStatus.APPROVED
+        obj.save()
     self.message_user(request, "审核通过!")
 
 
@@ -26,7 +29,10 @@ approve.short_description = u"审核通过"
 
 
 def un_approve(self, request, queryset):
-    queryset.update(status=AuditStatus.UNAPPROVED_BY_ADMIN)
+    # queryset.update(status=AuditStatus.UNAPPROVED_BY_ADMIN)
+    for obj in queryset:
+        obj.status = AuditStatus.UNAPPROVED_BY_ADMIN
+        obj.save()
     self.message_user(request, "审核不通过!")
 
 
@@ -34,7 +40,10 @@ un_approve.short_description = u"审核不通过"
 
 
 def make_delete(self, request, queryset):
-    queryset.update(status=AuditStatus.DELETED)
+    # queryset.update(status=AuditStatus.DELETED)
+    for obj in queryset:
+        obj.status = AuditStatus.DELETED
+        obj.save()
     self.message_user(request, "成功标记为删除状态!")
 
 
@@ -104,8 +113,10 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     avatar_thumb.short_description = u'头像'
 
     def tags_plain(self, instance):
-        return edit_string_for_tags(instance.tags.all())
+        return ', '.join(instance.get_tags_from_cache())
     tags_plain.short_description = u'兴趣'
+
+
 
     list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )
     list_filter = ('status', 'date_joined', 'is_staff', 'is_superuser',)
@@ -127,12 +138,17 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
     search_fields = ('username', 'name')
     ordering = ('-id',)
 
-    actions = ['resend_message'] + audit_actions
+    actions = ['resend_message', 'share_fanju'] + audit_actions
 
     def resend_message(self, request, queryset):
         for user in queryset:
             pubsub_user_created(User, user, True)
         self.message_user(request, "成功发送用户创建消息!")
+
+    def share_fanju(self, request, queryset):
+        for user in queryset:
+            tasks.share_fanju.delay(user.id)
+        self.message_user(request, "成功分享饭聚!")
 
     resend_message.short_description = u"重新发送用户创建消息"
 

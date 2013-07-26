@@ -4,6 +4,7 @@ import xml.dom.minidom
 from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
@@ -17,7 +18,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
 from fanju.exceptions import *
-from fanju.models import Order, Relationship, Meal
+from fanju.models import Order, Relationship, Meal, CacheKey, PhotoLike, MealLike
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
 from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
@@ -26,11 +27,13 @@ from fanju.forms import *
 from django.conf import settings
 from datetime import datetime, date, timedelta
 import json
+from cacheops import cached
 
 logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
 
 ###Photo related views ###
+
 
 
 def photo_request(request, host_id):
@@ -76,8 +79,8 @@ class PhotoDetailView(DetailView):
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
 
-        context['is_already_liked'] = self.request.user.is_authenticated() and self.object.likes.filter(
-            id=self.request.user.id).exists()
+        context['is_already_liked'] = self.request.user.is_authenticated() and PhotoLike.objects.filter(
+            user=self.request.user, target=self.object).count() > 0
         context['profile'] = self.object.user
         set_profile_common_attrs(context, self.request)
         return context
@@ -89,9 +92,11 @@ def set_profile_common_attrs(context, request):
     '''
     context['is_mine'] = context['profile'] == request.user
     context['orders_count'] = context['profile'].orders.filter(
-        status__in=(OrderStatus.PAYIED, OrderStatus.USED )).count()
-    if context['is_mine']:
-        context['orders_count'] += context['profile'].get_paying_orders_count()
+        status__in=(OrderStatus.PAYIED, OrderStatus.USED )).cache().count()
+    if not context['is_mine']:
+        # context['orders_count'] += context['profile'].get_paying_orders_count()
+        is_followed = Relationship.objects.filter(from_person=request.user, to_person=context['profile']).count() > 0
+        context['is_followed'] = is_followed
 
 
 class PhotoListView(ListView):
@@ -188,14 +193,17 @@ class MealCreateView(CreateView):
 
 class MealListView(ListView):
     template_name = "meal/meal_list.html"
-    context_object_name = "meal_list"
-    #TODO add filter to queyset
-    def get_queryset(self):
-        return Meal.get_upcomming_meals()
+    model = Meal
+    # context_object_name = "meal_list"
+    #
+    # def get_queryset(self):
+    #     return Meal.get_upcomming_meals()
 
     def get_context_data(self, **kwargs):
         context = super(MealListView, self).get_context_data(**kwargs)
-        context['passed_meal_list'] = Meal.get_passed_meals()
+        all_meals = Meal.get_all_meals()
+        context['passed_meal_list'] = Meal.get_passed_meals(all_meals)
+        context['upcomming_meal_list'] = Meal.get_upcomming_meals(all_meals)
         return context
 
 
@@ -271,7 +279,8 @@ class ProfileDetailView(DetailView):
 
         from_user = self.request.user
         if from_user != self.object:
-            Visitor.objects.get_or_create(from_person=from_user, to_person=self.object)
+            if len(Visitor.objects.filter(from_person=from_user, to_person=self.object)) == 0:
+                Visitor.objects.create(from_person=from_user, to_person=self.object)
 
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         set_profile_common_attrs(context, self.request)
@@ -298,18 +307,25 @@ class UserListView(ListView):
         tags = self.request.GET.get('tags')
         like_target_type = self.request.GET.get('target_type')
         like_target_id = self.request.GET.get('target_id')
-        users = User.objects.filter(
-            status=AuditStatus.APPROVED).select_related('tags').order_by('-id')
         if self.request.GET.get('show') == 'common' and self.request.user.is_authenticated():
             # return users.filter(id__in=[user.id for user in self.request.user.tags.similar_objects()])
             return self.request.user.recommendations
         elif tags:
-            return users.filter(tags__name__in=(tags, )).distinct()
+            return User.objects.filter(
+                status=AuditStatus.APPROVED).order_by('-id').filter(tags__name__in=(tags, )).distinct()
         elif like_target_type:
-            target_model_cls = ContentType.objects.get(app_label='fanju', model=like_target_type).model_class()
-            return target_model_cls.objects.get(pk=like_target_id).likes.select_related('tags').order_by('-avatar')
+            target_model_cls = ContentType.objects.get_by_natural_key('fanju', like_target_type).model_class()
+            return target_model_cls.objects.get(pk=like_target_id).likes.all().order_by('-avatar').cache()
         else:
-            return users
+            return User.objects.filter(status=AuditStatus.APPROVED).order_by('-id').cache()
+    #
+    # def get_all_approved(self):
+    #     @cached(timeout=60 * 60 * 12)
+    #     def _get_all_approved_users():
+    #         return User.objects.filter(
+    #             status=AuditStatus.APPROVED).order_by('-id')
+    #
+    #     return _get_all_approved_users()
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
@@ -330,17 +346,19 @@ class UserListView(ListView):
 
         if like_target_type == 'meal':
             context['like_text'] = u'感兴趣'
+        if user.is_authenticated():
+            user_tags = user.get_tags_from_cache()
+            context['user_tags'] = ' ,'.join( [('"%s"' % tag) for tag in user_tags])
 
         if user.is_authenticated() and not context['is_like_users']:
-            if not user.tags.all():
+            if not user_tags:
                 context['need_edit_tags'] = True
             context['is_approved_user'] = user.status == UserStatus.APPROVED
             if self.request.GET.get('show') != 'common':
                 context['show_common_tags_link'] = True
-            elif user.tags.all() and not context['page_obj'].has_next() and context['page_obj'].number < 2:
+            elif user_tags and not context['page_obj'].has_next() and context['page_obj'].number < 2:
                 context['need_edit_tags_again'] = True
-            if self.request.GET.get('tags') and not self.request.user.tags.filter(
-                    name=self.request.GET.get('tags')).exists():
+            if self.request.GET.get('tags') and not self.request.GET.get('tags') in user_tags:
                 context['show_add_tag'] = True
         return context
 
@@ -431,8 +449,7 @@ class MealDetailView(OrderCreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
         try:
-            meal = Meal.objects.select_related('menu__restaurant', ).prefetch_related('participants').get(
-                pk=self.kwargs.get('meal_id'))
+            meal = Meal.objects.select_related('menu__restaurant', ).get(pk=self.kwargs.get('meal_id'))
             context['meal'] = meal
         except ObjectDoesNotExist:
             raise Http404(u'对不起，该饭局不存在！')
@@ -442,7 +459,7 @@ class MealDetailView(OrderCreateView):
         context['payed_orders'] = payed_orders
 
         if self.request.user.is_authenticated():
-            my_orders = payed_orders.filter(customer=self.request.user)
+            my_orders = [o for o in payed_orders if o.customer==self.request.user]
             if len(my_orders) == 1:
                 context['order'] = my_orders[0]
             elif len(my_orders) > 1:
@@ -453,7 +470,8 @@ class MealDetailView(OrderCreateView):
         else:
             context['just_created'] = False
 
-        context['is_already_liked'] = self.request.user.is_authenticated() and meal.likes.filter(id=self.request.user.id).exists()
+        context['is_already_liked'] = self.request.user.is_authenticated() and MealLike.objects.filter(
+            user=self.request.user, target=meal).count() > 0
 
         return context
 
@@ -507,8 +525,9 @@ class UserMealListView(TemplateView):
         if context['is_mine']:
             context['paying_orders'] = user.get_paying_orders()
             context['pay_overtime'] = settings.PAY_OVERTIME_FOR_PAY_OR_USER
-        context['upcomming_orders'] = user.get_upcomming_orders()
-        context['passed_orders'] = user.get_passed_orders()
+        payed_orders = user.get_payed_orders()
+        context['upcomming_orders'] = user.get_upcomming_orders(payed_orders)
+        context['passed_orders'] = user.get_passed_orders(payed_orders)
         return context
 
 

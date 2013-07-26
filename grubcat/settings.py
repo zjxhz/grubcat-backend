@@ -9,7 +9,7 @@ FREE_PAY_USER_ID = ('1652340607', '', '')
 ###################### app ######################
 DEBUG = False
 TEMPLATE_DEBUG = False
-ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com')
+ALLOWED_HOSTS = ('*.fanjoin.com', 'localhost', '127.0.0.1', '*.ifunjoin.com', '*.ifunjoin.com:8001')
 SITE_ROOT = '/home/fanju/'
 
 DATABASES = {
@@ -35,9 +35,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'fanju.exceptions.ProcessExceptionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware', # disable for mobile users temporarily
     'django.middleware.transaction.TransactionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     )
 
@@ -69,6 +69,12 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.sites',
     'django.contrib.admin',
+    'djcelery',
+    'kombu.transport.django',
+    'clear_cache',
+    'cacheops',
+    'django_pickling'
+
 )
 
 SERIALIZATION_MODULES = {
@@ -113,6 +119,77 @@ USE_L10N = True
 
 AUTH_USER_MODEL = 'fanju.User'
 
+
+##################### chache ######################
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'LOCATION': '127.0.0.1:6379',
+        'TIMEOUT': 3600,
+        # 'JOHNNY_CACHE' : True,
+        'OPTIONS': {
+            # 'DB': 1,
+            # 'PASSWORD': 'yadayada',
+            'MAX_ENTRIES': 50000,
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+        'KEY_PREFIX': 'fj'
+    },
+}
+CACHE_MIDDLEWARE_SECONDS = 3600
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+CACHEOPS_REDIS = {
+    'host': 'localhost', # redis-server is on same machine
+    'port': 6379,        # default redis port
+    'db': 1,             # SELECT non-default redis database
+                         # using separate redis db or redis instance
+                         # is highly recommended
+    'socket_timeout': 3,
+}
+
+CACHEOPS = {
+    # Automatically cache any User.objects.get() calls for 15 minutes
+    # This includes request.user or post.author access,
+    # where Post.author is a foreign key to auth.User
+    'fanju.meal': ('all', 60 * 60 * 6),
+    'fanju.user': ('get', 60 * 60 * 6),
+    'fanju.restaurant': ('all', 60 * 60 * 12),
+    'fanju.userlocation': ('all', 60 * 60 * 12),
+    'fanju.menu': ('all', 60 * 60 * 12),
+    'fanju.dish': ('all', 60 * 60 * 12),
+    'fanju.dishcategory': ('all', 60 * 60 * 12),
+    'fanju.userphoto': ('all', 60 * 10),
+    'fanju.visitor': ('all', 60 * 10),
+    'fanju.relationship': ('all', 60 * 10),
+    'fanju.mealcomment': ('all', 60 * 60),
+    'fanju.usercomment': ('all', 60 * 60),
+    'fanju.photocomment': ('all', 60 * 60),
+    'fanju.order': ('get', 60 * 60),
+    'fanju.meallike': ('all', 60 * 60),
+    'fanju.photolike': ('all', 60 * 60),
+    # 'fanju.usertag': ('all', 60 * 60),
+    # 'fanju.taggeduser': ('all', 60 * 60),
+    # 'taggit_tag': ('all', 60 * 60),
+
+    # Automatically cache all gets, queryset fetches and counts
+    # to other django.contrib.auth models for an hour
+    # 'auth.*': ('all', 60*60),
+
+    # Enable manual caching on all news models with default timeout of an hour
+    # Use News.objects.cache().get(...)
+    #  or Tags.objects.filter(...).order_by(...).cache()
+    # to cache particular ORM request.
+    # Invalidation is still automatic
+    # 'news.*': ('just_enable', 60*60),
+
+    # Automatically cache count requests for all other models for 15 min
+    # '*.*': ('count', 60*15),
+}
+CACHEOPS_DEGRADE_ON_FAILURE=True
 ###################### static ######################
 STATIC_URL = '/static/'
 # STATIC_URL = 'http://fanju.dn.qbox.me/'
@@ -173,6 +250,7 @@ MINI_MENU_COVER_SIZE = (60, 40)
 DEFAULT_MALE_AVATAR = 'default/male.png'
 DEFAULT_FEMALE_AVATAR = 'default/female.png'
 
+
 ###################### pay ######################
 PAY_OVERTIME = 35
 PAY_OVERTIME_FOR_PAY_OR_USER = 30 # should smaller than PAY_OVERTIME, because alipay has a delay
@@ -216,6 +294,13 @@ CHATDOMAIN = "fanjoin.com"
 ###################  admin #######################
 ADMIN_TOOLS_INDEX_DASHBOARD = 'grubcat.dashboard.CustomIndexDashboard'
 ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'grubcat.dashboard.CustomAppIndexDashboard'
+
+################### celery #######################
+import djcelery
+djcelery.setup_loader()
+
+BROKER_URL = 'redis://localhost:6379/0'
+# BROKER_URL = 'django://'
 
 ###################### msic ######################
 SHOW_EXCEPTION_DETAIL = False

@@ -355,7 +355,7 @@ class UserResource(EOResource):
                 return http.HttpApplicationError(e.message)
         else:
             obj = self.obj(request, **kwargs)
-            all_valid_orders = obj.get_paying_orders() | obj.get_upcomming_orders() | obj.get_passed_orders()
+            all_valid_orders = obj.get_paying_orders() | obj.get_payed_orders()
             return self.get_my_list(OrderResource(), all_valid_orders, request)# order_resource.get_list(request, customer=user_profile)
     
     def next_meal(self, request, **kwargs):
@@ -430,7 +430,7 @@ class UserResource(EOResource):
             else:
                 return http.HttpBadRequest()
         else:
-            return self.get_my_list(UserTagResource(), user.tags.all(), request) 
+            return self.get_my_list(UserTagResource(), user.tags.all(), request)
 
     # we need to do the filtering of list by ourselves as tastypie filters only queryset
     def filter_list(self, request, users):

@@ -30,6 +30,14 @@ webassets==0.8
 xmpppy==0.5.0rc1
 yuicompressor==2.4.7
 MySQL-python==1.2.4
+supervisor==3.0b2
 django-qsstats-magic>=0.6.1
 django-chart-tools>=0.2.1
 django-admin-user-stats==0.2
+django-celery-with-redis==3.0
+flower==0.5.2
+django-redis-cache==0.10.0
+hiredis==0.1.1
+django-clear-cache==0.3
+django_pickling==0.1
+django-cacheops==1.0.0
