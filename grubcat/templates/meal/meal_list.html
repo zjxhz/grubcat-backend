@@ -22,7 +22,7 @@
         </div>
 
         <div id="meal-list" class="span9">
-            {% for meal in meal_list %}
+            {% for meal in upcomming_meal_list %}
                 {% include 'meal/meal_list_meal_frag.html' with meal=meal %}
             {% endfor %}
             {% for meal in passed_meal_list %}

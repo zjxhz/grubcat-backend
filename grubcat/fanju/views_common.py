@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from taggit.models import Tag
 import time
 from fanju.exceptions import *
-from fanju.models import User, Order, OrderStatus, TransFlow, Meal, UserPhoto
+from fanju.models import User, Order, OrderStatus, TransFlow, Meal, UserPhoto, MealLike
 from fanju import tasks
 import json
 
@@ -24,16 +24,13 @@ order_prefix = getattr(settings, 'ORDER_PREFIX', '')
 
 @require_POST
 def add_like(request, target_type, target_id):
-#     target_type = meal/userphoto/user
-    content_type = ContentType.objects.get_by_natural_key("fanju", target_type)
-    model_cls = content_type.model_class()
-    target = model_cls.objects.get(pk=target_id)
-    already_liked = target.likes.filter(id=request.user.id).exists()
-    if not already_liked:
-        target.likes.add(request.user)
-        if model_cls is Meal:
-            tasks.share_meal.delay(request.user.id, target.id)
-    return create_sucess_json_response(extra_dict={'already_liked': already_liked})
+#     target_type = meal/photo/user
+#     like_cls = MealLike/PhotoLike/UserLike
+    like_cls = ContentType.objects.get_by_natural_key("fanju", "%slike" % target_type).model_class()
+    obj, created = like_cls.objects.get_or_create(user=request.user, target_id=target_id)
+    if created and like_cls is MealLike:
+        tasks.share_meal.delay(request.user.id, target_id)
+    return create_sucess_json_response(extra_dict={'already_liked': not created})
 
 
 def handle_alipay_back(order_id, alipay_trade_no='', payed_time_str='', check_overtime=False):

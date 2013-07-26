@@ -18,7 +18,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 import weibo
 from fanju.exceptions import *
-from fanju.models import Order, Relationship, Meal,CacheKey
+from fanju.models import Order, Relationship, Meal, CacheKey, PhotoLike, MealLike
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
 from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
@@ -79,8 +79,8 @@ class PhotoDetailView(DetailView):
         context['pre_photo'] = pre_photo
         context['next_photo'] = next_photo
 
-        context['is_already_liked'] = self.request.user.is_authenticated() and self.object.likes.filter(
-            id=self.request.user.id).count() > 0
+        context['is_already_liked'] = self.request.user.is_authenticated() and PhotoLike.objects.filter(
+            user=self.request.user, target=self.object).count() > 0
         context['profile'] = self.object.user
         set_profile_common_attrs(context, self.request)
         return context
@@ -193,14 +193,17 @@ class MealCreateView(CreateView):
 
 class MealListView(ListView):
     template_name = "meal/meal_list.html"
-    context_object_name = "meal_list"
-
-    def get_queryset(self):
-        return Meal.get_upcomming_meals()
+    model = Meal
+    # context_object_name = "meal_list"
+    #
+    # def get_queryset(self):
+    #     return Meal.get_upcomming_meals()
 
     def get_context_data(self, **kwargs):
         context = super(MealListView, self).get_context_data(**kwargs)
-        context['passed_meal_list'] = Meal.get_passed_meals()
+        all_meals = Meal.get_all_meals()
+        context['passed_meal_list'] = Meal.get_passed_meals(all_meals)
+        context['upcomming_meal_list'] = Meal.get_upcomming_meals(all_meals)
         return context
 
 
@@ -312,9 +315,9 @@ class UserListView(ListView):
                 status=AuditStatus.APPROVED).order_by('-id').filter(tags__name__in=(tags, )).distinct()
         elif like_target_type:
             target_model_cls = ContentType.objects.get_by_natural_key('fanju', like_target_type).model_class()
-            return target_model_cls.objects.get(pk=like_target_id).likes.select_related('tags').order_by('-avatar')
+            return target_model_cls.objects.get(pk=like_target_id).likes.all().order_by('-avatar').cache()
         else:
-            return User.objects.filter( status=AuditStatus.APPROVED).order_by('-id')
+            return User.objects.filter(status=AuditStatus.APPROVED).order_by('-id').cache()
     #
     # def get_all_approved(self):
     #     @cached(timeout=60 * 60 * 12)
@@ -467,7 +470,8 @@ class MealDetailView(OrderCreateView):
         else:
             context['just_created'] = False
 
-        context['is_already_liked'] = self.request.user.is_authenticated() and meal.likes.filter(id=self.request.user.id).count()>0
+        context['is_already_liked'] = self.request.user.is_authenticated() and MealLike.objects.filter(
+            user=self.request.user, target=meal).count() > 0
 
         return context
 
