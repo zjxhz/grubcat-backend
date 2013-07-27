@@ -21,12 +21,12 @@
                 您现在还没有好友可以聊天，看看有没有感兴趣的朋友吧！
             </div>
         {% endif %}
-        {% if need_edit_tags %}
-            <div class="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                请完善你的兴趣爱好，这样便可以找到那些和你有着共同喜好的朋友了！赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>吧！
-            </div>
-        {% endif %}
+{#        {% if need_edit_tags %}#}
+{#            <div class="alert">#}
+{#                <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+{#                请完善你的兴趣爱好，这样便可以找到那些和你有着共同喜好的朋友了！赶快去 <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>吧！#}
+{#            </div>#}
+{#        {% endif %}#}
         {% if not is_like_users and user.is_authenticated and not is_approved_user %}
             <div class="alert">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>

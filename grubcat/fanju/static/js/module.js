@@ -2,38 +2,6 @@ jQuery(function($){
 
     var $data = $("#data");
 
-    $("#nav-chat").click(function(){
-        if (!$("#chat-container")[0]) {
-            $.get("/chat/", function(data){
-                $("body").append($(data));
-                $("#chat-dialog").modal({
-                    show: false,
-                    keyboard: false
-                })
-            }, "html")
-
-        } else {
-            $("#chat-dialog").modal({
-                show: true,
-                keyboard:false
-            })
-        }
-        return false;
-    })
-
-    var $notiWrapper = $("#notification-wrapper"), $notiList = $("#notification-list")
-
-    $("#nav-notification").click(function (e) {
-        $notiWrapper.toggleClass('hide')
-        var maxHeight = Math.min(700, ($(window).height() > 200 ? $(window).height()-100 : 100))
-        $notiList.css('maxHeight',maxHeight)
-        return false
-    })
-    $(document).bind('click', function () {
-        if ($notiWrapper.is(":visible")) {
-            $notiWrapper.toggleClass('hide')
-        }
-    })
 
 
     $("#chat-dialog").on("show",function(){
@@ -189,6 +157,12 @@ jQuery(function($){
             return false;
         });
     }
+
+    $(".btn-follow").live('click', function(){
+
+        $("#data").data("follow-request", true)
+        chatApp.connectChat()
+    })
 
 
     var $followListPage = $("#follow-list-page");

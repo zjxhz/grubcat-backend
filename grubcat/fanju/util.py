@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.geoip import GeoIP
+from django.db import connections
 from settings import APNS_ENVIRONMENT
 from xmpp.protocol import NS_DATA
 import json
@@ -219,3 +220,23 @@ def get_location_by_ip(ip):
     except Exception:
         return None
 
+
+def get_unread_message_count(user_name):
+    user_name = "%s@%s" % (escape_xmpp_node(user_name).replace('\\', '\\\\'), settings.CHATDOMAIN)
+    sql = "SELECT COUNT(*) FROM archiveMessages as m, archiveConversations as c  " \
+          "WHERE m.conversationId=c.conversationId and  ((c.ownerJid='%s' and m.direction='from') or (c.withJid='%s' and m.direction='to')) and m.status=0 and m.type='chat'" % (
+        user_name, user_name)
+    cursor = connections['openfire'].cursor()
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    return row[0]
+
+def get_unread_noty_count(user_name):
+    user_name = "%s@%s" % (escape_xmpp_node(user_name).replace('\\', '\\\\'), settings.CHATDOMAIN)
+    sql = "SELECT COUNT(*) FROM archiveMessages as m, archiveConversations as c  " \
+          "WHERE m.conversationId=c.conversationId and  ((c.ownerJid='%s' and  c.withJid='%s') or (c.ownerJid='%s' and  c.withJid='%s')) and m.status=0" % (
+        user_name, settings.XMPP_PUBSUB_SERVICE, settings.XMPP_PUBSUB_SERVICE,  user_name)
+    cursor = connections['openfire'].cursor()
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    return row[0]
