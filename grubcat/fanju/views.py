@@ -213,14 +213,14 @@ def get_user_info(request):
     if request.method == 'POST':
         if request.POST.get("ids"):
             usernames = escape_xmpp_username(request.POST.get("ids")).split(",")
-            users = User.objects.filter(username__in=usernames)
+            users = User.objects.filter(username__in=usernames).cache()
             result = []
             for user in users:
                 result.append({"id": escape_xmpp_node(user.username.lower()), "name": user.name, "avatarUrl": user.small_avatar,
                                'profileUrl': user.get_absolute_url()})
         elif request.POST.get("id"):
             username = escape_xmpp_username(request.POST.get("id"))
-            user = User.objects.filter(username=username)
+            user = User.objects.filter(username=username).cache()
             if len(user):
                 user = user[0]
                 result = {"id": escape_xmpp_node(user.username.lower()), "name": user.name, "avatarUrl": user.small_avatar,

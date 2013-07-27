@@ -21,6 +21,15 @@ DATABASES = {
         'HOST': '',
         'PORT': '',
         'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
+    },
+    'openfire': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'openfire', # Or path to database file if using sqlite3.
+        'USER': 'fanju',
+        'PASSWORD': 'fan321',
+        'HOST': '',
+        'PORT': '',
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
     }
 }
 
@@ -156,7 +165,6 @@ CACHEOPS = {
     # This includes request.user or post.author access,
     # where Post.author is a foreign key to auth.User
     'fanju.meal': ('all', 60 * 60 * 6),
-    'fanju.user': ('get', 60 * 60 * 6),
     'fanju.restaurant': ('all', 60 * 60 * 12),
     'fanju.userlocation': ('all', 60 * 60 * 12),
     'fanju.menu': ('all', 60 * 60 * 12),
@@ -168,9 +176,10 @@ CACHEOPS = {
     'fanju.mealcomment': ('all', 60 * 60),
     'fanju.usercomment': ('all', 60 * 60),
     'fanju.photocomment': ('all', 60 * 60),
-    'fanju.order': ('get', 60 * 60),
     'fanju.meallike': ('all', 60 * 60),
     'fanju.photolike': ('all', 60 * 60),
+    'fanju.user': ('get', 60 * 60 * 1),
+    'fanju.order': ('get', 60 * 60),
     # 'fanju.usertag': ('all', 60 * 60),
     # 'fanju.taggeduser': ('all', 60 * 60),
     # 'taggit_tag': ('all', 60 * 60),

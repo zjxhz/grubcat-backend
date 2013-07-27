@@ -34,16 +34,17 @@
                     <li id="nav-user"><a href="{% url 'user_list' %}">推荐用户</a></li>
                     <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
                     {% if user.is_authenticated %}
-                    <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">0</span></li>
+                    <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">{{ user.get_total_unread_message_count }}</span></li>
                     {% endif %}
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}
-                        <li id="nav-notification"><a href="#">通知</a><span id="total-noty-unread-count" class="unread-count hide">0</span></li>
+                        <li id="nav-notification"><a href="#">通知</a><span id="total-noty-unread-count" class="unread-count hide">{{ user.get_total_unread_noty_count }}</span></li>
                         <div id="notification-wrapper" class="hide">
                             <ul id="notification-list">
                             </ul>
-                            <div id="no-noty-tip">暂时没有新通知</div>
+                            <div id="no-noty-tip" class="hide">暂时没有新通知</div>
+                            <div id="loading-noty" >加载中</div>
                             <div class="actions"><a id="more-noty" href="#">查看更多</a><a id="ignore-all-noty" href="#">忽略全部</a>
                             </div>
                         </div>

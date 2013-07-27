@@ -24,7 +24,7 @@ import weibo
 
 from fanju.exceptions import BusinessException, AlreadyJoinedError, \
     NoAvailableSeatsError
-from fanju.util import pubsub
+from fanju.util import pubsub, get_unread_message_count, get_unread_noty_count
 
 
 #import redis
@@ -722,6 +722,12 @@ class User(AbstractUser):
     #            message["message"] = r.get("mid:%d:message" % mid)
     #            response.append(message)
     #        print response
+
+    def get_total_unread_message_count(self):
+        return get_unread_message_count(self.username)
+
+    def get_total_unread_noty_count(self):
+        return get_unread_noty_count(self.username)
 
     def get_webio_client(self):
         weibo_client = weibo.APIClient(app_key=settings.WEIBO_APP_KEY, app_secret=settings.WEIBO_APP_SECERT,

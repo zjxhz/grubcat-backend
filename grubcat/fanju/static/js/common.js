@@ -68,12 +68,14 @@ $(document).ready(function ($) {
                     $comment.focus()
                     return false
                 }
-
+                var $btnSubmit = $commentForm.find("button.btn-submit-comment")
+                    $btnSubmit.attr('disabled',true).addClass('disabled')
                 $.post($commentForm.attr('action'), {
                     'parent': $parent.val(),
                     'comment': $comment.val()
                 }, function (data) {
                     if (data.status == 'OK') {
+                        $btnSubmit.removeAttr('disabled').removeClass('disabled')
                         var $newComment = $(data.html), viewerId = $("#comment_box").data('uid'), vieweeId = $("#data").data('ownerId')
                         if (viewerId && $newComment.data('uid') == viewerId) {
                             $newComment.find(".comment-actions").append('<a href="#" class="del-comment-link"></i>删除</a>')
