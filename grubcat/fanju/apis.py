@@ -696,6 +696,18 @@ class MealResource(EOResource):
             obj = self.obj(request, **kwargs)
             meal_comment_resource = MealCommentResource()
             return self.get_my_list(meal_comment_resource, obj.comments.all(), request)
+        elif request.method == "POST":
+            obj = self.obj(request, **kwargs)
+            comment = MealComment()
+            comment.comment = request.POST.get("comment")
+            comment.user = request.user
+            comment.target = obj
+            parent_id = request.POST.get("parent_id")
+            if parent_id:
+                parent = MealComment.objects.get(pk=parent_id)
+                comment.parent = parent
+            comment.save()
+            return SuccessResponse({"id": comment.id})
         else:
             return http.HttpBadRequest()
     
@@ -707,8 +719,9 @@ class MealResource(EOResource):
         ordering = ['start_date']
 
 class MealCommentResource(EOResource):
-    from_person = fields.ForeignKey(UserResource, 'from_person', full=True)
-    meal  = fields.ForeignKey(MealResource, 'meal')
+    user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
+    parent = fields.ForeignKey('self', 'parent', full=True, null=True)
+#    meal  = fields.ForeignKey(MealResource, 'meal')
     
     class Meta:
         queryset = MealComment.objects.all()
