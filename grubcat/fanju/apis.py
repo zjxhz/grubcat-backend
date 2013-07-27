@@ -12,7 +12,7 @@ from fanju.exceptions import AlreadyJoinedError, NoAvailableSeatsError
 from fanju.models import UserLocation, UserTag, UserPhoto, User, \
     MealParticipants, Meal, Relationship, UserMessage, Visitor, Restaurant, \
     DishCategory, DishCategoryItem, MealComment, Order, Menu, Dish, DishItem, \
-    PhotoRequest
+    PhotoRequest, CommentStatus
 from fanju.pay.alipay.alipay import create_app_pay
 from taggit.models import Tag
 from tastypie import fields, http
@@ -695,7 +695,9 @@ class MealResource(EOResource):
         if request.method == "GET":
             obj = self.obj(request, **kwargs)
             meal_comment_resource = MealCommentResource()
-            return self.get_my_list(meal_comment_resource, obj.comments.all(), request)
+            return self.get_my_list(meal_comment_resource, \
+                                    obj.comments.filter(status__in=(CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED)), \
+                                    request)
         elif request.method == "POST":
             obj = self.obj(request, **kwargs)
             comment = MealComment()
