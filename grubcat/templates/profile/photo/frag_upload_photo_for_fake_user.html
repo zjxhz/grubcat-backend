@@ -1,0 +1,61 @@
+<div class="bbody">
+    <!-- upload form -->
+    <form id="upload_form_fake" enctype="multipart/form-data" method="post" action="{% url 'upload_photo' %}">
+        <!-- hidden crop params -->
+        <input type="hidden" id="x1" name="x1" />
+        <input type="hidden" id="y1" name="y1" />
+        <input type="hidden" id="x2" name="x2" />
+        <input type="hidden" id="y2" name="y2" />
+
+        <h4>选择或者拖拽图片</h4>
+        <div><input type="file" name="photo" id="image_file" onchange="fileSelectHandler()" /></div>
+        <div class="fake-error"></div>
+
+        <div class="step2">
+            <img id="preview" />
+
+            <div class="info clearfix">
+                <label>图片大小</label> <input type="text" id="filesize" name="filesize" />
+                <label>Type</label> <input type="text" id="filetype" name="filetype" />
+                <label>图片宽高</label> <input type="text" id="filedim" name="filedim" />
+                <label>裁剪后的宽度</label> <input type="text" id="w" name="w" />
+                <label>裁剪后的高度</label> <input type="text" id="h" name="h" />
+            </div>
+
+            <input id="upload_for_fake_user" type="submit" class="btn btn-primary btn-large" value="上传" />
+            <div class="loading hide " id="fake_loading" >上传中</div>
+        </div>
+    </form>
+</div>
+
+<style type="text/css">
+    #upload_for_fake_user{
+        float: left;
+    }
+    #fake_loading.loading{
+        margin-top: 15px;
+    }
+    #image_file{
+        margin-top: 20px;
+    }
+    .bbody{
+        margin-top: 100px;
+    }
+    #preview{
+        margin-bottom: 20px;
+
+    }
+    
+    .bbody .info label{
+        float: left;
+    }
+        .bbody .info input{
+        float: left;
+            width: 65px;
+            margin-right: 15px;
+            margin-left: 5px;
+    }
+    img{
+        max-width: none;
+    }
+</style>
