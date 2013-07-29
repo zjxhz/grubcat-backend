@@ -99,3 +99,8 @@ LOGGING = {
 }
 
 GEOIP_PATH = '/Users/wayne/workspace/fanju_resources/geo'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
