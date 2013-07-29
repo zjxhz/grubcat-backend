@@ -1,0 +1,50 @@
+{% extends "restaurant/base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load assets %}
+{% block title %}菜单管理{% endblock %}
+
+{% block page_js %}
+    {% assets "jquery_form_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+    <div id="dish-list-page" class="content span10">
+        <a href="{% url 'restaurant_dish_add' %}" id="add-dish-link" class="addlink" {% comment %}data-toggle="modal"
+           data-target="#add-edit-dish-modal"{% endcomment %}>添加菜</a>
+        <table id="dish-list" class="table table-bordered table-condensed table-striped">
+            <thead>
+            <tr>
+                <th class="tc">菜名</th>
+                <th class="tc">价钱(元)</th>
+                <th class="tc">单位</th>
+                <th class="tc span2">分类</th>
+                {#                <th class="span2 tc">是否可供</th>#}
+                <th class="span2 tc">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for dish in dish_list %}
+                {% include 'restaurant/dish_list_dish_frag.html' with dish=dish %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="modal hide" tabindex="-1" role="dialog"  id="add-edit-dish-modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4>添加菜</h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-link"  data-dismiss="modal">取消</a>
+            <a class="btn btn-primary btn-large" id="btn-add-edit-dish">确定</a>
+        </div>
+    </div>
+    <div id="data" data-nav-active-id="nav-dish" data-add-dish-category-link="{% url 'add_dish_category' %}" class='hide'></div>
+{% endblock %}
+
+

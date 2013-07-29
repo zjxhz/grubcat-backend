@@ -1,0 +1,35 @@
+{% load cache %}
+
+<div id="user-container" class="infinite-scroll">
+    {% for user in user_list %}
+{#        {% cache 600 user_box user.id %}#}
+            <div class="box ">
+                <div class="user-img">
+                    <a href="{% url 'user_detail' user.id %}" title="{{ user.name|default:'' }}" target="_blank">
+                        <img src="{{ user.big_avatar }}" alt="{{ user.name|default:'' }}" width="175" height="175">
+                    </a>
+                </div>
+                {% with tags=user.get_tags_from_cache %}
+                {% if user.motto or tags %}
+                    <div class="user-info">
+                        {% if user.motto %}<p> “ {{ user.motto }} ”</p>{% endif %}
+                        <ul class="tags">
+                            {% for tag_name in tags %}
+                                <li>{{ tag_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            </div>
+{#        {% endcache %}#}
+    {% endfor %}
+</div>
+{% if need_edit_tags_again %}
+    <div class="alert hide" id="need_edit_tags_again_tip">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        完善下你的兴趣爱好，这样就能找到更多和你有共同喜好的朋友哦~   <a href="{% url 'edit_basic_profile' %}">完善兴趣爱好</a>！
+    </div>
+{% endif %}
+<div id="page-nav">{% if next_page_url %}<a href="{{ next_page_url }}"></a>{% endif %}</div>
+

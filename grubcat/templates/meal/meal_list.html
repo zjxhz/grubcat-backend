@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load static_asset %}
+{% load cache %}
+{% load assets %}
+{% block title %}杭州的饭局{% endblock %}
+
+{% block base_js %}
+    {% assets "base_main_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+
+{% block content %}
+{#    {% cache 900 meal_list_frag %}#}
+    
+    <div class="row" id="meal-list-page">
+        <div id="app" class="span12">
+            <a class="ios-download" href="https://itunes.apple.com/cn/app/fan-ju/id662538880?l=en&mt=8" target="_blank">
+                <img src="{% static 'img/app.jpg' %}" alt=""/>
+            </a>
+        </div>
+
+        <div id="meal-list" class="span9">
+            {% for meal in upcomming_meal_list %}
+                {% include 'meal/meal_list_meal_frag.html' with meal=meal %}
+            {% endfor %}
+            {% for meal in passed_meal_list %}
+                {% include 'meal/meal_list_meal_frag.html' with meal=meal %}
+            {% endfor %}
+        </div>
+
+
+        <div class="sidebar span3 visible-desktop">
+            {% include "support/faq_sidebar.html" %}
+        </div>
+    </div>
+{#    {% endcache %}#}
+    <div id="data" data-nav-active-id="nav-meal" class='hide'></div>
+{% endblock %}
