@@ -1038,7 +1038,6 @@ $(function () {
 //                    show: true
 //                })
                 setTimeout(function(){
-                    console.log(toUID.replace(/(:|\.)/g,'\\$1'))
                     chatApp.contactListView.$el.find("#contact-" + toUID.replace(/(\.|\\)/g,'\\$1')).click();
                     try{
                 }catch(e){}
