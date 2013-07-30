@@ -73,6 +73,9 @@ class ClientTest(TestCase):
 
     client = Client()
 
+    def setUp(self):
+        self.settings(DEBUG=True)
+
     def assertNotErrorPage(self, response):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('"error-page"', response.content)

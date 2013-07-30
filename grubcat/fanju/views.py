@@ -304,7 +304,6 @@ class UserListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        a = b
         tags = self.request.GET.get('tags')
         like_target_type = self.request.GET.get('target_type')
         like_target_id = self.request.GET.get('target_id')
