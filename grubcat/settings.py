@@ -20,7 +20,8 @@ DATABASES = {
         'PASSWORD': 'fan321',
         'HOST': '',
         'PORT': '',
-        'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB", },
+        'TEST_CHARSET': 'utf8',
     },
     'openfire': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -29,9 +30,11 @@ DATABASES = {
         'PASSWORD': 'fan321',
         'HOST': '',
         'PORT': '',
-        'OPTIONS': {"init_command": "SET storage_engine=INNODB", }
+        'OPTIONS': {"init_command": "SET storage_engine=INNODB", },
+        'TEST_MIRROR': 'default',
     }
 }
+
 
 ADMINS = (
     ('Peter', 'ddsfeifei@gmail.com'),
