@@ -229,6 +229,14 @@ TEMPLATE_DIRS = (
     #    'path/to/debug_toolbar/templates',
 )
 
+###################### test #######################
+JENKINS_TASKS = (
+    'django_jenkins.tasks.run_pylint',
+    'django_jenkins.tasks.with_coverage',
+    'django_jenkins.tasks.run_pep8',
+    'django_jenkins.tasks.django_tests',
+)
+
 ###################### media ######################
 MEDIA_URL = '/media/'
 MEDIA_ROOT = SITE_ROOT + 'media/'
