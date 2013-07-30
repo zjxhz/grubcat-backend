@@ -161,7 +161,7 @@ jQuery(function($){
     $(".btn-follow").live('click', function(){
 
         $("#data").data("follow-request", true)
-        chatApp.connectChat()
+        chatApp.connect()
     })
 
 
