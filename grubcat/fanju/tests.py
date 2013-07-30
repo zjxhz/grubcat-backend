@@ -68,3 +68,19 @@ True
 #                 }
 #         response = self.c.post('/api/v1/meal/',json.dumps(data), content_type='application/json')
 #         self.assertEqual(response.status_code, 201, "Failed to create meal, code: %s" % response.status_code)
+
+class ClientTest(TestCase):
+
+    client = Client()
+
+    def test_index(self):
+        r = self.client.get('/')
+        self.assertEqual(r.status_code, 200)
+
+    def test_meal_list(self):
+        r = self.client.get('/meal/')
+        self.assertEqual(r.status_code, 200)
+
+    def test_user_list(self):
+        r = self.client.get('/user/')
+        self.assertEqual(r.status_code, 200)
