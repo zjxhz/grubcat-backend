@@ -73,14 +73,18 @@ class ClientTest(TestCase):
 
     client = Client()
 
+    def assertNotErrorPage(self, response):
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('"error-page"', response.content)
+
     def test_index(self):
         r = self.client.get('/')
-        self.assertEqual(r.status_code, 200)
+        self.assertNotErrorPage(r)
 
     def test_meal_list(self):
         r = self.client.get('/meal/')
-        self.assertEqual(r.status_code, 200)
+        self.assertNotErrorPage(r)
 
     def test_user_list(self):
         r = self.client.get('/user/')
-        self.assertEqual(r.status_code, 200)
+        self.assertNotErrorPage(r)
