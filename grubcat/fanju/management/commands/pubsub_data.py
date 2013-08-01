@@ -16,7 +16,13 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + ( make_option('--dry-run', action="store_true", dest="dry_run", default=False),
                                               make_option('--unsubscribe_owner_meal', action="store_true", dest="unsubscribe_own", default=False),
                                               make_option('--action',  dest="action", default=False), )
-    
+    """
+    if you want to delete old data first, use following sqls
+    use openfire;
+    delete FROM ofPubsubAffiliation;
+    delete FROM ofPubsubNode;
+    delete FROM ofPubsubSubscription;
+    """
     def handle(self, *args, **options):
         logger.debug("Handle pubsub data")
         self.dry_run = options.get("dry_run")
