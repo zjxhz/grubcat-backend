@@ -1522,7 +1522,7 @@ def meal_commented(sender, instance, created, **kwargs):
         if len(meal_participants):
             event = u"评论了饭局 “%s”" % meal.topic[:9]
             playlaod_json['event'] = event
-            playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
+            playlaod_json['message'] = u"%s%s" % (comment.user.name, event)
             pubsub.publish(node_meal_comment % meal.id, json.dumps(playlaod_json))
 
         for user in user_to_unsubscribe_meal_comment:
@@ -1531,7 +1531,7 @@ def meal_commented(sender, instance, created, **kwargs):
         if reply_to and comment_author != reply_to:
             event = u'回复了你'
             playlaod_json['event'] = event
-            playlaod_json['message'] = u"%s%s" % (comment.user.name, event),
+            playlaod_json['message'] = u"%s%s" % (comment.user.name, event)
             pubsub.publish(node_comment_reply % reply_to.id, json.dumps(playlaod_json))
 
 #
