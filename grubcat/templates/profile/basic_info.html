@@ -60,10 +60,13 @@
                     <div class="info-value">{{ gender_label }}</div>
                 </div>
             {% elif is_mine %}
-                <div class="info-item">
-                    <div class="info-label">性别：</div>
-                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
-                </div>
+                {% if gender_label %}
+
+                    <div class="info-item">
+                        <div class="info-label">性别：</div>
+                        <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                    </div>
+                {% endif %}
             {% endif %}
 
             {% if  profile.birthday %}
