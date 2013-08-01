@@ -1361,7 +1361,7 @@ def meal_created(sender, instance, created, **kwargs):
         pubsub.subscribe(host, node_name)
 
 
-def _meal_joined(meal, joiner):
+def _meal_joined(meal, joiner, participant=None):
     if meal.host and meal.host.id == joiner.id:
         event = u"发起了饭局"
     else:
@@ -1375,7 +1375,8 @@ def _meal_joined(meal, joiner):
         "event": event,
         "meal": meal.id,
         "topic": meal.topic,
-        "meal_photo": meal.small_cover_url})
+        "meal_photo": meal.small_cover_url,
+        "meal_participant": participant.id})
     if not meal.host or meal.host.id != joiner.id:
         # host does not publish meal events to participants
         # and he has subscribed the events already when he created the meal
@@ -1400,7 +1401,7 @@ def _meal_joined(meal, joiner):
 @receiver(post_save, sender=MealParticipants, dispatch_uid="meal_joined")
 def meal_joined(sender, instance, created, **kwargs):
     if created:
-        t = threading.Thread(target=_meal_joined, args=(instance.meal, instance.user))
+        t = threading.Thread(target=_meal_joined, args=(instance.meal, instance.user, instance))
         t.start()
 
 
