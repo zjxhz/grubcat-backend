@@ -1,0 +1,138 @@
+{% extends "profile/base.html" %}
+
+{% block title %}个人资料{% endblock %}
+
+{% block profile-main %}
+    <div id="profile_basic_info_page" class="span12" >
+        <div class="span3 base-info">
+            <img alt="{{ profile.name }}" class="img-polaroid" src="{{ profile.big_avatar }}" width="180"
+                 height="180">
+
+            <div class="name-age">
+                <span class="name">{{ profile.name }}</span>
+            </div>
+            {% if is_mine and not profile.avatar %}
+                <div class="alert" id="avatar_alert">你还没有上传头像，其他朋友无法寻找到你哦！</div>
+            {% endif %}
+        </div>
+        <div class="span9 fr">
+            {% if is_mine %}
+                <div class="fr profile-actions"><a href="{% url 'edit_basic_profile' %}" class="btn btn-primary fr">编辑</a>
+                </div>
+            {% endif %}
+
+            {% with tags=profile.get_tags_from_cache %}
+                {% if tags %}
+                    <div class="info-item info-tags">
+                        <div class="info-label">兴趣：</div>
+                        <div class="info-value">
+                            <ul class="tags">
+                                {% with my_tags=user.get_tags_from_cache %}
+                                    {% for tag in tags %}
+                                        <li {% if not is_mine and tag in my_tags %}class="common"{% endif %}>{{ tag }}</li>
+                                    {% endfor %}
+                                {% endwith %}
+                            </ul>
+                        </div>
+                    </div>
+                {% elif is_mine %}
+                    <div class="info-item info-tags">
+                        <div class="info-label">兴趣：</div>
+                        <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if profile.motto %}
+                <div class="info-item">
+                    <div class="info-label">签名：</div>
+                    <div class="info-value">{{ profile.motto }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">签名：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if gender_label %}
+                <div class="info-item">
+                    <div class="info-label">性别：</div>
+                    <div class="info-value">{{ gender_label }}</div>
+                </div>
+            {% elif is_mine %}
+                {% if gender_label %}
+
+                    <div class="info-item">
+                        <div class="info-label">性别：</div>
+                        <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if  profile.birthday %}
+                {% if is_mine %}
+                    <div class="info-item">
+                        <div class="info-label">生日：</div>
+                        <div class="info-value">{{ profile.birthday|date:"Y/n/j" }}</div>
+                    </div>
+                {% else %}
+                    <div class="info-item">
+                        <div class="info-label">年龄：</div>
+                        <div class="info-value">{{ profile.age }}</div>
+                    </div>
+                {% endif %}
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">生日：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if profile.college %}
+                <div class="info-item">
+                    <div class="info-label">学校：</div>
+                    <div class="info-value">{{ profile.college }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">学校：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if profile.industry >= 0 %}
+                <div class="info-item">
+                    <div class="info-label">行业：</div>
+                    <div class="info-value">{{ industry_label|default_if_none:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">行业：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if profile.work_for %}
+                <div class="info-item">
+                    <div class="info-label">公司：</div>
+                    <div class="info-value">{{ profile.work_for|default:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">公司：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+            {% if  profile.occupation %}
+                <div class="info-item">
+                    <div class="info-label">职位：</div>
+                    <div class="info-value">{{ profile.occupation|default:"未填写" }}</div>
+                </div>
+            {% elif is_mine %}
+                <div class="info-item">
+                    <div class="info-label">职位：</div>
+                    <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+    <div id="data" class='hide' data-add-tag-url="{% url 'add_tag' %}"  data-user-list-url='{% url "user_list" %}' data-active-nav-id="profile_basic_info"></div>
+{% endblock %}

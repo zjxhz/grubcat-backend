@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load bootstrap_tags %}
+{% load static_asset %}
+{% load static from staticfiles %}{% load assets %}
+{% block title %}创建圈子{% endblock %}
+{% block page_css %}
+    {{ block.super }}
+    {% assets "bootstrap_css" %}
+        <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+    {% endassets %}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+{% block page_js %}
+    {% assets "bootstrap_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+     {{ block.super }}
+{% endblock %}
+{% block active-nav-id %}nav-group{% endblock %}
+
+{% block content %}
+    <form id="id_create_group_form" action="{{ request.path }}" method="post"
+          class="ajax form-horizontal"> {% csrf_token %}
+        {{ form|as_bootstrap }}
+        <div class="form-actions">
+            <input type="submit" class="button" value="确定"/>
+        </div>
+    </form>
+{% endblock %}
