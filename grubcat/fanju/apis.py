@@ -746,7 +746,7 @@ class MealCommentResource(EOResource):
     meal  = fields.ForeignKey(MealResource, 'target', full=True, full_list=False, use_in='detail')
     
     class Meta:
-        queryset = MealComment.objects.all()
+        queryset = MealComment.objects.filter(status__in=(CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED))
         filtering= {'meal': ALL}
         authorization = ReadOnlyAuthorization()
 
