@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.defaults import url
 from django.contrib import auth
 from django.contrib.auth import logout
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
@@ -20,7 +21,7 @@ from tastypie.api import Api
 from tastypie.authorization import Authorization, ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.fields import RelatedField
-from tastypie.http import HttpUnauthorized
+from tastypie.http import HttpUnauthorized, HttpGone, HttpMultipleChoices
 from tastypie.paginator import Paginator
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
@@ -156,7 +157,21 @@ class UserTagResource(EOResource):
         authorization = ReadOnlyAuthorization() # can be updated at /user/u_id/tags/
         queryset = UserTag.objects.all()
 
+class SimpleUserPhotoResource(EOResource):                  
+    def dehydrate(self, bundle):
+        bundle.data['thumbnail'] = bundle.obj.photo_thumbnail
+        bundle.data['large'] = bundle.obj.large_photo
+        return bundle
+    
+    class Meta:
+        queryset = UserPhoto.objects.all()
+        authorization = UserObjectsOnlyAuthorization(read_other=True)
+        filtering={"id":ALL}
+        allowed_methods = ['get', 'post', 'delete']
+        
 class UserPhotoResource(EOResource):
+    user = fields.ForeignKey('fanju.apis.SimpleUserResource', 'user', full=True, full_list=False, use_in='detail')
+    
     def post_list(self, request, **kwargs):
         # in a REST framework there is no easy way to delete multiple objects at a time, so just use post here
         deleted_ids = request.POST.get("deleted_ids")
@@ -179,7 +194,7 @@ class UserPhotoResource(EOResource):
     class Meta:
         queryset = UserPhoto.objects.all()
         authorization = UserObjectsOnlyAuthorization(read_other=True)
-        filtering={"id":ALL}
+        filtering={"id":ALL, "user":ALL}
         allowed_methods = ['get', 'post', 'delete']
 
 
@@ -219,10 +234,7 @@ class SimpleUserResource(EOResource):
 
 class MealParticipantResource(EOResource):
     user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
-    
-    def dehydrate(self, bundle):
-        self.mergeOneToOneField(bundle, 'user')
-        return bundle
+    meal = fields.ForeignKey('fanju.apis.MealResource', 'meal', full=True)
 
     class Meta:
         queryset = MealParticipants.objects.all()
@@ -262,7 +274,7 @@ def writeMineOnly(func):
 class UserResource(EOResource):
     location = fields.ToOneField(UserLocationResource, 'location', full=True, null=True)
     tags = fields.ToManyField(UserTagResource, 'tags', full=True, null=True)
-    photos = fields.ToManyField(UserPhotoResource, 'photos', full=True, null=True)
+    photos = fields.ToManyField(SimpleUserPhotoResource, 'photos', full=True, null=True)
 
     def hydrate(self, bundle):
         bundle.data['avatar'] = str(bundle.obj.avatar) # never change avatar in a patch request, or it always add /media/
@@ -469,8 +481,16 @@ class UserResource(EOResource):
     def view_upload_photos(self, request, **kwargs):
         user_to_query = self.obj(request, **kwargs)   
         if request.method == 'GET':
-            photos = user_to_query.photos.all()
-            return self.get_my_list(UserPhotoResource(), photos, request)
+            try:
+                bundle = self.build_bundle(data={'pk': kwargs['pk']}, request=request)
+                obj = self.cached_obj_get(bundle=bundle, **self.remove_api_resource_names(kwargs))
+            except ObjectDoesNotExist:
+                return HttpGone()
+            except MultipleObjectsReturned:
+                return HttpMultipleChoices("More than one resource is found at this URI.")
+    
+            child_resource = UserPhotoResource()
+            return child_resource.get_list(request, user=obj)
         elif request.method == "POST":
             photo = UserPhoto(user=user_to_query)
             name = request.FILES.keys()[0]
@@ -723,13 +743,21 @@ class MealResource(EOResource):
 class MealCommentResource(EOResource):
     user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
     parent = fields.ForeignKey('self', 'parent', full=True, null=True)
-#    meal  = fields.ForeignKey(MealResource, 'meal')
+    meal  = fields.ForeignKey(MealResource, 'target', full=True, full_list=False, use_in='detail')
     
     class Meta:
         queryset = MealComment.objects.all()
         filtering= {'meal': ALL}
         authorization = ReadOnlyAuthorization()
+
+class SimpleMealCommentResource(EOResource):
+    user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
+    parent = fields.ForeignKey('self', 'parent', full=True, null=True)
     
+    class Meta:
+        queryset = MealComment.objects.all()
+        filtering= {'meal': ALL}
+        authorization = ReadOnlyAuthorization()    
 
 class OrderResource(EOResource):        
     meal = fields.ForeignKey(MealResource,'meal', full=True)
@@ -830,3 +858,4 @@ v1_api.register(UserTagResource())
 v1_api.register(UserPhotoResource())
 v1_api.register(SimpleUserResource())
 v1_api.register(RelationshipResource())
+v1_api.register(MealParticipantResource())
