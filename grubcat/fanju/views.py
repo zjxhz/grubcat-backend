@@ -315,7 +315,7 @@ class UserListView(ListView):
                 status=AuditStatus.APPROVED).order_by('-id').filter(tags__name__in=(tags, )).distinct()
         elif like_target_type:
             target_model_cls = ContentType.objects.get_by_natural_key('fanju', like_target_type).model_class()
-            return target_model_cls.objects.get(pk=like_target_id).likes.all().order_by('-avatar').cache()
+            return target_model_cls.objects.get(pk=like_target_id).likes.all().order_by('-avatar')
         else:
             return User.objects.filter(status=AuditStatus.APPROVED).order_by('-id').cache()
     #
