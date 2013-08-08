@@ -744,7 +744,13 @@ class MealCommentResource(EOResource):
     user = fields.ForeignKey(SimpleUserResource, 'user', full=True)
     parent = fields.ForeignKey('self', 'parent', full=True, null=True)
     meal  = fields.ForeignKey(MealResource, 'target', full=True, full_list=False, use_in='detail')
-    
+   
+    def dehydrate(self, bundle):
+        parent = bundle.data.get("parent")
+        if parent and parent.data.get("meal"):
+            del parent.data["meal"]
+        return bundle
+ 
     class Meta:
         queryset = MealComment.objects.filter(status__in=(CommentStatus.WAIT_TO_AUDIT, CommentStatus.APPROVED))
         filtering= {'meal': ALL}
