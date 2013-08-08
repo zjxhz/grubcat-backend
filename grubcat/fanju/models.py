@@ -189,6 +189,14 @@ class Menu(models.Model):
         return self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
 
     @property
+    def normal_cover_path(self):
+        return get_thumbnailer(self.photo).get_thumbnail({
+            'size': settings.NORMAL_MENU_COVER_SIZE,
+            'crop': True,
+            'box': self.cropping,
+        }).path
+
+    @property
     def small_cover_url(self):
         return self.get_cover_thumbnail(settings.SMALL_MENU_COVER_SIZE)
 
@@ -624,7 +632,7 @@ class User(AbstractUser):
         if lat and lng:
             lat = float(lat)
             lng = float(lng)
-        else:
+        elif self.location:
             lat = self.location.lat
             lng = self.location.lng
         if not lat or not lng:
@@ -970,12 +978,25 @@ class Meal(models.Model):
         return url
 
     @property
+    def normal_cover_path(self):
+        if self.photo:
+            path = get_thumbnailer(self.photo).get_thumbnail({
+                'size': settings.NORMAL_MENU_COVER_SIZE,
+                'crop': True,
+                'box': self.cropping
+            }).path
+        else:
+            path = self.menu.normal_cover_path
+        return path
+
+    @property
     def normal_cover_url(self):
         if self.photo:
             url = self.get_cover_thumbnail(settings.NORMAL_MENU_COVER_SIZE)
         else:
             url = self.menu.normal_cover_url
         return url
+
 
     @property
     def small_cover_url(self):

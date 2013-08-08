@@ -23,6 +23,9 @@ def share_fanju(uid):
     share_text = "%s%s" % (share_texts[2], fanju_url)
     visible = 2 if settings.DEBUG else 0
     weibo_client.statuses.update.post(uid=user.weibo_id, status=share_text, visible=visible)
+    # fanju_pic = open(meal.normal_cover_path, 'rb')
+    # weibo_client.statuses.upload.post(status=share_text, pic=fanju_pic)
+    # fanju_pic.close()
 
 
 @task()
@@ -37,13 +40,14 @@ def share_meal(uid, meal_id, is_join=False):
     else:
         share_text = u"我刚发现一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
 
+    # visible = 2 if settings.DEBUG else 0
     # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
-    # weibo_client.statuses.upload_url_text.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1) #need 高级权限
+    # weibo_client.statuses.upload_url_text.post(status=share_text, url=share_pic_url,visible=1) #need 高级权限
 
-    # weibo_client.statuses.upload.post(uid=self.weibo_id, status=share_text, url=share_pic_url,visible=1)
-    visible = 2 if settings.DEBUG else 0
-    weibo_client.statuses.update.post(uid=user.weibo_id, status=share_text, visible=visible)
-
+    # weibo_client.statuses.update.post(status=share_text, visible=visible)
+    meal_pic = open(meal.normal_cover_path, 'rb')
+    weibo_client.statuses.upload.post(status=share_text, pic=meal_pic)
+    meal_pic.close()
 
 def follow_fanju_weibo(uid):
     if isinstance(uid, User):
@@ -60,3 +64,5 @@ def user_registered(uid):
     user.audit_by_machine()
     share_fanju(user)
     follow_fanju_weibo(user)
+
+###################pubsub notification ################################
