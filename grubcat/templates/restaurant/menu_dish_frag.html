@@ -1,0 +1,10 @@
+{#used in menu list page , add/edit menu page#}
+<dd class="dish" dish-id="{{ dish.id }}" data-price='{{ dish.price|floatformat }}'>
+    <span class="dish-name">{{ dish.name }}</span>
+    <a href="#" class="close">&times;</a>
+    <span class="dish-info">
+        <span class="price">{{ dish.price|floatformat }}元</span>
+        <span class="unit">/{{ dish.unit }} &times; </span>
+        <span class="num">{{ num|default:'1' }}</span>
+    </span>
+</dd>
