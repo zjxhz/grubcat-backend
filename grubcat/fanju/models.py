@@ -873,7 +873,7 @@ class Meal(models.Model):
     @classmethod
     def get_all_meals(cls):
         return Meal.objects.filter(status=MealStatus.PUBLISHED, privacy=MealPrivacy.PUBLIC).order_by('start_date',
-                                                                                                     'start_time').cache()
+                                                                                                     'start_time')
 
 
     @classmethod
