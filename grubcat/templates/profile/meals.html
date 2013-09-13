@@ -4,18 +4,18 @@
 
 {% block profile-main %}
     <div id="profile-meal-page" class="">
-        {% if paying_orders %}
+        {% comment %}{% if paying_orders %}
             <h3 class="span12 ">{{ pay_overtime }}分钟内未支付的饭局</h3>
             {% for order in paying_orders %}
                 {% include 'profile/profile_meal_frag.html' %}
             {% endfor %}
-        {% endif %}
+        {% endif %}{% endcomment %}
 
         {% if upcomming_orders %}
             {% if paying_orders %}
                 <hr class="span12">
             {% endif %}
-            <h3 class="span12 ">最近的饭局</h3>
+            <h3 class="span12 ">最近的活动</h3>
             {% for order in upcomming_orders %}
                 {% include 'profile/profile_meal_frag.html' %}
             {% endfor %}
@@ -24,7 +24,7 @@
             {% if upcomming_orders %}
                 <hr class="span12">
             {% endif %}
-            <h3 class="span12 ">已结束的饭局</h3>
+            <h3 class="span12 ">已结束的活动</h3>
             {% for order in passed_orders %}
                 {% include 'profile/profile_meal_frag.html' %}
             {% endfor %}
@@ -32,9 +32,9 @@
         {% if not paying_orders and not upcomming_orders and not passed_orders %}
             <div class="no-results span12">
                 {% if is_mine %}
-                    您还没有参加任何饭局！<a href="{% url 'meal_list' %}">现在就去看看吧</a>
+                    您还没有参加任何活动！<a href="{% url 'meal_list' %}">现在就去看看吧</a>
                 {% else %}
-                    TA还没有参加任何饭局！
+                    TA还没有参加任何活动！
                 {% endif %}
             </div>
         {% endif %}

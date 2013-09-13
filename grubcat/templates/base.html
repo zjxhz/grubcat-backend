@@ -31,8 +31,8 @@
                 <a class="brand logo" href="/"><img src="{% static 'img/logo.png' %}" alt="饭聚"/></a><a class="brand city" href="/">@杭州</a>
                 <ul class="nav main">
                     <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
-                    <li id="nav-user"><a href="{% url 'user_list' %}">推荐用户</a></li>
-                    <li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起饭局</a></li>
+                    <li id="nav-user"><a href="{% url 'user_list' %}">热门用户</a></li>
+                    {% comment %}<li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起活动</a></li>{% endcomment %}
                     {% if user.is_authenticated %}
                     <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">{{ user.get_total_unread_message_count }}</span></li>
                     {% endif %}
@@ -54,8 +54,9 @@
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{% url 'user_detail' user.id %}">我的主页</a></li>
-                                <li><a href="{% url 'user_meal_list' user.id %}">我的饭局</a></li>
+                                <li><a href="{% url 'user_meal_list' user.id %}">我的活动</a></li>
                                 <li><a href="{% url 'following_list' user.id %}">我的好友</a></li>
+                                <li><a href="{% url 'photo_list' user.id %}">我的照片</a></li>
                                 <li class="divider"></li>
                                 <li id="nav-upload-photo" class="hidden-phone">
                                     <a href="{% url 'upload_photo' %}" class="upload-photo-link">上传照片</a>
