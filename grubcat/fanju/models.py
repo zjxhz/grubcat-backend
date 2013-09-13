@@ -911,7 +911,7 @@ class Meal(models.Model):
         paying_persons = sum([o['max_num_persons'] for o in other_paying_orders])
         if self.actual_persons + requesting_persons + paying_persons > self.max_persons:
             if self.actual_persons >= self.max_persons:
-                message = u'该饭局已卖光了！'
+                message = u'已经爆满了！'
             elif paying_persons == 0:
                 message = u'最多只可以预定%s个座位！' % (self.max_persons - self.actual_persons)
             elif requesting_persons > self.max_persons - self.actual_persons - paying_persons > 0:
@@ -924,7 +924,7 @@ class Meal(models.Model):
 
     def join(self, customer, requesting_persons):
         if self.is_participant(customer):
-            raise AlreadyJoinedError(u"对不起，您已经加入了这个饭局，您可以加入其他感兴趣的饭局！")
+            raise AlreadyJoinedError(u"对不起，您已经报名了！")
 
         self.checkAvaliableSeats(customer, requesting_persons)
 
@@ -933,10 +933,10 @@ class Meal(models.Model):
         order.customer = customer
         order.num_persons = requesting_persons
         order.orginal_total_price = self.list_price * requesting_persons
-        if customer.is_staff:
-            order.total_price = 0.1 * requesting_persons
-        else:
-            order.total_price = order.orginal_total_price
+        # if customer.is_staff:
+        #     order.total_price = 0.1 * requesting_persons
+        # else:
+        order.total_price = order.orginal_total_price
         order.status = OrderStatus.CREATED
         order.save()
         return order
@@ -1384,9 +1384,9 @@ def meal_created(sender, instance, created, **kwargs):
 
 def _meal_joined(meal, joiner, participant=None):
     if meal.host and meal.host.id == joiner.id:
-        event = u"发起了饭局"
+        event = u"发起了活动"
     else:
-        event = u"参加了饭局"
+        event = u"参加了活动"
     payload = json.dumps({
         "user": joiner.id,
         "avatar": joiner.normal_avatar,
@@ -1542,7 +1542,7 @@ def meal_commented(sender, instance, created, **kwargs):
                          "comment": u'“%s”' % comment_content}
 
         if len(meal_participants):
-            event = u"评论了饭局 “%s”" % meal.topic[:9]
+            event = u"评论了活动 “%s”" % meal.topic[:9]
             playlaod_json['event'] = event
             playlaod_json['message'] = u"%s%s" % (comment.user.name, event)
             pubsub.publish(node_meal_comment % meal.id, json.dumps(playlaod_json))
