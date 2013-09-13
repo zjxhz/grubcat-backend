@@ -56,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^$', cache_page_for_anonymous(MealListView.as_view()), name="index"),
     url(r'^meal/$', cache_page_for_anonymous(MealListView.as_view()), name="meal_list"),
     url(r'^meal/(?P<meal_id>\d+)/$', cache_page_for_anonymous()(MealDetailView.as_view()), name='meal_detail'),
+    url(r'^order/cancel/(?P<order_id>\d+)/$', cancel_order, name='cancel_order'),
     url(r'^meal/add/$', login_required(MealCreateView.as_view()), name='create_meal'),
 
     url(r'^user/(?P<user_id>\d+)/meals/$', login_required(UserMealListView.as_view()), name="user_meal_list"),

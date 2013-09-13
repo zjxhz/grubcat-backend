@@ -440,7 +440,15 @@ class OrderCreateView(CreateView):
         # url = order.get_absolute_url()
         return HttpResponseRedirect(meal.get_absolute_url())
 
-#TODO check pay status
+
+@require_POST
+def cancel_order(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    if order.customer == request.user:
+        order.cancel()
+        return create_sucess_json_response()
+
+
 
 class MealDetailView(OrderCreateView):
     form_class = OrderCreateForm

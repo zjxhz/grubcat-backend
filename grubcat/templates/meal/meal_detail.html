@@ -45,10 +45,10 @@
                 </div>
                 <div id="meal-grub">
                     {% if order %}
-                        <button href="#"
-                           class="btn btn-primary btn-book btn-booked fr">
+                        <a id="cancel_order" href="{% url 'cancel_order' order.id %}"
+                           class="btn btn-primary btn-book btn-booked fr" >
                             我已报名
-                        </button>
+                        </a>
 {% comment %}                        <a href="{% url 'order_detail' meal.id order.id %}"
                            class="btn btn-primary btn-book btn-booked fr">
                             我已报名
