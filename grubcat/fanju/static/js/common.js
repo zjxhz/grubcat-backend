@@ -143,7 +143,7 @@ $(document).ready(function ($) {
 
         $likeLink.hover(function () {
             if (isAlreadyLiked) {
-                $likeLink.html("&nbsp;已" + likeText)
+                $likeLink.html("<i class='icon-star'></i>&nbsp;已" + likeText)
             }
         }, function () {
             $likeLink.html(orginalLikeLink)
