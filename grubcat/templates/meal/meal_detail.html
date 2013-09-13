@@ -45,10 +45,14 @@
                 </div>
                 <div id="meal-grub">
                     {% if order %}
-                        <a href="{% url 'order_detail' meal.id order.id %}"
+                        <button href="#"
                            class="btn btn-primary btn-book btn-booked fr">
-                            已预订 查看订单
-                        </a>
+                            我已报名
+                        </button>
+{% comment %}                        <a href="{% url 'order_detail' meal.id order.id %}"
+                           class="btn btn-primary btn-book btn-booked fr">
+                            我已报名
+                        </a>{% endcomment %}
                     {% elif meal.is_passed %}
                         <a href="#"
                            class="btn btn-passed btn-book fr">
@@ -64,23 +68,23 @@
                             {% else %}
                                 <a href="#"
                                    class="btn btn-primary btn-book btn-book-now fr">
-                                    马上预定
+                                    我要报名
                                 </a>
                             {% endif %}
                         {% else %}
                             <a href="{% url 'weibo_login' %}?next={% url 'meal_detail' meal.id %}"
                                class="btn btn-primary btn-book fr">
-                                马上预定
+                                我要报名
                             </a>
                         {% endif %}
-                        <form id="order_info_form" method="post"  target="_blank"
+                        <form id="order_info_form" method="post"
                               class="form-horizontal"> {% csrf_token %}
-                            <fieldset>
+                            <fieldset class="hidden">
                                 {% for hidden in form.hidden_fields %}
                                     {{ hidden }}
                                 {% endfor %}
                                 <div class="control-group num_persons">
-                                    <label class="control-label" for="id_num_persons">为几人付款:</label>
+                                    <label class="control-label" for="id_num_persons">总共位:</label>
 
                                     <div class="controls">
                                         {{ form.num_persons }}
@@ -135,12 +139,12 @@
             <div id="users" class="clearfix">
                 {% if meal.actual_persons %}
                     {% if meal.left_persons <= 0 %}
-                        <h3 id="left_persons_tip" data-left-persons="0">没有空位了！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="0">已经爆满！</h3>
                     {% else %}
-                        <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">还剩{{ meal.left_persons }}个空位，快来预定吧！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">还剩 {{ meal.left_persons }} 位，快来参加哦！</h3>
                     {% endif %}
                 {% else %}
-                    <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加饭局，赶快预定吧！</h3>
+                    <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加，赶快抢沙发！</h3>
                 {% endif %}
                 {% for order in payed_orders %}
                     <a href="{% url 'user_detail' order.customer.id %}" class="user-img-wrapper"
@@ -174,13 +178,13 @@
 
             {% include "support/faq_sidebar.html" %}
 
-            <div id="menu" class="menu sidebar-box">
+           {% comment %} <div id="menu" class="menu sidebar-box">
                 <div class="sidebar-box-title">
                     菜单<span class="menu-name">（{{ meal.menu.name|default:"" }}）</span></div>
                 <div class="sidebar-box-content">
                     {% include 'meal/menu_frag.html' with menu=meal.menu %}
                 </div>
-            </div>
+            </div>{% endcomment %}
         </div>
     </div>
     <div id="data" class='hide' data-check-order-status-link="{% url 'check_order_status' meal.id%}" {% if request.GET.num %}data-num-persons="{{ request.GET.num }}"{% endif %}></div>

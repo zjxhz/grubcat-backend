@@ -23,7 +23,7 @@ pyapns==0.4.0
 python-dateutil==2.1
 raven==3.1.13
 simplejson==3.1.2
-sinaweibopy==1.1.2
+sinaweibopy==1.1.3
 #virtualenv==1.9.1
 wadofstuff-django-serializers==1.1.0
 webassets==0.8

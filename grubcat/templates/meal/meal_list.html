@@ -20,7 +20,6 @@
                 <img src="{% static 'img/app.jpg' %}" alt=""/>
             </a>
         </div>
-
         <div id="meal-list" class="span9">
             {% for meal in upcomming_meal_list %}
                 {% include 'meal/meal_list_meal_frag.html' with meal=meal %}

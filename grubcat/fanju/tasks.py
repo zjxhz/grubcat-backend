@@ -36,9 +36,9 @@ def share_meal(uid, meal_id, is_join=False):
     r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
     meal_url = r.urls[0].url_short
     if is_join:
-        share_text = u"我刚参加了一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+        share_text = u"我刚参加了一个有趣的活动 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
     else:
-        share_text = u"我刚发现一个有趣的饭局 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+        share_text = u"我刚发现一个有趣的活动 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
 
     # visible = 2 if settings.DEBUG else 0
     # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
@@ -62,7 +62,7 @@ def follow_fanju_weibo(uid):
 def user_registered(uid):
     user = User.objects.get(pk=uid)
     user.audit_by_machine()
-    share_fanju(user)
+    # share_fanju(user)
     follow_fanju_weibo(user)
 
 ###################pubsub notification ################################

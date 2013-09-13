@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static_asset %}
 {% load static from staticfiles %}{% load assets %}
-{% block title %}发起饭局{% endblock %}
+{% block title %}发起活动{% endblock %}
 
 {% block extra_base_css %}
     {% assets "create_meal_css" %}
@@ -70,28 +70,28 @@
                   class="form form-horizontal"> {% csrf_token %}
                 <fieldset>
 
-                    <legend>发起一个饭局</legend>
-
+{#                    <legend>发起一个</legend>#}
+    <br/>
                     <div class="control-group ">
 
-                        <label class="control-label" for="id_topic">饭局主题</label>
+                        <label class="control-label" for="id_topic">主题</label>
 
                         <div class="controls">
                             <input id="id_topic" type="text" maxlength="64" name="topic"
-                                   required data-validation-required-message="请输入饭局主题"
+                                   required data-validation-required-message="请输入主题"
                                    value="{{ form.topic.value|default_if_none:'' }}">
                             {{ form.topic.errors }}
                         </div>
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label" for="id_introduction">饭局简介</label>
+                        <label class="control-label" for="id_introduction">简介</label>
 
                         <div class="controls">
 
                             <textarea name="introduction" cols="40" rows="5" id="id_introduction"
                                       required
-                                      data-validation-required-message="请输入饭局简介">{{ form.introduction.value|default_if_none:"" }}</textarea>
+                                      data-validation-required-message="请输入简介">{{ form.introduction.value|default_if_none:"" }}</textarea>
 
 
                             {{ form.introduction.errors }}
@@ -105,7 +105,7 @@
 
                     {#                <legend>2、餐厅信息</legend>#}
                     <div class="control-group start_time">
-                        <label class="control-label" for="id_privacy">就餐时间</label>
+                        <label class="control-label" for="id_privacy">时间</label>
 
                         <div class="controls">
                             <div id="div_start_date">{{ form.start_date }}</div>
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                     <div class="control-group min_persons">
-                        <label class="control-label" for="id_min_persons">就餐人数</label>
+                        <label class="control-label" for="id_min_persons">人数</label>
 
                         <div class="controls">
                             {{ form.min_persons }} {{ form.min_persons.errors }}

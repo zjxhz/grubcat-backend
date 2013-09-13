@@ -428,17 +428,17 @@ class OrderCreateView(CreateView):
         customer = self.request.user
         order = meal.join(customer, num_persons)
         #        TODO some checks
-        if not settings.PAY_DEBUG:
-            price = order.total_price
-            if isMobileRequest(self.request):
-                url = create_wap_pay(order.id, meal.topic, price, 1)
-            else:
-                url = create_direct_pay(order.id, meal.topic, price, 1)
-            pay_logger.info("支付订单：%s" % url)
-        else:
-            handle_alipay_back(order.id)
-            url = order.get_absolute_url()
-        return HttpResponseRedirect(url)
+        # if not settings.PAY_DEBUG:
+        #     price = order.total_price
+        #     if isMobileRequest(self.request):
+        #         url = create_wap_pay(order.id, meal.topic, price, 1)
+        #     else:
+        #         url = create_direct_pay(order.id, meal.topic, price, 1)
+        #     pay_logger.info("支付订单：%s" % url)
+        # else:
+        handle_alipay_back(order.id)
+        # url = order.get_absolute_url()
+        return HttpResponseRedirect(meal.get_absolute_url())
 
 #TODO check pay status
 
@@ -449,7 +449,7 @@ class MealDetailView(OrderCreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
         try:
-            meal = Meal.objects.select_related('menu__restaurant', ).get(pk=self.kwargs.get('meal_id'))
+            meal = Meal.objects.select_related('restaurant', ).get(pk=self.kwargs.get('meal_id'))
             context['meal'] = meal
         except ObjectDoesNotExist:
             raise Http404(u'对不起，该饭局不存在！')
