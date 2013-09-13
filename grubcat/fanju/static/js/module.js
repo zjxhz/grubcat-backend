@@ -115,6 +115,20 @@ jQuery(function($){
             $num_persons.val(orginalOrderNumPersons);
             $("#meal-grub").find(".btn-book-now").text("去支付");
         }
+
+        $("#cancel_order").hover(function(){
+            $(this).html("取消报名")
+        }, function(){
+            $(this).html("我已报名")
+        }).click(function(){
+                $.post($(this).attr('href'),function(data){
+                    if(data.status=='OK'){
+                        location.reload()
+                    }
+                })
+                return false
+            })
+
         var orderTimeOut;
         $(".btn-book-now").click(function () {
             $("#order_info_form").submit();
