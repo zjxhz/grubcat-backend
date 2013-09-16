@@ -36,9 +36,9 @@ def share_meal(uid, meal_id, is_join=False):
     r = weibo_client.short_url.shorten.post(url_long=settings.SITE_DOMAIN + meal.get_absolute_url())
     meal_url = r.urls[0].url_short
     if is_join:
-        share_text = u"我刚参加了一个有趣的活动 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+        share_text = u"我刚参加了一个活动 “%s”，还有%s个名额！%s" % (meal.topic, meal.left_persons, meal_url)
     else:
-        share_text = u"我刚发现一个有趣的活动 “%s”，大家快来看看吧！%s" % (meal.topic, meal_url)
+        share_text = u"我刚发现一个活动 “%s”，还有%s个名额！%s" % (meal.topic, meal.left_persons, meal_url)
 
     # visible = 2 if settings.DEBUG else 0
     # share_pic_url = u"%s%s" % (settings.SITE_DOMAIN, meal.normal_cover_url)
