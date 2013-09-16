@@ -1,4 +1,5 @@
 {% extends "profile/base.html" %}
+{% load static from staticfiles %}
 
 {% block title %}个人资料{% endblock %}
 
@@ -131,6 +132,12 @@
                     <div class="info-value"><a href="{% url 'edit_basic_profile' %}">编辑</a></div>
                 </div>
             {% endif %}
+        {% if profile.weibo_id %}
+                <div class="info-item">
+                    <div class="info-label">微博：</div>
+                    <div class="info-value"><a href="http://weibo.com/u/{{ profile.weibo_id }}" target="_blank"><img src="{% static 'img/auth_weibo_big.png' %}" alt=""/></a></div>
+                </div>
+        {% endif %}
         </div>
 
     </div>
