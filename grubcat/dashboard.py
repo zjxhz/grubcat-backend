@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 
 from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
-from fanju.models import AuditStatus, User, UserPhoto, MealComment, PhotoComment
+from fanju.models import AuditStatus, User, UserPhoto, MealComment, PhotoComment, UserSource, ClientSource
 
 
 class CustomIndexDashboard(Dashboard):
@@ -54,7 +54,6 @@ class CustomIndexDashboard(Dashboard):
             models=('django.contrib.*',),
         ))
 
-
         need_audit_user_count = User.objects.filter(status=AuditStatus.WAIT_TO_AUDIT).count()
         if need_audit_user_count:
             need_audit_user_title = u'待审核用户（<span style="color:red">%s</span>）' % need_audit_user_count
@@ -67,6 +66,18 @@ class CustomIndexDashboard(Dashboard):
                 {
                     'title': need_audit_user_title,
                     'url': "%s?status__exact=%s" % (reverse("admin:fanju_user_changelist"), AuditStatus.WAIT_TO_AUDIT) ,
+                    'external': False,
+                },
+            ]
+        ))
+
+        self.children.append(modules.LinkList(
+            u'Statistics',
+            children=[
+                {
+                    'title': u'IOS/WEB用户：%s / %s' % (UserSource.objects.filter(source=ClientSource.IOS).count(),
+                                                     UserSource.objects.filter(source=ClientSource.WEB).count()),
+                    'url': "#",
                     'external': False,
                 },
             ]

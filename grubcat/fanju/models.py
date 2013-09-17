@@ -286,6 +286,7 @@ class Order(models.Model):
             elif meal.status is MealStatus.CREATED_WITH_MENU:
                 meal.status = MealStatus.PUBLISHED
         meal.save()
+        order.customer.add_score(Score.JOIN_MEAL)
         from fanju import tasks
 
         tasks.share_meal.delay(order.customer.id, order.meal.id, is_join=True)
@@ -431,6 +432,10 @@ INDUSTRY_CHOICE = (
 )
 
 
+class Score:
+    JOIN_MEAL = 100
+
+
 class User(AbstractUser):
     name = models.CharField(u'昵称', max_length=30, null=True, blank=False)
     following = models.ManyToManyField('self', related_name="followers", symmetrical=False, through="RelationShip")
@@ -455,6 +460,7 @@ class User(AbstractUser):
                                          null=True)
     mobile = models.CharField(u'手机号码', max_length=11, null=True, blank=True)
     status = models.SmallIntegerField(u'状态', default=UserStatus.WAIT_TO_AUDIT, choices=USER_STATUS_CHOICE)
+    score = models.IntegerField(u'积分', default=0,)
 
     # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="users_i_like", verbose_name=u'赞',
     #                                blank=True, null=True, through="UserLike")
@@ -466,6 +472,10 @@ class User(AbstractUser):
 
     def get_tags_from_cache(self):
         return CacheUtil.get_user_tags(self)
+
+    def add_score(self, score):
+        self.score = self.score + score
+        self.save()
 
     def follow(self, followee):
         if self == followee:
@@ -749,6 +759,16 @@ class User(AbstractUser):
     class Meta:
         verbose_name = u'用户'
         verbose_name_plural = u'用户'
+
+
+class ClientSource:
+    IOS = 0
+    WEB = 1
+
+
+class UserSource(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=u'用户',)
+    source = models.IntegerField(u'注册来源', default=ClientSource.IOS)
 
 
 class UserPhoto(models.Model):

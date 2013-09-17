@@ -89,7 +89,7 @@ class UserChangeForm(auth_forms.UserChangeForm):
             'username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'constellation',
             'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'weibo_access_token', 'is_staff',
             'is_superuser', 'status', 'location',
-            'apns_token')
+            'apns_token', 'score')
         widgets = {
             'birthday': SelectDateWidget(required=False, years=range(1976, 1996), attrs={'class': "input-small"}, )
 
@@ -118,11 +118,11 @@ class UserAdmin(ImageCroppingMixin, UserAdmin):
 
 
 
-    list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', )
+    list_display = ('id', 'username', 'name', 'weibo_id', 'avatar_thumb', 'tags_plain', 'motto', 'status', 'score' )
     list_filter = ('status', 'date_joined', 'is_staff', 'is_superuser',)
     list_editable = ('status', )
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status')}),
+        (None, {'fields': ('username', 'password', 'name', 'weibo_id', 'gender', 'avatar', 'cropping', 'tags', 'status','score')}),
         ('Others', {'fields': (
             'constellation', 'birthday', 'college', 'industry', 'work_for', 'occupation', 'motto', 'location', 'weibo_access_token',
             'apns_token', 'is_staff', 'is_superuser',)}),

@@ -317,7 +317,7 @@ class UserListView(ListView):
             target_model_cls = ContentType.objects.get_by_natural_key('fanju', like_target_type).model_class()
             return target_model_cls.objects.get(pk=like_target_id).likes.all().order_by('-avatar')
         else:
-            return User.objects.filter(status=AuditStatus.APPROVED).order_by('-id').cache()
+            return User.objects.filter(status=AuditStatus.APPROVED).order_by('-score').cache()
     #
     # def get_all_approved(self):
     #     @cached(timeout=60 * 60 * 12)
@@ -562,6 +562,7 @@ def weibo_login(request):
     #        after weibo auth
         try:
             data = weibo_client.request_access_token(code)
+            data['fj_source'] = ClientSource.WEB
             logger.debug(data)
         except Exception as e:
             logger.exception(e)
