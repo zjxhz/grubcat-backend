@@ -3,15 +3,15 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from fanju.models import OrderStatus, Score
+from fanju.models import OrderStatus, Score, User
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         for order in orm.Order.objects.filter(status__in=(OrderStatus.PAYIED, OrderStatus.USED)):
-            order.customer.add_score(Score.JOIN_MEAL)
-
+            user = User.objects.get(pk=order.customer_id)
+            user.add_score(Score.JOIN_MEAL)
     def backwards(self, orm):
         "Write your backwards methods here."
 
