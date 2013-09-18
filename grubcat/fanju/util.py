@@ -185,7 +185,7 @@ mobile_uas = [
 mobile_ua_hints = ['SymbianOS', 'Opera Mini', 'iPhone']
 
 
-def isMobileRequest(request):
+def is_mobile_request(request):
     ''' Super simple device detection, returns True for mobile devices '''
 
     mobile_browser = False

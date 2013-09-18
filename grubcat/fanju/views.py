@@ -21,7 +21,7 @@ from fanju.exceptions import *
 from fanju.models import Order, Relationship, Meal, CacheKey, PhotoLike, MealLike
 from fanju.pay.alipay.alipay import create_direct_pay, verify_sign, decrypt, create_wap_pay
 from fanju.pay.alipay.config import settings as alipay_settings
-from fanju.util import isMobileRequest, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
+from fanju.util import is_mobile_request, get_client_ip, get_location_by_ip, escape_xmpp_username, escape_xmpp_node
 from fanju.views_common import create_sucess_json_response, create_failure_json_response, create_no_right_response, SUCESS, handle_alipay_back
 from fanju.forms import *
 from django.conf import settings
@@ -294,6 +294,7 @@ class ProfileDetailView(DetailView):
                 if self.object.gender == value:
                     context['gender_label'] = label
                     break
+        context['is_mobile'] = is_mobile_request(self.request)
         return context
 
 
