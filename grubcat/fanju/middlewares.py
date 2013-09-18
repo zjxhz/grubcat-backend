@@ -40,7 +40,7 @@ class WeiboAuthenticationBackend(object):
                     username, password = 'weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password,
                                                                     weibo_id=weibo_id, weibo_access_token=access_token)
-                    if credentials.get('fj_source'):
+                    if credentials.get('fj_source') is not None:
                         UserSource.objects.create(user=user_to_authenticate, source=credentials.get('fj_source'))
 #                    user_to_authenticate.is_active = False #set unactive before complete some profile
 #                    user_to_authenticate.save()
