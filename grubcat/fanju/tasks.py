@@ -18,7 +18,10 @@ def share_fanju(uid):
     fanju_url = r.urls[0].url_short
     share_texts = (u'你敢和志趣相投的陌生人一起吃饭，一起交流吗？反正我敢！ ',
                    u'刚注册了饭聚网，一个严肃却又有趣的陌生人线下聚会平台, 不用再担心被放鸽子了！ ',
-                   u'一个靠谱的陌生人线下聚会平台，不用再担心被放鸽子了。赶快来看看吧，因为在这里你可以找到志同道合的朋友，找到心仪的TA哦！ ')
+                   u'#饭聚#来了！  ')
+    # share_texts = (u'你敢和志趣相投的陌生人一起吃饭，一起交流吗？反正我敢！ ',
+    #                u'刚注册了饭聚网，一个严肃却又有趣的陌生人线下聚会平台, 不用再担心被放鸽子了！ ',
+    #                u'一个靠谱的陌生人线下聚会平台，不用再担心被放鸽子了。赶快来看看吧，因为在这里你可以找到志同道合的朋友，找到心仪的TA哦！ ')
 
     share_text = "%s%s" % (share_texts[2], fanju_url)
     visible = 2 if settings.DEBUG else 0
@@ -62,7 +65,7 @@ def follow_fanju_weibo(uid):
 def user_registered(uid):
     user = User.objects.get(pk=uid)
     user.audit_by_machine()
-    # share_fanju(user)
+    share_fanju(user)
     follow_fanju_weibo(user)
 
 ###################pubsub notification ################################
