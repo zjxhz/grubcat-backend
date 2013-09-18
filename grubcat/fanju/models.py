@@ -434,6 +434,7 @@ INDUSTRY_CHOICE = (
 
 class Score:
     JOIN_MEAL = 100
+    UPLOAD_PHOTO = 10
 
 
 class User(AbstractUser):
@@ -1495,6 +1496,7 @@ def photo_uploaded(sender, instance, created, **kwargs):
                               "photo_url": instance.photo.url,
                               "photo": instance.photo_thumbnail})
         pubsub.publish(node_name, payload)
+        instance.user.add_score(Score.UPLOAD_PHOTO)
 
 
 @receiver(post_save, sender=PhotoComment, dispatch_uid="photo_comment")
