@@ -54,20 +54,20 @@
                          width="420" height="280">
                 </div>
                 <div id="meal-grub">
-                    {% if order %}
-                        <a id="cancel_order" href="{% url 'cancel_order' order.id %}"
-                           class="btn btn-primary btn-book btn-booked fr" >
-                            我已报名
-                        </a>
-{% comment %}                        <a href="{% url 'order_detail' meal.id order.id %}"
-                           class="btn btn-primary btn-book btn-booked fr">
-                            我已报名
-                        </a>{% endcomment %}
-                    {% elif meal.is_passed %}
+                    {% if meal.is_passed %}
                         <a href="#"
                            class="btn btn-passed btn-book fr">
                             已结束
                         </a>
+                    {% elif order %}
+                        <a id="cancel_order" href="{% url 'cancel_order' order.id %}"
+                           class="btn btn-primary btn-book btn-booked fr">
+                            我已报名
+                        </a>
+                        {% comment %}                        <a href="{% url 'order_detail' meal.id order.id %}"
+                           class="btn btn-primary btn-book btn-booked fr">
+                            我已报名
+                        </a>{% endcomment %}
                     {% elif meal.left_persons > 0 %}
                         {% if user.is_authenticated %}
                             {% if just_created %}
@@ -131,7 +131,7 @@
                     <a id="like-link" class="btn btn  need-login" href="{% url "add_like" 'meal' meal.id %}"
                        data-login-back-url="{% url 'meal_detail' meal.id %}" data-like-text="感兴趣"
                             {% if is_already_liked %}data-is-already-liked="true"{% endif %}>
-                        <i class="icon-star"></i>&nbsp;我感兴趣</a>
+                        <i class="icon-star"></i>&nbsp;感兴趣</a>
                     <a id="like-num" href="{% url 'user_list' %}?target_type=meal&target_id={{ meal.id }}"
                        target="_blank" class="like-num btn btn-link" title="查看感兴趣的用户">{{ meal.likes_count }}</a>
                 </div>
@@ -149,9 +149,9 @@
             <div id="users" class="clearfix">
                 {% if meal.actual_persons %}
                     {% if meal.left_persons <= 0 %}
-                        <h3 id="left_persons_tip" data-left-persons="0">已经爆满！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="0">已爆满！共 {{ meal.actual_persons }} 人报名！</h3>
                     {% else %}
-                        <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">还剩 {{ meal.left_persons }} 位，快来参加哦！</h3>
+                        <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">已有 {{ meal.actual_persons }} 人报名！还剩 {{ meal.left_persons }} 个名额，快来参加哦！</h3>
                     {% endif %}
                 {% else %}
                     <h3 id="left_persons_tip" data-left-persons="{{ meal.left_persons }}">现在还没有人参加，赶快抢沙发！</h3>

@@ -135,7 +135,7 @@
         {% if profile.weibo_id %}
                 <div class="info-item">
                     <div class="info-label">微博：</div>
-                    <div class="info-value"><a href="http://weibo.com/u/{{ profile.weibo_id }}" target="_blank"><img src="{% static 'img/auth_weibo_big.png' %}" alt=""/></a></div>
+                    <div class="info-value"><a href="http://{% if is_mobile %}m.weibo.cn{% else %}weibo.com{% endif %}/u/{{ profile.weibo_id }}" target="_blank"><img src="{% static 'img/auth_weibo_big.png' %}" alt=""/></a></div>
                 </div>
         {% endif %}
         </div>
