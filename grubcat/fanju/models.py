@@ -298,6 +298,7 @@ class Order(models.Model):
             self.meal.save()
             self.status = OrderStatus.CANCELED
             self.save()
+            self.customer.minus_score(Score.JOIN_MEAL)
 
     def is_used(self):
         return self.status == OrderStatus.USED
@@ -477,6 +478,11 @@ class User(AbstractUser):
     def add_score(self, score):
         self.score = self.score + score
         self.save()
+
+    def minus_score(self, score):
+        if self.score > score:
+            self.score = self.score - score
+            self.save()
 
     def follow(self, followee):
         if self == followee:

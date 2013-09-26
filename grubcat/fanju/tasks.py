@@ -65,7 +65,7 @@ def follow_fanju_weibo(uid):
 def user_registered(uid):
     user = User.objects.get(pk=uid)
     user.audit_by_machine()
-    #share_fanju(user)
+    share_fanju(user)
     follow_fanju_weibo(user)
 
 ###################pubsub notification ################################

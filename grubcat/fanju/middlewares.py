@@ -4,7 +4,7 @@ from django.core.files.base import ContentFile
 import logging
 import urllib2
 import weibo
-from fanju.models import User, Gender, UserSource
+from fanju.models import User, Gender, UserSource, ClientSource
 from fanju import tasks
 
 logger = logging.getLogger(__name__)
@@ -40,8 +40,9 @@ class WeiboAuthenticationBackend(object):
                     username, password = 'weibo_%s' % weibo_id, User.objects.make_random_password()
                     user_to_authenticate = User.objects.create_user(username, '', password,
                                                                     weibo_id=weibo_id, weibo_access_token=access_token)
-                    if credentials.get('fj_source') is not None:
-                        UserSource.objects.create(user=user_to_authenticate, source=credentials.get('fj_source'))
+                    UserSource.objects.create(user=user_to_authenticate,
+                                              source=credentials.get('fj_source', ClientSource.IOS))
+
 #                    user_to_authenticate.is_active = False #set unactive before complete some profile
 #                    user_to_authenticate.save()
                     user_data = weibo_client.users.show.get(uid=weibo_id)
