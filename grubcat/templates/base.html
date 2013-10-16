@@ -1,0 +1,142 @@
+{% load static_asset %}
+{% load static from staticfiles %}
+{% load assets %}
+<!DOCTYPE html>
+<html lang="zh-CN" {% block ns %}{% endblock %}>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}饭聚网，享美食，聚好友{% endblock %}</title>
+    <meta content="饭聚,饭聚网,饭局,杭州的饭局" name="keywords">
+    <meta content="饭聚网是刚刚流行起来的基于兴趣的美食社交，通过一顿饭局让不同的人相聚在餐厅里，一起享受美食的同时，认识和你有着相同兴趣的新朋友。" name="description">
+    {% block page_css %}
+        {% block extra_base_css %}{% endblock %}
+        {% assets "base_css" %}
+            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">
+        {% endassets %}
+        {% block module_css %}{% endblock %}
+    {% endblock %}
+{% include "ga.html" %}
+{#        {% assets "bootstrap_ie6_css" %}#}
+{#    <!--[if IE 6]>#}
+{#            <link href="{% static_asset ASSET_URL %}" media="screen" rel="stylesheet" type="text/css">#}
+{#    <![endif]-->#}
+{#        {% endassets %}#}
+</head>
+<body>
+{% block nav %}
+    <div class="navbar navbar-fixed-top" id="main-nav">
+        <div class="navbar-inner  ">
+            <div class="container">
+                <a class="brand logo" href="/"><img src="{% static 'img/logo.png' %}" alt="饭聚"/></a><a class="brand city" href="/">@杭州</a>
+                <ul class="nav main">
+                    <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
+                    <li id="nav-user"><a href="{% url 'user_list' %}">热门用户</a></li>
+                    {% comment %}<li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起活动</a></li>{% endcomment %}
+                    {% comment %}{% if user.is_authenticated %}
+                    <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">{{ user.get_total_unread_message_count }}</span></li>
+                    {% endif %}{% endcomment %}
+                </ul>
+                <ul class="nav pull-right">
+                    {% if user.is_authenticated %}
+                        <li id="nav-notification"><a href="#">通知</a><span id="total-noty-unread-count" class="unread-count hide">{{ user.get_total_unread_noty_count }}</span></li>
+                        <div id="notification-wrapper" class="hide">
+                            <ul id="notification-list">
+                            </ul>
+                            <div id="no-noty-tip" class="hide">暂时没有新通知</div>
+                            <div id="loading-noty" >加载中</div>
+                            <div class="actions"><a id="more-noty" href="#">查看更多</a><a id="ignore-all-noty" href="#">忽略全部</a>
+                            </div>
+                        </div>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="hidden-phone" id='nav-username'>{{  user.name|default:'用户' }}</span>
+                                <b class="caret"></b></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{% url 'user_detail' user.id %}">我的主页</a></li>
+                                <li><a href="{% url 'user_meal_list' user.id %}">我的活动</a></li>
+                                <li><a href="{% url 'following_list' user.id %}">我的好友</a></li>
+                                <li><a href="{% url 'photo_list' user.id %}">我的照片</a></li>
+                                <li class="divider"></li>
+                                <li id="nav-upload-photo" class="hidden-phone">
+                                    <a href="{% url 'upload_photo' %}" class="upload-photo-link">上传照片</a>
+                                </li>
+                                <li><a href="{% url 'edit_basic_profile' %}">修改资料</a></li>
+
+                                <li class="divider"></li>
+                                <li><a href="{% url 'logout' %}">退出</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a id="login_link" class="login" href="{% url 'weibo_login' %}?next={{ request.path_info }}">登录</a>
+                        </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page-container %}
+    <div id="main-wrap">
+        <div class="container" id="main-container">
+        <!--[if lte IE 7]>
+<div id="ie6-warning" class='alert'>
+<div class='container'>您的浏览器版本太低，将不能正常浏览本网站。请升级 <a href="http://windows.microsoft.com/zh-CN/internet-explorer/downloads/ie">Internet Explorer</a> 或使用
+<a href="http://www.google.com/chrome/">Google Chrome</a> 浏览器。<br>如果您在使用双核浏览器，请切换到高速 / 极速 / 神速核心。</div></div>
+<![endif]-->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    {% block footer %}
+        <div id="footer">
+            <div class="container">{% if not user.is_authenticated%}   <span id="restaurant-login-link"><a href="{% url 'restaurant_admin' %}">餐厅登录</a> |</span>  {% endif %}  ©2013 饭聚 浙ICP备13002509号</div>
+        </div>
+    {% endblock %}
+    <div id="common-data" class="hide" data-uid="{{ user.username.lower|escape_xml }}" data-pwd="{{ user.weibo_access_token }}"
+            data-chat-server="{{CHATSERVER }}" data-chat-domain="{{ CHATDOMAIN }}"> </div>
+    {% if user.is_authenticated %}
+    <div id="chat-dialog" class="modal fade hide">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div id="chat-container" class="modal-body">
+            <div id="chat-left-column">
+                <div id="roster"></div>
+            </div>
+
+            <div id='chat-right-column'>
+                <div id="no-avatar-tip" class="alert hide">您现在还没有上传头像，无法使用聊天功能，现在就去 <a
+                        href="{% url 'edit_basic_profile' %} ">上传头像</a></div>
+            </div>
+            <div id="chat-data" class='hide' data-default-avatar="{% static 'img/default/male.png' %}"
+                 data-get-user-info-url="{% url 'get_user_info' %}"
+                 data-my-avatar="{{ request.user.small_avatar }}"
+                 data-my-name="{{ request.user.name }}"
+                 data-profile-url="{{ request.user.get_absolute_url }}"></div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block base_js %}
+    {% assets "base_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+{% block page_js %}
+    {% assets "module_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+{% endblock %}
+{% block extra_js %}
+    {% if user.is_authenticated %}
+        {% assets "chat_js" %}
+            <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+        {% endassets %}
+    {% endif %}
+{% endblock %}
+</body>
+</html>
