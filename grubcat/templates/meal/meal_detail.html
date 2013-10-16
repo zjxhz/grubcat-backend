@@ -38,13 +38,13 @@
             <p id="desc">
                 {{ meal.introduction|linebreaksbr }}<br/><br/>
 
-                <p class="visible-phone visible-tablet">
+                {% comment %}<p class="visible-phone visible-tablet">
                     <span style="color:green">==========“7免1”优惠来袭==========</span><br/><br/>
                     活动1：7人免1人，关注公众账号“饭聚”，并分享此次活动到朋友圈，通过网站或者App参加活动即可获得免单机会，7个人中产生1个免单名额，抽奖方式为现场抓阄<br/><br/>
                     活动2：7次免1次，第7次参加活动者，免单<br/>
                     <br/>
                     活动时间：9.1-12.31<br/><br/>
-                </p>
+                </p>{% endcomment %}
             </p>
 
             <div id="meal-container" class="clearfix box-seperator">
@@ -186,7 +186,7 @@
         </div>
         <div class="sidebar span3  visible-desktop">
 
-            {% include "support/discount_sidebar.html" %}
+{#            {% include "support/discount_sidebar.html" %}#}
             {% include "support/faq_sidebar.html" %}
 
            {% comment %} <div id="menu" class="menu sidebar-box">

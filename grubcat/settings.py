@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
     'clear_cache',
-    'cacheops',
+    #'cacheops',
     'django_pickling'
 
 )
