@@ -27,7 +27,6 @@ from fanju.forms import *
 from django.conf import settings
 from datetime import datetime, date, timedelta
 import json
-from cacheops import cached
 
 logger = logging.getLogger(__name__)
 pay_logger = logging.getLogger("fanju.pay")
