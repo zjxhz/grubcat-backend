@@ -1,0 +1,29 @@
+<div id="comment-{{ comment.id }}" class='comment' data-uid='{{ comment.user.id }}'>
+    <div class="comment-avatar">
+        <a target="_blank" href="{{ comment.user.get_absolute_url }}">
+            <img src="{{ comment.user.small_avatar }}" alt="{{ comment.user.name }}"/>
+        </a>
+
+    </div>
+    <div class="comment-body">
+        <div class="comment-header">
+            <a class="author" target="_blank"
+               href="{{ comment.user.get_absolute_url }}">{{ comment.user.name }}</a>
+
+        </div>
+        <p class="comment-content">
+            {% if comment.parent != None %}
+                <span class="reply-to">回复 <span class="name">{{ comment.parent.user.name }}</span>：</span>
+            {% endif %}
+            {{ comment.comment|linebreaksbr }}
+        </p>
+
+        <div class="comment-footer">
+            <span class="comment-time">{{ comment.time_gap }}</span>
+
+            <div class="comment-actions">
+                <a href="#" class="reply-link"></i>回复</a>
+            </div>
+        </div>
+    </div>
+</div>

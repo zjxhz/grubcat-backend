@@ -1,0 +1,42 @@
+{% load static from staticfiles %}{% load assets %}{% load static_asset %}
+
+
+<div id="crop_cover_modal" class="modal hide fade" tabindex="-1" role="dialog" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4>请选择合适的区域做为套餐封面</h4>
+    </div>
+    <div class="modal-body">
+        <form action="{% url 'edit_menu_cover' menu.id %}" id="id_crop_form" method="post" enctype="multipart/form-data" class="">
+            <div id="cropping-area" class="">
+                {{ form.photo }}
+                {{ form.cropping }}
+            </div>
+{#            <div id="preview_area" class="">#}
+{#                <div id="preview_big_container" class="preview-container ">#}
+{#                    <img id="preview_big">#}
+{#                </div>#}
+{#                <div id="preview_middle_container" class="preview-container ">#}
+{#                    <img id="preview_middle">#}
+{#                </div>#}
+{#            </div>#}
+        </form>
+        <div id="data" class="hide" data-cover-url="{{ menu.photo.url }}"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button id="crop_submit" type="submit" class="btn btn-large btn-primary">保存</button>
+    </div>
+
+</div>
+
+{% block page_js %}
+    {% assets "image_cropping_js" %}
+        <script type="text/javascript" src="{% static_asset ASSET_URL %}"></script>
+    {% endassets %}
+
+    <script type="text/javascript">
+        jQuery(".preview-container img").attr('src', '{{ menu.photo.url }}');
+    </script>
+{% endblock %}
