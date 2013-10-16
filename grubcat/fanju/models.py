@@ -840,7 +840,7 @@ MEAL_PRIVACY_CHOICE = (
 )
 
 MEAL_PERSON_CHOICE = [(2 * x, "%s 人" % (2 * x)) for x in range(1, 5)]
-START_TIME_CHOICE = (
+START_TIME_CHOICE = ((dtime(6, 00), "6:00"), (dtime(7, 00), "7:00"), (dtime(8, 00), "8:00"),
     (dtime(9, 00), "9:00"), (dtime(9, 30), "9:30"), (dtime(10, 00), "10:00"), (dtime(10, 30), "10:30"),
     (dtime(11, 00), "11:00"), (dtime(11, 30), "11:30"), (dtime(12, 00), "12:00"), (dtime(12, 30), "12:30"),
     (dtime(13, 00), "13:00"), (dtime(13, 30), "13:30"), (dtime(14, 00), "14:00"), (dtime(14, 30), "14:30"),
