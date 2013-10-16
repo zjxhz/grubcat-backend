@@ -33,9 +33,9 @@
                     <li id="nav-meal"><a href="{% url 'index' %}" class="hidden-phone">首页</a></li>
                     <li id="nav-user"><a href="{% url 'user_list' %}">热门用户</a></li>
                     {% comment %}<li id="nav-create-meal"><a href="{% url 'create_meal' %}" class="hidden-phone">发起活动</a></li>{% endcomment %}
-                    {% if user.is_authenticated %}
+                    {% comment %}{% if user.is_authenticated %}
                     <li id="nav-chat" class="hidden-phone"><a href="#">聊天</a><span id="total-unread-count" class="unread-count hide">{{ user.get_total_unread_message_count }}</span></li>
-                    {% endif %}
+                    {% endif %}{% endcomment %}
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_authenticated %}
