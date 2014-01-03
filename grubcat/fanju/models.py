@@ -976,7 +976,7 @@ class Meal(models.Model):
     @property
     def paid_orders(self):
         return Order.objects.filter(meal=self, status__in=(OrderStatus.PAYIED, OrderStatus.USED)).select_related(
-            'customer').cache()
+            'customer')
 
     def is_participant(self, user):
         return self.participants.filter(pk=user.id).exists()
