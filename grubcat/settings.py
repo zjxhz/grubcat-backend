@@ -182,7 +182,7 @@ CACHEOPS = {
     'fanju.meallike': ('all', 60 * 60),
     'fanju.photolike': ('all', 60 * 60),
     'fanju.user': ('get', 60 * 60 * 1),
-    'fanju.order': ('get', 60 * 60),
+    #'fanju.order': ('get', 60 * 60),
     # 'fanju.usertag': ('all', 60 * 60),
     # 'fanju.taggeduser': ('all', 60 * 60),
     # 'taggit_tag': ('all', 60 * 60),
